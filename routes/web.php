@@ -27,6 +27,34 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/careerJourney', function () {
+    return Inertia::render('careerJourney/myCareerJourney');
+})->middleware(['auth', 'verified'])->name('careerJourney');
+Route::get('/library', function () {
+    return Inertia::render('library/mylibrary');
+})->middleware(['auth', 'verified'])->name('library');
+Route::get('/content', function () {
+    return Inertia::render('content/mycontent');
+})->middleware(['auth', 'verified'])->name('content');
+Route::get('/coursess', function () {
+    return Inertia::render('Courses/myCourses');
+})->middleware(['auth', 'verified'])->name('coursess');
+Route::get('/leadershipAndManagement', function () {
+    return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
+})->middleware(['auth', 'verified'])->name('leadershipAndManagement');
+Route::get('/artificialIntelligence', function () {
+    return Inertia::render('artificialIntelligence/myartificialIntelligence');
+})->middleware(['auth', 'verified'])->name('artificialIntelligence');
+Route::get('/cyberSecurity', function () {
+    return Inertia::render('cyberSecurity/mycyberSecurity');
+})->middleware(['auth', 'verified'])->name('cyberSecurity');
+Route::get('/Instructor', function () {
+    return Inertia::render('Instructor/myInstructor');
+})->middleware(['auth', 'verified'])->name('Instructor');
+Route::get('/help', function () {
+    return Inertia::render('help/help');
+})->middleware(['auth', 'verified'])->name('help');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

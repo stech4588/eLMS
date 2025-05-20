@@ -12,7 +12,7 @@ const showingNavigationDropdown = ref(false)
 </script>
 
 <template>
-    <div class="flex min-h-screen bg-gray-100">
+    <div class="flex min-h-screen bg-gray-100 mobile_view_style">
         <!-- Sidebar -->
         <AuthSidebar />
 
@@ -124,3 +124,11 @@ const showingNavigationDropdown = ref(false)
         </div>
     </div>
 </template>
+<style scoped>
+@media (max-width: 770px) {
+    .mobile_view_style{
+    display: block;
+}
+}
+
+</style>
