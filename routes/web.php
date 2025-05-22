@@ -27,6 +27,9 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/swiper', function () {
+    return Inertia::render('library/swiper');
+})->middleware(['auth', 'verified'])->name('swiper');
 Route::get('/careerJourney', function () {
     return Inertia::render('careerJourney/myCareerJourney');
 })->middleware(['auth', 'verified'])->name('careerJourney');
@@ -39,6 +42,9 @@ Route::get('/content', function () {
 Route::get('/coursess', function () {
     return Inertia::render('Courses/myCourses');
 })->middleware(['auth', 'verified'])->name('coursess');
+Route::get('/addnewcourses', function () {
+    return Inertia::render('addCourses/addNewCourses');
+})->middleware(['auth', 'verified'])->name('addnewcourses');
 Route::get('/leadershipAndManagement', function () {
     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
 })->middleware(['auth', 'verified'])->name('leadershipAndManagement');

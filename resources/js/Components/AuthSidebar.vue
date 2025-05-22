@@ -47,8 +47,14 @@
         <button class="sidebar_closebutton" @click="toggleSidebar">
             <img src="/images/sidebar_icon.svg">
         </button>
-        
-        <div>
+        <div class="logo">
+            
+                <Link  class="sidebar_subtitles"  href="/dashboard" > LOGO</Link>
+                
+            
+            
+        </div>
+        <div style="margin-top: 2.8%;">
             <div >
                 <Link  class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/careerJourney' }" href="/careerJourney"><img src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
@@ -60,6 +66,7 @@
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/library' }" href="/library"><img src="/images/library_icon.svg" alt="Library"  /> My Library</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/content' }" href="/content"><img src="/images/content_icon.svg" alt="Content"  /> Content</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/coursess' }" href="/coursess"> <img src="/images/courses_icon.svg" alt="Courses"  /> My Courses</Link>
+                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/addnewcourses' }" href="/addnewcourses"> <img src="/images/add_icon.svg" alt="Add"  />Add New Courses</Link>
             </div>
             
         </div>
@@ -144,12 +151,14 @@ const trendingTopic = [
     width: 320px;
    transition: left 0.3s ease-in-out, opacity 0.3s ease-in-out;
     overflow: hidden;
+    flex-shrink: 0;
 }
 @media (max-width: 770px) {
 .main_sidebar.sidebar-closed {
     left: 0;
     padding: 0;
     opacity: 0;
+    display: none;
 }}
 @media (max-width: 770px) {
     .main_sidebar{
@@ -192,5 +201,7 @@ const trendingTopic = [
     }
     
 }
-
+.logo{
+    margin-top: 0 !important;
+}
 </style>

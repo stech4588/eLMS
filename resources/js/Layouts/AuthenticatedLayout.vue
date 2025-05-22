@@ -17,7 +17,7 @@ const showingNavigationDropdown = ref(false)
         <AuthSidebar />
 
         <!-- Main Content Area -->
-        <div class="flex flex-col flex-1">
+        <div class="flex flex-col flex-1" style="width:56% !important">
             <!-- Top Navigation -->
             <nav class="border-b border-gray-100 bg-white">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -118,7 +118,7 @@ const showingNavigationDropdown = ref(false)
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-6 home_page_style">
                 <slot />
             </main>
         </div>
@@ -127,7 +127,7 @@ const showingNavigationDropdown = ref(false)
 <style scoped>
 @media (max-width: 770px) {
     .mobile_view_style{
-    display: block;
+    display: flex;
 }
 }
 
