@@ -23,7 +23,7 @@ const isPlayerPage = computed(() => page.component === 'Course/Player');
     <div class="flex min-h-screen bg-[#97d5ff] mobile_view_style" style="flex-direction: column;">
 
         <nav class="border-b border-gray-100 bg-white">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
                         <div class=" sidebar_button_nav">
 <!--                           todo topbar items-->

@@ -44,13 +44,7 @@ const currentCourses = computed(() => {
     <Head title=" My Library" />
 
     <AuthenticatedLayout>
-        <!-- <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800"
-            >
-                 My Library
-            </h2>
-        </template> -->
+        
         <div style="background-color: white; padding: 32px 40px; gap: 20px; display: flex; flex-direction: column;">
             <div style="font-size: 36px; font-weight: 600;">
                 My Library

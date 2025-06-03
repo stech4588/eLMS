@@ -30,6 +30,7 @@ class CourseCertificateController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
         CourseCertificate::create($request->all());
         return redirect()->back();
@@ -58,6 +59,7 @@ class CourseCertificateController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
         $courseCertificate->update($request->all());
         return redirect()->back();

@@ -20,6 +20,7 @@ class Course extends Model
         'course_type_id',
         'additional_description',
         'recomendations',
+        'topic_id',
     ];
 
     public function courseType()
@@ -37,6 +38,11 @@ class Course extends Model
         // Make sure 'industry_id' is the correct foreign key column name in your 'courses' table
         // And CourseIndustry::class is the correct model for your industries.
         return $this->belongsTo(CourseIndustry::class, 'industry_id');
+    }
+
+    public function topic()
+    {
+        return $this->belongsTo(CourseTopic::class, 'topic_id');
     }
 
     public function videos()

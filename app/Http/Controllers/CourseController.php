@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Models\CourseCertificate; // Assuming you have a Certificate model
 use App\Models\CourseIndustry;    // Assuming you have an Industry model
 use App\Models\CourseType;
+use App\Models\CourseTopic; // Added CourseTopic model
 use Inertia\Response as InertiaResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -68,11 +69,19 @@ class CourseController extends Controller
             ];
         });
 
+        $topics = CourseTopic::all()->map(function ($topic) { // Added topics fetching
+            return [
+                'value' => $topic->id,
+                'text' => $topic->name,
+            ];
+        });
+
         // Add this line for debugging
         return Inertia::render('addCourses/addNewCourses', [
             'certificates' => $certificates,
             'industries' => $industries,
             'courseTypes' => $courseTypes,
+            'topics' => $topics, // Pass topics to the view
             // You can also pass other necessary data here
         ]);
     }
@@ -91,6 +100,7 @@ class CourseController extends Controller
             'certificates' => 'nullable|exists:course_certificates,id',
             'industry' => 'nullable|exists:course_industries,id',
             'course_type' => 'nullable|exists:course_types,id',
+            'topic' => 'nullable|exists:topics,id',
         ]);
 
         $validatedVideosData = $request->validate([
@@ -115,6 +125,7 @@ class CourseController extends Controller
                 'certificate_id' => $validatedCourseData['certificates'] ?? null,
                 'industry_id' => $validatedCourseData['industry'] ?? null,
                 'course_type_id' => $validatedCourseData['course_type'] ?? null,
+                'topic_id' => $validatedCourseData['topic'] ?? null,
             ];
 
             $course = $this->courseService->create($courseDataToCreate);
@@ -184,7 +195,7 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         // Eager load relationships you might need
-        $course->load('courseType', 'videos', 'industry', 'certificate'); // Added 'industry' and 'certificate'
+        $course->load('courseType', 'videos', 'industry', 'certificate', 'topic'); // Added 'industry' and 'certificate'
 
         // Prepare the data for the view
         $courseData = [
@@ -197,6 +208,7 @@ class CourseController extends Controller
             'author' => $course->user ? $course->user->name : 'Placeholder Author', // Or however you get the author
             'additional_description' => $course->additional_description,
             'recomendations' => $course->recomendations,
+            'topic_name' => $course->topic ? $course->topic->name : 'N/A', // Get name from relationship
             'first_video_thumbnail_url' => null, // Initialize
             'videos' => $course->videos->map(function ($video) {
                 return [
@@ -264,6 +276,7 @@ class CourseController extends Controller
             'updated_at' => $course->updated_at->format('M d, Y'),
             'additional_description' => $course->additional_description,
             'recommendations' => $course->recomendations,
+            'topic_name' => $course->topic ? $course->topic->name : 'N/A', // Get name from relationship
             'user' => $course->user, // user is already loaded via $course->load('user')
             // 'profile_picture' => $course->user->profile_picture, // This can be accessed via course.user.profile_picture in Vue
             'comments' => $course->comments->map(function ($comment) { // Map comments to include necessary data

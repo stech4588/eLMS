@@ -18,31 +18,66 @@
                     </div>
                     <div class="filter-container">
                         <div class="filter_select_container" style="display: flex; gap: 10px; flex-wrap: wrap;justify-content: end;">
-                            <select v-model="selectedTopic">
-                                <option value="">Topics</option>
-                                <option v-for="option in topicOptions" :key="option.value" :value="option.value">
-                                    {{ option.text }}
-                                </option>
-                            </select>
-                            <select v-model="selectedCourseTypeFilter">
-                                <option value="">Course Type</option>
-                                <option v-for="option in courseTypeOptions" :key="option.value" :value="option.value">
-                                    {{ option.text }}
-                                </option>
-                            </select>
-                            <select v-model="selectedCertificate">
-                                <option value="">Certificate</option>
-                                <option v-for="option in certificateOptions" :key="option.value" :value="option.value">
-                                    {{ option.text }}
-                                </option>
-                            </select>
-                            <select v-model="selectedCourseIndustry">
-                                <option value="">Course Industry</option>
-                                <option v-for="option in courseIndustryOptions" :key="option.value"
-                                    :value="option.value">
-                                    {{ option.text }}
-                                </option>
-                            </select>
+                            <!-- Topics Dropdown -->
+                            <div class="dropdown_dashboard" ref="topicDropdownRef" style="position: relative; ">
+                                <button @click="toggleTopicDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                    <span>{{ selectedTopicText || 'Topics' }}</span>
+                                    <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
+                                </button>
+                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item" href="#" @click.prevent="handleTopicSelect({ value: '', text: 'Topics' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Topics (All)</a></li>
+                                    <li v-for="option in topicOptions" :key="option.value">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                            {{ option.text }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Course Type Dropdown -->
+                            <div class="dropdown_dashboard" ref="courseTypeDropdownRef" style="position: relative; ">
+                                <button @click="toggleCourseTypeDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                    <span>{{ selectedCourseTypeText || 'Course Type' }}</span>
+                                    <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
+                                </button>
+                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item" href="#" @click.prevent="handleCourseTypeSelect({ value: '', text: 'Course Type' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Type (All)</a></li>
+                                    <li v-for="option in courseTypeOptions" :key="option.value">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                            {{ option.text }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Certificate Dropdown -->
+                            <div class="dropdown_dashboard" ref="certificateDropdownRef" style="position: relative; ;">
+                                <button @click="toggleCertificateDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                    <span>{{ selectedCertificateText || 'Certificate' }}</span>
+                                    <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
+                                </button>
+                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item" href="#" @click.prevent="handleCertificateSelect({ value: '', text: 'Certificate' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Certificate (All)</a></li>
+                                    <li v-for="option in certificateOptions" :key="option.value">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                            {{ option.text }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Course Industry Dropdown -->
+                            <div class="dropdown_dashboard" ref="courseIndustryDropdownRef" style="position: relative; ">
+                                <button @click="toggleCourseIndustryDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                    <span>{{ selectedCourseIndustryText || 'Course Industry' }}</span>
+                                    <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
+                                </button>
+                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item" href="#" @click.prevent="handleCourseIndustrySelect({ value: '', text: 'Course Industry' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Industry (All)</a></li>
+                                    <li v-for="option in courseIndustryOptions" :key="option.value">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                            {{ option.text }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -240,7 +275,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -267,6 +302,16 @@ const selectedCourseTypeFilter = ref('');
 const selectedCertificate = ref('');
 const selectedCourseIndustry = ref('');
 const searchQuery = ref(''); // Added for search input
+
+// Dropdown states
+const isTopicDropdownOpen = ref(false);
+const topicDropdownRef = ref(null); // Ref for the Topics dropdown element
+const isCourseTypeDropdownOpen = ref(false);
+const courseTypeDropdownRef = ref(null);
+const isCertificateDropdownOpen = ref(false);
+const certificateDropdownRef = ref(null);
+const isCourseIndustryDropdownOpen = ref(false);
+const courseIndustryDropdownRef = ref(null);
 
 // Computed properties to format data for select options
 const topicOptions = computed(() => {
@@ -317,18 +362,23 @@ const hasActiveFilters = computed(() => {
 // Methods to clear filters
 const clearSelectedTopic = () => {
     selectedTopic.value = '';
+    // Optionally close dropdown if open
+    isTopicDropdownOpen.value = false;
 };
 
 const clearSelectedCourseTypeFilter = () => {
     selectedCourseTypeFilter.value = '';
+    isCourseTypeDropdownOpen.value = false;
 };
 
 const clearSelectedCertificate = () => {
     selectedCertificate.value = '';
+    isCertificateDropdownOpen.value = false;
 };
 
 const clearSelectedCourseIndustry = () => {
     selectedCourseIndustry.value = '';
+    isCourseIndustryDropdownOpen.value = false;
 };
 
 const modules = [Navigation]; // Only Navigation is globally registered now unless other swipers need Pagination
@@ -394,6 +444,68 @@ function prevPageSkills() {
         currentPageSkills.value--;
     }
 }
+
+// Dropdown toggle methods
+const toggleTopicDropdown = () => {
+    isTopicDropdownOpen.value = !isTopicDropdownOpen.value;
+};
+
+const toggleCourseTypeDropdown = () => {
+    isCourseTypeDropdownOpen.value = !isCourseTypeDropdownOpen.value;
+};
+
+const toggleCertificateDropdown = () => {
+    isCertificateDropdownOpen.value = !isCertificateDropdownOpen.value;
+};
+
+const toggleCourseIndustryDropdown = () => {
+    isCourseIndustryDropdownOpen.value = !isCourseIndustryDropdownOpen.value;
+};
+
+// Dropdown select methods
+const handleTopicSelect = (topic) => {
+    selectedTopic.value = topic.value;
+    isTopicDropdownOpen.value = false; // Close dropdown after selection
+};
+
+const handleCourseTypeSelect = (option) => {
+    selectedCourseTypeFilter.value = option.value;
+    isCourseTypeDropdownOpen.value = false;
+};
+
+const handleCertificateSelect = (option) => {
+    selectedCertificate.value = option.value;
+    isCertificateDropdownOpen.value = false;
+};
+
+const handleCourseIndustrySelect = (option) => {
+    selectedCourseIndustry.value = option.value;
+    isCourseIndustryDropdownOpen.value = false;
+};
+
+// Close dropdown on outside click
+const handleClickOutside = (event) => {
+    if (topicDropdownRef.value && !topicDropdownRef.value.contains(event.target)) {
+        isTopicDropdownOpen.value = false;
+    }
+    if (courseTypeDropdownRef.value && !courseTypeDropdownRef.value.contains(event.target)) {
+        isCourseTypeDropdownOpen.value = false;
+    }
+    if (certificateDropdownRef.value && !certificateDropdownRef.value.contains(event.target)) {
+        isCertificateDropdownOpen.value = false;
+    }
+    if (courseIndustryDropdownRef.value && !courseIndustryDropdownRef.value.contains(event.target)) {
+        isCourseIndustryDropdownOpen.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+});
 
 // Watch for filter changes to reset current page for skills section
 watch([selectedTopic, selectedCourseTypeFilter, selectedCertificate, selectedCourseIndustry, searchQuery], () => {
@@ -699,4 +811,30 @@ const courseDatabaseList = [
     color: #000;
 }
 
+/* Added styles for select options */
+.filter-container select option:hover,
+.filter-container select option:focus {
+    background-color: #97d5ff !important;
+    color: #000000 !important; /* Black text for better contrast */
+    border: none !important;
+    outline: none !important;
+}
+
+/* Style for the currently selected option in the dropdown list (though support is very limited) */
+.filter-container select option:checked {
+    background-color: #97d5ff !important;
+    color: #000000 !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* Styles for custom dropdown items on hover */
+.dropdown-menu .dropdown-item:hover {
+    background-color: #97d5ff !important;
+    color: #000000 !important;
+}
+
+.dropdown_dashboard{
+    width: 200px;
+}
 </style>

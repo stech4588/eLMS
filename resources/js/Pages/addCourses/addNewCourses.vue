@@ -177,6 +177,8 @@
                                         <!-- Optional: display character count or validation for price -->
                                     </div>
 
+
+
                                     <div class="mb-6" style="">
                                         <label for="certificates" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Certificates <img src="/images/question_mark.svg"/></label>
                                         <select
@@ -189,9 +191,25 @@
                                             <option v-for="cert in props.certificates" :key="cert.value" :value="cert.value">
                                                 {{ cert.text }}
                                             </option>
-                                            <option value="_add_new_certificate_">-- Add New Certificate --</option>
+                                            <!-- <option value="_add_new_certificate_">-- Add New Certificate --</option> -->
                                         </select>
                                     </div>
+
+                                    <div class="mb-6" style="">
+                                        <label for="topic" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Topic <img src="/images/question_mark.svg"/></label>
+                                        <select
+                                            id="topic"
+                                            v-model="form.topic"
+                                            class="custom-select" style="border: none;color: #4D4D4D; width: 100%;  border: 1px solid grey; border-radius: 15px; padding: 20px;"
+                                        >
+                                            <option value="" disabled selected hidden>Select Topic</option>
+                                            <option v-for="topic in props.topics" :key="topic.value" :value="topic.value">
+                                                {{ topic.text }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+
 
                                     <div class="mb-6" style="">
                                         <label for="industry" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Industry <img src="/images/question_mark.svg"/></label>
@@ -478,6 +496,10 @@ const props = defineProps({
         type: Array,
         default: () => []
     },
+    topics: {
+        type: Array,
+        default: () => []
+    },
 });
 
 const currentStep = ref(1);
@@ -492,6 +514,7 @@ const form = useForm({
     recomendations: '',
     certificates: '',
     industry: '',
+    topic: '',
     course_type: '',
     course_price: '',
 });
@@ -722,7 +745,7 @@ const submitForm = async () => {
     formData.append('certificates', form.certificates);
     formData.append('industry', form.industry);
     formData.append('course_type', form.course_type);
-
+    formData.append('topic', form.topic);
     // Append videos data
     if (videosData.value && videosData.value.length > 0) {
         videosData.value.forEach((video, index) => {
