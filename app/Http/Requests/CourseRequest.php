@@ -11,7 +11,21 @@ class CourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
+    }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if (!$this->has('status')) {
+            $this->merge([
+                'status' => 'draft',
+            ]);
+        }
     }
 
     /**

@@ -1,8 +1,6 @@
 <template>
-    <button class="sidebar_openbutton" @click="toggleSidebar">
-            <img src="/images/sidebar_icon.svg">
-        </button>
-    <aside class="main_sidebar bg-white shadow-md space-y-6" :class="{ 'sidebar-closed': !isSidebarOpen }">
+   
+    <aside class="main_sidebar bg-white shadow-md space-y-6" >
         <!-- Optional Logo Section -->
         <!-- <div class="flex items-center justify-center">
             <Link :href="route('dashboard')">
@@ -44,20 +42,22 @@
                 />
             </div>
         </nav> -->
-        <button class="sidebar_closebutton" @click="toggleSidebar">
+        <!-- <button class="sidebar_closebutton" @click="toggleSidebar">
             <img src="/images/sidebar_icon.svg">
-        </button>
-        <div class="logo">
+        </button> -->
+        <!-- <div class="logo">
             
                 <Link  class="sidebar_subtitles"  href="/dashboard" > LOGO</Link>
                 
             
             
-        </div>
-        <div style="margin-top: 2.8%;">
+        </div> -->
+        <div style="">
             <div >
                 <Link  class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/careerJourney' }" href="/careerJourney"><img src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img src="/images/career_icon.svg" alt="users"  /> User Listing</Link>
+                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> Course Management</Link>
             </div>
             
         </div>
@@ -75,7 +75,7 @@
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/leadershipAndManagement' }" href="/leadershipAndManagement">Leadership & Management</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/artificialIntelligence' }" href="/artificialIntelligence">Artificial Intelligence</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/cyberSecurity' }" href="/cyberSecurity">Cyber Security</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/Instructor' }" href="/Instructor">Become an Instructor</Link>
+                <!-- <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/Instructor' }" href="/Instructor">Become an Instructor</Link> -->
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img src="/images/help_icon.svg" alt="Help"  /></Link>
             </div>
             
@@ -84,16 +84,33 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import SidebarItem from './SidebarItem.vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import { usePage,Link } from '@inertiajs/vue3'
-const page = usePage()
-const isSidebarOpen = ref(false)
+import axios from 'axios'; // Import axios
 
-const toggleSidebar = () => {
-    isSidebarOpen.value = !isSidebarOpen.value
-}
+const page = usePage()
+const showUserListingLink = ref(false);
+
+// const isSidebarOpen = ref(false)
+
+// const toggleSidebar = () => {
+//     isSidebarOpen.value = !isSidebarOpen.value
+// }
+
+onMounted(async () => {
+    try {
+        const response = await axios.post('/check-permissions', {
+            permissions: ['userView'] 
+        });
+        if (response.data && response.data.permissions && response.data.permissions.userView) {
+            showUserListingLink.value = true;
+        }
+    } catch (error) {
+        console.error("Error checking permissions:", error);
+    }
+});
 
 const menu = [
     { title: 'Home', href: '/dashboard' },
@@ -130,7 +147,7 @@ const trendingTopic = [
 
 }
 .active {
-    background-color: #DBDBDB;
+    background-color: #97d5ff;
     border-radius: 4px;
     border-left: 5px solid #312f2f;
     border-radius: 0;
@@ -167,6 +184,13 @@ const trendingTopic = [
         z-index: 1000;
         overflow-y: auto;
         
+    }
+    
+}
+@media (min-width: 770px) {
+    .main_sidebar{
+       
+        min-height: 854px;
     }
     
 }

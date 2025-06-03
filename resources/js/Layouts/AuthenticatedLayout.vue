@@ -1,31 +1,41 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
 import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
 
 const showingNavigationDropdown = ref(false)
+const isSidebarOpen = ref(false)
+const page = usePage();
+
+const toggleSidebar = () => {
+    isSidebarOpen.value = !isSidebarOpen.value
+}
+
+const isPlayerPage = computed(() => page.component === 'Course/Player');
 </script>
 
 <template>
-    <div class="flex min-h-screen bg-gray-100 mobile_view_style">
-        <!-- Sidebar -->
-        <AuthSidebar />
+    <div class="flex min-h-screen bg-[#97d5ff] mobile_view_style" style="flex-direction: column;">
 
-        <!-- Main Content Area -->
-        <div class="flex flex-col flex-1" style="width:56% !important">
-            <!-- Top Navigation -->
-            <nav class="border-b border-gray-100 bg-white">
+        <nav class="border-b border-gray-100 bg-white">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
-                        <div class="flex">
+                        <div class=" sidebar_button_nav">
 <!--                           todo topbar items-->
+<button class="sidebar_openbutton" @click="toggleSidebar">
+            <img src="/images/sidebar_icon.svg">
+        </button>
 
                         </div>
+
+                        <a href="/dashboard">
+                            <img src="/images/MBM_Uni.svg" alt="logo" class="logo_image_nav" style=" width: 80px; height: 80px;">
+                        </a>
 
                         <!-- User Dropdown -->
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -56,6 +66,7 @@ const showingNavigationDropdown = ref(false)
 
                                     <template #content>
                                         <DropdownLink :href="route('profile.edit')">Profile</DropdownLink>
+                                        <DropdownLink :href="route('cart')">Cart</DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">Log Out</DropdownLink>
                                     </template>
                                 </Dropdown>
@@ -104,31 +115,63 @@ const showingNavigationDropdown = ref(false)
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')">Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('profile.edit')">Checkout</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">Log Out</ResponsiveNavLink>
                         </div>
                     </div>
                 </div>
             </nav>
+        <div style="display: flex; flex-direction: row;">
+            <AuthSidebar v-if="!isPlayerPage" :class="{ 'sidebar-closed': !isSidebarOpen }" />
 
-            <!-- Optional Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
+<!-- Main Content Area -->
+<div class="flex flex-col flex-1" style="width:56% !important">
+    <!-- Top Navigation -->
+    
 
-            <!-- Page Content -->
-            <main class="flex-1 p-6 home_page_style">
-                <slot />
-            </main>
+    <!-- Optional Page Heading -->
+    <header class="bg-white shadow" v-if="$slots.header">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <slot name="header" />
         </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 p-6 home_page_style">
+        <slot :is-sidebar-open="isSidebarOpen" :is-player-page="isPlayerPage" />
+    </main>
+</div>
+        </div>
+        <!-- Sidebar -->
+       
     </div>
 </template>
 <style scoped>
+
 @media (max-width: 770px) {
     .mobile_view_style{
     display: flex;
 }
 }
-
+.sidebar_button_nav{
+    display: none;
+     
+}
+@media (max-width: 770px) {
+    .sidebar_button_nav{
+        display: flex;
+    }
+}
+.logo_image_nav{
+    display: block;
+    cursor: pointer;
+}
+@media (max-width: 770px) {
+    .logo_image_nav{
+        /*   */
+    }
+}
+.home_page_style {
+    background-color: #97d5ff;
+}
 </style>

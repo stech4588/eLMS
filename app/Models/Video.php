@@ -10,7 +10,9 @@ class Video extends Model
         'course_id',
         'title',
         'description',
-        'url',
+        'video_url',
+        'thumbnail_url',
         'duration',
+        'order',
     ];
 }

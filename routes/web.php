@@ -13,6 +13,17 @@ use App\Http\Controllers\WatchlistController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
+use App\Models\User;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CourseTypeController;
+use App\Http\Controllers\TopicController;
+use App\Http\Controllers\CourseCertificateController;
+use App\Http\Controllers\CourseIndustryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ContentController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -23,9 +34,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('/swiper', function () {
     return Inertia::render('library/swiper');
@@ -36,15 +47,18 @@ Route::get('/careerJourney', function () {
 Route::get('/library', function () {
     return Inertia::render('library/mylibrary');
 })->middleware(['auth', 'verified'])->name('library');
-Route::get('/content', function () {
-    return Inertia::render('content/mycontent');
-})->middleware(['auth', 'verified'])->name('content');
-Route::get('/coursess', function () {
-    return Inertia::render('Courses/myCourses');
-})->middleware(['auth', 'verified'])->name('coursess');
-Route::get('/addnewcourses', function () {
-    return Inertia::render('addCourses/addNewCourses');
-})->middleware(['auth', 'verified'])->name('addnewcourses');
+Route::get('/content', [\App\Http\Controllers\ContentController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('content');
+Route::get('/coursess', [CourseController::class, 'myCourses'])
+    ->middleware(['auth', 'verified'])
+    ->name('coursess');
+// Route::get('/addnewcourses', function () {
+//     return Inertia::render('addCourses/addNewCourses');
+// })->middleware(['auth', 'verified'])->name('addnewcourses');
+Route::get('/addnewcourses', [CourseController::class, 'create'])
+    ->middleware(['auth', 'verified'])
+    ->name('addnewcourses');
 Route::get('/leadershipAndManagement', function () {
     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
 })->middleware(['auth', 'verified'])->name('leadershipAndManagement');
@@ -56,16 +70,67 @@ Route::get('/cyberSecurity', function () {
 })->middleware(['auth', 'verified'])->name('cyberSecurity');
 Route::get('/Instructor', function () {
     return Inertia::render('Instructor/myInstructor');
-})->middleware(['auth', 'verified'])->name('Instructor');
+})->name('Instructor');
 Route::get('/help', function () {
     return Inertia::render('help/help');
 })->middleware(['auth', 'verified'])->name('help');
+
+Route::get('/cart', function () {
+    return Inertia::render('cart/cart');
+})->middleware(['auth', 'verified'])->name('cart');
+
+Route::get('/BecomeInstructor', function () {
+    return Inertia::render('Auth/becomeInstructor');
+})->middleware(['auth', 'verified'])->name('BecomeInstructor');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // User Management Routes
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // Invoice Management Routes
+     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+     Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+    Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
+    Route::put('/invoices/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
+    Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+
+    // Course routes
+    Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
+
+    // Video routes
+    Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
+
+    // permission routes
+    Route::post('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
+
+    // Course Type routes
+    Route::get('/course-management', [CourseTypeController::class, 'showManagementPage'])->name('course-management.index');
+    Route::resource('course-types', CourseTypeController::class)->except(['index', 'create', 'show', 'edit']);
+    Route::resource('topics', TopicController::class)->except(['index', 'create', 'show', 'edit']);
+    Route::resource('course-certificates', CourseCertificateController::class)->except(['index', 'create', 'show', 'edit']);
+    Route::resource('course-industries', CourseIndustryController::class)->except(['index', 'create', 'show', 'edit']);
+
+    // Comments route
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
 });
+
+// //For Roles Routes
+// Route::controller(RoleController::class)->group(function(){
+
+//     Route::get('/check-permissions', 'checkPermissions');
+
+
+// });
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('courses', CourseController::class);
@@ -77,5 +142,12 @@ Route::apiResource('watchlists', WatchlistController::class);
 Route::apiResource('reviews', ReviewController::class);
 Route::apiResource('certificates', CertificateController::class);
 
+// Add this route for the course detail page
+Route::get('/courses/{course}', [CourseController::class, 'show'])
+    ->middleware(['auth', 'verified'])->name('courses.show');
+
+// Add this route for the course player page
+Route::get('/courses/{course}/play/{video?}', [CourseController::class, 'play'])
+    ->middleware(['auth', 'verified'])->name('courses.play');
 
 require __DIR__.'/auth.php';
