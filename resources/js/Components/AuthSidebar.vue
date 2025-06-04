@@ -1,6 +1,6 @@
 <template>
    
-    <aside class="main_sidebar bg-white shadow-md space-y-6" >
+    <aside  v-if="sidebarVisible" class="main_sidebar bg-white shadow-md space-y-6" >
         <!-- Optional Logo Section -->
         <!-- <div class="flex items-center justify-center">
             <Link :href="route('dashboard')">
@@ -84,53 +84,65 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import SidebarItem from './SidebarItem.vue'
-import ApplicationLogo from '@/Components/ApplicationLogo.vue'
-import { usePage,Link } from '@inertiajs/vue3'
-import axios from 'axios'; // Import axios
+import { ref, watch } from 'vue';
+import SidebarItem from './SidebarItem.vue';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import { usePage, Link } from '@inertiajs/vue3';
+import axios from 'axios';
 
-const page = usePage()
+const page = usePage();
+
 const showUserListingLink = ref(false);
+const sidebarVisible = ref(true);
 
-// const isSidebarOpen = ref(false)
+// 👇 Watch route changes to show/hide sidebar
+watch(
+  () => page.url,
+  (newUrl) => {
+    sidebarVisible.value = newUrl !== '/cart';
+  },
+  { immediate: true }
+);
 
-// const toggleSidebar = () => {
-//     isSidebarOpen.value = !isSidebarOpen.value
-// }
-
-onMounted(async () => {
-    try {
-        const response = await axios.post('/check-permissions', {
-            permissions: ['userView'] 
-        });
-        if (response.data && response.data.permissions && response.data.permissions.userView) {
-            showUserListingLink.value = true;
-        }
-    } catch (error) {
-        console.error("Error checking permissions:", error);
+// 👇 Fetch permissions for User Listing link
+const fetchPermissions = async () => {
+  try {
+    const response = await axios.post('/check-permissions', {
+      permissions: ['userView']
+    });
+    if (response.data?.permissions?.userView) {
+      showUserListingLink.value = true;
     }
-});
+  } catch (error) {
+    console.error("Error checking permissions:", error);
+  }
+};
 
+// Run on mount
+fetchPermissions();
+
+// Static menu arrays (if needed elsewhere)
 const menu = [
-    { title: 'Home', href: '/dashboard' },
-    { title: 'My Career Journey', href: '/careerJourney' },
-]
+  { title: 'Home', href: '/dashboard' },
+  { title: 'My Career Journey', href: '/careerJourney' },
+];
 
 const learn = [
-    { title: 'My Library', href: '/library' },
-    { title: 'Content', href: '/content' },
-    { title: 'My Courses', href: '/courses' },
-]
+  { title: 'My Library', href: '/library' },
+  { title: 'Content', href: '/content' },
+  { title: 'My Courses', href: '/courses' },
+];
 
 const trendingTopic = [
-    { title: 'Leadership & Management', href: '/leadershipManagement' },
-    { title: 'Artificial Intelligence', href: '/artificialIntelligence' },
-    { title: 'Cyber Security', href: '/cyberSecurity' },
-    { title: 'Become an Instructor', href: '/instructor' },
-    { title: 'Help', href: '/help' },
-]
+  { title: 'Leadership & Management', href: '/leadershipManagement' },
+  { title: 'Artificial Intelligence', href: '/artificialIntelligence' },
+  { title: 'Cyber Security', href: '/cyberSecurity' },
+  { title: 'Become an Instructor', href: '/instructor' },
+  { title: 'Help', href: '/help' },
+];
+
 </script>
+
 
 <style scoped>
 .sidebar_subtitles {
