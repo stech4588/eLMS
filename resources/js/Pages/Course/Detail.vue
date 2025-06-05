@@ -80,7 +80,7 @@ const props = defineProps({
 
 <style >
 .main_sidebar {
-    display: none ;
+    /* display: none ; */
 }
 /* Add any page-specific styles here */
 </style> 

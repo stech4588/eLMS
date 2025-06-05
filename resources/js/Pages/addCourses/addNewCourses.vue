@@ -181,62 +181,92 @@
 
                                     <div class="mb-6" style="">
                                         <label for="certificates" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Certificates <img src="/images/question_mark.svg"/></label>
-                                        <select
-                                            id="certificates"
-                                            v-model="form.certificates"
-                                            @change="handleCertificateChange"
-                                            class="custom-select" style="border: none;color: #4D4D4D; width: 100%;  border: 1px solid grey; border-radius: 15px; padding: 20px;"
-                                        >
-                                            <option value="" disabled selected hidden>Select Certificate</option>
-                                            <option v-for="cert in props.certificates" :key="cert.value" :value="cert.value">
-                                                {{ cert.text }}
-                                            </option>
-                                            <!-- <option value="_add_new_certificate_">-- Add New Certificate --</option> -->
-                                        </select>
+                                        <div class="custom-dropdown" @click="toggleDropdown('certificates')" :class="{ 'active': activeDropdown === 'certificates' }">
+                                            <div class="selected-option">
+                                                <span>{{ getSelectedText('certificates') || 'Select Certificate' }}</span>
+                                                <div class="dropdown-arrow">
+                                                    <img src="/images/dropdown_arrow.svg" alt="dropdown" />
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-options" v-if="activeDropdown === 'certificates'">
+                                                <div 
+                                                    v-for="cert in props.certificates" 
+                                                    :key="cert.value"
+                                                    class="dropdown-option"
+                                                    @click="selectOption('certificates', cert.value, cert.text)"
+                                                >
+                                                    {{ cert.text }}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="mb-6" style="">
                                         <label for="topic" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Topic <img src="/images/question_mark.svg"/></label>
-                                        <select
-                                            id="topic"
-                                            v-model="form.topic"
-                                            class="custom-select" style="border: none;color: #4D4D4D; width: 100%;  border: 1px solid grey; border-radius: 15px; padding: 20px;"
-                                        >
-                                            <option value="" disabled selected hidden>Select Topic</option>
-                                            <option v-for="topic in props.topics" :key="topic.value" :value="topic.value">
-                                                {{ topic.text }}
-                                            </option>
-                                        </select>
+                                        <div class="custom-dropdown" @click="toggleDropdown('topic')" :class="{ 'active': activeDropdown === 'topic' }">
+                                            <div class="selected-option">
+                                                <span>{{ getSelectedText('topic') || 'Select Topic' }}</span>
+                                                <div class="dropdown-arrow">
+                                                    <img src="/images/dropdown_arrow.svg" alt="dropdown" />
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-options" v-if="activeDropdown === 'topic'">
+                                                <div 
+                                                    v-for="topic in props.topics" 
+                                                    :key="topic.value"
+                                                    class="dropdown-option"
+                                                    @click="selectOption('topic', topic.value, topic.text)"
+                                                >
+                                                    {{ topic.text }}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
 
 
                                     <div class="mb-6" style="">
                                         <label for="industry" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Industry <img src="/images/question_mark.svg"/></label>
-                                        <select
-                                            id="industry"
-                                            v-model="form.industry"
-                                            class="custom-select" style="border: none;color: #4D4D4D; width: 100%;  border: 1px solid grey; border-radius: 15px; padding: 20px;"
-                                        >
-                                            <option value="" disabled selected hidden>Select Industry</option>
-                                            <option v-for="industry in props.industries" :key="industry.value" :value="industry.value">
-                                                {{ industry.text }}
-                                            </option>
-                                        </select>
+                                        <div class="custom-dropdown" @click="toggleDropdown('industry')" :class="{ 'active': activeDropdown === 'industry' }">
+                                            <div class="selected-option">
+                                                <span>{{ getSelectedText('industry') || 'Select Industry' }}</span>
+                                                <div class="dropdown-arrow">
+                                                    <img src="/images/dropdown_arrow.svg" alt="dropdown" />
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-options" v-if="activeDropdown === 'industry'">
+                                                <div 
+                                                    v-for="industry in props.industries" 
+                                                    :key="industry.value"
+                                                    class="dropdown-option"
+                                                    @click="selectOption('industry', industry.value, industry.text)"
+                                                >
+                                                    {{ industry.text }}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="mb-6" style="">
                                         <label for="course_type" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course type <img src="/images/question_mark.svg"/></label>
-                                        <select
-                                            id="course_type"
-                                            v-model="form.course_type"
-                                            class="custom-select" style="border: none;color: #4D4D4D; width: 100%;  border: 1px solid grey; border-radius: 15px; padding: 20px;"
-                                        >
-                                            <option value="" disabled selected hidden>Select Course Type</option>
-                                            <option v-for="courseType in props.courseTypes" :key="courseType.value" :value="courseType.value" >
-                                                {{ courseType.text }}
-                                            </option>
-                                        </select>
+                                        <div class="custom-dropdown" @click="toggleDropdown('course_type')" :class="{ 'active': activeDropdown === 'course_type' }">
+                                            <div class="selected-option">
+                                                <span>{{ getSelectedText('course_type') || 'Select Course Type' }}</span>
+                                                <div class="dropdown-arrow">
+                                                    <img src="/images/dropdown_arrow.svg" alt="dropdown" />
+                                                </div>
+                                            </div>
+                                            <div class="dropdown-options" v-if="activeDropdown === 'course_type'">
+                                                <div 
+                                                    v-for="courseType in props.courseTypes" 
+                                                    :key="courseType.value"
+                                                    class="dropdown-option"
+                                                    @click="selectOption('course_type', courseType.value, courseType.text)"
+                                                >
+                                                    {{ courseType.text }}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="flex justify-end mt-6 space-x-4">
@@ -558,26 +588,27 @@ const activeThumbnailPreviewForRightPanel = ref(null);
 const thumbnailUploadInput = ref(null);
 const videoUploadInputForPreview = ref(null);
 
-// Helper function to get video duration from a file object
-const getVideoDurationFromFile = (file) => {
-    return new Promise((resolve, reject) => {
-        if (!file || !file.type.startsWith('video/')) {
-            resolve(null); // Not a video file or no file
-            return;
-        }
-        const videoElement = document.createElement('video');
-        videoElement.preload = 'metadata';
-        videoElement.onloadedmetadata = () => {
-            window.URL.revokeObjectURL(videoElement.src);
-            resolve(Math.round(videoElement.duration)); // Duration in seconds, rounded
-        };
-        videoElement.onerror = () => {
-            window.URL.revokeObjectURL(videoElement.src);
-            console.error('Error loading video metadata for duration.');
-            resolve(null); // Or reject, depending on how you want to handle errors
-        };
-        videoElement.src = URL.createObjectURL(file);
-    });
+// Add these new refs and functions
+const activeDropdown = ref(null);
+const selectedOptions = reactive({
+    certificates: { value: '', text: '' },
+    topic: { value: '', text: '' },
+    industry: { value: '', text: '' },
+    course_type: { value: '', text: '' }
+});
+
+const toggleDropdown = (dropdownName) => {
+    activeDropdown.value = activeDropdown.value === dropdownName ? null : dropdownName;
+};
+
+const selectOption = (dropdownName, value, text) => {
+    selectedOptions[dropdownName] = { value, text };
+    form[dropdownName] = value;
+    activeDropdown.value = null;
+};
+
+const getSelectedText = (dropdownName) => {
+    return selectedOptions[dropdownName].text;
 };
 
 const saveCurrentVideoDetails = () => {
@@ -854,6 +885,13 @@ onMounted(() => {
     } else if (currentEditingVideoIndex.value === -1 && videosData.value.length > 0) {
         selectVideoToEdit(0);
     }
+
+    // Add click outside listener to close dropdowns
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-dropdown')) {
+            activeDropdown.value = null;
+        }
+    });
 });
 
 </script>
@@ -926,27 +964,54 @@ onMounted(() => {
 }
 
 .custom-select {
-    padding: 0.5rem;
-    border: 1px solid #D1D5DB;
-    border-radius: 0.375rem;
+    position: relative;
+    width: 100%;
+}
+
+.custom-select select {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid grey;
+    border-radius: 15px;
     color: #4D4D4D;
-    width: 211px;
+    background-color: white;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-right: 40px; /* Space for the arrow */
+    box-sizing: border-box;
 }
 
-.custom-select:focus {
+/* Style for the select dropdown options */
+.custom-select select option {
+    width: calc(100% - 40px); /* Match select width minus padding */
+    padding: 10px 20px;
+    background-color: white;
+    color: #4D4D4D;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0 20px;
+}
+
+/* Custom dropdown arrow */
+.custom-select select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 1em;
+}
+
+.custom-select select:focus {
     outline: none;
-    border-color: #9CA3AF;
-    box-shadow: 0 0 0 1px rgba(59, 178, 246, 0.5);
-   
+    border-color: #148ad9;
 }
-.custom-select option {
-    background-color: #6ac4fc;
 
-}
-.custom-select option:hover {
-    background-color: #5299c5 !important;
-    
-}
 .custom-radio {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -1009,4 +1074,144 @@ onMounted(() => {
     padding-right: 30px;
     }
 }
+</style>
+
+<style scoped>
+.tabs_course_management {
+    gap: 10px;
+}
+
+@media (max-width: 425px) {
+    .tabs_course_management {
+        flex-direction: column;
+    }
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    border: 1px solid grey;
+    border-radius: 15px;
+    background-color: white;
+    cursor: pointer;
+    user-select: none;
+}
+
+.selected-option {
+    padding: 20px;
+    color: #4D4D4D;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: calc(100% - 40px); /* Leave space for the arrow */
+    text-align: left;
+}
+
+.selected-option span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.dropdown-arrow {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+}
+
+.custom-dropdown.active .dropdown-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid grey;
+    border-radius: 0 0 15px 15px;
+    margin-top: 5px;
+    max-height: 0;
+    overflow: hidden;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.custom-dropdown.active .dropdown-options {
+    max-height: 200px;
+    opacity: 1;
+    visibility: visible;
+    overflow-y: auto;
+}
+
+.dropdown-option {
+    padding: 15px 20px;
+    color: #4D4D4D;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: background-color 0.2s ease;
+    text-align: left;
+}
+
+.dropdown-option:hover {
+    background-color: #f5f5f5;
+}
+
+/* Add smooth scrollbar */
+.dropdown-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-options::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Add animation for options */
+.dropdown-option {
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: all 0.2s ease;
+}
+
+.custom-dropdown.active .dropdown-option {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Stagger the animation for options */
+.custom-dropdown.active .dropdown-option:nth-child(1) { transition-delay: 0.05s; }
+.custom-dropdown.active .dropdown-option:nth-child(2) { transition-delay: 0.1s; }
+.custom-dropdown.active .dropdown-option:nth-child(3) { transition-delay: 0.15s; }
+.custom-dropdown.active .dropdown-option:nth-child(4) { transition-delay: 0.2s; }
+.custom-dropdown.active .dropdown-option:nth-child(5) { transition-delay: 0.25s; }
+.custom-dropdown.active .dropdown-option:nth-child(6) { transition-delay: 0.3s; }
+.custom-dropdown.active .dropdown-option:nth-child(7) { transition-delay: 0.35s; }
+.custom-dropdown.active .dropdown-option:nth-child(8) { transition-delay: 0.4s; }
+.custom-dropdown.active .dropdown-option:nth-child(9) { transition-delay: 0.45s; }
+.custom-dropdown.active .dropdown-option:nth-child(10) { transition-delay: 0.5s; }
 </style>

@@ -91,7 +91,7 @@ const toggleFavorite = async (course) => {
     <AuthenticatedLayout>
 
 
-        <div class="">
+        <div class="p-4">
             <div class="mx-auto max-w-7xl ">
                 <div class="overflow-hidden sm:rounded-lg">
                     <div class="course-card-wrapper">
