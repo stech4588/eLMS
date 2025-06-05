@@ -54,10 +54,11 @@
         </div> -->
         <div style="">
             <div >
-                <Link  class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/careerJourney' }" href="/careerJourney"><img src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img src="/images/career_icon.svg" alt="users"  /> User Listing</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> Course Management</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> Course Management</Link>
+                <Link  class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
+                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/careerJourney' }" href="/careerJourney"><img src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
+               
             </div>
             
         </div>
@@ -71,13 +72,23 @@
             
         </div>
          <div>
-            <div ><div class="sidebar_titles">Trending Topics</div>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/leadershipAndManagement' }" href="/leadershipAndManagement">Leadership & Management</Link>
+            <div v-if="!showUserListingLink">
+                <div class="sidebar_titles">Trending Topics</div>
+                <!-- <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/leadershipAndManagement' }" href="/leadershipAndManagement">Leadership & Management</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/artificialIntelligence' }" href="/artificialIntelligence">Artificial Intelligence</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/cyberSecurity' }" href="/cyberSecurity">Cyber Security</Link>
+                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/cyberSecurity' }" href="/cyberSecurity">Cyber Security</Link> -->
+                <Link 
+                    v-for="topic in trendingTopicsList" 
+                    :key="topic.id" 
+                    class="sidebar_subtitles" 
+                    :class="{ 'active': page.url === ('/topic/' + topic.slug) }" 
+                    :href="'/topic/' + topic.slug">
+                    {{ topic.name }}
+                </Link>
                 <!-- <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/Instructor' }" href="/Instructor">Become an Instructor</Link> -->
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img src="/images/help_icon.svg" alt="Help"  /></Link>
+                
             </div>
+            <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img src="/images/help_icon.svg" alt="Help"  /></Link>
             
         </div>
     </aside>
@@ -92,6 +103,7 @@ import axios from 'axios'; // Import axios
 
 const page = usePage()
 const showUserListingLink = ref(false);
+const trendingTopicsList = ref([]); // To store fetched trending topics
 
 // const isSidebarOpen = ref(false)
 
@@ -101,14 +113,23 @@ const showUserListingLink = ref(false);
 
 onMounted(async () => {
     try {
-        const response = await axios.post('/check-permissions', {
-            permissions: ['userView'] 
+        const permissionResponse = await axios.post('/check-permissions', {
+            permissions: ['userAdd'] 
         });
-        if (response.data && response.data.permissions && response.data.permissions.userView) {
+        if (permissionResponse.data && permissionResponse.data.permissions && permissionResponse.data.permissions.userAdd) {
             showUserListingLink.value = true;
         }
     } catch (error) {
         console.error("Error checking permissions:", error);
+    }
+
+    try {
+        const topicsResponse = await axios.get('/trending-topics-list');
+        if (topicsResponse.data) {
+            trendingTopicsList.value = topicsResponse.data;
+        }
+    } catch (error) {
+        console.error("Error fetching trending topics:", error);
     }
 });
 

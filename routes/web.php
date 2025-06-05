@@ -24,6 +24,8 @@ use App\Http\Controllers\CourseIndustryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Auth\InstructorRegisteredUserController;
+use App\Http\Controllers\CourseFavoriteController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -44,9 +46,9 @@ Route::get('/swiper', function () {
 Route::get('/careerJourney', function () {
     return Inertia::render('careerJourney/myCareerJourney');
 })->middleware(['auth', 'verified'])->name('careerJourney');
-Route::get('/library', function () {
-    return Inertia::render('library/mylibrary');
-})->middleware(['auth', 'verified'])->name('library');
+Route::get('/library', [ContentController::class, 'mylibrary'])
+    ->middleware(['auth', 'verified'])
+    ->name('library');
 Route::get('/content', [\App\Http\Controllers\ContentController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('content');
@@ -119,9 +121,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('topics', TopicController::class)->except(['index', 'create', 'show', 'edit']);
     Route::resource('course-certificates', CourseCertificateController::class)->except(['index', 'create', 'show', 'edit']);
     Route::resource('course-industries', CourseIndustryController::class)->except(['index', 'create', 'show', 'edit']);
+    Route::get('/trending-topics-list', [TopicController::class, 'fetchTrending'])->name('topics.fetchTrending');
 
     // Comments route
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::apiResource('progresses', ProgressController::class);
+    Route::post('/progresses/storeUserVideoProgress', [ProgressController::class, 'storeUserVideoProgress'])
+    ->name('progress.storeUserVideoProgress');
+    Route::get('/video-progress/{video}', [ProgressController::class, 'getUserVideoProgress'])->name('progress.getUserVideoProgress');
 });
 
 // //For Roles Routes
@@ -149,5 +156,17 @@ Route::get('/courses/{course}', [CourseController::class, 'show'])
 // Add this route for the course player page
 Route::get('/courses/{course}/play/{video?}', [CourseController::class, 'play'])
     ->middleware(['auth', 'verified'])->name('courses.play');
+
+// Route for toggling course favorite status
+Route::post('/courses/{course}/favorite', [CourseFavoriteController::class, 'toggle'])
+    ->middleware(['auth', 'verified'])
+    ->name('courses.toggleFavorite');
+
+Route::middleware('guest')->group(function () {
+    Route::get('instructor/register', [InstructorRegisteredUserController::class, 'create'])
+        ->name('instructor.register');
+
+    Route::post('instructor/register', [InstructorRegisteredUserController::class, 'store']);
+});
 
 require __DIR__.'/auth.php';

@@ -558,6 +558,27 @@ const activeThumbnailPreviewForRightPanel = ref(null);
 const thumbnailUploadInput = ref(null);
 const videoUploadInputForPreview = ref(null);
 
+// Helper function to get video duration from a file object
+const getVideoDurationFromFile = (file) => {
+    return new Promise((resolve, reject) => {
+        if (!file || !file.type.startsWith('video/')) {
+            resolve(null); // Not a video file or no file
+            return;
+        }
+        const videoElement = document.createElement('video');
+        videoElement.preload = 'metadata';
+        videoElement.onloadedmetadata = () => {
+            window.URL.revokeObjectURL(videoElement.src);
+            resolve(Math.round(videoElement.duration)); // Duration in seconds, rounded
+        };
+        videoElement.onerror = () => {
+            window.URL.revokeObjectURL(videoElement.src);
+            console.error('Error loading video metadata for duration.');
+            resolve(null); // Or reject, depending on how you want to handle errors
+        };
+        videoElement.src = URL.createObjectURL(file);
+    });
+};
 
 const saveCurrentVideoDetails = () => {
     if (currentEditingVideoIndex.value >= 0 && videosData.value[currentEditingVideoIndex.value]) {
@@ -608,6 +629,7 @@ const addNewVideoSlot = () => {
         thumbnailFilePreview: null,
         playlist: '',
         visibility: 'private',
+        duration_in_seconds: null, // Add field to store duration
     };
     videosData.value.push(newVideoData);
     currentEditingVideoIndex.value = videosData.value.length - 1;
@@ -615,7 +637,7 @@ const addNewVideoSlot = () => {
     // if(currentStep.value < 2) currentStep.value = 2;
 };
 
-const handleVideoUpload = (e) => {
+const handleVideoUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
         if (videosData.value.length === 0) {
@@ -635,6 +657,10 @@ const handleVideoUpload = (e) => {
             currentVideo.videoFile = file;
             currentVideo.videoFilePreview = URL.createObjectURL(file);
             activeVideoPreviewForRightPanel.value = currentVideo.videoFilePreview;
+            
+            // Get and set duration
+            currentVideo.duration_in_seconds = await getVideoDurationFromFile(file);
+            console.log(`Duration for ${file.name}: ${currentVideo.duration_in_seconds}s`);
         }
         nextStep();
     }
@@ -685,7 +711,7 @@ const triggerVideoUploadFromRightPanel = () => {
     }
 };
 
-const handleVideoUploadFromRightPanel = (e) => {
+const handleVideoUploadFromRightPanel = async (e) => {
     const file = e.target.files[0];
     if (file && currentEditingVideoIndex.value >= 0 && videosData.value[currentEditingVideoIndex.value]) {
         const currentVideo = videosData.value[currentEditingVideoIndex.value];
@@ -695,6 +721,10 @@ const handleVideoUploadFromRightPanel = (e) => {
         currentVideo.videoFile = file; 
         currentVideo.videoFilePreview = URL.createObjectURL(file);
         activeVideoPreviewForRightPanel.value = currentVideo.videoFilePreview;
+        
+        // Get and set duration
+        currentVideo.duration_in_seconds = await getVideoDurationFromFile(file);
+        console.log(`Duration for ${file.name} (right panel): ${currentVideo.duration_in_seconds}s`);
         
         if (videoUploadInputForPreview.value) {
             videoUploadInputForPreview.value.value = '';
@@ -755,6 +785,10 @@ const submitForm = async () => {
                 formData.append(`videos[${index}][videoFile]`, video.videoFile);
             }
             formData.append(`videos[${index}][order]`, (index + 1).toString());
+            // Append duration if available
+            if (video.duration_in_seconds !== null && video.duration_in_seconds !== undefined) {
+                formData.append(`videos[${index}][duration_in_seconds]`, video.duration_in_seconds.toString());
+            }
             // Example for appending a thumbnail if it exists
             if (video.thumbnailFile instanceof File) {
                 formData.append(`videos[${index}][thumbnailFile]`, video.thumbnailFile);

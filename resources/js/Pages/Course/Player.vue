@@ -29,9 +29,18 @@
             <div class="flex-1 flex flex-col ">
                 <!-- Video Player -->
                 <div class="bg-black flex-shrink-0">
-                    <video v-if="currentVideo && currentVideo.video_url" :key="currentVideo.id"
-                        :src="currentVideo.video_url" controls autoplay
-                        class="w-full h-[60vh] object-contain player_video" @ended="playNextVideo">
+                    <video v-if="currentVideo && currentVideo.video_url"
+                        ref="videoPlayer" 
+                        :key="currentVideo.id"
+                        :src="currentVideo.video_url" controls autoplay 
+                        @timeupdate="handleTimeUpdate"
+                        @pause="handlePause"
+                        @ended="() => { handleEnded(); playNextVideo(); }"
+                        @loadedmetadata="handleLoadedMetadata"
+                        class="w-full h-[60vh] object-contain player_video" 
+                        @play="() => { lastProgressSaveTime = Date.now(); /* Reset timer when play starts/resumes */ }"
+                        >
+                        <!-- <source :src="currentVideo.video_url" type="video/mp4"> -->
                         Your browser does not support the video tag.
                     </video>
                     <div v-else class="w-full h-[60vh] bg-black flex items-center justify-center text-white">
@@ -144,8 +153,9 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
+import axios from 'axios'; // Import axios
 
 const props = defineProps({
     course: Object, // Contains course details and an array of its videos
@@ -155,10 +165,22 @@ const props = defineProps({
 const currentVideo = ref(null);
 const isLargeScreen = ref(window.innerWidth > 770); // Reactive variable for screen size
 const newComment = ref(''); // For the new comment textarea
+const videoPlayer = ref(null); // Ref for the video element
+const { props: pageProps } = usePage();
+const authUser = computed(() => usePage().props.value.auth.user);
+const currentVideoSavedProgress = ref(null); // To store fetched progress
+const initialTimeApplied = ref(false); // New ref to track if initial time has been set
 
-const updateScreenSize = () => {
-    isLargeScreen.value = window.innerWidth > 770;
-};
+let lastProgressSaveTime = 0;
+const progressSaveInterval = 5000; // Save progress every 5 seconds
+
+const progressForm = useForm({
+    user_id: null,
+    video_id: null,
+    watched_duration: 0,
+    completed: false,
+    last_watched_at: null,
+});
 
 const COMMENTS_TO_SHOW_INCREMENT = 3;
 const visibleCommentsCount = ref(COMMENTS_TO_SHOW_INCREMENT);
@@ -172,7 +194,32 @@ const sortedVideos = computed(() => {
 });
 
 const selectVideo = (video) => {
+    console.log("selectVideo called for video:", video ? video.id : 'null');
+    if (currentVideo.value && videoPlayer.value) {
+        console.log(`selectVideo: Checking progress for outgoing video ${currentVideo.value.id}. Player state: ended=${videoPlayer.value.ended}, currentTime=${videoPlayer.value.currentTime}, duration=${videoPlayer.value.duration}`);
+        if (!videoPlayer.value.ended && videoPlayer.value.currentTime > 0 && videoPlayer.value.duration > 0) {
+            const isOutgoingCompleted = videoPlayer.value.currentTime >= videoPlayer.value.duration - 2;
+            console.log(`selectVideo: Saving progress for outgoing video ${currentVideo.value.id}. Completed: ${isOutgoingCompleted}`);
+            saveProgress(isOutgoingCompleted, false); // Foreground save
+        } else {
+            console.log(`selectVideo: Not saving progress for outgoing video ${currentVideo.value.id}. Ended: ${videoPlayer.value.ended}, CurrentTime: ${videoPlayer.value.currentTime}, Duration: ${videoPlayer.value.duration}`);
+        }
+    }
+
     currentVideo.value = video;
+    lastProgressSaveTime = 0; // Reset for the new video
+    currentVideoSavedProgress.value = null; // Reset saved progress for the new video
+    initialTimeApplied.value = false; // Reset flag for new video
+
+    if (video) {
+        fetchVideoProgress(video.id); // Fetch progress for the newly selected video
+        console.log(`selectVideo: Switched to video ${video.id}. Player should reload due to :key change.`);
+    } else {
+        console.log("selectVideo: Cleared current video.");
+    }
+    // Autoplay is handled by the :key change on video and 'autoplay' attribute
+    // If videoPlayer.value is available, we could call .load() and .play()
+    // but changing the :src and :key should be sufficient for most browsers with autoplay.
 };
 
 const playNextVideo = () => {
@@ -234,41 +281,288 @@ const showLessComments = () => {
     visibleCommentsCount.value = COMMENTS_TO_SHOW_INCREMENT;
 };
 
-onMounted(() => {
-    window.addEventListener('resize', updateScreenSize); // Add resize listener
-    updateScreenSize(); // Initial check
+const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) => {
+    // Get auth user at the start of the function
+    const { props: pageProps } = usePage();
+    const currentUser = pageProps.auth?.user;
+    
+    console.log('[[SAVE PROGRESS ATTEMPT]]: Function saveProgress initiated.', { 
+        isExplicitlyCompleted, 
+        videoId: currentVideo.value?.id,
+        isBackgroundSave
+    });
 
+    if (!currentVideo.value || !videoPlayer.value || !currentUser) {
+        console.error("saveProgress: Aborting. Missing currentVideo, videoPlayer, or currentUser.", {
+            hasVideo: !!currentVideo.value,
+            hasPlayer: !!videoPlayer.value,
+            hasUser: !!currentUser,
+            videoPlayerCurrentTime: videoPlayer.value ? videoPlayer.value.currentTime : 'N/A'
+        });
+        return;
+    }
+
+    const currentTime = Math.floor(videoPlayer.value.currentTime);
+    const duration = Math.floor(videoPlayer.value.duration);
+
+    // Avoid saving if video hasn't played or no significant change
+    if (currentTime === 0 && !isExplicitlyCompleted && duration > 0) {
+        console.log("saveProgress: Aborting. No progress (currentTime is 0) and not explicitly completed.");
+        return;
+    }
+    if (isNaN(duration) || duration <= 0) {
+        console.log("saveProgress: Aborting. Duration is not valid.");
+        return;
+    }
+
+    const payload = {
+        user_id: currentUser.id,
+        video_id: currentVideo.value.id,
+        watched_duration: currentTime,
+        completed: isExplicitlyCompleted || (duration > 0 && currentTime >= duration - 2),
+        last_watched_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+    };
+
+    if (isBackgroundSave) {
+        console.log('Saving progress (background - axios) with data:', payload);
+        axios.post(route('progress.storeUserVideoProgress'), payload, {
+            headers: {
+                'Accept': 'application/json',
+            }
+        })
+            .then(response => {
+                // console.log('Background progress saved successfully', response.data);
+                lastProgressSaveTime = Date.now(); // Still update this for throttling
+            })
+            .catch(error => {
+                console.error('Error saving background progress:', error.response ? error.response.data : error.message);
+            });
+    } else {
+        console.log('Saving progress (foreground - Inertia form) with data:', payload);
+        // Use Inertia's form helper for foreground requests (will show progress bar)
+        progressForm.reset(); // Reset form before filling
+        progressForm.user_id = payload.user_id;
+        progressForm.video_id = payload.video_id;
+        progressForm.watched_duration = payload.watched_duration;
+        progressForm.completed = payload.completed;
+        progressForm.last_watched_at = payload.last_watched_at;
+
+        progressForm.post(route('progress.storeUserVideoProgress'), {
+            preserveScroll: true,
+            preserveState: true, 
+            onError: (errors) => {
+                console.error('Error saving progress (Inertia form):', errors);
+            },
+            onSuccess: () => {
+                lastProgressSaveTime = Date.now();
+            }
+        });
+    }
+};
+
+const handleTimeUpdate = () => {
+    if (!videoPlayer.value || !currentVideo.value) return;
+    const now = Date.now();
+    if (now - lastProgressSaveTime > progressSaveInterval) {
+        if (!videoPlayer.value.paused && videoPlayer.value.duration > 0) { 
+            console.log("handleTimeUpdate: Interval reached, attempting background save.");
+            saveProgress(false, true); // Call with isBackgroundSave = true
+        }
+    }
+};
+
+const handlePause = () => {
+    if (videoPlayer.value && videoPlayer.value.readyState >= 2 && !videoPlayer.value.ended && videoPlayer.value.duration > 0) {
+         console.log("handlePause: Video paused, attempting foreground save.");
+         saveProgress(false, false); // Explicitly false, or rely on default
+    }
+};
+
+const handleEnded = () => {
+    console.log('Video ended (handleEnded triggered). Attempting foreground save as complete.');
+    saveProgress(true, false); // Mark as completed, foreground save
+    // playNextVideo(); // playNextVideo is already bound to @ended on the video element directly in the template for now
+    // If we keep it here, we might remove the direct binding. For now, let playNextVideo be handled by its direct binding.
+};
+
+const fetchVideoProgress = async (videoId) => {
+    if (!videoId) return;
+    console.log(`Fetching progress for video ID: ${videoId}`);
+    try {
+        const response = await axios.get(route('progress.getUserVideoProgress', { video: videoId }));
+        if (response.data) {
+            currentVideoSavedProgress.value = response.data;
+            console.log(`Fetched progress for video ID ${videoId}:`, response.data);
+            
+            // If we already have the video element, try to apply the progress immediately
+            if (videoPlayer.value && currentVideo.value?.id === videoId) {
+                applySavedProgress();
+            }
+        } else {
+            currentVideoSavedProgress.value = null;
+            console.log('No progress found for video ID:', videoId);
+        }
+    } catch (error) {
+        console.error('Error fetching video progress:', error.response ? error.response.data : error.message);
+        currentVideoSavedProgress.value = null;
+    }
+};
+
+const applySavedProgress = () => {
+    if (!videoPlayer.value || !currentVideoSavedProgress.value || initialTimeApplied.value) {
+        return;
+    }
+
+    const progress = currentVideoSavedProgress.value;
+    
+    // Only apply if:
+    // 1. We have progress for this video
+    // 2. The video has some watch time saved
+    // 3. The video wasn't completed
+    if (progress.video_id === currentVideo.value.id && 
+        progress.watched_duration > 0 && 
+        !progress.completed) {
+        
+        console.log(`Applying saved progress: setting currentTime to ${progress.watched_duration}`);
+        
+        // Wait for video to be ready
+        const checkReady = () => {
+            if (videoPlayer.value.readyState > 0) {
+                videoPlayer.value.currentTime = progress.watched_duration;
+                initialTimeApplied.value = true;
+                console.log('Progress applied successfully');
+            } else {
+                setTimeout(checkReady, 100);
+            }
+        };
+        
+        checkReady();
+    }
+};
+
+
+const handleLoadedMetadata = () => {
+
+    console.log('Video metadata loaded');
+    
+    console.log(`[[LOADEDMETADATA]] Fired for video ID: ${currentVideo.value ? currentVideo.value.id : 'N/A'}. Current player time: ${videoPlayer.value?.currentTime}. Initial time applied: ${initialTimeApplied.value}`);
+    console.log(`[[LOADEDMETADATA]] currentVideoSavedProgress:`, currentVideoSavedProgress.value ? JSON.parse(JSON.stringify(currentVideoSavedProgress.value)) : null);
+
+    if (videoPlayer.value && currentVideoSavedProgress.value && !initialTimeApplied.value) { // Check initialTimeApplied
+        const progress = currentVideoSavedProgress.value;
+        console.log('[[LOADEDMETADATA]] Conditions check:');
+        console.log(`  - progress.watched_duration > 0: ${progress.watched_duration > 0} (value: ${progress.watched_duration})`);
+        console.log(`  - !progress.completed: ${!progress.completed} (value: ${progress.completed})`);
+        // We remove the videoPlayer.value.currentTime < 1 check for now, relying on initialTimeApplied flag
+
+        if (currentVideo.value && progress.video_id === currentVideo.value.id) {
+            console.log('[[LOADEDMETADATA]] Saved progress video_id matches currentVideo.value.id.');
+            if (progress.watched_duration > 0 && !progress.completed) { // Simplified condition
+                console.log(`[[LOADEDMETADATA]] Applying saved progress: setting currentTime to ${progress.watched_duration} for video ID ${currentVideo.value.id}`);
+                videoPlayer.value.currentTime = progress.watched_duration;
+                initialTimeApplied.value = true; // Mark that we've applied it
+            } else {
+                console.log('[[LOADEDMETADATA]] Conditions to apply progress not fully met or already applied.');
+            }
+        } else {
+            console.warn('[[LOADEDMETADATA]] Mismatch: currentVideoSavedProgress.video_id does not match currentVideo.value.id.', 
+                { progressVideoId: progress.video_id, currentVideoId: currentVideo.value?.id });
+        }
+    } else {
+        console.log('[[LOADEDMETADATA]] No videoPlayer or no currentVideoSavedProgress.');
+    }
+    lastProgressSaveTime = Date.now(); // Reset save timer as video metadata is loaded/reloaded
+    applySavedProgress();
+};
+
+onMounted(() => {
+    window.addEventListener('resize', updateScreenSize);
+    updateScreenSize();
+
+    let videoToPlayInitially = null;
     if (props.initialVideoId && sortedVideos.value.length > 0) {
-        const videoToPlay = sortedVideos.value.find(v => v.id == props.initialVideoId);
-        if (videoToPlay) {
-            selectVideo(videoToPlay);
-        } else if (sortedVideos.value.length > 0) {
-            selectVideo(sortedVideos.value[0]); // Fallback to first video if initialVideoId is invalid
+        videoToPlayInitially = sortedVideos.value.find(v => v.id == props.initialVideoId);
+        if (!videoToPlayInitially && sortedVideos.value.length > 0) {
+            videoToPlayInitially = sortedVideos.value[0]; // Fallback to first video if initialVideoId is invalid
         }
     } else if (sortedVideos.value.length > 0) {
-        selectVideo(sortedVideos.value[0]); // Play the first video if no initialVideoId is provided
+        videoToPlayInitially = sortedVideos.value[0]; // Play the first video if no initialVideoId is provided
+    }
+
+    if (videoToPlayInitially) {
+        // Select video without triggering its own progress save for outgoing video (as there isn't one yet)
+        currentVideo.value = videoToPlayInitially; // Directly set currentVideo
+        lastProgressSaveTime = 0;
+        currentVideoSavedProgress.value = null;
+        initialTimeApplied.value = false; // Reset flag for initial video
+        fetchVideoProgress(videoToPlayInitially.id); // Fetch progress for the initial video
+        console.log("onMounted: Initial video selected:", videoToPlayInitially.id);
+    } else {
+        console.log("onMounted: No initial video to play.");
     }
 });
 
-// Watch for changes in initialVideoId if the page is reloaded with a different video in the URL
-watch(() => props.initialVideoId, (newId) => {
-    if (newId && sortedVideos.value.length > 0) {
-        const videoToPlay = sortedVideos.value.find(v => v.id == newId);
-        if (videoToPlay) {
-            selectVideo(videoToPlay);
-        }
-    } else if (!newId && currentVideo.value && sortedVideos.value.length > 0) {
-        // If initialVideoId is removed (e.g. navigating to base player URL), perhaps keep current video or reset
-        // For now, let's stick to the first video if no specific one is requested
-        if (!currentVideo.value && sortedVideos.value.length > 0) {
-            selectVideo(sortedVideos.value[0]);
+ watch(() => props.initialVideoId, (newId) => {
+     if (newId && sortedVideos.value.length > 0) {
+         const videoToPlay = sortedVideos.value.find(v => v.id == newId);
+         if (videoToPlay) {
+             selectVideo(videoToPlay);
+         }
+     } else if (!newId && currentVideo.value && sortedVideos.value.length > 0) {
+         // If initialVideoId is removed (e.g. navigating to base player URL), perhaps keep current video or reset
+         // For now, let's stick to the first video if no specific one is requested
+         if (!currentVideo.value && sortedVideos.value.length > 0) {
+             selectVideo(sortedVideos.value[0]);
         }
     }
+ });
+
+watch(currentVideo, (newVideo, oldVideo) => {
+    if (oldVideo && videoPlayer.value) {
+        // Save progress for the old video if it was playing and had progress
+        // This is somewhat covered by selectVideo, but good for robustness if video changes externally
+        if (!videoPlayer.value.paused && videoPlayer.value.currentTime > 0) {
+             saveProgress(videoPlayer.value.currentTime >= videoPlayer.value.duration - 2);
+        }
+    }
+    if (newVideo && videoPlayer.value) {
+        // If we need to load initial progress for newVideo, this is where it would go.
+        // For now, we just reset the save timer.
+        lastProgressSaveTime = 0;
+    }
+    // Reset visible comments when video changes
+    visibleCommentsCount.value = COMMENTS_TO_SHOW_INCREMENT;
 });
 
 onUnmounted(() => {
-    window.removeEventListener('resize', updateScreenSize); // Remove resize listener
+    window.removeEventListener('resize', updateScreenSize);
+    console.warn('[[PLAYER UNMOUNTING]]: Attempting to save final progress (foreground save).', { 
+        hasPlayer: !!videoPlayer.value, 
+        hasCurrentVideo: !!currentVideo.value,
+        currentTime: videoPlayer.value?.currentTime,
+        duration: videoPlayer.value?.duration,
+        ended: videoPlayer.value?.ended
+    });
+
+    if (videoPlayer.value && currentVideo.value) {
+        const currentTime = videoPlayer.value.currentTime;
+        const duration = videoPlayer.value.duration;
+        
+        if (duration > 0 && currentTime > 0 && !videoPlayer.value.ended) {
+            const isCompletedOnUnmount = currentTime >= duration - 2;
+            console.log(`Unmount save: videoId=${currentVideo.value.id}, currentTime=${currentTime}, duration=${duration}, isCompleted=${isCompletedOnUnmount}`);
+            saveProgress(isCompletedOnUnmount, false); // Foreground save
+        } else {
+            console.log(`Unmount save: No progress to save or video already ended for videoId=${currentVideo.value.id}. currentTime=${currentTime}, duration=${duration}, ended=${videoPlayer.value.ended}`);
+        }
+    } else {
+        console.log("Unmount save: No current video or player instance to save progress for.");
+    }
 });
+
+const updateScreenSize = () => {
+    isLargeScreen.value = window.innerWidth > 770;
+};
 
 </script>
 

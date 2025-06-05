@@ -48,60 +48,66 @@
                             <h2 class="instructor-form-heading">Instructor Application</h2>
                             <button class="instructor-linkedin-btn">AutoFill with LinkedIn</button>
 
-                            <form>
+                            <form @submit.prevent="submit">
                                 <div class="instructor-form-group" style="margin-top: 10px;">
-                                    
-                                    <input type="text" class="instructor-form-input" placeholder="Name*">
+                                    <input type="text" class="instructor-form-input" placeholder="Name*" v-model="form.name" required>
                                 </div>
+                                <div v-if="form.errors.name" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.name }}</div>
+
                                 <div class="instructor-form-group">
-                                    
-                                    <input type="text" class="instructor-form-input" placeholder="Phone number*">
+                                    <input type="text" class="instructor-form-input" placeholder="Phone number*" v-model="form.phone_number" required>
                                 </div>
-                                <!-- <div class="instructor-form-group">
-                                    
-                                    <input type="text" class="instructor-form-input" placeholder="Last Name*">
-                                </div> -->
+                                <div v-if="form.errors.phone_number" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.phone_number }}</div>
+
                                 <div class="instructor-form-group">
-                                    
-                                    <input type="email" class="instructor-form-input" placeholder="Email*">
+                                    <input type="email" class="instructor-form-input" placeholder="Email*" v-model="form.email" required>
                                 </div>
+                                <div v-if="form.errors.email" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.email }}</div>
+
                                 <div class="instructor-form-group">
-                                    
-                                    <input type="password" class="instructor-form-input" placeholder="Password*">
+                                    <input type="password" class="instructor-form-input" placeholder="Password*" v-model="form.password" required>
                                 </div>
+                                <div v-if="form.errors.password" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.password }}</div>
+
                                 <div class="instructor-form-group">
-                                    
-                                    <input type="url" class="instructor-form-input" placeholder="LinkedIn Profile URL*">
+                                    <input type="password" class="instructor-form-input" placeholder="Confirm Password*" v-model="form.password_confirmation" required>
                                 </div>
-                                <div class="instructor-form-group" >
-                                    
-                                    <select class="instructor-form-select">
-                                        <option>How Many Followers do you have?</option>
-                                        <option>0-1,000</option>
-                                        <option>1,001-10,000</option>
-                                        <option>10,001-50,000</option>
-                                        <option>50,001-100,000</option>
-                                        <option>100,000+</option>
+                                <!-- No separate error for password_confirmation, usually covered by password 'confirmed' rule -->
+
+                                <div class="instructor-form-group">
+                                    <input type="url" class="instructor-form-input" placeholder="LinkedIn Profile URL*" v-model="form.linkedin_url" required>
+                                </div>
+                                <div v-if="form.errors.linkedin_url" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.linkedin_url }}</div>
+
+                                <div class="instructor-form-group">
+                                    <select class="instructor-form-select" v-model="form.followers" required>
+                                        <option :value="null" disabled>How Many Followers do you have?</option>
+                                        <option value="0-1,000">0-1,000</option>
+                                        <option value="1,001-10,000">1,001-10,000</option>
+                                        <option value="10,001-50,000">10,001-50,000</option>
+                                        <option value="50,001-100,000">50,001-100,000</option>
+                                        <option value="100,000+">100,000+</option>
                                     </select>
                                 </div>
-
-                                
+                                <div v-if="form.errors.followers" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.followers }}</div>
 
                                 <div class="instructor-form-group" style="margin-top: 30px;">
-                                    <label class="instructor-form-label">Are you a part of any of the following LinkedIn programs? <span class="instructor-form-note">(Please check all that apply.) is a required field*</span></label>
-                                    <div class="instructor-checkbox-group"><input type="checkbox" id="li_influencer" class="instructor-checkbox"> <label for="li_influencer" class="instructor-checkbox-label">LinkedIn Influencer</label></div>
-                                    <div class="instructor-checkbox-group"><input type="checkbox" id="managed_creator" class="instructor-checkbox"> <label for="managed_creator" class="instructor-checkbox-label">Managed Power Creator</label></div>
-                                    <div class="instructor-checkbox-group"><input type="checkbox" id="top_voice" class="instructor-checkbox"> <label for="top_voice" class="instructor-checkbox-label">Top Voice</label></div>
-                                    <div class="instructor-checkbox-group"><input type="checkbox" id="other_linkedin" class="instructor-checkbox"> <label for="other_linkedin" class="instructor-checkbox-label">Other (working with LinkedIn in any other capacity)</label></div>
+                                    <label class="instructor-form-label">Are you a part of any of the following LinkedIn programs? <span class="instructor-form-note">(Please check all that apply.)</span></label>
+                                    <div class="instructor-checkbox-group"><input type="checkbox" id="li_influencer" class="instructor-checkbox" value="LinkedIn Influencer" v-model="form.linkedin_programs"> <label for="li_influencer" class="instructor-checkbox-label">LinkedIn Influencer</label></div>
+                                    <div class="instructor-checkbox-group"><input type="checkbox" id="managed_creator" class="instructor-checkbox" value="Managed Power Creator" v-model="form.linkedin_programs"> <label for="managed_creator" class="instructor-checkbox-label">Managed Power Creator</label></div>
+                                    <div class="instructor-checkbox-group"><input type="checkbox" id="top_voice" class="instructor-checkbox" value="Top Voice" v-model="form.linkedin_programs"> <label for="top_voice" class="instructor-checkbox-label">Top Voice</label></div>
+                                    <div class="instructor-checkbox-group"><input type="checkbox" id="other_linkedin" class="instructor-checkbox" value="Other LinkedIn" v-model="form.linkedin_programs"> <label for="other_linkedin" class="instructor-checkbox-label">Other (working with LinkedIn in any other capacity)</label></div>
                                 </div>
+                                <div v-if="form.errors.linkedin_programs" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.linkedin_programs }}</div>
 
                                 <div class="instructor-form-group" style="margin-top: 30px;">
                                     <label class="instructor-form-label">Which language would you like to teach a course in? <span class="instructor-form-note">(Please select one.) is a required field*</span></label>
-                                    <div class="instructor-radio-group"><input type="checkbox" name="language" id="lang_eng" class="instructor-radio"> <label for="lang_eng" class="instructor-radio-label">Eng</label></div>
-                                    <div class="instructor-radio-group"><input type="checkbox" name="language" id="lang_french" class="instructor-radio"> <label for="lang_french" class="instructor-radio-label">French</label></div>
-                                    <div class="instructor-radio-group"><input type="checkbox" name="language" id="lang_spanish" class="instructor-radio"> <label for="lang_spanish" class="instructor-radio-label">Spanish</label></div>
-                                    <div class="instructor-radio-group"><input type="checkbox" name="language" id="lang_japanese" class="instructor-radio"> <label for="lang_japanese" class="instructor-radio-label">Japanese</label></div>
+                                    <div class="instructor-radio-group"><input type="radio" name="language" id="lang_eng" class="instructor-radio" value="Eng" v-model="form.teaching_language"> <label for="lang_eng" class="instructor-radio-label">Eng</label></div>
+                                    <div class="instructor-radio-group"><input type="radio" name="language" id="lang_french" class="instructor-radio" value="French" v-model="form.teaching_language"> <label for="lang_french" class="instructor-radio-label">French</label></div>
+                                    <div class="instructor-radio-group"><input type="radio" name="language" id="lang_spanish" class="instructor-radio" value="Spanish" v-model="form.teaching_language"> <label for="lang_spanish" class="instructor-radio-label">Spanish</label></div>
+                                    <div class="instructor-radio-group"><input type="radio" name="language" id="lang_japanese" class="instructor-radio" value="Japanese" v-model="form.teaching_language"> <label for="lang_japanese" class="instructor-radio-label">Japanese</label></div>
                                 </div>
+                                <div v-if="form.errors.teaching_language" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.teaching_language }}</div>
 
                                 <div class="instructor-form-group" style="margin-top: 30px;">
                                      <label class="instructor-form-label">Where did you hear of this opportunity? is a required field*</label>
@@ -133,7 +139,7 @@
                                     <input type="text" class="instructor-form-input instructor-disabled-input" placeholder="Where did you hear of this opportunity? is a required field*">
                                 </div> -->
 
-                                <button type="submit" class="instructor-submit-btn">Submit</button>
+                                <button type="submit" class="instructor-submit-btn" :disabled="form.processing">Submit</button>
                             </form>
                         </div>
                     </div>
@@ -144,21 +150,40 @@
 </template>
 
 <script>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
 export default {
     components: {
-        AuthenticatedLayout,
+        // AuthenticatedLayout, // Assuming this is not used for a public registration form
         Head,
+        Link,
     },
     data() {
         return {
-            // form data can be defined here
+            form: useForm({
+                name: '',
+                phone_number: '',
+                email: '',
+                password: '',
+                password_confirmation: '',
+                linkedin_url: '',
+                followers: null, // Default to null for the select placeholder
+                linkedin_programs: [], // Initialize as an empty array for checkboxes
+                teaching_language: '', // Initialize as empty for radio buttons
+            }),
         };
     },
     methods: {
-        // methods for form handling etc.
+        submit() {
+            this.form.post(route('instructor.register'), {
+                onFinish: () => {
+                    // Only reset passwords if submission was successful (no errors)
+                    if (!this.form.hasErrors) {
+                        this.form.reset('password', 'password_confirmation');
+                    }
+                },
+            });
+        },
     },
     mounted() {
         // lifecycle hooks
