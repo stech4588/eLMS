@@ -17,13 +17,14 @@ const toggleSidebar = () => {
 }
 
 const isPlayerPage = computed(() => page.component === 'Course/Player');
+const isCartPage = computed(() => page.component === 'cart/cart');
 </script>
 
 <template>
     <div class="flex min-h-screen bg-[#97d5ff] mobile_view_style" style="flex-direction: column;">
 
         <nav class="border-b border-gray-100 bg-white">
-                <div class="mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mx-auto px-4 sm:px-6 lg:px-8" style="border-bottom: 1px solid rgb(225 225 225)">
                     <div class="flex h-16 justify-between">
                         <div class=" sidebar_button_nav">
 <!--                           todo topbar items-->
@@ -122,10 +123,10 @@ const isPlayerPage = computed(() => page.component === 'Course/Player');
                 </div>
             </nav>
         <div style="display: flex; flex-direction: row;">
-            <AuthSidebar v-if="!isPlayerPage" :class="{ 'sidebar-closed': !isSidebarOpen }" />
+            <AuthSidebar v-if="!isPlayerPage && !isCartPage" :class="{ 'sidebar-closed': !isSidebarOpen }" />
 
 <!-- Main Content Area -->
-<div class="flex flex-col flex-1" style="width:56% !important">
+<div class="flex flex-col flex-1" :style="{ width: isCartPage ? '100% !important' : '56% !important' }">
     <!-- Top Navigation -->
     
 
@@ -137,7 +138,7 @@ const isPlayerPage = computed(() => page.component === 'Course/Player');
     </header>
 
     <!-- Page Content -->
-    <main class="flex-1 p-6 home_page_style">
+    <main class="flex-1 p-6 home_page_style flex-box">
         <slot :is-sidebar-open="isSidebarOpen" :is-player-page="isPlayerPage" />
     </main>
 </div>
@@ -147,7 +148,11 @@ const isPlayerPage = computed(() => page.component === 'Course/Player');
     </div>
 </template>
 <style scoped>
-
+.flex-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 @media (max-width: 770px) {
     .mobile_view_style{
     display: flex;
@@ -173,5 +178,11 @@ const isPlayerPage = computed(() => page.component === 'Course/Player');
 }
 .home_page_style {
     background-color: #97d5ff;
+}
+.h-16{
+    height:5rem!important;
+}
+.p-6{
+    padding:1.5rem!important;
 }
 </style>

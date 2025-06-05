@@ -64,8 +64,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 <style>
 @media (min-width: 770px) {
-    .main_sidebar{
+    /* .main_sidebar{
         display: none;
-    }
+    } */
 }
 </style>
