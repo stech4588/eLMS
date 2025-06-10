@@ -16,20 +16,20 @@
                         <div class="instructor-left-column">
                             <div style="display: flex; flex-direction: column; gap: 40px;">
                                  <h1 class="instructor-main-heading">Become a LinkedIn Learning Instructor</h1>
-                            <p class="instructor-text">Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor sit amet consectetur.</p>
+                            <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of LinkedIn Learning Instructors and share your knowledge with millions of learners worldwide.</p>
                             </div>
                            
-                            <p class="instructor-text" style="margin-bottom: 1rem;">Lorem ipsum dolor sit amet consectetur</p>
+                            <p class="instructor-text" style="margin-bottom: 1rem;">At LinkedIn Learning, we believe that great education starts with great instructors. As a subject matter expert, you’ll have the opportunity to:</p>
                             <ul class="instructor-list">
-                                <li>Lorem ipsum dolor sit amet consectetur</li>
-                                <li>Lorem ipsum dolor sit amet consectetur</li>
-                                <li>Lorem ipsum dolor sit amet consectetur</li>
-                                <li>Lorem ipsum dolor sit amet consecteturLorem ipsum dolor sit amet consectetur</li>
+                                <li>Teach what you love and reach a global audience.</li>
+                                <li>Collaborate with a world-class production team.</li>
+                                <li>Create impactful, high-quality learning content.</li>
+                                <li>Grow your personal brand and influence in your industry.</li>
                             </ul>
 
                             <h2 class="instructor-subheading">About Working With us:</h2>
                             <p class="instructor-text">
-                                Lorem ipsum dolor sit amet consectetur. Convallis aenaan sed aenean vel sem lorem amet neque tristique. Gravida neque sit neque nec. Blandit ac diam ornare orci. Amet porttitor lobortis amet nascetur tempor. Aliquam scelerisque tellus enim nisi dui interdum <a href="#" class="instructor-link">Here</a>
+                                Working with LinkedIn Learning goes beyond simply recording courses—it’s a collaborative experience where you’ll team up with an expert group dedicated to helping you refine your content and message. They’ll guide you in delivering your knowledge in an engaging, easy-to-digest format while ensuring your course connects with the right learners at the perfect time. <a href="#" class="instructor-link">Here</a>
                             </p>
 
                             <div class="instructor-quote">
@@ -39,7 +39,9 @@
 
                             <h2 class="instructor-subheading">Apply Now!</h2>
                             <p class="instructor-text">
-                                Lorem ipsum dolor sit amet consectetur. Convallis aenaan sed aenean vel sem lorem amet neque tristique. Gravida neque sit neque nec. Blandit ac diam ornare orci. Amet porttitor lobortis amet nascetur tempor. Aliquam scelerisque tellus enim nisi dui interdum <a href="#" class="instructor-link">Here</a>
+                                If you're ready to inspire, educate, and make an impact, we’d love to hear from you.
+
+📩 Start your journey with LinkedIn Learning today. Apply to become an instructor! <a href="#" class="instructor-link">Here</a>
                             </p>
                         </div>
 

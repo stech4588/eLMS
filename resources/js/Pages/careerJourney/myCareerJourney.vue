@@ -33,7 +33,7 @@ import { Head } from '@inertiajs/vue3';
                             </div>
 
                             <div class="goal-footer">
-                                Lorem ipsum dolor sit amet consectetur.
+                                We are dedicated to delivering high-quality content with care and professionalism.
                             </div>
                         </div>
                     </div>

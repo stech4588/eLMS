@@ -9,12 +9,15 @@
                 <div 
                     v-for="(video, index) in videosData" 
                     :key="index"
-                    @click="selectVideoToEdit(index)"
-                    style="width: 100%;padding: 10px 30px; font-size: 16px; font-weight: 600; cursor: pointer;"
+                    style="width: 100%; font-size: 16px; font-weight: 600; display: flex; align-items: center;"
                     :style="index === currentEditingVideoIndex ? { backgroundColor: '#9fd3f5', borderLeft: '2px solid #148ad9' } : {}"
                 >
-                    Video {{ index + 1 }} 
-                    <!-- <span v-if="video.title">: {{ video.title }}</span> -->
+                    <span @click="selectVideoToEdit(index)" style="flex-grow: 1; padding: 10px 30px; cursor: pointer;">
+                        Video {{ index + 1 }}
+                    </span>
+                    <button @click.stop="removeVideo(index)" style="background:transparent; border:none; cursor:pointer; padding-right: 20px;" title="Remove video">
+                        <img src="/images/cross_icon.svg" alt="Remove" style="height: 12px; width: 12px;" />
+                    </button>
                 </div>
                 <div 
                     @click="addNewVideoSlot"
@@ -24,7 +27,7 @@
                     Add Videos
                 </div>
              </div>
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class=" max-w-7xl sm:px-1 lg:px-8" style="width: 100%;">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="bg-white border-b border-gray-200">
 
@@ -89,14 +92,14 @@
                         <div v-if="currentStep === 1" class="text-center">
                             <div class="upload_header">
                                 <div class="Upload_text">Upload Course</div>
-                                <div class="upload_left_icons">
+                                <!-- <div class="upload_left_icons">
                                     <img src="/images/guide_icon.svg" />
                                     <img src="/images/cross_icon.svg" />
-                                </div>
+                                </div> -->
                             </div>
-                            <div class="md:col-span-2 upload_video_section">
+                            <div class="md:col-span-2 upload_video_section" style="width: 100%;">
                                     <div class="mb-6" style="">
-                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Title <img src="/images/question_mark.svg"/></label>
+                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Title<span style="color: red;">*</span></label>
                                         <input 
                                             type="text" 
                                             id="title" 
@@ -107,80 +110,86 @@
                                                 box-shadow: none !important;
                                                 border: none !important; border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         />
+                                        <p v-if="errors.course_title" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_title }}</p>
                                         <div class="flex justify-end mt-1 text-sm text-gray-500">
                                             <span>{{ form.course_title.length }}/100</span>
                                         </div>
                                     </div>
                                     <div class="mb-6" style="">
-                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Description <img src="/images/question_mark.svg"/></label>
+                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Description <span style="color: red;">*</span></label>
                                         <input 
                                             id="description" 
                                             v-model="form.course_description" 
                                             rows="5"
                                             class="w-full p-2 border-none"
-                                            placeholder="Lorem ipsum dolor sit amet consectetur..."
+                                            placeholder="Enter Course Description..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
                                                 border: none !important; border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         ></input>
+                                        <p v-if="errors.course_description" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_description }}</p>
                                         <div class="flex justify-end mt-1 text-sm text-gray-500">
                                             <span>{{ form.course_description.length }}/5000</span>
                                         </div>
                                     </div>
 
                                     <div class="mb-6" style="">
-                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Additional Description <img src="/images/question_mark.svg"/></label>
+                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Additional Description <span style="color: red;">*</span></label>
                                         <input 
                                             id="additional_description" 
                                             v-model="form.additional_description" 
                                             rows="5"
                                             class="w-full p-2 border-none"
-                                            placeholder="Lorem ipsum dolor sit amet consectetur..."
+                                            placeholder="Enter Additional Description..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
                                                 border: none !important;border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         ></input>
+                                        <p v-if="errors.additional_description" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.additional_description }}</p>
                                         <div class="flex justify-end mt-1 text-sm text-gray-500">
                                             <span>{{ form.additional_description.length }}/5000</span>
                                         </div>
                                     </div>
 
                                     <div class="mb-6" style="">
-                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Recomendations <img src="/images/question_mark.svg"/></label>
+                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Recomendations <span style="color: red;">*</span></label>
                                         <input 
                                             type="text" 
                                             id="recomendations" 
                                             v-model="form.recomendations" 
                                             class="w-full p-2 border-none"
-                                            placeholder="UI/UX Designing Course Recomendations"
+                                            placeholder="Enter Recomendations..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
                                                 border: none !important; border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         />
+                                        <p v-if="errors.recomendations" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.recomendations }}</p>
                                         <div class="flex justify-end mt-1 text-sm text-gray-500">
                                             <span>{{ form.recomendations.length }}/100</span>
                                         </div>
                                     </div>
 
                                     <div class="mb-6" style="">
-                                        <label for="course_price" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Price <img src="/images/question_mark.svg"/></label>
+                                        <label for="course_price" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Price <span style="color: red;">*</span></label>
                                         <input
                                             type="number"
                                             id="course_price"
                                             v-model="form.course_price"
+                                            min="0"
                                             class="w-full p-2 border-none"
                                             placeholder="Enter Course Price"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
                                                 border: none !important; border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         />
+                                        <p v-if="errors.course_price" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_price }}</p>
                                         <!-- Optional: display character count or validation for price -->
                                     </div>
 
 
 
                                     <div class="mb-6" style="">
-                                        <label for="certificates" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Certificates <img src="/images/question_mark.svg"/></label>
+                                        <label for="certificates" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Certificates <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('certificates')" :class="{ 'active': activeDropdown === 'certificates' }">
                                             <div class="selected-option">
                                                 <span>{{ getSelectedText('certificates') || 'Select Certificate' }}</span>
@@ -199,10 +208,11 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <p v-if="errors.certificates" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.certificates }}</p>
                                     </div>
 
                                     <div class="mb-6" style="">
-                                        <label for="topic" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Topic <img src="/images/question_mark.svg"/></label>
+                                        <label for="topic" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Topic <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('topic')" :class="{ 'active': activeDropdown === 'topic' }">
                                             <div class="selected-option">
                                                 <span>{{ getSelectedText('topic') || 'Select Topic' }}</span>
@@ -221,12 +231,13 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <p v-if="errors.topic" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.topic }}</p>
                                     </div>
 
 
 
                                     <div class="mb-6" style="">
-                                        <label for="industry" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Industry <img src="/images/question_mark.svg"/></label>
+                                        <label for="industry" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Industry <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('industry')" :class="{ 'active': activeDropdown === 'industry' }">
                                             <div class="selected-option">
                                                 <span>{{ getSelectedText('industry') || 'Select Industry' }}</span>
@@ -245,10 +256,11 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <p v-if="errors.industry" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.industry }}</p>
                                     </div>
 
                                     <div class="mb-6" style="">
-                                        <label for="course_type" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course type <img src="/images/question_mark.svg"/></label>
+                                        <label for="course_type" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course type <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('course_type')" :class="{ 'active': activeDropdown === 'course_type' }">
                                             <div class="selected-option">
                                                 <span>{{ getSelectedText('course_type') || 'Select Course Type' }}</span>
@@ -267,6 +279,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <p v-if="errors.course_type" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_type }}</p>
                                     </div>
 
                                     <div class="flex justify-end mt-6 space-x-4">
@@ -294,7 +307,7 @@
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div class="md:col-span-2">
                                     <div class="mb-6" style="border: 1px solid grey; border-radius: 15px; padding: 5px;">
-                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Video Title <img src="/images/question_mark.svg"/></label>
+                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Video Title <span style="color: red;">*</span></label>
                                         <input 
                                             type="text" 
                                             id="video_title_step2" 
@@ -303,14 +316,15 @@
                                             placeholder="Enter title for this video"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
-                                                border: none !important;"
+                                                border: none !important;  border-radius: 15px; padding: 20px;"
                                         />
+                                        <p v-if="videosData[currentEditingVideoIndex]?.errors?.title" class="text-red-500 text-sm mt-1 px-2" style="text-align: start;">{{ videosData[currentEditingVideoIndex].errors.title }}</p>
                                         <div class="flex justify-end mt-1 text-sm text-gray-500">
                                             <span>{{ currentVideoFormPart2.title.length }}/100</span>
                                         </div>
                                     </div>
                                     <div class="mb-6" style="border: 1px solid grey; border-radius: 15px; padding: 5px;">
-                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Description <img src="/images/question_mark.svg"/></label>
+                                        <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Description <span style="color: red;">*</span></label>
                                         <textarea 
                                             id="video_description_step2" 
                                             v-model="currentVideoFormPart2.description" 
@@ -319,8 +333,9 @@
                                             placeholder="Enter description for this video"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
-                                                border: none !important;"
+                                                border: none !important;  border-radius: 15px; padding: 20px;"
                                         ></textarea>
+                                        <p v-if="videosData[currentEditingVideoIndex]?.errors?.description" class="text-red-500 text-sm mt-1 px-2" style="text-align: start;">{{ videosData[currentEditingVideoIndex].errors.description }}</p>
                                         <div class="flex justify-end mt-1 text-sm text-gray-500">
                                             <span>{{ currentVideoFormPart2.description.length }}/5000</span>
                                         </div>
@@ -336,6 +351,7 @@
                                             accept="image/*" 
                                             @change="handleThumbnailUpload"
                                         />
+                                        <p v-if="videosData[currentEditingVideoIndex]?.errors?.thumbnailFile" class="text-red-500 text-sm mt-1 text-center" style="display: flex; justify-content: flex-start; text-align: start;">{{ videosData[currentEditingVideoIndex].errors.thumbnailFile }}</p>
                                         <label 
                                             for="thumbnail-upload" 
                                             class="block  p-2 text-center   cursor-pointer hover:bg-gray-50"
@@ -360,6 +376,7 @@
                                                           <button @click="triggerVideoUploadFromRightPanel" class="px-4 py-2 text-black flex items-center justify-center w-full bg-[#9fd3f5]" style="height: 150px; width: 100%;">
                                                               Upload Video for Video {{ currentEditingVideoIndex + 1 }}
                                                            </button>
+                                                           <p v-if="videosData[currentEditingVideoIndex]?.errors?.videoFile" class="text-red-500 text-sm mt-1 text-center">{{ videosData[currentEditingVideoIndex].errors.videoFile }}</p>
                                                      
                                                 </template>
                                                 <template v-else>
@@ -511,7 +528,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, router, Link } from '@inertiajs/vue3';
-import { ref, reactive, onMounted, computed, defineProps } from 'vue';
+import { ref, reactive, onMounted, computed, defineProps, watch } from 'vue';
 
 const props = defineProps({
     certificates: {
@@ -532,6 +549,7 @@ const props = defineProps({
     },
 });
 
+const errors = ref({});
 const currentStep = ref(1);
 const uploadedVideo = ref(null);
 const videoPreview = ref(null);
@@ -547,6 +565,12 @@ const form = useForm({
     topic: '',
     course_type: '',
     course_price: '',
+});
+
+watch(() => form.course_price, (newValue) => {
+    if (newValue < 0) {
+        form.course_price = 0;
+    }
 });
 
 const availableCertificates = ref([
@@ -661,6 +685,7 @@ const addNewVideoSlot = () => {
         playlist: '',
         visibility: 'private',
         duration_in_seconds: null, // Add field to store duration
+        errors: {}, // For validation errors
     };
     videosData.value.push(newVideoData);
     currentEditingVideoIndex.value = videosData.value.length - 1;
@@ -715,11 +740,87 @@ const handleThumbnailUpload = (e) => {
 };
 
 const nextStep = () => {
+    errors.value = {}; // Clear previous step 1 errors
+
+    // Step 1 validation
+    if (currentStep.value === 1) {
+        const requiredFields = {
+            course_title: 'Course Title',
+            course_description: 'Description',
+            additional_description: 'Additional Description',
+            recomendations: 'Recomendations',
+            course_price: 'Course Price',
+            certificates: 'Certificates',
+            industry: 'Industry',
+            topic: 'Topic',
+            course_type: 'Course Type',
+        };
+
+        Object.entries(requiredFields).forEach(([field, name]) => {
+            const value = form[field];
+            let isMissing = false;
+            if (field === 'course_price') {
+                isMissing = value === '' || value === null;
+            } else {
+                isMissing = !value || (typeof value === 'string' && value.trim() === '');
+            }
+            if (isMissing) {
+                errors.value[field] = `${name} is required.`;
+            }
+        });
+
+        if (Object.keys(errors.value).length > 0) {
+            return; // Stop execution
+        }
+    }
+
+    // Step 2 validation
+    if (currentStep.value === 2) {
+        // Save current video details before checking all videos.
+        if (currentEditingVideoIndex.value !== -1) {
+            saveCurrentVideoDetails();
+        }
+
+        if (videosData.value.length === 0) {
+            alert('Please add at least one video.');
+            return;
+        }
+        
+        let hasErrors = false;
+        videosData.value.forEach((video) => {
+            video.errors = {}; // Clear previous errors
+            if (!video.title || video.title.trim() === '') {
+                video.errors.title = 'Title is required.';
+                hasErrors = true;
+            }
+            if (!video.description || video.description.trim() === '') {
+                video.errors.description = 'Description is required.';
+                hasErrors = true;
+            }
+            if (!video.videoFile) {
+                video.errors.videoFile = 'Video file is required.';
+                hasErrors = true;
+            }
+            if (!video.thumbnailFile) {
+                video.errors.thumbnailFile = 'Thumbnail file is required.';
+                hasErrors = true;
+            }
+        });
+
+        if (hasErrors) {
+            const firstErrorIndex = videosData.value.findIndex(v => Object.keys(v.errors).length > 0);
+            if (firstErrorIndex !== -1 && firstErrorIndex !== currentEditingVideoIndex.value) {
+                selectVideoToEdit(firstErrorIndex); // Switch to the problematic video
+            }
+            return;
+        }
+    }
+
+    // If all validations for the current step passed, proceed.
     if (currentStep.value === 1 && videosData.value.length === 0) {
         addNewVideoSlot();
-    } else if (currentStep.value >=2 && currentEditingVideoIndex.value !== -1) {
-        saveCurrentVideoDetails();
     }
+
     currentStep.value++;
 };
 
@@ -879,6 +980,40 @@ const submitForm = async () => {
     }
 };
 
+const removeVideo = (index) => {
+    if (!confirm('Are you sure you want to remove this video?')) {
+        return;
+    }
+
+    // Revoke object URLs to prevent memory leaks
+    const videoToRemove = videosData.value[index];
+    if (videoToRemove.videoFilePreview && videoToRemove.videoFilePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(videoToRemove.videoFilePreview);
+    }
+    if (videoToRemove.thumbnailFilePreview && videoToRemove.thumbnailFilePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(videoToRemove.thumbnailFilePreview);
+    }
+
+    const wasEditingTheRemovedVideo = currentEditingVideoIndex.value === index;
+    const isEditingAfterTheRemovedVideo = currentEditingVideoIndex.value > index;
+
+    videosData.value.splice(index, 1);
+
+    if (videosData.value.length === 0) {
+        currentEditingVideoIndex.value = -1;
+        addNewVideoSlot();
+        return;
+    }
+
+    if (wasEditingTheRemovedVideo) {
+        const newIndex = Math.max(0, index - 1);
+        currentEditingVideoIndex.value = newIndex;
+        populateVideoDetailsForm(newIndex);
+    } else if (isEditingAfterTheRemovedVideo) {
+        currentEditingVideoIndex.value--;
+    }
+};
+
 onMounted(() => {
     if (videosData.value.length === 0) {
         addNewVideoSlot();
@@ -905,7 +1040,7 @@ onMounted(() => {
 .upload_header{
     display: flex;
     justify-content: space-between;
-    padding: 20px;
+    padding: 14px;
     border-bottom: 1px solid #7E7E7E;
 }
 .Upload_text{
@@ -941,6 +1076,16 @@ onMounted(() => {
     }
 }
 @media (max-width: 450px) {
+    .upload_video_section{
+        width: 340px;
+    }
+}
+@media (max-width: 425px) {
+    .upload_video_section{
+        width: 390px;
+    }
+}
+@media (max-width: 320px) {
     .upload_video_section{
         width: 300px;
     }
