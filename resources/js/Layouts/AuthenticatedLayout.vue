@@ -35,7 +35,7 @@ const isCartPage = computed(() => page.component === 'cart/cart');
                         </div>
 
                         <a href="/dashboard">
-                            <img src="/images/MBM_Uni.svg" alt="logo" class="logo_image_nav" style=" width: 80px; height: 80px;">
+                            <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav" style=" width: 80px; height: 80px;">
                         </a>
 
                         <!-- User Dropdown -->

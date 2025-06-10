@@ -105,6 +105,7 @@ const page = usePage();
 
 const showUserListingLink = ref(false);
 const sidebarVisible = ref(true);
+const trendingTopicsList = ref([]);
 
 // 👇 Watch route changes to show/hide sidebar
 watch(
@@ -119,9 +120,9 @@ watch(
 const fetchPermissions = async () => {
   try {
     const response = await axios.post('/check-permissions', {
-      permissions: ['userView']
+      permissions: ['userAdd']
     });
-    if (response.data?.permissions?.userView) {
+    if (response.data?.permissions?.userAdd) {
       showUserListingLink.value = true;
     }
   } catch (error) {
@@ -129,8 +130,19 @@ const fetchPermissions = async () => {
   }
 };
 
+// 👇 Fetch trending topics
+const fetchTrendingTopics = async () => {
+  try {
+    const response = await axios.get('/trending-topics-list');
+    trendingTopicsList.value = response.data;
+  } catch (error) {
+    console.error("Error fetching trending topics:", error);
+  }
+};
+
 // Run on mount
 fetchPermissions();
+fetchTrendingTopics();
 
 // Static menu arrays (if needed elsewhere)
 const menu = [
@@ -185,6 +197,9 @@ const trendingTopic = [
     padding-left: 24px;
     padding-right: 10px;
     letter-spacing: 1px;
+    display: flex;
+    justify-content: flex-start;
+    
     
 }
 .main_sidebar{

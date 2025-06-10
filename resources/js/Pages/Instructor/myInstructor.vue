@@ -8,7 +8,7 @@
             <div class="instructor-page-wrapper">
                 <div class="instructor-card">
                     <div style="border-bottom: 1px solid #414141;">
-                        <img src="/images/MBM_Uni.svg" alt="logo" class="" style="margin-left: 55px; width: 100px; height: 100px;">
+                        <img src="/images/MBM_Uni.png" alt="logo" class="" style="margin-left: 55px; width: 100px; height: 100px;">
                     </div>
                     <div class="instructor-content-container">
 
