@@ -2,6 +2,19 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
+
+const props = defineProps({
+    savedCourses: {
+        type: Array,
+        default: () => [],
+    },
+    inProgressItems: {
+        type: Array,
+        default: () => [],
+    },
+    // Define other props if you pass more dynamic data, e.g., for 'In Progress'
+});
 
 const selectedOption = ref('In Progress');
 
@@ -9,32 +22,27 @@ const selectOption = (option) => {
     selectedOption.value = option;
 };
 
-const sidebarOptions = [
-    { name: 'In Progress', count: 31 },
-    { name: 'Saved', count: 22 },
-    { name: 'My Collections', count: 12 },
-    { name: 'Learning History', count: 1 },
-];
+const sidebarOptions = computed(() => [
+    { name: 'In Progress', count: props.inProgressItems.length },
+    { name: 'Saved', count: props.savedCourses.length },
+    // { name: 'My Collections', count: 12 },
+    // { name: 'Learning History', count: 1 },
+]);
 
-// Placeholder course data for each category
+// Placeholder course data for non-Saved categories (can be replaced by props later)
 const coursesData = {
-    'In Progress': [
-        { id: 1, type: 'Course', title: 'Advanced Vue 3 Techniques', author: 'Jane Doe', updated: 'August 2024', progress: 70, timeLeft: '30min 10s left', thumbnail: '/images/skill_section_thumbnail.svg' },
-        { id: 2, type: 'Video', title: 'Understanding Reactivity in Vue', author: 'John Smith', updated: 'July 2024', progress: 45, timeLeft: '15min 5s left', thumbnail: '/images/skill_section_thumbnail.svg' },
-    ],
-    'Saved': [
-        { id: 3, type: 'Course', title: 'Tailwind CSS Masterclass', author: 'Alice Brown', updated: 'June 2024', progress: 0, timeLeft: '1h 20min left', thumbnail: '/images/skill_section_thumbnail.svg' },
-    ],
-    'My Collections': [
-        { id: 4, type: 'Playlist', title: 'JavaScript Deep Dive', author: 'Collection Curator', updated: 'May 2024', progress: 10, timeLeft: '5h 0min left', thumbnail: '/images/skill_section_thumbnail.svg' },
-        { id: 5, type: 'Video', title: 'Node.js for Beginners', author: 'Bob Green', updated: 'July 2024', progress: 90, timeLeft: '5min 0s left', thumbnail: '/images/skill_section_thumbnail.svg' },
-    ],
-    'Learning History': [
-        { id: 6, type: 'Course', title: 'Introduction to Python', author: 'Chris White', updated: 'January 2024', progress: 100, timeLeft: 'Completed', thumbnail: '/images/skill_section_thumbnail.svg' },
-    ],
+    // 'In Progress' data will now come from props.inProgressItems
+    // 'My Collections': [ /* ... */ ],
+    // 'Learning History': [ /* ... */ ],
 };
 
 const currentCourses = computed(() => {
+    if (selectedOption.value === 'Saved') {
+        return props.savedCourses;
+    }
+    if (selectedOption.value === 'In Progress') {
+        return props.inProgressItems;
+    }
     return coursesData[selectedOption.value] || [];
 });
 
@@ -156,27 +164,69 @@ const currentCourses = computed(() => {
                             <div v-if="currentCourses.length > 0" class="space-y-6">
                                 <div v-for="course in currentCourses" :key="course.id" class="p-6 bg-white rounded-lg shadow">
                                     <div class="flex library_videos">
-                                        <img :src="course.thumbnail" alt="Course Thumbnail"
-                                            class="mr-4 rounded w-30 h-21"> <!-- Make sure w-30 and h-21 are valid Tailwind classes or use style bindings -->
+                                        <img :src="course.thumbnail" alt="Course Thumbnail" style="width: 200px; "
+                                            class="mr-4 rounded  h-15"> <!-- Make sure w-30 and h-21 are valid Tailwind classes or use style bindings -->
                                         <div class="flex-grow">
-                                            <p class="text-xs text-black-500" style="font-size: 11px;">{{ course.type }}</p>
-                                            <h3 class="mb-1 text-lg font-semibold" style="font-size: 16px;">{{ course.title }}</h3>
-                                            <p class="mb-2 text-sm text-black-500" style="font-size: 11px;">By: {{ course.author }} > Updated {{ course.updated }}</p>
+                                            <p class="text-xs text-black-500" style="font-size: 11px;">
+                                                {{ course.type }}
+                                                <!-- <span v-if="selectedOption === 'In Progress' && course.course_title">
+                                                     <strong>{{ course.course_title }}</strong>
+                                                </span> -->
+                                            </p>
+                                            <h3 class="mb-1 text-lg font-semibold" style="font-size: 16px;">{{ course.course_title }}</h3>
+                                            <p class="mb-2 text-sm text-black-500" style="font-size: 11px;">
+                                                {{ course.title }}
+                                            </p>
+                                            <p class="mb-2 text-sm text-black-500" style="font-size: 11px;">
+                                                By: {{ course.author }}
+                                                <span v-if="selectedOption === 'In Progress'"> > Last activity: {{ course.updated }}</span>
+                                                <span v-else-if="selectedOption === 'Saved'"> > Updated {{ course.updated }}</span>
+                                                <!-- General case for other types if any -->
+                                                <span v-else> > {{ course.updated }}</span>
+                                            </p>
+                                            <p v-if="selectedOption === 'Saved' && course.duration" class="mb-2 text-sm text-gray-600" style="font-size: 11px;">Duration: {{ course.duration }}</p>
+                                            <!-- Display Video duration if it's an In Progress Video -->
+                                            <!-- <p v-if="selectedOption === 'In Progress' && course.duration" class="mb-2 text-sm text-gray-600" style="font-size: 11px;">Video Duration: {{ course.duration }}</p> -->
+                                            
                                             <div class="" style="display: flex; justify-content: space-between; width: 100%;">
-                                                <div class="flex items-center mb-2" style="width: 60%;">
+                                                <div v-if="selectedOption !== 'Saved'" class="flex items-center mb-2" style="width: 60%;">
                                                     <div class="w-full h-1 mr-2 bg-gray-200 rounded-full"
-                                                        style="height: 2px;"> <!-- Removed fixed width: 50% to allow progress to fill -->
+                                                        style="height: 2px;"> 
                                                         <div class="h-1 bg-black rounded-full"
-                                                            :style="{ width: course.progress + '%', height: '2px' }"></div> <!-- Use :style for dynamic width -->
+                                                            :style="{ width: course.progress + '%', height: '2px' }"></div> 
                                                     </div>
                                                     <span class="text-xs text-gray-500" style="min-width: 90px;">{{ course.timeLeft }}</span>
                                                 </div>
+                                                <!-- Spacer for Saved tab to align buttons to the right -->
+                                                <div v-else style="flex-grow: 1;"></div> 
+
                                                 <div class="flex flex-row items-end " style="align-items: center; gap: 10px;">
-                                                    <button class="text-gray-500 hover:text-gray-700">
+                                                    <!-- <button class="text-gray-500 hover:text-gray-700">
                                                         <img src="/images/three_dot.svg" alt="options" class="w-4 h-4">
+                                                    </button> -->
+                                                    <Link 
+                                                        v-if="selectedOption === 'In Progress' && course.course_id && course.video_id"
+                                                        :href="route('courses.play', { course: course.course_id, video: course.video_id })"
+                                                        class="px-4 py-2 text-sm text-blue-500 border border-blue-500 rounded hover:bg-blue-50"
+                                                        style="border-radius: 30px;"
+                                                    >
+                                                        Continue
+                                                    </Link>
+                                                    <!-- Fallback or different button for 'Saved' items or if IDs are missing -->
+                                                    <Link 
+                                                        v-if="selectedOption === 'Saved' && course.id" 
+                                                        :href="route('courses.show', { course: course.id })"
+                                                        class="px-4 py-2 text-sm text-blue-500 border border-blue-500 rounded hover:bg-blue-50" 
+                                                        style="border-radius: 30px;"
+                                                        >
+                                                        View Course
+                                                    </Link>
+                                                    <button 
+                                                        v-else-if="selectedOption === 'Saved'" 
+                                                        class="px-4 py-2 text-sm text-gray-400 border border-gray-400 rounded cursor-not-allowed"
+                                                        style="border-radius: 30px;" disabled >
+                                                        View Course
                                                     </button>
-                                                    <button
-                                                        class="px-4 py-2 text-sm text-blue-500 border border-blue-500 rounded hover:bg-blue-50" style="border-radius: 30px;">Share</button>
                                                 </div>
                                             </div>
                                         </div>

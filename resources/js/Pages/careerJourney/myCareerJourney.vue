@@ -33,7 +33,7 @@ import { Head } from '@inertiajs/vue3';
                             </div>
 
                             <div class="goal-footer">
-                                Lorem ipsum dolor sit amet consectetur.
+                                We are dedicated to delivering high-quality content with care and professionalism.
                             </div>
                         </div>
                     </div>
@@ -193,7 +193,7 @@ import { Head } from '@inertiajs/vue3';
 
 .goal-footer {
     background-color: #D9D9D966;
-    padding: 11px 20px 30px 20px;
+    padding: 8px 13px 8px 13px;
     border-top: 1px solid gray;
 }
 .home_page_style {

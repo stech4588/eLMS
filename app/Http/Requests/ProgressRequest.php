@@ -11,7 +11,7 @@ class ProgressRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class ProgressRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'video_id' => 'required|exists:videos,id',
-            'watched_seconds' => 'required|integer|min:0',
+            'watched_duration' => 'required|integer|min:0',
+            'completed' => 'required|boolean',
+            'last_watched_at' => 'required|date',
         ];
     }
 }

@@ -2,11 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 
 class Course extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'user_id',
         'title',
         'description',
         'price',
@@ -14,7 +22,6 @@ class Course extends Model
         'instructor_id',
         'thumbnail',
         'status',
-        'user_id',
         'certificate_id',
         'industry_id',
         'course_type_id',
@@ -23,36 +30,54 @@ class Course extends Model
         'topic_id',
     ];
 
-    public function courseType()
+    protected $appends = ['is_favorited'];
+
+    /**
+     * Get the user (author) that owns the course.
+     */
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(CourseType::class, 'course_type_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function certificate()
+    /**
+     * Get the videos for the course.
+     */
+    public function videos(): HasMany
     {
-        return $this->belongsTo(CourseCertificate::class, 'certificate_id');
-    }
-    
-    public function industry()
-    {
-        // Make sure 'industry_id' is the correct foreign key column name in your 'courses' table
-        // And CourseIndustry::class is the correct model for your industries.
-        return $this->belongsTo(CourseIndustry::class, 'industry_id');
+        return $this->hasMany(Video::class)->orderBy('order');
     }
 
-    public function topic()
+    /**
+     * Get the course type of the course.
+     */
+    public function courseType(): BelongsTo
     {
-        return $this->belongsTo(CourseTopic::class, 'topic_id');
+        return $this->belongsTo(CourseType::class);
     }
 
-    public function videos()
+    /**
+     * Get the topic of the course.
+     */
+    public function topic(): BelongsTo
     {
-        return $this->hasMany(Video::class)->orderBy('order', 'asc');
+        return $this->belongsTo(Topic::class);
     }
 
-    public function user()
+    /**
+     * Get the industry of the course.
+     */
+    public function industry(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(CourseIndustry::class);
+    }
+
+    /**
+     * Get the certificate associated with the course.
+     */
+    public function certificate(): BelongsTo
+    {
+        return $this->belongsTo(CourseCertificate::class);
     }
 
     /**
@@ -60,6 +85,35 @@ class Course extends Model
      */
     public function comments()
     {
-        return $this->hasMany(CourseComment::class)->with('user')->latest(); // Eager load user and order by latest
+        return $this->hasMany(CourseComment::class)->with('user')->latest();
+    }
+
+    /**
+     * Get the course favorites records.
+     */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(CourseFavorite::class);
+    }
+
+    /**
+     * The users that have favorited this course.
+     */
+    public function favoritedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'course_favorites', 'course_id', 'user_id')->withTimestamps();
+    }
+
+    /**
+     * Check if the course is favorited by the current authenticated user.
+     *
+     * @return bool
+     */
+    public function getIsFavoritedAttribute(): bool
+    {
+        if (!Auth::check()) {
+            return false;
+        }
+        return $this->favorites()->where('user_id', Auth::id())->exists();
     }
 }

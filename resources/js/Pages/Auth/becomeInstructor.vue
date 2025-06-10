@@ -13,7 +13,7 @@
                         <div class="instructor-left-column">
                             <div style="display: flex; flex-direction: column; gap: 40px;">
                                  <h1 class="instructor-main-heading">Become a LinkedIn Learning Instructor</h1>
-                            <p class="instructor-text">Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor sit amet consectetur.</p>
+                            <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of LinkedIn Learning Instructors and share your knowledge with millions of learners worldwide.</p>
                             </div>
                            
                             <p class="instructor-text" style="margin-bottom: 1rem;">Lorem ipsum dolor sit amet consectetur</p>
