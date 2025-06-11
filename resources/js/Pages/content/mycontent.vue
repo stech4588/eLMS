@@ -143,6 +143,7 @@ function prevPageMyCourses() {
                 </div>
                 </div>
          
+            <!-- Topics Section -->
 
 
   <div class="section_box flex justify-start">
