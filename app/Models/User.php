@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -23,6 +25,8 @@ class User extends Authenticatable
         'email',
         'password',
         'phone_number',
+        'role_id',
+        'type',
         // 'profile_picture',
         // 'bio',
         // 'type',
@@ -77,5 +81,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the user's course favorites.
+     */
+    public function courseFavorites(): HasMany
+    {
+        return $this->hasMany(CourseFavorite::class);
+    }
+
+    /**
+     * The courses that the user has favorited.
+     */
+    public function favoriteCourses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'course_favorites', 'user_id', 'course_id')->withTimestamps();
+    }
+
+    /**
+     * Get the progress entries for the user.
+     */
+    public function progressEntries(): HasMany
+    {
+        return $this->hasMany(Progress::class);
     }
 }

@@ -21,13 +21,13 @@
                             <!-- Topics Dropdown -->
                             <div class="dropdown_dashboard" ref="topicDropdownRef" style="position: relative; ">
                                 <button @click="toggleTopicDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span>{{ selectedTopicText || 'Topics' }}</span>
+                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedTopicText || 'Topics' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
                                     <li><a class="dropdown-item" href="#" @click.prevent="handleTopicSelect({ value: '', text: 'Topics' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Topics (All)</a></li>
                                     <li v-for="option in topicOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -36,13 +36,13 @@
                             <!-- Course Type Dropdown -->
                             <div class="dropdown_dashboard" ref="courseTypeDropdownRef" style="position: relative; ">
                                 <button @click="toggleCourseTypeDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span>{{ selectedCourseTypeText || 'Course Type' }}</span>
+                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseTypeText || 'Course Type' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show" style="position: absolute;overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
                                     <li><a class="dropdown-item" href="#" @click.prevent="handleCourseTypeSelect({ value: '', text: 'Course Type' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Type (All)</a></li>
                                     <li v-for="option in courseTypeOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -51,13 +51,13 @@
                             <!-- Certificate Dropdown -->
                             <div class="dropdown_dashboard" ref="certificateDropdownRef" style="position: relative; ;">
                                 <button @click="toggleCertificateDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span>{{ selectedCertificateText || 'Certificate' }}</span>
+                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCertificateText || 'Certificate' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
                                     <li><a class="dropdown-item" href="#" @click.prevent="handleCertificateSelect({ value: '', text: 'Certificate' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Certificate (All)</a></li>
                                     <li v-for="option in certificateOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -66,13 +66,13 @@
                             <!-- Course Industry Dropdown -->
                             <div class="dropdown_dashboard" ref="courseIndustryDropdownRef" style="position: relative; ">
                                 <button @click="toggleCourseIndustryDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span>{{ selectedCourseIndustryText || 'Course Industry' }}</span>
+                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseIndustryText || 'Course Industry' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
                                     <li><a class="dropdown-item" href="#" @click.prevent="handleCourseIndustrySelect({ value: '', text: 'Course Industry' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Industry (All)</a></li>
                                     <li v-for="option in courseIndustryOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -86,7 +86,7 @@
                 <!-- Skills Section -->
                 <div class="section_box">
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xl font-bold">Because of Skills you Follow</h3>
+                        <h3 class="text-xl font-bold section-title">Because of Skills you Follow</h3>
                         <div class="space-x-2 main_left_right_button">
                             <button class="swiper-button-prev1 left_right_button"><img
                                     src="/images/left_side_icon.svg" /></button>
@@ -97,19 +97,19 @@
                     <!-- Display Selected Filters -->
                     <div class="selected-filters-container mb-4" v-if="hasActiveFilters">
                         <span v-if="selectedTopicText" class="selected-filter-tag">
-                            {{ selectedTopicText }}
+                            <span class="filter-text">{{ selectedTopicText }}</span>
                             <button @click="clearSelectedTopic" class="remove-filter-btn">&times;</button>
                         </span>
                         <span v-if="selectedCourseTypeText" class="selected-filter-tag">
-                            {{ selectedCourseTypeText }}
+                            <span class="filter-text">{{ selectedCourseTypeText }}</span>
                             <button @click="clearSelectedCourseTypeFilter" class="remove-filter-btn">&times;</button>
                         </span>
                         <span v-if="selectedCertificateText" class="selected-filter-tag">
-                            {{ selectedCertificateText }}
+                            <span class="filter-text">{{ selectedCertificateText }}</span>
                             <button @click="clearSelectedCertificate" class="remove-filter-btn">&times;</button>
                         </span>
                         <span v-if="selectedCourseIndustryText" class="selected-filter-tag">
-                            {{ selectedCourseIndustryText }}
+                            <span class="filter-text">{{ selectedCourseIndustryText }}</span>
                             <button @click="clearSelectedCourseIndustry" class="remove-filter-btn">&times;</button>
                         </span>
                     </div>
@@ -145,7 +145,17 @@
                                             <p class="text-xs text-gray-500">{{ course.type }}</p>
                                             <p class="text-sm font-semibold leading-tight title_hidden">{{ course.title }}
                                             </p>
-                                            <p class="text-xs text-gray-500 mt-1">By: {{ course.author || "Placeholder Author" }}</p>
+                                            <div class="flex justify-between items-center mt-1">
+                                                <p class="text-xs text-gray-500">By: {{ course.author || "Placeholder Author" }}</p>
+                                                <button @click.stop.prevent="toggleFavorite(course)" class="p-1 rounded-full hover:bg-gray-200">
+                                                    <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                                    </svg>
+                                                    <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-600">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>
@@ -274,7 +284,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
@@ -297,10 +307,10 @@ const getThumbnailSrc = (course) => {
 };
 
 // Refs for selected values - assuming these already exist
-const selectedTopic = ref('');
-const selectedCourseTypeFilter = ref('');
-const selectedCertificate = ref('');
-const selectedCourseIndustry = ref('');
+const selectedTopics = ref([]);
+const selectedCourseTypes = ref([]);
+const selectedCertificates = ref([]);
+const selectedCourseIndustries = ref([]);
 const searchQuery = ref(''); // Added for search input
 
 // Dropdown states
@@ -332,52 +342,63 @@ const courseIndustryOptions = computed(() => {
 
 // Computed properties to get text of selected options
 const selectedTopicText = computed(() => {
-    if (!selectedTopic.value) return '';
-    const found = topicOptions.value.find(opt => opt.value === selectedTopic.value);
-    return found ? found.text : '';
+    if (selectedTopics.value.length === 0) return '';
+    const selectedTexts = selectedTopics.value.map(value => {
+        const found = topicOptions.value.find(opt => opt.value === value);
+        return found ? found.text : '';
+    }).filter(text => text);
+    return selectedTexts.join(', ');
 });
 
 const selectedCourseTypeText = computed(() => {
-    if (!selectedCourseTypeFilter.value) return '';
-    const found = courseTypeOptions.value.find(opt => opt.value === selectedCourseTypeFilter.value);
-    return found ? found.text : '';
+    if (selectedCourseTypes.value.length === 0) return '';
+    const selectedTexts = selectedCourseTypes.value.map(value => {
+        const found = courseTypeOptions.value.find(opt => opt.value === value);
+        return found ? found.text : '';
+    }).filter(text => text);
+    return selectedTexts.join(', ');
 });
 
 const selectedCertificateText = computed(() => {
-    if (!selectedCertificate.value) return '';
-    const found = certificateOptions.value.find(opt => opt.value === selectedCertificate.value);
-    return found ? found.text : '';
+    if (selectedCertificates.value.length === 0) return '';
+    const selectedTexts = selectedCertificates.value.map(value => {
+        const found = certificateOptions.value.find(opt => opt.value === value);
+        return found ? found.text : '';
+    }).filter(text => text);
+    return selectedTexts.join(', ');
 });
 
 const selectedCourseIndustryText = computed(() => {
-    if (!selectedCourseIndustry.value) return '';
-    const found = courseIndustryOptions.value.find(opt => opt.value === selectedCourseIndustry.value);
-    return found ? found.text : '';
+    if (selectedCourseIndustries.value.length === 0) return '';
+    const selectedTexts = selectedCourseIndustries.value.map(value => {
+        const found = courseIndustryOptions.value.find(opt => opt.value === value);
+        return found ? found.text : '';
+    }).filter(text => text);
+    return selectedTexts.join(', ');
 });
 
 const hasActiveFilters = computed(() => {
-    return !!(selectedTopic.value || selectedCourseTypeFilter.value || selectedCertificate.value || selectedCourseIndustry.value);
+    return !!(selectedTopics.value.length || selectedCourseTypes.value.length || selectedCertificates.value.length || selectedCourseIndustries.value.length);
 });
 
 // Methods to clear filters
 const clearSelectedTopic = () => {
-    selectedTopic.value = '';
-    // Optionally close dropdown if open
+    selectedTopics.value = [];
     isTopicDropdownOpen.value = false;
 };
 
 const clearSelectedCourseTypeFilter = () => {
-    selectedCourseTypeFilter.value = '';
+    selectedCourseTypes.value = [];
     isCourseTypeDropdownOpen.value = false;
 };
 
 const clearSelectedCertificate = () => {
-    selectedCertificate.value = '';
+    selectedCertificates.value = [];
     isCertificateDropdownOpen.value = false;
 };
 
 const clearSelectedCourseIndustry = () => {
-    selectedCourseIndustry.value = '';
+    selectedCourseIndustries.value = [];
     isCourseIndustryDropdownOpen.value = false;
 };
 
@@ -392,17 +413,17 @@ const displayedCourses = computed(() => {
     let coursesToDisplay = props.skillBasedCourses || [];
 
     // Apply dropdown filters
-    if (selectedTopic.value) {
-        coursesToDisplay = coursesToDisplay.filter(course => course.topic_id === selectedTopic.value);
+    if (selectedTopics.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedTopics.value.includes(course.topic_id));
     }
-    if (selectedCourseTypeFilter.value) {
-        coursesToDisplay = coursesToDisplay.filter(course => course.course_type_id === selectedCourseTypeFilter.value);
+    if (selectedCourseTypes.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseTypes.value.includes(course.course_type_id));
     }
-    if (selectedCertificate.value) {
-        coursesToDisplay = coursesToDisplay.filter(course => course.certificate_id === selectedCertificate.value);
+    if (selectedCertificates.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedCertificates.value.includes(course.certificate_id));
     }
-    if (selectedCourseIndustry.value) {
-        coursesToDisplay = coursesToDisplay.filter(course => course.industry_id === selectedCourseIndustry.value);
+    if (selectedCourseIndustries.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseIndustries.value.includes(course.industry_id));
     }
 
     // Then apply search query filter
@@ -415,7 +436,7 @@ const displayedCourses = computed(() => {
             return titleMatch || typeMatch || authorMatch;
         });
     }
-    return coursesToDisplay; // This should be the fully filtered array
+    return coursesToDisplay;
 });
 
 // Computed properties for Skills Section Pagination
@@ -464,23 +485,39 @@ const toggleCourseIndustryDropdown = () => {
 
 // Dropdown select methods
 const handleTopicSelect = (topic) => {
-    selectedTopic.value = topic.value;
-    isTopicDropdownOpen.value = false; // Close dropdown after selection
+    const index = selectedTopics.value.indexOf(topic.value);
+    if (index === -1) {
+        selectedTopics.value.push(topic.value);
+    } else {
+        selectedTopics.value.splice(index, 1);
+    }
 };
 
 const handleCourseTypeSelect = (option) => {
-    selectedCourseTypeFilter.value = option.value;
-    isCourseTypeDropdownOpen.value = false;
+    const index = selectedCourseTypes.value.indexOf(option.value);
+    if (index === -1) {
+        selectedCourseTypes.value.push(option.value);
+    } else {
+        selectedCourseTypes.value.splice(index, 1);
+    }
 };
 
 const handleCertificateSelect = (option) => {
-    selectedCertificate.value = option.value;
-    isCertificateDropdownOpen.value = false;
+    const index = selectedCertificates.value.indexOf(option.value);
+    if (index === -1) {
+        selectedCertificates.value.push(option.value);
+    } else {
+        selectedCertificates.value.splice(index, 1);
+    }
 };
 
 const handleCourseIndustrySelect = (option) => {
-    selectedCourseIndustry.value = option.value;
-    isCourseIndustryDropdownOpen.value = false;
+    const index = selectedCourseIndustries.value.indexOf(option.value);
+    if (index === -1) {
+        selectedCourseIndustries.value.push(option.value);
+    } else {
+        selectedCourseIndustries.value.splice(index, 1);
+    }
 };
 
 // Close dropdown on outside click
@@ -508,7 +545,7 @@ onUnmounted(() => {
 });
 
 // Watch for filter changes to reset current page for skills section
-watch([selectedTopic, selectedCourseTypeFilter, selectedCertificate, selectedCourseIndustry, searchQuery], () => {
+watch([selectedTopics, selectedCourseTypes, selectedCertificates, selectedCourseIndustries, searchQuery], () => {
     currentPageSkills.value = 1;
 });
 
@@ -601,6 +638,59 @@ const courseDatabaseList = [
         type: 'Course'
     }
 ];
+
+const activeFilters = computed(() => {
+    return [
+        { value: selectedTopics.value.join(','), text: selectedTopicText },
+        { value: selectedCourseTypes.value.join(','), text: selectedCourseTypeText },
+        { value: selectedCertificates.value.join(','), text: selectedCertificateText },
+        { value: selectedCourseIndustries.value.join(','), text: selectedCourseIndustryText },
+    ].filter(filter => filter.text);
+});
+
+function clearFilter(value) {
+    if (value.startsWith('topics')) {
+        clearSelectedTopic();
+    } else if (value.startsWith('courseTypes')) {
+        clearSelectedCourseTypeFilter();
+    } else if (value.startsWith('certificates')) {
+        clearSelectedCertificate();
+    } else if (value.startsWith('courseIndustries')) {
+        clearSelectedCourseIndustry();
+    }
+}
+
+const toggleFavorite = async (course) => {
+    // Optimistically update the UI first
+    const originalIsFavorited = course.is_favorited;
+    course.is_favorited = !course.is_favorited;
+
+    try {
+        // router.post will send a POST request. 
+        // Ensure you have a route like Route::post('/courses/{course}/favorite', [YourController::class, 'toggleFavorite']);
+        await router.post(route('courses.toggleFavorite', { course: course.id }), {}, {
+            preserveScroll: true, // Keep scroll position
+            preserveState: true, // Preserve component state where possible
+            onSuccess: (page) => {
+                // Optionally, you can verify the change from the server response if needed
+                // For example, if the controller returns the updated course or its favorite status.
+                // However, if the `is_favorited` attribute is part of the main course data that's refreshed,
+                // Inertia might handle the update automatically if you refetch data.
+                // For now, we rely on the optimistic update and the backend to be consistent.
+            },
+            onError: (errors) => {
+                // Revert the optimistic update if there was an error
+                course.is_favorited = originalIsFavorited;
+                console.error('Error toggling favorite:', errors);
+                // Optionally, show a notification to the user
+            },
+        });
+    } catch (error) {
+        // Revert the optimistic update in case of an unexpected error with the request itself
+        course.is_favorited = originalIsFavorited;
+        console.error('Failed to send favorite toggle request:', error);
+    }
+};
 </script>
 
 <style>
@@ -656,11 +746,16 @@ const courseDatabaseList = [
 .swiper-slide {
     /* width: 150px; */
     margin-right: 24px !important;
+    width: 100% !important;
 }
 
 .title_hidden {
     height: 18px;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    display: block;
 }
 
 .filter-container {
@@ -679,7 +774,7 @@ const courseDatabaseList = [
 .course-card-wrapper {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-between;
     gap: 16px;
     background-color: white;
     padding: 20px;
@@ -700,6 +795,11 @@ const courseDatabaseList = [
     height: 249px;
 }
 
+@media(max-width:1435px){
+    .course-card{
+        max-width: 100%;
+    }
+}
 .course-card-text {
     display: flex;
     flex-direction: column;
@@ -783,6 +883,7 @@ const courseDatabaseList = [
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+    width: 100%;
 }
 
 .selected-filter-tag {
@@ -793,6 +894,14 @@ const courseDatabaseList = [
     font-size: 14px;
     display: inline-flex;
     align-items: center;
+    max-width: 200px;
+}
+
+.filter-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 25px); /* Leave space for the close button */
 }
 
 .remove-filter-btn {
@@ -805,6 +914,7 @@ const courseDatabaseList = [
     font-size: 1rem;
     padding: 0;
     line-height: 1;
+    flex-shrink: 0;
 }
 
 .remove-filter-btn:hover {
@@ -836,5 +946,12 @@ const courseDatabaseList = [
 
 .dropdown_dashboard{
     width: 200px;
+}
+
+.section-title {
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

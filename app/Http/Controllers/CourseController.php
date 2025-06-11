@@ -86,7 +86,6 @@ class CourseController extends Controller
         ]);
     }
 
-
     public function storeWithVideos(Request $request): RedirectResponse
     {
         Log::info('storeWithVideos request data:', $request->all());
@@ -171,6 +170,7 @@ class CourseController extends Controller
                         'video_url' => $videoPath,
                         'thumbnail_url' => $thumbnailPath,
                         'order' => $videoDataInput['order'],
+                        'duration' => $videoDataInput['duration_in_seconds'] ?? null,
                     ]);
                     $createdVideos[] = $newVideo;
                     Log::info('Video created:', $newVideo->toArray());
@@ -262,7 +262,7 @@ class CourseController extends Controller
                 'id' => $video->id,
                 'title' => $video->title,
                 'description' => $video->description, // Ensure Video model has description
-                'video_url' => $video->video_url ? asset($video->video_url) : null, // Assuming video_path
+                'video_url' => $video->video_url ? asset($video->video_url) : null,
                 'order' => $video->order,
                 // Add other video properties if needed
             ];
@@ -334,6 +334,7 @@ class CourseController extends Controller
                     'first_video_thumbnail_url' => $firstVideoThumbnailUrl,
                     'type' => $course->courseType ? $course->courseType->name : 'N/A', // If you use course type.
                     'author' => $course->user ? $course->user->name : 'Placeholder Author', // Or however you get the author
+                    'is_favorited' => $course->is_favorited, // Explicitly include is_favorited
                     // Include other necessary course properties
                 ];
             });

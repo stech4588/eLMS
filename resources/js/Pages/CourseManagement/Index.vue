@@ -16,10 +16,18 @@
                                 <input type="text" v-model="form.name" id="itemName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Name">
                                 <p v-if="form.errors.name" class="text-red-500 text-xs italic mt-1">{{ form.errors.name }}</p>
                             </div>
-                            <div class="mt-4">
+                            <div class="mt-4" v-if="activeTab === 'courseCertificate'">
                                 <label for="itemDescription" class="block text-sm font-medium text-gray-700">Description</label>
                                 <textarea v-model="form.description" id="itemDescription" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Description"></textarea>
                                 <p v-if="form.errors.description" class="text-red-500 text-xs italic mt-1">{{ form.errors.description }}</p>
+                            </div>
+                            <div class="mt-4" v-if="activeTab === 'topic'">
+                                <label for="isTrending" class="block text-sm font-medium text-gray-700">Is Trending?</label>
+                                <select v-model="form.is_trending" id="isTrending" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <option :value="1">Yes</option>
+                                    <option :value="0">No</option>
+                                </select>
+                                <p v-if="form.errors.is_trending" class="text-red-500 text-xs italic mt-1">{{ form.errors.is_trending }}</p>
                             </div>
                             <div class="mt-6 flex justify-end space-x-3">
                                 <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -98,6 +106,7 @@
                                             <tr>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: black; font-weight: 600; font-size: 14px;">ID</th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: black; font-weight: 600; font-size: 14px;">Name</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: black; font-weight: 600; font-size: 14px;">Trending</th>
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="justify-content: flex-end; display: flex; color: black; font-weight: 600; font-size: 14px">Action</th>
                                             </tr>
                                         </thead>
@@ -105,6 +114,7 @@
                                             <tr v-for="topic in topics.data" :key="topic.id">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ topic.id }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ topic.name }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ topic.is_trending ? 'Yes' : 'No' }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
                                                     <button @click="startEdit(topic)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" /></button>
                                                     <button @click="deleteItem(topic.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4"/></button>
@@ -210,6 +220,7 @@ const activeTab = ref('courseType');
 const form = useForm({
     name: '',
     description: '',
+    is_trending: 0,
 });
 
 const viewTitle = computed(() => {
@@ -245,6 +256,7 @@ const startEdit = (item) => {
     currentItemId.value = item.id;
     form.name = item.name;
     form.description = item.description;
+    form.is_trending = item.is_trending === undefined ? 0 : item.is_trending;
     form.clearErrors();
 };
 

@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({
@@ -383,4 +383,65 @@ function handleImageError() {
             </div>
         </div>
     </div>
-</template>
+</template> -->
+
+
+<template>
+    <NavbarComponent/>
+    <HeroSection />
+    <RealWorld />
+    <FeatureContainer />
+    <TeachingPhilosophy />
+    <Teaching />
+    <Professors />
+    <Results />
+    <BuildYourFuture />
+    <YourChoice />
+    <FrequentQuestions />
+    <FooterContainer />
+    <router-view/>
+  </template>
+  
+  <script>
+  import FeatureContainer from '@/components/FeatureContainer.vue';
+  import HeroSection from '@/components/HeroSection.vue';
+  import NavbarComponent from '@/components/NavbarComponent.vue'
+  import Teaching from '@/components/Teaching.vue';
+  import Professors from '@/components/Professors.vue';
+  import RealWorld from '@/components/RealWorld.vue';
+  import Results from '@/components/Results.vue';
+  import TeachingPhilosophy from '@/components/TeachingPhilosophy.vue';
+  import BuildYourFuture from '@/components/BuildYourFuture.vue';
+  import FrequentQuestions from '@/components/FrequentQuestions.vue';
+  import YourChoice from '@/components/YourChoice.vue';
+  import FooterContainer from '@/components/Footer-Container.vue';
+  
+  export default {
+    name: 'App',
+    components: {
+      FooterContainer,
+      YourChoice,
+      FrequentQuestions,
+      NavbarComponent,
+      BuildYourFuture,
+      Results,
+      Professors,
+      Teaching,
+      TeachingPhilosophy,
+      FeatureContainer,
+      RealWorld,
+      HeroSection,
+    }
+  }
+  </script>
+  
+  <style>
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+  }
+  </style>
+  

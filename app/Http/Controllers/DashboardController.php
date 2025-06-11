@@ -37,7 +37,8 @@ class DashboardController extends Controller
                     'industry_id' => $course->industry_id,
                     'first_video_thumbnail_url' => $firstVideoThumbnailUrl,
                     // Using a placeholder for author as it's not directly on the course model here
-                    'author' => $course->user ? $course->user->name : 'Placeholder Author' // Get author name from user relationship
+                    'author' => $course->user ? $course->user->name : 'Placeholder Author', // Get author name from user relationship
+                    'is_favorited' => $course->is_favorited, // Explicitly include is_favorited
                 ];
             });
             //dd($skillBasedCourses);
@@ -58,7 +59,8 @@ class DashboardController extends Controller
                     'type' => $course->courseType ? $course->courseType->name : 'N/A',
                     'first_video_thumbnail_url' => $firstVideoThumbnailUrl,
                     // Using a placeholder for author
-                    'author' => $course->user ? $course->user->name : 'Placeholder Author' // Get author name from user relationship
+                    'author' => $course->user ? $course->user->name : 'Placeholder Author', // Get author name from user relationship
+                    'is_favorited' => $course->is_favorited, // Explicitly include is_favorited
                 ];
             });
 

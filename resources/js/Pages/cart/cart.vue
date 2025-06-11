@@ -51,7 +51,7 @@
                     </button>
                 </form>
                 <p class="text-xs text-gray-500 mt-6">
-                    Lorem ipsum dolor sit amet consectetur. In orci tortor duis augue a accumsan nullam neque. Enim purus sem eget bibendum magna faucibus vitae pretium.
+                   We’re looking for passionate educators and industry experts. At LinkedIn Learning, your knowledge matters. Whether you’re a seasoned professional or an emerging leader in your field, we provide the tools and support to help you succeed.
                 </p>
             </div>
         </div>
@@ -64,8 +64,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 <style>
 @media (min-width: 770px) {
-    .main_sidebar{
+    /* .main_sidebar{
         display: none;
-    }
+    } */
 }
 </style>

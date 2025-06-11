@@ -1,6 +1,6 @@
 <template>
    
-    <aside class="main_sidebar bg-white shadow-md space-y-6" >
+    <aside  v-if="sidebarVisible" class="main_sidebar bg-white shadow-md space-y-6" >
         <!-- Optional Logo Section -->
         <!-- <div class="flex items-center justify-center">
             <Link :href="route('dashboard')">
@@ -54,10 +54,11 @@
         </div> -->
         <div style="">
             <div >
-                <Link  class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/careerJourney' }" href="/careerJourney"><img src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img src="/images/career_icon.svg" alt="users"  /> User Listing</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> Course Management</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> Course Management</Link>
+                <Link  class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
+                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/careerJourney' }" href="/careerJourney"><img src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
+               
             </div>
             
         </div>
@@ -71,66 +72,100 @@
             
         </div>
          <div>
-            <div ><div class="sidebar_titles">Trending Topics</div>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/leadershipAndManagement' }" href="/leadershipAndManagement">Leadership & Management</Link>
+            <div v-if="!showUserListingLink">
+                <div class="sidebar_titles">Trending Topics</div>
+                <!-- <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/leadershipAndManagement' }" href="/leadershipAndManagement">Leadership & Management</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/artificialIntelligence' }" href="/artificialIntelligence">Artificial Intelligence</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/cyberSecurity' }" href="/cyberSecurity">Cyber Security</Link>
+                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/cyberSecurity' }" href="/cyberSecurity">Cyber Security</Link> -->
+                <Link 
+                    v-for="topic in trendingTopicsList" 
+                    :key="topic.id" 
+                    class="sidebar_subtitles" 
+                    :class="{ 'active': page.url === ('/topic/' + topic.slug) }" 
+                    :href="'/topic/' + topic.slug">
+                    {{ topic.name }}
+                </Link>
                 <!-- <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/Instructor' }" href="/Instructor">Become an Instructor</Link> -->
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img src="/images/help_icon.svg" alt="Help"  /></Link>
+                
             </div>
+            <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img src="/images/help_icon.svg" alt="Help"  /></Link>
             
         </div>
     </aside>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import SidebarItem from './SidebarItem.vue'
-import ApplicationLogo from '@/Components/ApplicationLogo.vue'
-import { usePage,Link } from '@inertiajs/vue3'
-import axios from 'axios'; // Import axios
+import { ref, watch } from 'vue';
+import SidebarItem from './SidebarItem.vue';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import { usePage, Link } from '@inertiajs/vue3';
+import axios from 'axios';
 
-const page = usePage()
+const page = usePage();
+
 const showUserListingLink = ref(false);
+const sidebarVisible = ref(true);
+const trendingTopicsList = ref([]);
 
-// const isSidebarOpen = ref(false)
+// 👇 Watch route changes to show/hide sidebar
+watch(
+  () => page.url,
+  (newUrl) => {
+    sidebarVisible.value = newUrl !== '/cart';
+  },
+  { immediate: true }
+);
 
-// const toggleSidebar = () => {
-//     isSidebarOpen.value = !isSidebarOpen.value
-// }
-
-onMounted(async () => {
-    try {
-        const response = await axios.post('/check-permissions', {
-            permissions: ['userView'] 
-        });
-        if (response.data && response.data.permissions && response.data.permissions.userView) {
-            showUserListingLink.value = true;
-        }
-    } catch (error) {
-        console.error("Error checking permissions:", error);
+// 👇 Fetch permissions for User Listing link
+const fetchPermissions = async () => {
+  try {
+    const response = await axios.post('/check-permissions', {
+      permissions: ['userAdd']
+    });
+    if (response.data?.permissions?.userAdd) {
+      showUserListingLink.value = true;
     }
-});
+  } catch (error) {
+    console.error("Error checking permissions:", error);
+  }
+};
 
+// 👇 Fetch trending topics
+const fetchTrendingTopics = async () => {
+  try {
+    const response = await axios.get('/trending-topics-list');
+    trendingTopicsList.value = response.data;
+  } catch (error) {
+    console.error("Error fetching trending topics:", error);
+  }
+};
+
+// Run on mount
+fetchPermissions();
+fetchTrendingTopics();
+
+// Static menu arrays (if needed elsewhere)
 const menu = [
-    { title: 'Home', href: '/dashboard' },
-    { title: 'My Career Journey', href: '/careerJourney' },
-]
+  { title: 'Home', href: '/dashboard' },
+  { title: 'My Career Journey', href: '/careerJourney' },
+];
 
 const learn = [
-    { title: 'My Library', href: '/library' },
-    { title: 'Content', href: '/content' },
-    { title: 'My Courses', href: '/courses' },
-]
+  { title: 'My Library', href: '/library' },
+  { title: 'Content', href: '/content' },
+  { title: 'My Courses', href: '/courses' },
+];
 
 const trendingTopic = [
-    { title: 'Leadership & Management', href: '/leadershipManagement' },
-    { title: 'Artificial Intelligence', href: '/artificialIntelligence' },
-    { title: 'Cyber Security', href: '/cyberSecurity' },
-    { title: 'Become an Instructor', href: '/instructor' },
-    { title: 'Help', href: '/help' },
-]
+  { title: 'Leadership & Management', href: '/leadershipManagement' },
+  { title: 'Artificial Intelligence', href: '/artificialIntelligence' },
+  { title: 'Cyber Security', href: '/cyberSecurity' },
+  { title: 'Become an Instructor', href: '/instructor' },
+  { title: 'Help', href: '/help' },
+];
+
 </script>
+
 
 <style scoped>
 .sidebar_subtitles {
@@ -162,6 +197,9 @@ const trendingTopic = [
     padding-left: 24px;
     padding-right: 10px;
     letter-spacing: 1px;
+    display: flex;
+    justify-content: flex-start;
+    
     
 }
 .main_sidebar{

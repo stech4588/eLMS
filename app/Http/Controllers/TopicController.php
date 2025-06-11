@@ -30,6 +30,7 @@ class TopicController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'is_trending' => 'required|boolean',
         ]);
         Topic::create($request->all());
         return redirect()->back();
@@ -58,6 +59,7 @@ class TopicController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'is_trending' => 'required|boolean',
         ]);
         $topic->update($request->all());
         return redirect()->back();
@@ -70,5 +72,22 @@ class TopicController extends Controller
     {
         $topic->delete();
         return redirect()->back();
+    }
+
+    public function fetchTrending()
+    {
+        $trendingTopics = Topic::where('is_trending', true)
+                               ->take(5)
+                               ->get(['id', 'name']);
+
+        $topicsWithSlugs = $trendingTopics->map(function ($topic) {
+            return [
+                'id' => $topic->id,
+                'name' => $topic->name,
+                'slug' => \Illuminate\Support\Str::slug($topic->name) // Generate slug
+            ];
+        });
+
+        return response()->json($topicsWithSlugs);
     }
 }
