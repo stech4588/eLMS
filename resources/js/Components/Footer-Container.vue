@@ -4,7 +4,9 @@
       <div class="footer-container">
         <!-- Newsletter Signup -->
         <div class="newsletter">
+          <Link :href="user ? '/dashboard' : '/'">
           <img src="/images/MBM_Uni.png" alt="CFO Logo" class="logo" />
+          </Link>
           <h2>NewsLetter Signup</h2>
           <label for="email">Enter Email</label>
           <input type="email" id="email" placeholder="Enter your email" />
@@ -80,6 +82,13 @@
     </div>
   </footer> -->
 </template>
+
+<script setup>
+import { Link, usePage } from '@inertiajs/vue3'
+
+const user = usePage().props.auth?.user
+</script>
+
 
 <style scoped>
 .footer {

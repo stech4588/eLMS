@@ -1,8 +1,10 @@
 <template>
     <div class="main-hero-section">
-        <div class="hero-logo">
-            <img src="/images/MBM_Uni.png" alt="">
-        </div>
+       <div class="hero-logo">
+      <a :href="user ? '/dashboard' : '/'">
+        <img src="/images/MBM_Uni.png" alt="MBM Logo" />
+      </a>
+    </div>
         <div class="hero-description">
             <h1>Welcome to  <span class="real">MBM University</span></h1>
         </div>
@@ -51,20 +53,19 @@
         </div>
     </div>
 </template>
-<script>
-export default {
-    data() {
-        return {
-            isPlaying: false,
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-        };
-    },
-    methods: {
-        playVideo() {
-            this.isPlaying = true;
-        }
-    }
-};
+<script setup>
+import { ref } from 'vue'
+import { usePage, Link } from '@inertiajs/vue3'
+
+
+const user = usePage().props.auth?.user
+
+const isPlaying = ref(false)
+const videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ"
+
+function playVideo() {
+  isPlaying.value = true
+}
 </script>
 <style>
 

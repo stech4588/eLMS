@@ -8,6 +8,8 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
 
+
+const user = usePage().props.auth?.user;
 const showingNavigationDropdown = ref(false)
 const isSidebarOpen = ref(false)
 const page = usePage();
@@ -34,9 +36,12 @@ const isCartPage = computed(() => page.component === 'cart/cart');
 
                         </div>
 
-                        <a href="/dashboard">
+                        <!-- <a href="/dashboard">
                             <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav" style=" width: 80px; height: 80px;">
-                        </a>
+                        </a> -->
+                        <a :href="user ? '/dashboard' : '/'">
+                       <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav" style="width: 80px; height: 80px;">
+                     </a>
 
                         <!-- User Dropdown -->
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -178,6 +183,7 @@ const isCartPage = computed(() => page.component === 'cart/cart');
 }
 .home_page_style {
     background-color: #97d5ff;
+    text-align: start;
 }
 .h-16{
     height:5rem!important;

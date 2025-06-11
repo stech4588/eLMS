@@ -8,7 +8,9 @@
             <div class="instructor-page-wrapper">
                 <div class="instructor-card">
                     <div style="border-bottom: 1px solid #414141;">
+                     <a :href="user ? '/dashboard' : '/'">   
                         <img src="/images/MBM_Uni.png" alt="logo" class="" style="margin-left: 55px; width: 100px; height: 100px;">
+                        </a>
                     </div>
                     <div class="instructor-content-container" style="text-align: start;">
 
@@ -153,7 +155,9 @@
 
 <script>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 
+const user = usePage().props.auth?.user
 export default {
     components: {
         // AuthenticatedLayout, // Assuming this is not used for a public registration form
