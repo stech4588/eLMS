@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,11 +21,12 @@ class DatabaseSeeder extends Seeder
         $this->call(CourseTopicSeeder::class);
         $this->call(CourseIndustrySeeder::class);
         $this->call(CourseTypeSeeder::class);
-        
+
         User::updateOrCreate(
             [
                 'email' => 'test@example.com',
                 'name' => 'Test User',
+                'password'=>Hash::make('password'),
                 'role_id' => 1, // Assuming role_id 1 is for 'Super Admin'
             ],
         );

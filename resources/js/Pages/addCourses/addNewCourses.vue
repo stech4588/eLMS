@@ -6,8 +6,8 @@
 
         <div class="py-12 main_upload_video" style="display: flex; ">
             <div v-if="currentStep == 2" style="width: 223px; background-color: white; padding-top: 20px; padding-bottom: 20px; flex-direction: column;display: flex;gap: 10px; height: max-content;">
-                <div 
-                    v-for="(video, index) in videosData" 
+                <div
+                    v-for="(video, index) in videosData"
                     :key="index"
                     style="width: 100%; font-size: 16px; font-weight: 600; display: flex; align-items: center;"
                     :style="index === currentEditingVideoIndex ? { backgroundColor: '#9fd3f5', borderLeft: '2px solid #148ad9' } : {}"
@@ -19,7 +19,7 @@
                         <img src="/images/cross_icon.svg" alt="Remove" style="height: 12px; width: 12px;" />
                     </button>
                 </div>
-                <div 
+                <div
                     @click="addNewVideoSlot"
                     style="width: 100%;padding: 10px 18px; color: #2C15F5; display: flex; gap:5px; font-size: 16px; font-weight: 600; cursor: pointer;"
                 >
@@ -40,48 +40,48 @@
                             </h2>
                         </div>
 
-                        
+
 
                         <!-- Step Indicator -->
                         <div v-if="currentStep >= 2" class="flex justify-center p-6 ">
                             <div class="flex items-center w-full">
-                                <div 
+                                <div
                                     :class="{
                                         'border-4 border-black text-white': currentStep >= 2,
                                         'bg-black': currentStep < 2
-                                    }" 
+                                    }"
                                     class="flex items-center justify-center w-6 h-6 rounded-full">
                                     <span class="check_text text-sm">Details</span>
                                 </div>
-                                
-                                <div 
+
+                                <div
                                     :class="{
                                         'bg-black': currentStep >= 3,
                                         'bg-black': currentStep < 3
-                                    }" 
+                                    }"
                                     class="w-1/2 h-1  bg-black">
                                 </div>
-                                <div 
+                                <div
                                     :class="{
                                         'border-4 border-black text-white': currentStep >= 3,
                                         'bg-black': currentStep < 3
-                                    }" 
+                                    }"
                                     class="flex items-center justify-center w-6 h-6 rounded-full">
                                     <span class="check_text text-sm">Checks</span>
                                 </div>
-                                
-                                <div 
+
+                                <div
                                     :class="{
                                         'bg-black': currentStep >= 4,
                                         'bg-black': currentStep < 4
-                                    }" 
+                                    }"
                                     class="w-1/2 h-1  bg-black">
                                 </div>
-                                <div 
+                                <div
                                     :class="{
                                         'border-4 border-black text-white': currentStep >= 4,
                                         'bg-black': currentStep < 4
-                                    }" 
+                                    }"
                                     class="flex items-center justify-center w-6 h-6 rounded-full">
                                     <span class="check_text text-sm">Visibility</span>
                                 </div>
@@ -100,10 +100,10 @@
                             <div class="md:col-span-2 upload_video_section" style="width: 100%;">
                                     <div class="mb-6" style="">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Title<span style="color: red;">*</span></label>
-                                        <input 
-                                            type="text" 
-                                            id="title" 
-                                            v-model="form.course_title" 
+                                        <input
+                                            type="text"
+                                            id="title"
+                                            v-model="form.course_title"
                                             class="w-full p-2 border-none"
                                             placeholder="UI/UX Designing Course"
                                             style="outline: none !important;
@@ -117,9 +117,9 @@
                                     </div>
                                     <div class="mb-6" style="">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Description <span style="color: red;">*</span></label>
-                                        <input 
-                                            id="description" 
-                                            v-model="form.course_description" 
+                                        <input
+                                            id="description"
+                                            v-model="form.course_description"
                                             rows="5"
                                             class="w-full p-2 border-none"
                                             placeholder="Enter Course Description..."
@@ -135,9 +135,9 @@
 
                                     <div class="mb-6" style="">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Additional Description <span style="color: red;">*</span></label>
-                                        <input 
-                                            id="additional_description" 
-                                            v-model="form.additional_description" 
+                                        <input
+                                            id="additional_description"
+                                            v-model="form.additional_description"
                                             rows="5"
                                             class="w-full p-2 border-none"
                                             placeholder="Enter Additional Description..."
@@ -153,10 +153,10 @@
 
                                     <div class="mb-6" style="">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Recomendations <span style="color: red;">*</span></label>
-                                        <input 
-                                            type="text" 
-                                            id="recomendations" 
-                                            v-model="form.recomendations" 
+                                        <input
+                                            type="text"
+                                            id="recomendations"
+                                            v-model="form.recomendations"
                                             class="w-full p-2 border-none"
                                             placeholder="Enter Recomendations..."
                                             style="outline: none !important;
@@ -198,8 +198,8 @@
                                                 </div>
                                             </div>
                                             <div class="dropdown-options" v-if="activeDropdown === 'certificates'">
-                                                <div 
-                                                    v-for="cert in props.certificates" 
+                                                <div
+                                                    v-for="cert in props.certificates"
                                                     :key="cert.value"
                                                     class="dropdown-option"
                                                     @click="selectOption('certificates', cert.value, cert.text)"
@@ -221,8 +221,8 @@
                                                 </div>
                                             </div>
                                             <div class="dropdown-options" v-if="activeDropdown === 'topic'">
-                                                <div 
-                                                    v-for="topic in props.topics" 
+                                                <div
+                                                    v-for="topic in props.topics"
                                                     :key="topic.value"
                                                     class="dropdown-option"
                                                     @click="selectOption('topic', topic.value, topic.text)"
@@ -246,8 +246,8 @@
                                                 </div>
                                             </div>
                                             <div class="dropdown-options" v-if="activeDropdown === 'industry'">
-                                                <div 
-                                                    v-for="industry in props.industries" 
+                                                <div
+                                                    v-for="industry in props.industries"
                                                     :key="industry.value"
                                                     class="dropdown-option"
                                                     @click="selectOption('industry', industry.value, industry.text)"
@@ -269,8 +269,8 @@
                                                 </div>
                                             </div>
                                             <div class="dropdown-options" v-if="activeDropdown === 'course_type'">
-                                                <div 
-                                                    v-for="courseType in props.courseTypes" 
+                                                <div
+                                                    v-for="courseType in props.courseTypes"
                                                     :key="courseType.value"
                                                     class="dropdown-option"
                                                     @click="selectOption('course_type', courseType.value, courseType.text)"
@@ -283,18 +283,18 @@
                                     </div>
 
                                     <div class="flex justify-end mt-6 space-x-4">
-                                        <!-- <button 
-                                            @click="prevStep" 
+                                        <!-- <button
+                                            @click="prevStep"
                                             class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
                                             Back
                                         </button> -->
-                                        <button 
-                                            @click="nextStep" 
+                                        <button
+                                            @click="nextStep"
                                             class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                             Next
                                         </button>
                                     </div>
-                                    
+
                             </div>
 
 
@@ -308,10 +308,10 @@
                                 <div class="md:col-span-2">
                                     <div class="mb-6" style="border: 1px solid grey; border-radius: 15px; padding: 5px;">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Video Title <span style="color: red;">*</span></label>
-                                        <input 
-                                            type="text" 
-                                            id="video_title_step2" 
-                                            v-model="currentVideoFormPart2.title" 
+                                        <input
+                                            type="text"
+                                            id="video_title_step2"
+                                            v-model="currentVideoFormPart2.title"
                                             class="w-full p-2 border-none"
                                             placeholder="Enter title for this video"
                                             style="outline: none !important;
@@ -325,9 +325,9 @@
                                     </div>
                                     <div class="mb-6" style="border: 1px solid grey; border-radius: 15px; padding: 5px;">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Description <span style="color: red;">*</span></label>
-                                        <textarea 
-                                            id="video_description_step2" 
-                                            v-model="currentVideoFormPart2.description" 
+                                        <textarea
+                                            id="video_description_step2"
+                                            v-model="currentVideoFormPart2.description"
                                             rows="5"
                                             class="w-full p-2 border-none"
                                             placeholder="Enter description for this video"
@@ -340,20 +340,20 @@
                                             <span>{{ currentVideoFormPart2.description.length }}/5000</span>
                                         </div>
                                     </div>
-                                    
+
                                    <div class="relative">
                                         <label for="thumbnail" class="block mb-2 font-medium flex" style=" color: black; font-size: 16px; font-weight: 600;">Thumbnail </label>
-                                        <input 
-                                            type="file" 
-                                            id="thumbnail-upload" 
+                                        <input
+                                            type="file"
+                                            id="thumbnail-upload"
                                             ref="thumbnailUploadInput"
-                                            class="hidden" 
-                                            accept="image/*" 
+                                            class="hidden"
+                                            accept="image/*"
                                             @change="handleThumbnailUpload"
                                         />
                                         <p v-if="videosData[currentEditingVideoIndex]?.errors?.thumbnailFile" class="text-red-500 text-sm mt-1 text-center" style="display: flex; justify-content: flex-start; text-align: start;">{{ videosData[currentEditingVideoIndex].errors.thumbnailFile }}</p>
-                                        <label 
-                                            for="thumbnail-upload" 
+                                        <label
+                                            for="thumbnail-upload"
                                             class="block  p-2 text-center   cursor-pointer hover:bg-gray-50"
                                             style="background-color: #9fd3f5; width: 178px; height: 79px; text-align: center; justify-content: center; align-items: center; display: flex; border-radius: 8px; color: black; font-size: 12px; font-weight: 600;"
                                         >
@@ -363,21 +363,21 @@
                                 </div>
                                 <div>
                                     <div class="mb-6">
-                                        
+
                                         <div class="border border-gray-300 rounded-md">
                                             <!-- Hidden file input for this preview's upload button -->
                                             <input type="file" ref="videoUploadInputForPreview" @change="handleVideoUploadFromRightPanel" accept="video/*" class="hidden">
 
                                             <!-- Visual Preview Area -->
-                                            <div class=""> 
+                                            <div class="">
                                                 <template v-if="!videosData[currentEditingVideoIndex] || !videosData[currentEditingVideoIndex].videoFile">
                                                     <!-- Show Upload Video Button if no video in form -->
-                                                    
+
                                                           <button @click="triggerVideoUploadFromRightPanel" class="px-4 py-2 text-black flex items-center justify-center w-full bg-[#9fd3f5]" style="height: 150px; width: 100%;">
                                                               Upload Video for Video {{ currentEditingVideoIndex + 1 }}
                                                            </button>
                                                            <p v-if="videosData[currentEditingVideoIndex]?.errors?.videoFile" class="text-red-500 text-sm mt-1 text-center">{{ videosData[currentEditingVideoIndex].errors.videoFile }}</p>
-                                                     
+
                                                 </template>
                                                 <template v-else>
                                                     <!-- Video is in form, now check for thumbnail -->
@@ -411,12 +411,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- <div class="mb-6">
                                         <label class="flex items-center">
-                                            <input 
-                                                type="checkbox" 
-                                                v-model="form.comments_enabled" 
+                                            <input
+                                                type="checkbox"
+                                                v-model="form.comments_enabled"
                                                 class="mr-2"
                                             />
                                             <span>Enable Comments</span>
@@ -425,13 +425,13 @@
                                 </div>
                             </div>
                             <div class="flex justify-end mt-6 space-x-4">
-                                <button 
-                                    @click="prevStep" 
+                                <button
+                                    @click="prevStep"
                                     class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" style=" color: black; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Back
                                 </button>
-                                <button 
-                                    @click="nextStep" 
+                                <button
+                                    @click="nextStep"
                                     class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Next
                                 </button>
@@ -456,23 +456,23 @@
                                         <p class="text-sm font-medium text-gray-700">Description:</p>
                                         <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ video.description || '(Not provided)' }}</p>
                                     </div>
-                                  
+
                                 </div>
                             </div>
 
                             <div class="flex justify-end mt-8 space-x-4">
-                                <button 
-                                    @click="prevStep" 
+                                <button
+                                    @click="prevStep"
                                     class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" style="  font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Back
                                 </button>
-                                <button 
-                                    @click="submitForm" 
-                                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" 
+                                <button
+                                    @click="submitForm"
+                                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
                                     style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Publish
                                 </button>
-                                
+
 
                             </div>
                         </div>
@@ -713,7 +713,7 @@ const handleVideoUpload = async (e) => {
             currentVideo.videoFile = file;
             currentVideo.videoFilePreview = URL.createObjectURL(file);
             activeVideoPreviewForRightPanel.value = currentVideo.videoFilePreview;
-            
+
             // Get and set duration
             currentVideo.duration_in_seconds = await getVideoDurationFromFile(file);
             console.log(`Duration for ${file.name}: ${currentVideo.duration_in_seconds}s`);
@@ -721,6 +721,24 @@ const handleVideoUpload = async (e) => {
         nextStep();
     }
 };
+function getVideoDurationFromFile(file) {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+
+        video.onloadedmetadata = function () {
+            window.URL.revokeObjectURL(video.src);
+            const duration = video.duration;
+            resolve(Math.floor(duration)); // Rounded down to integer seconds
+        };
+
+        video.onerror = function () {
+            reject('Failed to load video metadata.');
+        };
+
+        video.src = URL.createObjectURL(file);
+    });
+}
 
 const handleThumbnailUpload = (e) => {
     const file = e.target.files[0];
@@ -785,7 +803,7 @@ const nextStep = () => {
             alert('Please add at least one video.');
             return;
         }
-        
+
         let hasErrors = false;
         videosData.value.forEach((video) => {
             video.errors = {}; // Clear previous errors
@@ -850,14 +868,14 @@ const handleVideoUploadFromRightPanel = async (e) => {
         if (currentVideo.videoFilePreview && currentVideo.videoFilePreview.startsWith('blob:')) {
             URL.revokeObjectURL(currentVideo.videoFilePreview);
         }
-        currentVideo.videoFile = file; 
+        currentVideo.videoFile = file;
         currentVideo.videoFilePreview = URL.createObjectURL(file);
         activeVideoPreviewForRightPanel.value = currentVideo.videoFilePreview;
-        
+
         // Get and set duration
         currentVideo.duration_in_seconds = await getVideoDurationFromFile(file);
         console.log(`Duration for ${file.name} (right panel): ${currentVideo.duration_in_seconds}s`);
-        
+
         if (videoUploadInputForPreview.value) {
             videoUploadInputForPreview.value.value = '';
         }
@@ -883,10 +901,10 @@ const submitNewCertificate = () => {
         text: newCertificate.title.trim(),
         description: newCertificate.description.trim()
     };
-    
+
 
     alert('New certificate created locally. Please ensure your backend saves this and refreshes the certificate list.'); // Placeholder alert
-    
+
 
     form.certificates = newCert.value; // This will select the newly "added" certificate.
     showCertificatePopup.value = false;
@@ -927,10 +945,10 @@ const submitForm = async () => {
             }
         });
     } else {
-        // If there are no videos, we might need to send an empty array or a specific flag 
+        // If there are no videos, we might need to send an empty array or a specific flag
         // depending on backend validation (e.g., 'videos' => 'present|array').
         // Sending an empty array indicator if backend expects 'videos' key even if empty.
-        formData.append('videos', JSON.stringify([])); 
+        formData.append('videos', JSON.stringify([]));
     }
 
     try {
@@ -940,7 +958,7 @@ const submitForm = async () => {
             },
             onSuccess: (page) => {
                 // Inertia will automatically follow the redirect from the backend.
-                // A client-side alert for success can be shown if desired, 
+                // A client-side alert for success can be shown if desired,
                 // but the flashed message on the redirected page is often preferred.
                 // console.log('Form submitted successfully, server responded with:', page);
                 // If you have a global notification system that reads from $page.props.flash, it would pick up the success message.
@@ -964,7 +982,7 @@ const submitForm = async () => {
                     errorMessage = `Please correct the following errors: ${errorDetails}`;
                 } else if (page && page.props && page.props.flash && page.props.flash.error) {
                      // This part might not be directly available in the `errors` argument of `onError`.
-                     // General errors flashed by the server might need to be accessed via $page.props.flash.error 
+                     // General errors flashed by the server might need to be accessed via $page.props.flash.error
                      // in the template or a global handler.
                      // For now, we just log it, as Inertia typically re-renders the page with new props.
                      console.error('Server flashed error:', page.props.flash.error);
@@ -1035,7 +1053,7 @@ onMounted(() => {
 .upload_left_icons{
     display: flex;
     gap: 10px;
-    
+
 }
 .upload_header{
     display: flex;
@@ -1058,7 +1076,7 @@ onMounted(() => {
     padding-top: 40px;
     padding-bottom: 60px;
     width: 800px;
-    
+
 }
 @media (max-width: 1200px) {
     .upload_video_section{
@@ -1102,7 +1120,7 @@ onMounted(() => {
 .check_text{
     color: black;
     margin-bottom: 45px;
-   
+
 }
 .vedio_title{
     font-size: 20px;
@@ -1188,21 +1206,21 @@ onMounted(() => {
   border: 0.5px solid #000 !important;
 }
 .home_page_style{
-    
+
     justify-content: space-between;
     display: flex;
     flex-direction: column;
     padding-bottom: 0;
-    
+
     background-color: #1898e5;
     padding-left: 0;
     padding-right: 0;
-    
+
 }
 @media (max-width: 770px) {
     .footer_upload_video{
         flex-direction: column;
-        
+
     }
     .main_upload_video{
         flex-direction: column !important;
