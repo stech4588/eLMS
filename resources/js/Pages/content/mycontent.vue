@@ -2,10 +2,25 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import { defineProps } from 'vue'
+
+
 
 const props = defineProps({
     skillBasedCourses: Array,
+    topics: Array,
 });
+
+const visibleTopicCount = ref(9)
+
+const visibleTopics = computed(() => {
+  return props.topics.slice(0, visibleTopicCount.value)
+})
+
+function showMoreTopics() {
+  visibleTopicCount.value += 9
+}
+
 
 const getThumbnailSrc = (course) => {
     return course.first_video_thumbnail_url ? course.first_video_thumbnail_url : '/images/skill_section_thumbnail.svg';
@@ -49,6 +64,9 @@ function prevPageMyCourses() {
         currentPageMyCourses.value--;
     }
 }
+
+
+
 
 </script>
 
@@ -124,6 +142,38 @@ function prevPageMyCourses() {
                         </div>
                 </div>
                 </div>
+         
+
+
+  <div class="section_box flex justify-start">
+    <div class="w-full max-w-6xl">
+      <h3 class="text-xl font-bold mb-4 text-center">Topics</h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+        <div
+          v-for="(topic, index) in visibleTopics"
+          :key="`topic-${index}`"
+          class="flex justify-start p-4 rounded-lg shadow hover:shadow-md transition w-full max-w-[90%] sm:max-w-[80%] md:max-w-[90%]"
+        >
+          <p class="font-semibold">{{ topic.name }}</p>
+        </div>
+      </div>
+
+      <!-- Show More Button -->
+      <div class="flex justify-center mt-4" v-if="visibleTopicCount < topics.length">
+        <button
+          @click="showMoreTopics"
+          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        >
+          Show More
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+
+
             </div>
         </div>
     </AuthenticatedLayout>
