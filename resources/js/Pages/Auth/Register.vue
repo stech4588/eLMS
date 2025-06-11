@@ -214,6 +214,7 @@ const submit = () => {
 
 .form-body {
     width: 100%;
+    text-align: start;
 }
 
 .form-row {

@@ -66,8 +66,8 @@
             <div ><div class="sidebar_titles">Learn</div>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/library' }" href="/library"><img src="/images/library_icon.svg" alt="Library"  /> My Library</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/content' }" href="/content"><img src="/images/content_icon.svg" alt="Content"  /> Content</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/coursess' }" href="/coursess"> <img src="/images/courses_icon.svg" alt="Courses"  /> My Courses</Link>
-                <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/addnewcourses' }" href="/addnewcourses"> <img src="/images/add_icon.svg" alt="Add"  />Add New Courses</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/coursess' }" href="/coursess"> <img src="/images/courses_icon.svg" alt="Courses"  /> My Courses</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/addnewcourses' }" href="/addnewcourses"> <img src="/images/add_icon.svg" alt="Add"  />Add New Courses</Link>
             </div>
             
         </div>

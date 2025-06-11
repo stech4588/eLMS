@@ -9,10 +9,10 @@
 
 
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10 "
-                style="padding: 0px;margin: 0px;  width: 100%; background-color: white; border-radius: 16px;">
+                style="padding: 0px;margin: 0px;  width: 100%; background-color: white; border-radius: 16px; text-align: start;">
                 <div class="main_filter_container" style="background-color: white; display: flex; justify-content: space-between; padding: 10px; border-radius: 16px; padding-top: 25px;">
-                    <div style=" display: flex; align-items: center; ">
-                        <img src="/images/search_icon.svg" alt="Search" class="search_icon" style="position: absolute; margin-left: 10px;  "/>
+                    <div style=" display: flex; align-items: start; ">
+                        <img src="/images/search_icon.svg" alt="Search" class="search_icon" style="position: absolute; margin-left: 10px;  padding: 15px 0px;"/>
                         <input class="search_input" type="text" placeholder="Search Courses..." v-model="searchQuery"
                             style="border-radius: 10px; border: 1px solid #7E7E7E; padding: 10px; padding-left: 30px; " />
                     </div>
@@ -96,21 +96,21 @@
                     </div>
                     <!-- Display Selected Filters -->
                     <div class="selected-filters-container mb-4" v-if="hasActiveFilters">
-                        <span v-if="selectedTopicText" class="selected-filter-tag">
-                            <span class="filter-text">{{ selectedTopicText }}</span>
-                            <button @click="clearSelectedTopic" class="remove-filter-btn">&times;</button>
+                        <span v-for="topic in selectedTopicFilters" :key="`topic-${topic.value}`" class="selected-filter-tag">
+                            <span class="filter-text">{{ topic.text }}</span>
+                            <button @click="removeSelectedTopic(topic.value)" class="remove-filter-btn">&times;</button>
                         </span>
-                        <span v-if="selectedCourseTypeText" class="selected-filter-tag">
-                            <span class="filter-text">{{ selectedCourseTypeText }}</span>
-                            <button @click="clearSelectedCourseTypeFilter" class="remove-filter-btn">&times;</button>
+                        <span v-for="courseType in selectedCourseTypeFilters" :key="`courseType-${courseType.value}`" class="selected-filter-tag">
+                            <span class="filter-text">{{ courseType.text }}</span>
+                            <button @click="removeSelectedCourseType(courseType.value)" class="remove-filter-btn">&times;</button>
                         </span>
-                        <span v-if="selectedCertificateText" class="selected-filter-tag">
-                            <span class="filter-text">{{ selectedCertificateText }}</span>
-                            <button @click="clearSelectedCertificate" class="remove-filter-btn">&times;</button>
+                        <span v-for="certificate in selectedCertificateFilters" :key="`certificate-${certificate.value}`" class="selected-filter-tag">
+                            <span class="filter-text">{{ certificate.text }}</span>
+                            <button @click="removeSelectedCertificate(certificate.value)" class="remove-filter-btn">&times;</button>
                         </span>
-                        <span v-if="selectedCourseIndustryText" class="selected-filter-tag">
-                            <span class="filter-text">{{ selectedCourseIndustryText }}</span>
-                            <button @click="clearSelectedCourseIndustry" class="remove-filter-btn">&times;</button>
+                        <span v-for="industry in selectedCourseIndustryFilters" :key="`industry-${industry.value}`" class="selected-filter-tag">
+                            <span class="filter-text">{{ industry.text }}</span>
+                            <button @click="removeSelectedCourseIndustry(industry.value)" class="remove-filter-btn">&times;</button>
                         </span>
                     </div>
 
@@ -139,7 +139,7 @@
                                 style="width: ">
                                 <Link :href="route('courses.show', { course: course.id })">
                                     <div class="shrink-0 bg-white rounded-lg overflow-hidden">
-                                        <img :src="getThumbnailSrc(course)" class="w-full  object-cover"
+                                        <img :src="getThumbnailSrc(course)" class="w-full object-cover course_listing_home_page"
                                             alt="Course thumbnail" />
                                         <div class="p-2">
                                             <p class="text-xs text-gray-500">{{ course.type }}</p>
@@ -381,25 +381,74 @@ const hasActiveFilters = computed(() => {
     return !!(selectedTopics.value.length || selectedCourseTypes.value.length || selectedCertificates.value.length || selectedCourseIndustries.value.length);
 });
 
+// Helper computed properties for rendering individual filter tags
+const selectedTopicFilters = computed(() => {
+    return selectedTopics.value
+        .map(topicId => topicOptions.value.find(opt => opt.value === topicId))
+        .filter(Boolean);
+});
+
+const selectedCourseTypeFilters = computed(() => {
+    return selectedCourseTypes.value
+        .map(ctId => courseTypeOptions.value.find(opt => opt.value === ctId))
+        .filter(Boolean);
+});
+
+const selectedCertificateFilters = computed(() => {
+    return selectedCertificates.value
+        .map(certId => certificateOptions.value.find(opt => opt.value === certId))
+        .filter(Boolean);
+});
+
+const selectedCourseIndustryFilters = computed(() => {
+    return selectedCourseIndustries.value
+        .map(indId => courseIndustryOptions.value.find(opt => opt.value === indId))
+        .filter(Boolean);
+});
+
 // Methods to clear filters
 const clearSelectedTopic = () => {
     selectedTopics.value = [];
     isTopicDropdownOpen.value = false;
+};
+const removeSelectedTopic = (topicId) => {
+    const index = selectedTopics.value.indexOf(topicId);
+    if (index > -1) {
+        selectedTopics.value.splice(index, 1);
+    }
 };
 
 const clearSelectedCourseTypeFilter = () => {
     selectedCourseTypes.value = [];
     isCourseTypeDropdownOpen.value = false;
 };
+const removeSelectedCourseType = (courseTypeId) => {
+    const index = selectedCourseTypes.value.indexOf(courseTypeId);
+    if (index > -1) {
+        selectedCourseTypes.value.splice(index, 1);
+    }
+};
 
 const clearSelectedCertificate = () => {
     selectedCertificates.value = [];
     isCertificateDropdownOpen.value = false;
 };
+const removeSelectedCertificate = (certificateId) => {
+    const index = selectedCertificates.value.indexOf(certificateId);
+    if (index > -1) {
+        selectedCertificates.value.splice(index, 1);
+    }
+};
 
 const clearSelectedCourseIndustry = () => {
     selectedCourseIndustries.value = [];
     isCourseIndustryDropdownOpen.value = false;
+};
+const removeSelectedCourseIndustry = (courseIndustryId) => {
+    const index = selectedCourseIndustries.value.indexOf(courseIndustryId);
+    if (index > -1) {
+        selectedCourseIndustries.value.splice(index, 1);
+    }
 };
 
 const modules = [Navigation]; // Only Navigation is globally registered now unless other swipers need Pagination
@@ -485,6 +534,10 @@ const toggleCourseIndustryDropdown = () => {
 
 // Dropdown select methods
 const handleTopicSelect = (topic) => {
+    if (topic.value === '') {
+        selectedTopics.value = [];
+        return;
+    }
     const index = selectedTopics.value.indexOf(topic.value);
     if (index === -1) {
         selectedTopics.value.push(topic.value);
@@ -494,6 +547,10 @@ const handleTopicSelect = (topic) => {
 };
 
 const handleCourseTypeSelect = (option) => {
+    if (option.value === '') {
+        selectedCourseTypes.value = [];
+        return;
+    }
     const index = selectedCourseTypes.value.indexOf(option.value);
     if (index === -1) {
         selectedCourseTypes.value.push(option.value);
@@ -503,6 +560,10 @@ const handleCourseTypeSelect = (option) => {
 };
 
 const handleCertificateSelect = (option) => {
+    if (option.value === '') {
+        selectedCertificates.value = [];
+        return;
+    }
     const index = selectedCertificates.value.indexOf(option.value);
     if (index === -1) {
         selectedCertificates.value.push(option.value);
@@ -512,6 +573,10 @@ const handleCertificateSelect = (option) => {
 };
 
 const handleCourseIndustrySelect = (option) => {
+    if (option.value === '') {
+        selectedCourseIndustries.value = [];
+        return;
+    }
     const index = selectedCourseIndustries.value.indexOf(option.value);
     if (index === -1) {
         selectedCourseIndustries.value.push(option.value);
@@ -698,6 +763,7 @@ const toggleFavorite = async (course) => {
     background-color: white;
     padding: 20px;
     border-radius: 16px;
+    text-align: start;
 }
 
 .home_page_style {
@@ -953,5 +1019,53 @@ const toggleFavorite = async (course) => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.course_listing_home_page{
+    height: 14rem;
+}
+@media (max-width: 1500px){
+    .course_listing_home_page{
+    height: 12rem;
+}
+}
+@media (max-width: 1370px){
+    .course_listing_home_page{
+    height: 10rem;
+}
+}
+@media (max-width: 1200px){
+    .course_listing_home_page{
+    height: 8rem;
+}
+}
+@media (max-width: 1024px){
+    .course_listing_home_page{
+    height: 7rem;
+}
+}
+@media (max-width: 768px){
+    .course_listing_home_page{
+    height: 13rem;
+}
+}
+@media (max-width: 425px){
+    .course_listing_home_page{
+    height: 12rem;
+}
+}
+@media (max-width: 375px){
+    .course_listing_home_page{
+    height: 10rem;
+}
+}
+@media (max-width: 320px){
+    .course_listing_home_page{
+    height: 8rem;
+}
+}
+@media (max-width: 425px){
+    .dropdown_dashboard{
+        width: 100%;
+    }
 }
 </style>

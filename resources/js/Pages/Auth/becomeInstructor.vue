@@ -12,8 +12,8 @@
                         <!-- Left Column -->
                         <div class="instructor-left-column">
                             <div style="display: flex; flex-direction: column; gap: 40px;">
-                                 <h1 class="instructor-main-heading">Become a LinkedIn Learning Instructor</h1>
-                            <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of LinkedIn Learning Instructors and share your knowledge with millions of learners worldwide.</p>
+                                 <h1 class="instructor-main-heading">Become a MBM Learning Instructor</h1>
+                            <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of MBM Learning Instructors and share your knowledge with millions of learners worldwide.</p>
                             </div>
                            
                             <p class="instructor-text" style="margin-bottom: 1rem;">Lorem ipsum dolor sit amet consectetur</p>
@@ -30,8 +30,8 @@
                             </p>
 
                             <div class="instructor-quote">
-                                "As an instructor, you're passionate about your subject matter. The thing I love about working with LinkedIn is, they help you bring it to life in really exciting ways."
-                                <p class="instructor-quote-author">—Lisa Earle McLeod, Sales Leadership Consultant & LinkedIn Learning Instructor</p>
+                                "As an instructor, you're passionate about your subject matter. The thing I love about working with MBM is, they help you bring it to life in really exciting ways."
+                                <p class="instructor-quote-author">—Lisa Earle McLeod, Sales Leadership Consultant & MBM Learning Instructor</p>
                             </div>
 
                             <h2 class="instructor-subheading">Apply Now!</h2>
@@ -43,7 +43,7 @@
                         <!-- Right Column -->
                         <div class="instructor-right-column">
                             <h2 class="instructor-form-heading">Instructor Application</h2>
-                            <button class="instructor-linkedin-btn">AutoFill with LinkedIn</button>
+                            <button class="instructor-linkedin-btn">AutoFill with MBM</button>
 
                             <form>
                                 <div class="instructor-form-group" style="margin-top: 10px;">
@@ -75,7 +75,7 @@
                                 </div>
 
                                 <div class="instructor-form-group" style="margin-top: 30px;">
-                                    <label class="instructor-form-label">Are you a part of any of the following LinkedIn programs? <span class="instructor-form-note">(Please check all that apply.) is a required field*</span></label>
+                                    <label class="instructor-form-label">Are you a part of any of the following MBM programs? <span class="instructor-form-note">(Please check all that apply.) is a required field*</span></label>
                                     <div class="instructor-checkbox-group"><input type="checkbox" id="li_influencer" class="instructor-checkbox"> <label for="li_influencer" class="instructor-checkbox-label">LinkedIn Influencer</label></div>
                                     <div class="instructor-checkbox-group"><input type="checkbox" id="managed_creator" class="instructor-checkbox"> <label for="managed_creator" class="instructor-checkbox-label">Managed Power Creator</label></div>
                                     <div class="instructor-checkbox-group"><input type="checkbox" id="top_voice" class="instructor-checkbox"> <label for="top_voice" class="instructor-checkbox-label">Top Voice</label></div>
