@@ -51,7 +51,7 @@
                     </button>
                 </form>
                 <p class="text-xs text-gray-500 mt-6">
-                   We’re looking for passionate educators and industry experts. At LinkedIn Learning, your knowledge matters. Whether you’re a seasoned professional or an emerging leader in your field, we provide the tools and support to help you succeed.
+                   We’re looking for passionate educators and industry experts. At MBM Learning, your knowledge matters. Whether you’re a seasoned professional or an emerging leader in your field, we provide the tools and support to help you succeed.
                 </p>
             </div>
         </div>

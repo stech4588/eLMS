@@ -21,10 +21,12 @@ class DatabaseSeeder extends Seeder
         $this->call(CourseIndustrySeeder::class);
         $this->call(CourseTypeSeeder::class);
         
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'role_id' => 1, // Assuming role_id 1 is for 'Super Admin'
-        ]);
+        User::updateOrCreate(
+            [
+                'email' => 'test@example.com',
+                'name' => 'Test User',
+                'role_id' => 1, // Assuming role_id 1 is for 'Super Admin'
+            ],
+        );
     }
 }
