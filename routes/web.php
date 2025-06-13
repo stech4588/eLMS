@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\VideoController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\WatchlistController;
@@ -117,8 +116,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
 
-    // Video routes
-    Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
 
     // permission routes
     Route::post('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
@@ -149,7 +146,6 @@ Route::middleware('auth')->group(function () {
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('courses', CourseController::class);
-Route::apiResource('videos', VideoController::class);
 Route::apiResource('enrollments', EnrollmentController::class);
 Route::apiResource('invoices', InvoiceController::class);
 Route::apiResource('progresses', ProgressController::class);
