@@ -6,11 +6,11 @@ use App\Models\Invoice;
 class InvoiceService
 {
     public function getAll() {
-        return Invoice::all();
+        return Invoice::with(['user', 'details.course'])->get();
     }
 
     public function getById(int $id) {
-        return Invoice::findOrFail($id);
+        return Invoice::with(['user', 'details.course'])->findOrFail($id);
     }
 
     public function create(array $data) {

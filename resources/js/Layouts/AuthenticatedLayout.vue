@@ -189,6 +189,6 @@ const isCartPage = computed(() => page.component === 'cart/cart');
     height:5rem!important;
 }
 .p-6{
-    padding:1.5rem!important;
+    padding:1.5rem;
 }
 </style>
