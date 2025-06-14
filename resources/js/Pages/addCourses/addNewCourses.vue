@@ -4,7 +4,7 @@
     <AuthenticatedLayout>
 
 
-        <div class="py-12 main_upload_video" style="display: flex; ">
+        <div class="py-12 main_upload_video" style="display: flex; justify-content: center;">
             <div v-if="currentStep == 2" style="width: 223px; background-color: white; padding-top: 20px; padding-bottom: 20px; flex-direction: column;display: flex;gap: 10px; height: max-content;">
                 <div 
                     v-for="(video, index) in videosData" 
@@ -90,21 +90,21 @@
 
                         <!-- Step 1: Upload Video -->
                         <div v-if="currentStep === 1" class="text-center">
-                            <div class="upload_header">
+                            <div class="upload_header dark:bg-dark-bg-secondary dark:text-white">
                                 <div class="Upload_text">Upload Course</div>
                                 <!-- <div class="upload_left_icons">
                                     <img src="/images/guide_icon.svg" />
                                     <img src="/images/cross_icon.svg" />
                                 </div> -->
                             </div>
-                            <div class="md:col-span-2 upload_video_section" style="width: 100%;">
+                            <div class="md:col-span-2 upload_video_section dark:bg-dark-bg-secondary dark:text-white" style="width: 100%;">
                                     <div class="mb-6" style="">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Title<span style="color: red;">*</span></label>
                                         <input 
                                             type="text" 
                                             id="title" 
                                             v-model="form.course_title" 
-                                            class="w-full p-2 border-none"
+                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
                                             placeholder="UI/UX Designing Course"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -121,7 +121,7 @@
                                             id="description" 
                                             v-model="form.course_description" 
                                             rows="5"
-                                            class="w-full p-2 border-none"
+                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
                                             placeholder="Enter Course Description..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -139,7 +139,7 @@
                                             id="additional_description" 
                                             v-model="form.additional_description" 
                                             rows="5"
-                                            class="w-full p-2 border-none"
+                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
                                             placeholder="Enter Additional Description..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -157,7 +157,7 @@
                                             type="text" 
                                             id="recomendations" 
                                             v-model="form.recomendations" 
-                                            class="w-full p-2 border-none"
+                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
                                             placeholder="Enter Recomendations..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -176,7 +176,7 @@
                                             id="course_price"
                                             v-model="form.course_price"
                                             min="0"
-                                            class="w-full p-2 border-none"
+                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
                                             placeholder="Enter Course Price"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -191,7 +191,8 @@
                                     <div class="mb-6" style="">
                                         <label for="certificates" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Certificates <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('certificates')" :class="{ 'active': activeDropdown === 'certificates' }">
-                                            <div class="selected-option">
+                                            <div class="selected-option dark:bg-dark-bg-secondary"style="border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('certificates') || 'Select Certificate' }}</span>
                                                 <div class="dropdown-arrow">
                                                     <img src="/images/dropdown_arrow.svg" alt="dropdown" />
@@ -214,7 +215,8 @@
                                     <div class="mb-6" style="">
                                         <label for="topic" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Topic <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('topic')" :class="{ 'active': activeDropdown === 'topic' }">
-                                            <div class="selected-option">
+                                            <div class="selected-option dark:bg-dark-bg-secondary" style="border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('topic') || 'Select Topic' }}</span>
                                                 <div class="dropdown-arrow">
                                                     <img src="/images/dropdown_arrow.svg" alt="dropdown" />
@@ -239,7 +241,8 @@
                                     <div class="mb-6" style="">
                                         <label for="industry" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Industry <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('industry')" :class="{ 'active': activeDropdown === 'industry' }">
-                                            <div class="selected-option">
+                                            <div class="selected-option dark:bg-dark-bg-secondary"style="border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('industry') || 'Select Industry' }}</span>
                                                 <div class="dropdown-arrow">
                                                     <img src="/images/dropdown_arrow.svg" alt="dropdown" />
@@ -262,7 +265,8 @@
                                     <div class="mb-6" style="">
                                         <label for="course_type" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course type <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('course_type')" :class="{ 'active': activeDropdown === 'course_type' }">
-                                            <div class="selected-option">
+                                            <div class="selected-option dark:bg-dark-bg-secondary" style="border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('course_type') || 'Select Course Type' }}</span>
                                                 <div class="dropdown-arrow">
                                                     <img src="/images/dropdown_arrow.svg" alt="dropdown" />

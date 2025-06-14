@@ -3,31 +3,31 @@
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <div class="bg-gray-100"
-            style="padding: 0px;margin: 13px; margin-top: 0px; justify-content: center; display: flex;background-color: #97d5ff; border-radius: 16px;">
+        <div class="bg-gray-100 dark:bg-dark-bg-primary p-6"
+            style="margin: 13px; margin-top: 0px; justify-content: center; display: flex;">
 
 
 
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10 "
-                style="padding: 0px;margin: 0px;  width: 100%; background-color: white; border-radius: 16px; text-align: start;">
-                <div class="main_filter_container" style="background-color: white; display: flex; justify-content: space-between; padding: 10px; border-radius: 16px; padding-top: 25px;">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10 bg-white dark:bg-dark-bg-secondary p-6"
+                style="margin: 0px; width: 100%; border-radius: 16px; text-align: start;">
+                <div class="main_filter_container bg-white dark:bg-dark-bg-secondary" style="display: flex; justify-content: space-between; padding: 10px; border-radius: 16px; padding-top: 25px;">
                     <div style=" display: flex; align-items: start; ">
                         <img src="/images/search_icon.svg" alt="Search" class="search_icon" style="position: absolute; margin-left: 10px;  padding: 15px 0px;"/>
-                        <input class="search_input" type="text" placeholder="Search Courses..." v-model="searchQuery"
+                        <input class="search_input dark:bg-gray-700 dark:text-white dark:border-gray-600" type="text" placeholder="Search Courses..." v-model="searchQuery"
                             style="border-radius: 10px; border: 1px solid #7E7E7E; padding: 10px; padding-left: 30px; " />
                     </div>
                     <div class="filter-container">
                         <div class="filter_select_container" style="display: flex; gap: 10px; flex-wrap: wrap;justify-content: end;">
                             <!-- Topics Dropdown -->
                             <div class="dropdown_dashboard" ref="topicDropdownRef" style="position: relative; ">
-                                <button @click="toggleTopicDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                <button @click="toggleTopicDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedTopicText || 'Topics' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show" style="position: absolute; top: 100%; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
-                                    <li><a class="dropdown-item" href="#" @click.prevent="handleTopicSelect({ value: '', text: 'Topics' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Topics (All)</a></li>
+                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; top: 100%; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect({ value: '', text: 'Topics' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Topics (All)</a></li>
                                     <li v-for="option in topicOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -35,14 +35,14 @@
                             </div>
                             <!-- Course Type Dropdown -->
                             <div class="dropdown_dashboard" ref="courseTypeDropdownRef" style="position: relative; ">
-                                <button @click="toggleCourseTypeDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                <button @click="toggleCourseTypeDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseTypeText || 'Course Type' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show" style="position: absolute;overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
-                                    <li><a class="dropdown-item" href="#" @click.prevent="handleCourseTypeSelect({ value: '', text: 'Course Type' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Type (All)</a></li>
+                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute;overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect({ value: '', text: 'Course Type' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Type (All)</a></li>
                                     <li v-for="option in courseTypeOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -50,14 +50,14 @@
                             </div>
                             <!-- Certificate Dropdown -->
                             <div class="dropdown_dashboard" ref="certificateDropdownRef" style="position: relative; ;">
-                                <button @click="toggleCertificateDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                <button @click="toggleCertificateDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCertificateText || 'Certificate' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
-                                    <li><a class="dropdown-item" href="#" @click.prevent="handleCertificateSelect({ value: '', text: 'Certificate' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Certificate (All)</a></li>
+                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect({ value: '', text: 'Certificate' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Certificate (All)</a></li>
                                     <li v-for="option in certificateOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -65,14 +65,14 @@
                             </div>
                             <!-- Course Industry Dropdown -->
                             <div class="dropdown_dashboard" ref="courseIndustryDropdownRef" style="position: relative; ">
-                                <button @click="toggleCourseIndustryDropdown" class="btn btn-outline-secondary dropdown-toggle" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
+                                <button @click="toggleCourseIndustryDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseIndustryText || 'Course Industry' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
-                                    <li><a class="dropdown-item" href="#" @click.prevent="handleCourseIndustrySelect({ value: '', text: 'Course Industry' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Industry (All)</a></li>
+                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                    <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect({ value: '', text: 'Course Industry' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Industry (All)</a></li>
                                     <li v-for="option in courseIndustryOptions" :key="option.value">
-                                        <a class="dropdown-item" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; color: #212529; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
+                                        <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
                                             {{ option.text }}
                                         </a>
                                     </li>
@@ -84,7 +84,7 @@
 
                 </div>
                 <!-- Skills Section -->
-                <div class="section_box">
+                <div class="section_box dark:bg-dark-bg-secondary dark:text-white">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-xl font-bold section-title">Because of Skills you Follow</h3>
                         <div class="space-x-2 main_left_right_button">
@@ -138,16 +138,16 @@
                             <swiper-slide v-for="(course, index) in paginatedSkillBasedCourses" :key="`skill-${index}-${course.id}`" class=""
                                 style="width: ">
                                 <Link :href="route('courses.show', { course: course.id })">
-                                    <div class="shrink-0 bg-white rounded-lg overflow-hidden">
+                                    <div class="shrink-0 bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
                                         <img :src="getThumbnailSrc(course)" class="w-full object-cover course_listing_home_page"
                                             alt="Course thumbnail" />
                                         <div class="p-2">
-                                            <p class="text-xs text-gray-500">{{ course.type }}</p>
-                                            <p class="text-sm font-semibold leading-tight title_hidden">{{ course.title }}
+                                            <p class="text-xs text-gray-500 dark:text-gray-300">{{ course.type }}</p>
+                                            <p class="text-sm font-semibold leading-tight title_hidden dark:text-white">{{ course.title }}
                                             </p>
                                             <div class="flex justify-between items-center mt-1">
-                                                <p class="text-xs text-gray-500">By: {{ course.author || "Placeholder Author" }}</p>
-                                                <button @click.stop.prevent="toggleFavorite(course)" class="p-1 rounded-full hover:bg-gray-200">
+                                                <p class="text-xs text-gray-500 dark:text-gray-300">By: {{ course.author || 'Placeholder Author' }}</p>
+                                                <button @click.stop.prevent="toggleFavorite(course)" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
                                                     <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                                                     </svg>
@@ -218,28 +218,28 @@
                     </div>
                 </div> -->
 
-                <div class="course-card-wrapper">
-                    <div class="course-card">
+                <div class="dark:bg-dark-bg-secondary dark:text-white" style="display:flex;flex-direction: row; justify-content:space-around; gap:15px;">
+                    <div class="course-card dark:bg-gray-800 dark:text-white">
                         <div class="course-card-text">
                             Leadership & Management
-                            <a href="/content" class="course-card-button">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
                         </div>
                         <img src="/images/leadership_management_image.svg" alt="Leadership & Management"
                             class="course-card-image" />
                     </div>
 
-                    <div class="course-card">
+                    <div class="course-card dark:bg-gray-800 dark:text-white">
                         <div class="course-card-text">
                             Diversity & Equity
-                            <a href="/content" class="course-card-button">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
                         </div>
                         <img src="/images/diversity_image.svg" alt="Diversity & Equity" class="course-card-image" />
                     </div>
 
-                    <div class="course-card">
+                    <div class="course-card dark:bg-gray-800 dark:text-white">
                         <div class="course-card-text">
                             Productivity
-                            <a href="/content" class="course-card-button">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
                         </div>
                         <img src="/images/productivity_image.svg" alt="Productivity" class="course-card-image" />
                     </div>
@@ -863,7 +863,11 @@ const toggleFavorite = async (course) => {
 
 @media(max-width:1435px){
     .course-card{
+        flex-direction: column;
         max-width: 100%;
+        align-items: center;
+        text-align: center;
+        height: 350px;
     }
 }
 .course-card-text {
@@ -903,6 +907,8 @@ const toggleFavorite = async (course) => {
 
     .course-card-text {
         align-items: center;
+        text-align: center;
+        justify-content: center;
     }
 }
 
@@ -1067,5 +1073,86 @@ const toggleFavorite = async (course) => {
     .dropdown_dashboard{
         width: 100%;
     }
+}
+
+.linkedin-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s, transform 0.2s;
+    border: 1px solid #e6e6e6;
+    min-width: 220px;
+    max-width: 320px;
+    margin: auto;
+}
+.linkedin-card:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+    transform: translateY(-2px) scale(1.02);
+}
+.linkedin-card-img-wrap {
+    width: 100%;
+    height: 120px;
+    background: #f3f6f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.linkedin-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.linkedin-card-body {
+    padding: 16px 16px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.linkedin-card-type {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.linkedin-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.linkedin-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+.linkedin-card-author {
+    font-size: 12px;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.linkedin-card-fav-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+    border-radius: 50%;
+}
+.linkedin-card-fav-btn:hover {
+    background: #f3f6f8;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
    
-    <aside  v-if="sidebarVisible" class="main_sidebar bg-white shadow-md space-y-6" >
+    <aside  v-if="sidebarVisible" class="main_sidebar bg-white dark:bg-dark-bg-secondary shadow-md space-y-6" >
         <!-- Optional Logo Section -->
         <!-- <div class="flex items-center justify-center">
             <Link :href="route('dashboard')">
@@ -172,15 +172,19 @@ const trendingTopic = [
     font-size: 20px;
     font-weight: 400;
     color: black;
-   padding-top: 13px;
+    padding-top: 13px;
     padding-bottom: 13px;
     padding-left: 24px;
     padding-right: 10px;
     display: flex;
     gap: 6px;
     cursor: pointer;
-
 }
+
+.dark .sidebar_subtitles {
+    color: white;
+}
+
 .active {
     background-color: #97d5ff;
     border-radius: 4px;
@@ -188,6 +192,12 @@ const trendingTopic = [
     border-radius: 0;
     padding-left: 19px;
 }
+
+.dark .active {
+    background-color: #1a1a1a;
+    border-left: 5px solid #ffffff;
+}
+
 .sidebar_titles{
     font-size: 13px;
     font-weight: 400;
@@ -199,8 +209,10 @@ const trendingTopic = [
     letter-spacing: 1px;
     display: flex;
     justify-content: flex-start;
-    
-    
+}
+
+.dark .sidebar_titles {
+    color: white;
 }
 .main_sidebar{
     width: 320px;

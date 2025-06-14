@@ -1,86 +1,51 @@
 <template>
   <div class="main-footer">
-    <footer class="footer">
+    <footer class="footer dark:bg-dark-bg-primary transition-colors duration-200">
       <div class="footer-container">
         <!-- Newsletter Signup -->
         <div class="newsletter">
           <Link :href="user ? '/dashboard' : '/'">
-          <img src="/images/MBM_Uni.png" alt="CFO Logo" class="logo" />
+            <img src="/images/MBM_Uni.png" alt="CFO Logo" class="logo dark:brightness-90" />
           </Link>
-          <h2>NewsLetter Signup</h2>
-          <label for="email">Enter Email</label>
-          <input type="email" id="email" placeholder="Enter your email" />
-          <button class="subscribe-btn">Subscribe</button>
+          <h2 class="dark:text-dark-text-primary">NewsLetter Signup</h2>
+          <label for="email" class="dark:text-dark-text-secondary">Enter Email</label>
+          <input type="email" id="email" placeholder="Enter your email" class="dark:bg-dark-bg-secondary dark:text-dark-text-primary dark:border-dark-border-primary" />
+          <button class="subscribe-btn dark:bg-dark-accent-primary dark:hover:bg-dark-accent-secondary">Subscribe</button>
         </div>
 
         <!-- Quick Links -->
         <div class="footer-section">
-          <h3></h3>
+          <h3 class="text-xl font-bold text-light-text-primary dark:text-dark-text-primary">Quick Links</h3>
           <ul>
-            <li><router-link to="/login" class="footer-link">Log In</router-link></li>
-            <li><router-link to="/download" class="footer-link">Download</router-link></li>
-            <li><router-link to="/terms" class="footer-link">Terms & Conditions</router-link></li>
-            <li><router-link to="/privacypolicy" class="footer-link">Privacy Policy</router-link></li>
-            <li><router-link to="/about" class="footer-link">About Us</router-link></li>
-            <li><router-link to="/contact" class="footer-link">Need help? <span class="highlight">Contact
-                  us</span></router-link></li>
-            <li><a href="mailto:support@therealworldportal.com" class="footer-email">support@therealworldportal.com</a>
-            </li>
+            <li><router-link to="/login" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Log In</router-link></li>
+            <li><router-link to="/download" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Download</router-link></li>
+            <li><router-link to="/terms" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Terms & Conditions</router-link></li>
+            <li><router-link to="/privacypolicy" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Privacy Policy</router-link></li>
+            <li><router-link to="/about" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">About Us</router-link></li>
+            <li><router-link to="/contact" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Need help? <span class="highlight dark:text-dark-accent-primary">Contact us</span></router-link></li>
+            <li><a href="mailto:support@therealworldportal.com" class="footer-email dark:text-dark-text-primary dark:hover:text-dark-accent-primary">support@therealworldportal.com</a></li>
           </ul>
         </div>
 
-        <!-- Pakistan Office -->
+        <!-- Office Information -->
         <div class="footer-section">
-          <h3></h3>
-          <p>Owned and Managed by New Era Learning LLC</p>
-          <p>Distributed by our partners:</p>
-          <p><strong>Thrifty Consulting LLC</strong></p>
-          <p>800 North State St. Ste 403, Dover, DE 19901</p>
-          <p><strong>Legendary Courses, Inc</strong></p>
-          <p>221 N. Broad St. Middletown, DE 19709</p>
+          <h3 class="text-xl font-bold text-light-text-primary dark:text-dark-text-primary">Office</h3>
+          <p class="dark:text-dark-text-secondary">Owned and Managed by New Era Learning LLC</p>
+          <p class="dark:text-dark-text-secondary">Distributed by our partners:</p>
+          <p class="dark:text-dark-text-primary"><strong>Thrifty Consulting LLC</strong></p>
+          <p class="dark:text-dark-text-secondary">800 North State St. Ste 403, Dover, DE 19901</p>
+          <p class="dark:text-dark-text-primary"><strong>Legendary Courses, Inc</strong></p>
+          <p class="dark:text-dark-text-secondary">221 N. Broad St. Middletown, DE 19709</p>
         </div>
       </div>
 
-      <hr />
+      <hr class="dark:border-dark-border-primary" />
       <div class="footer-bottom">
-        <p>Everything taught within MBM University is for education purposes only. It is up to each student to implement
-          and do the work.</p>
-        <p>MBM University team does not guarantee any specific outcomes or success. Results may vary based on individual
-          effort and circumstances.</p>
+        <p class="dark:text-dark-text-secondary">Everything taught within MBM University is for education purposes only. It is up to each student to implement and do the work.</p>
+        <p class="dark:text-dark-text-secondary">MBM University team does not guarantee any specific outcomes or success. Results may vary based on individual effort and circumstances.</p>
       </div>
     </footer>
-
   </div>
-  <!-- <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-links">
-        <router-link to="/login" class="footer-link">Log In</router-link>
-        <router-link to="/download" class="footer-link">Download</router-link>
-        <router-link to="/terms" class="footer-link">Terms & Conditions</router-link>
-        <router-link to="/privacypolicy" class="footer-link">Privacy Policy</router-link>
-        <router-link to="/about" class="footer-link">About Us</router-link>
-        <router-link to="/contact" class="footer-link">Need help? <span class="highlight">Contact
-            us</span></router-link>
-        <a href="mailto:support@therealworldportal.com" class="footer-email">support@therealworldportal.com</a>
-      </div>
-
-      <div class="footer-info">
-        <p>Owned and Managed by New Era Learning LLC</p>
-        <p>Distributed by our partners:</p>
-        <p><strong>Thrifty Consulting LLC</strong></p>
-        <p>800 North State St. Ste 403, Dover, DE 19901</p>
-        <p><strong>Legendary Courses, Inc</strong></p>
-        <p>221 N. Broad St. Middletown, DE 19709</p>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>Everything taught within MBM University is for education purposes only. It is up to each student to implement
-        and do the work.</p>
-      <p>MBM University team does not guarantee any specific outcomes or success. Results may vary based on individual
-        effort and circumstances.</p>
-    </div>
-  </footer> -->
 </template>
 
 <script setup>
@@ -89,12 +54,12 @@ import { Link, usePage } from '@inertiajs/vue3'
 const user = usePage().props.auth?.user
 </script>
 
-
 <style scoped>
 .footer {
   background-color: #08080D;
   color: white;
   padding: 40px 20px;
+  transition: all 0.3s ease;
 }
 
 .footer-container {
@@ -116,17 +81,20 @@ const user = usePage().props.auth?.user
 .logo {
   width: 220px;
   margin-bottom: 15px;
+  transition: all 0.3s ease;
 }
 
 .newsletter h2 {
   font-size: 20px;
   margin-bottom: 10px;
+  transition: all 0.3s ease;
 }
 
 .newsletter label {
   font-size: 12px;
   margin-bottom: 5px;
   display: block;
+  transition: all 0.3s ease;
 }
 
 .newsletter input {
@@ -136,6 +104,7 @@ const user = usePage().props.auth?.user
   margin-bottom: 10px;
   border: none;
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .subscribe-btn {
@@ -145,6 +114,11 @@ const user = usePage().props.auth?.user
   padding: 10px 16px;
   border-radius: 4px;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.subscribe-btn:hover {
+  background-color: #02a8be;
 }
 
 .footer-section {
@@ -169,6 +143,7 @@ const user = usePage().props.auth?.user
 .footer-section ul li a {
   color: white;
   text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .footer-section ul li a:hover {
@@ -179,6 +154,7 @@ const user = usePage().props.auth?.user
   margin-bottom: 6px;
   text-align: left;
   font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 .social-icons a {
@@ -187,12 +163,14 @@ const user = usePage().props.auth?.user
   color: white;
   font-weight: bold;
   font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 hr {
   margin: 40px 0 20px;
   border: 0;
   border-top: 1px solid #ffffff30;
+  transition: all 0.3s ease;
 }
 
 .footer-bottom {
@@ -207,21 +185,14 @@ hr {
 
 .footer-bottom p {
   margin: 0px;
-}
-
-.scroll-top {
-  background-color: #03BFD7;
-  color: white;
-  text-decoration: none;
-  padding: 10px 14px;
-  border-radius: 50%;
-  font-size: 18px;
+  transition: all 0.3s ease;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .footer-container {
     flex-direction: column;
+    gap: 40px;
   }
 
   .footer-bottom {

@@ -1,332 +1,120 @@
 <template>
-    <div class="main-econinner" id="access">
-        <div class="econinner">
-        <div class="elementorelement">
-            <div class="elementorwidgetcontainer">
-                <h2>What Can I Access?</h2>
+    <section class="py-16 bg-light-bg-primary dark:bg-dark-bg-primary">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-light-text-primary dark:text-dark-text-primary mb-4">
+                    Why Choose eLMS?
+                </h2>
+                <p class="text-xl text-light-text-secondary dark:text-dark-text-secondary max-w-3xl mx-auto">
+                    Discover the features that make our learning platform stand out from the rest.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Customizable Learning
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Tailor your learning experience to match your goals and preferences.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Community Support
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Connect with peers and instructors in a supportive learning environment.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Quality Content
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Access high-quality, up-to-date content curated by industry experts.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Fast Learning
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Accelerate your learning with our efficient and effective teaching methods.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Time Management
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Learn at your own pace with flexible scheduling options.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Resource Library
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Access a vast collection of learning resources and materials.
+                    </p>
+                </div>
             </div>
         </div>
-        <!-- <div class="elementorelement elementorwidget">
-            <div class="box">
-                <div id="logo">
-                    <div class="icon">
-                        <img src="../assets/images/medal.svg" alt="logo">
-                    </div>
-                </div>
-                <div class="discription">
-                    <div class="stepHeading">
-                        <h3 style="margin: 0;">
-                            <span>Step-by-Step<br>Learning</span>
-                        </h3>
-
-                    </div>
-                    <div class="steps">
-                        <ul>
-                            <li><strong>Easy-to-follow program</strong>&nbsp;for daily progress</li>
-                            <li><strong>New high-value skills</strong>&nbsp;constantly added</li>
-                            <li>Master skills you need to&nbsp;<strong>grow your income</strong></li>
-                            <li>Learn with our&nbsp;<strong>custom-made</strong>&nbsp;educational platform</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="sidePic">
-                <img src="../assets/images/laptop.png" alt="step1">
-            </div>
-        </div>
-        <div class="elementorelement elementorwidget">
-            <div class="box">
-                <div id="logo">
-                    <span class="icon">
-                        <img src="../assets/images/grouplogo.svg" alt="logo">
-                    </span>
-
-                </div>
-                <div class="discription">
-                    <div class="stepHeading">
-                        <h3 style="margin: 0;">
-                            <span>Private Network<br>& Community</span>
-                        </h3>
-
-                    </div>
-                    <div class="steps">
-                        <ul>
-                            <li>Network with&nbsp;<strong>200,000+ students</strong></li>
-                            <li>Learn from&nbsp;<strong>real-world results</strong>&nbsp;and examples</li>
-                            <li><strong>Make like-minded friends</strong>&nbsp;on your journey</li>
-                            <li><strong>Celebrate your wins</strong>&nbsp;with people who understand</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="sidePic">
-                <img src="../assets/images/mobile.png" alt="step1">
-            </div>
-        </div> -->
-        <div class="elementorelement elementorwidget">
-            <div class="box">
-                <div id="logo">
-                    <span class="icon">
-                        <img src="/images/personal.svg" alt="logo">
-                    </span>
-                </div>
-                <div class="discription">
-                    <div class="stepHeading">
-                        <h3 style="margin: 0;">
-                            <span>Industry Experts<br>In Your Pocket</span>
-                        </h3>
-
-                    </div>
-                    <div class="steps">
-                        <ul>
-                            <li><strong>Personalized advice</strong>&nbsp;from successful entrepreneurs</li>
-                            <li>Receive&nbsp;<strong>mentorship throughout</strong>&nbsp;your journey</li>
-                            <li>Professors will&nbsp;<strong>help develop a personalized plan</strong>&nbsp;for you</li>
-                            <li>Daily&nbsp;<strong>live sessions</strong>&nbsp;with experienced coaches</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="sidePic">
-                <img src="/images/group.png" alt="step1">
-            </div>
-        </div>
-    </div>
-    </div>
-    
+    </section>
 </template>
 
-<script>
-export default {
-    name: 'WebFeatures'
-}
+<script setup>
+// No additional setup needed for dark mode
 </script>
 
-<style>
-.econinner {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
-.elementorwidgetcontainer {
-
-    color: #30353a;
-    font-size: 30px;
-    font-size: 700;
-    font-family: 'Montserrat';
-}
-
-.elementorelement {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-
-
-
-}
-
-.elementorwidget {
-    border: 2px solid  #87CEEB;
-    border-radius: 20px;
-    width: 65%;
-    /* height: 350px; */
-    justify-content: space-between;
-    padding: 19px 25px;
-    background-color: white;
-    margin-bottom: 30px;
-    flex-direction: row;
-
-}
-
-@media(max-width:650px) {
-    .elementorwidget {
-        height: 680px;
-        width: 80%;
-        flex-direction: column;
-        padding-left: 4%;
-        justify-content: none;
-        align-items: flex-start;
-    }
-}
-
-
-@media (max-width: 1040px) {
-
-    .elementorwidget {
-        width: 70%;
-        flex-direction: column;
-        padding-left: 4% !important;
-        justify-content: none;
-        align-items: flex-start;
-    }
-
-
-
-
-
-    .elementorwidgetcontainer {
-        text-align: center;
-        font-size: 20px;
-    }
-
-}
-
-@media (max-width: 650px) {
-
-    .elementorwidgetcontainer {
-        text-align: center;
-        font-size: 20px;
-    }
-
-
-}
-
-@media (max-width: 440px) {
-
-    .elementorwidget {
-        height: 640px;
-        width: 80%;
-    }
-
-
-
-
-    .elementorwidgetcontainer {
-        text-align: center;
-        font-size: 20px;
-    }
-
-
-}
-
-.icon {
-    background-image: linear-gradient(310deg, #38B6FF, #4CCAFF);
-    display: inline-block;
-    border-radius: 50px;
-    height: 60px;
-    width: 60px;
-    /* text-align: center;
-        align-items: center; */
-    ;
-    margin-bottom: 20px;
-
-}
-
-.icon img {
-    width: 40px;
-    height: 40px;
-    padding-top: 10px;
-    padding-left: 10px;
-
-}
-
-.stepHeading {
-    font-size: 30px;
-    color: #08080D;
-    line-height: 40px;
-}
-
-@media(max-width:510px) {
-    .stepHeading {
-        font-size: 20px;
-    }
-}
-
-.box {
-    width: 45%;
-    display: flex;
-    line-height: 30px;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-}
-
-@media(max-width:1040px) {
-    .box {
-        width: 100%;
-    }
-}
-
-.sidePic {
-    width: 45%;
-}
-
-@media(max-width:1040px) {
-    .sidePic {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        width: 100%;
-    }
-}
-
-@media(max-width:650px) {
-    .sidePic {
-        justify-content: center;
-        align-items: center;
-    }
-}
-@media(max-width:510px) {
-
-    .sidePic {
-        padding-bottom: 0px;
-    }
-}
-
-.sidePic img {
-    width: 100%;
-}
-
-@media(max-width:1040px) {
-    .sidePic img {
-        width: 450px;
-        height: 350px;
-    }
-}
-
-@media(max-width:650px) {
-    .sidePic img {
-        width: 280px;
-        height: 220px;
-    }
-}
-@media(max-width:510px) {
-    .sidePic img {
-        width: 100%
-    }
-}
-
-.econinner {
-    background-position: center center;
-    background-size: cover;
-    background-image: url("/images/bg.png");
-}
-
-.steps ul {
-    list-style: none;
-    padding: 0;
-}
-
-.steps ul li {
-    color: #08080D;
-    position: relative;
-    padding-left: 20px;
-    font-size: 16px;
-}
-
-@media(max-width:510px) {
-    .steps ul li {
-        font-size: 12px;
-    }
-}
-
-.steps ul li::before {
-    content: "◆";
-    position: absolute;
-    left: 0;
-    color:  #87CEEB;
-    font-size: 12px;
-}
+<style scoped>
+/* No additional styles needed as we're using Tailwind classes */
 </style>
