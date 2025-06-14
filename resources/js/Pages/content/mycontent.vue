@@ -113,55 +113,54 @@ const toggleFavorite = async (course) => {
         <div class="p-4">
             <div class="mx-auto max-w-7xl ">
                 <div class="overflow-hidden sm:rounded-lg">
-                    <div class="course-card-wrapper">
-                        <div class="course-card">
-                            <div class="course-card-text">
+                    <div class="course-card-wrapper dark:bg-dark-bg-secondary">
+                        <div class="course-card dark:bg-gray-800">
+                            <div class="course-card-text dark:text-white">
                                 Leadership & Management
-                                <a href="/content" class="course-card-button">Explore</a>
+                                <a href="/content" class="course-card-button dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Explore</a>
                             </div>
                             <img src="/images/leadership_management_image.svg" alt="Leadership & Management"
                                 class="course-card-image" />
                         </div>
 
-                        <div class="course-card">
-                            <div class="course-card-text">
+                        <div class="course-card dark:bg-gray-800">
+                            <div class="course-card-text dark:text-white">
                                 Diversity & Equity
-                                <a href="/content" class="course-card-button">Explore</a>
+                                <a href="/content" class="course-card-button dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Explore</a>
                             </div>
                             <img src="/images/diversity_image.svg" alt="Diversity & Equity" class="course-card-image" />
                         </div>
 
-                        <div class="course-card">
-                            <div class="course-card-text">
+                        <div class="course-card dark:bg-gray-800">
+                            <div class="course-card-text dark:text-white">
                                 Productivity
-                                <a href="/content" class="course-card-button">Explore</a>
+                                <a href="/content" class="course-card-button dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Explore</a>
                             </div>
                             <img src="/images/productivity_image.svg" alt="Productivity" class="course-card-image" />
                         </div>
                     </div>
 
                     <!-- Skills Section -->
-                <div class="section_box">
+                <div class="section_box dark:bg-dark-bg-secondary">
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xl font-bold">Because of Skills you Follow</h3>
+                        <h3 class="text-xl font-bold dark:text-white">Because of Skills you Follow</h3>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" style="gap: 25px; padding: 20px;">
                         <div v-for="(course, index) in displayedCourses" :key="`skill-${index}`">
                             <Link :href="route('courses.show', { course: course.id })" class="block hover:shadow-lg transition-shadow duration-200 ease-in-out rounded-lg h-full">
-                                <div class="bg-white rounded-lg overflow-hidden shadow my_course_card">
+                                <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow my_course_card">
                                     <img :src="getThumbnailSrc(course)" class="w-full h-48 object-cover"
                                         alt="Course thumbnail" />
                                     <div class="p-4">
-                                        <p class="text-xs text-gray-500">{{ course.type }}</p>
-                                        <p class="text-sm font-semibold leading-tight title_hidden">{{ course.title }}
-                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-white">{{ course.type }}</p>
+                                        <p class="text-sm font-semibold leading-tight title_hidden dark:text-white">{{ course.title }}</p>
                                         <div class="flex justify-between items-center mt-1">
-                                                <p class="text-xs text-gray-500">By: {{ course.author || "Placeholder Author" }}</p>
-                                                <button @click.stop.prevent="toggleFavorite(course)" class="p-1 rounded-full hover:bg-gray-200">
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">By: {{ course.author || "Placeholder Author" }}</p>
+                                                <button @click.stop.prevent="toggleFavorite(course)" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
                                                     <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                                                     </svg>
-                                                    <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-600">
+                                                    <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-600 dark:text-gray-400">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                                     </svg>
                                                 </button>
@@ -175,12 +174,12 @@ const toggleFavorite = async (course) => {
                      <!-- Pagination Controls -->
                      <div v-if="totalPagesMyCourses > 1" class="flex justify-center items-center mt-8 space-x-2">
                             <button @click="prevPageMyCourses" :disabled="currentPageMyCourses === 1"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-[#97d5ff] rounded-md hover:bg-[#63c0ff] disabled:opacity-50">
+                                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-white bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50">
                                 Previous
                             </button>
-                            <span>Page {{ currentPageMyCourses }} of {{ totalPagesMyCourses }}</span>
+                            <span class="dark:text-white">Page {{ currentPageMyCourses }} of {{ totalPagesMyCourses }}</span>
                             <button @click="nextPageMyCourses" :disabled="currentPageMyCourses === totalPagesMyCourses"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-[#97d5ff] rounded-md hover:bg-[#63c0ff] disabled:opacity-50">
+                                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-white bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50">
                                 Next
                             </button>
                         </div>
@@ -190,16 +189,16 @@ const toggleFavorite = async (course) => {
             <!-- Topics Section -->
 
 
-  <div class="section_box flex justify-start">
+  <div class="section_box flex justify-start dark:bg-dark-bg-secondary">
     <div class="w-full max-w-6xl">
-      <h3 class="text-xl font-bold mb-4 text-start">Topics</h3>
+      <h3 class="text-xl font-bold mb-4 text-start dark:text-white">Topics</h3>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
         <div
           v-for="(topic, index) in visibleTopics"
           :key="`topic-${index}`"
-          class="flex justify-start p-0 ">
-          <p class="font-small">{{ topic.name }}</p>
+          class="flex justify-start p-0">
+          <p class="font-small truncate max-w-[200px] dark:text-white">{{ topic.name }}</p>
         </div>
       </div>
 
@@ -208,7 +207,7 @@ const toggleFavorite = async (course) => {
   <button
     v-if="visibleTopicCount < topics.length"
     @click="showMoreTopics"
-    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition">
     Show More
   </button>
 
@@ -216,7 +215,7 @@ const toggleFavorite = async (course) => {
   <button
     v-if="visibleTopicCount > 9"
     @click="showLessTopics"
-    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition">
     Show Less
        </button>
      </div>

@@ -47,7 +47,7 @@ const submit = () => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
                     {{ invoice ? 'Edit Invoice' : 'Create New Invoice' }}
                 </h2>
                 <Link :href="route('invoices.index')"
@@ -59,34 +59,34 @@ const submit = () => {
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
+                <div class="overflow-hidden bg-white dark:bg-dark-bg-secondary shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white dark:bg-dark-bg-secondary border-b border-gray-200 dark:border-gray-700">
                         <form @submit.prevent="submit">
                             <div class="mb-4">
-                                <label for="user_id" class="block text-sm font-medium text-gray-700">User ID</label>
+                                <label for="user_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">User ID</label>
                                 <input type="number" v-model="form.user_id" id="user_id" name="user_id"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                                <div v-if="form.errors.user_id" class="mt-2 text-sm text-red-600">{{ form.errors.user_id }}</div>
+                                    class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <div v-if="form.errors.user_id" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.errors.user_id }}</div>
                             </div>
 
                             <div class="mb-4">
-                                <label for="course_id" class="block text-sm font-medium text-gray-700">Course ID</label>
+                                <label for="course_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course ID</label>
                                 <input type="number" v-model="form.course_id" id="course_id" name="course_id"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                                <div v-if="form.errors.course_id" class="mt-2 text-sm text-red-600">{{ form.errors.course_id }}</div>
+                                    class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <div v-if="form.errors.course_id" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.errors.course_id }}</div>
                             </div>
 
                             <div class="mb-4">
-                                <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                                <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount</label>
                                 <input type="number" step="0.01" v-model="form.amount" id="amount" name="amount"
-                                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                                <div v-if="form.errors.amount" class="mt-2 text-sm text-red-600">{{ form.errors.amount }}</div>
+                                    class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <div v-if="form.errors.amount" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.errors.amount }}</div>
                             </div>
 
                             <div class="mb-4">
-                                <label for="payment_method" class="block text-sm font-medium text-gray-700">Payment Method</label>
+                                <label for="payment_method" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Method</label>
                                 <select v-model="form.payment_method" id="payment_method" name="payment_method"
-                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                     class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="">Select Payment Method</option>
                                     <option value="credit_card">Credit Card</option>
                                     <option value="paypal">PayPal</option>
@@ -94,18 +94,18 @@ const submit = () => {
                                     <option value="stripe">Stripe</option>
                                     <option value="other">Other</option>
                                 </select>
-                                <div v-if="form.errors.payment_method" class="mt-2 text-sm text-red-600">{{ form.errors.payment_method }}</div>
+                                <div v-if="form.errors.payment_method" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.errors.payment_method }}</div>
                             </div>
 
                             <div class="mb-4">
-                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                                  <select v-model="form.status" id="status" name="status"
-                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                     class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="pending">Pending</option>
                                     <option value="completed">Completed</option>
                                     <option value="failed">Failed</option>
                                 </select>
-                                <div v-if="form.errors.status" class="mt-2 text-sm text-red-600">{{ form.errors.status }}</div>
+                                <div v-if="form.errors.status" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.errors.status }}</div>
                             </div>
 
                             <div class="flex items-center justify-end mt-4">
