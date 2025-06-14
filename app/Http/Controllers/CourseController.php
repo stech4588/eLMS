@@ -18,6 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str; // Import Str facade
 use Illuminate\Support\Facades\File; // Import File facade for directory creation
 use App\Models\Course;
+use App\Models\Invoice;
+use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
@@ -195,12 +197,24 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         // Eager load relationships you might need
-        $course->load('courseType', 'videos', 'industry', 'certificate', 'topic'); // Added 'industry' and 'certificate'
+        $course->load('courseType', 'videos', 'industry', 'certificate', 'topic', 'user'); // Added 'industry' and 'certificate'
+
+        $isPurchased = false;
+        if (Auth::check()) {
+            // Check if a paid invoice exists for the user that has a detail record for this course
+            $isPurchased = Invoice::where('user_id', Auth::id())
+                                  ->where('payment_status', 'paid') // or 'completed' depending on your status values
+                                  ->whereHas('details', function ($query) use ($course) {
+                                      $query->where('course_id', $course->id);
+                                  })
+                                  ->exists();
+        }
 
         // Prepare the data for the view
         $courseData = [
             'id' => $course->id,
             'title' => $course->title,
+            'price' => $course->price,
             'description' => $course->description, // Assuming you have a description field
             'type' => $course->courseType ? $course->courseType->name : 'N/A',
             'industry_name' => $course->industry ? $course->industry->name : 'N/A', // Get name from relationship
@@ -227,6 +241,7 @@ class CourseController extends Controller
 
         return Inertia::render('Course/Detail', [
             'course' => $courseData,
+            'isPurchased' => $isPurchased,
         ]);
     }
 

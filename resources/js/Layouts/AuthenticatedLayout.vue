@@ -216,7 +216,7 @@ onMounted(() => {
 }
 
 .p-6{
-    padding:1.5rem!important;
+    padding:1.5rem;
 }
 
 .page-transition-loader {

@@ -34,8 +34,12 @@ defineProps({
                                 <p class="mt-1 text-sm text-gray-600">{{ invoice.id }}</p>
                             </div>
                             <div>
-                                <h3 class="text-lg font-medium text-gray-900">User ID</h3>
-                                <p class="mt-1 text-sm text-gray-600">{{ invoice.user_id }}</p>
+                                <h3 class="text-lg font-medium text-gray-900">User Name</h3>
+                                <p class="mt-1 text-sm text-gray-600">{{ invoice.user.name }}</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900">Course Name</h3>
+                                <p class="mt-1 text-sm text-gray-600">{{ invoice.details[0]?.course?.title }}</p>
                             </div>
                             <div>
                                 <h3 class="text-lg font-medium text-gray-900">Amount</h3>

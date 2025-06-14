@@ -41,7 +41,11 @@
                                     </ul>
                                     
                                     <div v-if="course.videos && course.videos.length > 0" class="mt-4" style="display: flex; justify-content: flex-end; align-items: center;">
-                                        <Link :href="route('courses.play', { course: course.id, video: course.videos[0].id })" 
+                                        
+                                        <button v-if="!isPurchased && user && user.type === 'student'" @click="handleBuyNow" class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors">
+                                            Buy Now for ${{ course.price }}
+                                        </button>
+                                        <Link v-else :href="route('courses.play', { course: course.id, video: course.videos[0].id })" 
                                               class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">
                                             Play Course
                                         </Link>
@@ -68,11 +72,28 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     course: Object, // Expects a single course object
+    isPurchased: Boolean,
 });
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+const handleBuyNow = () => {
+    if (user.value) {
+        router.get(route('cart'), {
+            course_id: props.course.id,
+            price: props.course.price,
+            title: props.course.title,
+        });
+    } else {
+        router.visit(route('login'));
+    }
+};
 
 // You might want to fetch more detailed video information or other related data here
 // using onMounted or by passing more data from the controller.
@@ -83,4 +104,4 @@ const props = defineProps({
     /* display: none ; */
 }
 /* Add any page-specific styles here */
-</style> 
+</style>

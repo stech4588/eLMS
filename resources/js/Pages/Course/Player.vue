@@ -609,6 +609,8 @@ const updateScreenSize = () => {
         height: 30vh !important;
     }
 }
-
+.home_page_style{
+ padding:0px !important;
+}
 /* Ensure video player does not exceed viewport height, adjust h-[60vh] as needed */
 </style>

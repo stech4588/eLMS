@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="navbar-content">
-      <Link href="/register" class="join-now">JOIN NOW</Link>
+      <Link href="/joinnow" class="join-now">JOIN NOW</Link>
       <a @click="scrollToSection('access')">ACCESS</a>
       <a @click="scrollToSection('education')">EDUCATION</a>
       <a @click="scrollToSection('result')">RESULTS</a>

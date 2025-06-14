@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\VideoController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\WatchlistController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\StripeController;
 use App\Models\User;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseTypeController;
@@ -26,6 +26,7 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Auth\InstructorRegisteredUserController;
 use App\Http\Controllers\CourseFavoriteController;
+use App\Http\Controllers\CartController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -64,6 +65,9 @@ Route::get('/addnewcourses', [CourseController::class, 'create'])
 Route::get('/leadershipAndManagement', function () {
     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
 })->middleware(['auth', 'verified'])->name('leadershipAndManagement');
+Route::get('/joinnow', function () {
+    return Inertia::render('joinNow/join_now');
+})->name('joinnow');    
 Route::get('/artificialIntelligence', function () {
     return Inertia::render('artificialIntelligence/myartificialIntelligence');
 })->middleware(['auth', 'verified'])->name('artificialIntelligence');
@@ -77,9 +81,11 @@ Route::get('/help', function () {
     return Inertia::render('help/help');
 })->middleware(['auth', 'verified'])->name('help');
 
-Route::get('/cart', function () {
-    return Inertia::render('cart/cart');
-})->middleware(['auth', 'verified'])->name('cart');
+// Route::get('/cart', function () {
+//     return Inertia::render('cart/cart');
+// })->middleware(['auth', 'verified'])->name('cart');
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
 
 Route::get('/BecomeInstructor', function () {
     return Inertia::render('Auth/becomeInstructor');
@@ -104,13 +110,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoices/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
     Route::put('/invoices/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+    Route::post('/invoices/create-from-payment', [InvoiceController::class, 'storeFromPayment'])->name('invoices.storeFromPayment');
 
     // Course routes
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
 
-    // Video routes
-    Route::post('/videos', [VideoController::class, 'store'])->name('videos.store');
 
     // permission routes
     Route::post('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
@@ -141,7 +146,6 @@ Route::middleware('auth')->group(function () {
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('courses', CourseController::class);
-Route::apiResource('videos', VideoController::class);
 Route::apiResource('enrollments', EnrollmentController::class);
 Route::apiResource('invoices', InvoiceController::class);
 Route::apiResource('progresses', ProgressController::class);
@@ -156,7 +160,8 @@ Route::get('/courses/{course}', [CourseController::class, 'show'])
 // Add this route for the course player page
 Route::get('/courses/{course}/play/{video?}', [CourseController::class, 'play'])
     ->middleware(['auth', 'verified'])->name('courses.play');
-
+    Route::get('/fetch-intent/{amount}', [StripeController::class, 'fetchIntent']);
+    //Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
 // Route for toggling course favorite status
 Route::post('/courses/{course}/favorite', [CourseFavoriteController::class, 'toggle'])
     ->middleware(['auth', 'verified'])
@@ -168,5 +173,7 @@ Route::middleware('guest')->group(function () {
 
     Route::post('instructor/register', [InstructorRegisteredUserController::class, 'store']);
 });
+
+
 
 require __DIR__.'/auth.php';

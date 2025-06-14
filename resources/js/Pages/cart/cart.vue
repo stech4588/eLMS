@@ -8,10 +8,9 @@
 
                 <div class="flex justify-between items-center mb-4">
                     <div>
-                        <p class="text-lg font-medium">Monthly</p>
-                        <p class="text-sm text-gray-500">$29.99/mo</p>
+                        <p class="text-lg font-medium">{{ title }}</p>
                     </div>
-                    <p class="text-lg font-semibold">Total: $30</p>
+                    <p class="text-lg font-semibold">Total: ${{ price }}</p>
                 </div>
 
                 <button class="w-full bg-yellow-400 text-blue-800 font-semibold py-3 rounded-lg mb-4 flex items-center justify-center">
@@ -24,34 +23,18 @@
                     <hr class="w-full border-gray-300" />
                 </div>
 
-                <form>
-                    <div class="mb-4">
-                        <label for="card-name" class="block text-sm font-medium text-gray-700 mb-1">Name on card</label>
-                        <input type="text" id="card-name" placeholder="Name on card" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
+                <form @submit.prevent="checkout">
+                    <div class="mb-6">
+                        <div id="payment-element"></div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="card-number" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                        <input type="text" id="card-number" placeholder="1234 1234 1234 1234" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label for="expiry-date" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                            <input type="text" id="expiry-date" placeholder="MM / YY" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
-                        </div>
-                        <div>
-                            <label for="cvc" class="block text-sm font-medium text-gray-700 mb-1">CVC</label>
-                            <input type="text" id="cvc" placeholder="CVC" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-[#148ad9] text-white font-semibold py-3 rounded-lg hover:bg-[#76c3f1]">
-                        Pay $30.00
+                    <button type="submit" class="w-full bg-[#148ad9] text-white font-semibold py-3 rounded-lg hover:bg-[#76c3f1]" :disabled="paymentProcessing || !price">
+                        <span v-if="paymentProcessing">Processing...</span>
+                        <span v-else>Pay ${{ price }}</span>
                     </button>
                 </form>
                 <p class="text-xs text-gray-500 mt-6">
-                   We’re looking for passionate educators and industry experts. At MBM Learning, your knowledge matters. Whether you’re a seasoned professional or an emerging leader in your field, we provide the tools and support to help you succeed.
+                   We're looking for passionate educators and industry experts. At MBM Learning, your knowledge matters. Whether you're a seasoned professional or an emerging leader in your field, we provide the tools and support to help you succeed.
                 </p>
             </div>
         </div>
@@ -60,6 +43,76 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { onMounted, ref } from 'vue';
+import { loadStripe } from '@stripe/stripe-js';
+import { router } from '@inertiajs/vue3';
+
+const props = defineProps({
+    course_id: [String, Number],
+    title: String,
+    price: [String, Number]
+});
+
+const pk = 'pk_test_51RZFkqPF8BzoPAVhNu7Lpqi40TnbQETCQGyiisJyPfztajSTaZdBOfXem930W375gIMhjyaLK9VAJOMk4mUb9NNc009zifzCDs';
+let stripe = null;
+let elements = null;
+const paymentProcessing = ref(false);
+
+const loadStripeDate = async () => {
+    if (!props.price) return;
+    stripe = await loadStripe(pk);
+    try {
+        // const amountInCents = Math.round(props.price * 100);
+        const response = await axios.get(`/fetch-intent/${props.price}`);
+        elements = stripe.elements({ clientSecret: response.data.client_secret });
+        const paymentElement = elements.create('payment');
+        paymentElement.mount('#payment-element');
+    } catch (error) {
+        console.error("Error fetching payment intent:", error);
+    }
+};
+
+onMounted(() => {
+    loadStripeDate();
+});
+
+const checkout = async () => {
+    if (paymentProcessing.value || !stripe || !elements) {
+        return;
+    }
+    paymentProcessing.value = true;
+
+    const result = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+            return_url: window.location.href, // Or a specific success URL
+        },
+        redirect: 'if_required'
+    });
+
+    if (result.error) {
+        console.error(result.error.message);
+        paymentProcessing.value = false;
+    } else {
+        if (result.paymentIntent.status === 'succeeded') {
+            try {
+                await axios.post('/invoices/create-from-payment', {
+                    amount: result.paymentIntent.amount,
+                    payment_method: result.paymentIntent.payment_method_types[0],
+                    transaction_id: result.paymentIntent.id,
+                    course_id: props.course_id,
+                    price: props.price,
+                });
+                console.log("Invoice created successfully.");
+                router.visit(route('courses.show', { course: props.course_id }));
+            } catch (invoiceError) {
+                console.error("Error creating invoice:", invoiceError);
+            }
+        }
+    }
+
+    paymentProcessing.value = false;
+};
 </script>
 
 <style>
