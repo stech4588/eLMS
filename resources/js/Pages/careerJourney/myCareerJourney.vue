@@ -1,6 +1,72 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage, useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+const props = defineProps({
+    preferredTopics: Array,
+    allTopics: Array,
+});
+
+const isEditing = ref(false);
+const goalForm = useForm({
+    primary_learning_goal: user.value.primary_learning_goal,
+});
+
+function startEditing() {
+    goalForm.primary_learning_goal = user.value.primary_learning_goal;
+    isEditing.value = true;
+}
+
+function cancelEditing() {
+    isEditing.value = false;
+    goalForm.reset();
+}
+
+function saveCareerGoal() {
+    goalForm.patch(route('career-goal.update'), {
+        onSuccess: () => {
+            isEditing.value = false;
+        },
+    });
+}
+
+const topicForm = useForm({
+    preferred_topic_ids: props.preferredTopics.map(t => t.id),
+});
+
+const searchTerm = ref('');
+
+const availableTopics = computed(() => {
+    return props.allTopics.filter(topic => {
+        const isNotSelected = !topicForm.preferred_topic_ids.includes(topic.id);
+        const matchesSearch = topic.name.toLowerCase().includes(searchTerm.value.toLowerCase());
+        return isNotSelected && matchesSearch;
+    }).slice(0, 10);
+});
+
+function getTopicName(topicId) {
+    const topic = props.allTopics.find(t => t.id === topicId);
+    return topic ? topic.name : '';
+}
+
+function addTopic(topic) {
+    if (!topicForm.preferred_topic_ids.includes(topic.id)) {
+        topicForm.preferred_topic_ids.push(topic.id);
+    }
+    searchTerm.value = '';
+}
+
+function removeTopic(topicId) {
+    topicForm.preferred_topic_ids = topicForm.preferred_topic_ids.filter(id => id !== topicId);
+}
+
+function updateTopics() {
+    topicForm.patch(route('preferred-topics.update'));
+}
 </script>
 
 <template>
@@ -15,20 +81,30 @@ import { Head } from '@inertiajs/vue3';
                     <div class="profile-sections-container">
                         <!-- Profile Card -->
                         <div class="profile-card">
-                            <img src="/images/profile.svg" alt="myCareerJourney" class="profile-image" />
-                            <div class="profile-name">James j.</div>
-                            <div class="profile-title">Senior Developer</div>
+                            <img :src="user.profile_photo_url || '/images/profile.svg'" alt="myCareerJourney" class="profile-image" style="width: 85px;border-radius: 50%;"/>
+                            <div class="profile-name">{{ user.name }}</div>
+                            <div class="profile-title">{{ user.type }}</div>
                         </div>
                         
                         <!-- Career Goal Card -->
                         <div class="career-goal-card">
-                            <div class="goal-content">
+                            <div class="goal-content" >
                                 <div class="goal-header">
                                     <span class="goal-title">Career Goal</span>
-                                    <img src="/images/pen_icon.svg" alt="pen" class="edit-icon" />
+                                    <img src="/images/pen_icon.svg" alt="pen" class="edit-icon" @click="startEditing" v-if="!isEditing"/>
                                 </div>
-                                <div class="goal-description">
-                                    Grow and advance as <strong>Senior Developer</strong>
+                                <div v-if="!isEditing" class="goal-description">
+                                    {{ user.primary_learning_goal }}
+                                </div>
+                                <div v-else>
+                                    <form @submit.prevent="saveCareerGoal">
+                                         <input type="text" v-model="goalForm.primary_learning_goal" class="add-skill-input" style="width: 100%; padding-left: 10px;height: 40px;"  />
+                                         <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+                                              <button type="submit" class="save-btn">Save</button>
+                                          <button type="button" @click="cancelEditing" class="cancel-btn">Cancel</button>
+                                         </div>
+                                         
+                                      </form>
                                 </div>
                             </div>
 
@@ -45,24 +121,33 @@ import { Head } from '@inertiajs/vue3';
                          <div class="learning-plan-title">Choose a focus to unlock your personalized learning plan</div>
                         <p class="learning-plan-subtitle">We'll create a plan to help you there.</p>
                     </div>
-                    <div style=" display: flex;gap: 10px;">
-                        <input type="text" placeholder="I want to..." class="add-skill-input" />
-                        <div>
-                            <img src="/images/arrow_add_icon.svg" alt="add" class="add-skill-icon" />
+                    <form @submit.prevent="updateTopics" class="topics-form">
+                        <div class="topics-input-wrapper">
+                            <div class="selected-topics-container">
+                                <span v-for="topicId in topicForm.preferred_topic_ids" :key="topicId" class="topic-tag">
+                                    {{ getTopicName(topicId) }}
+                                    <button @click.prevent="removeTopic(topicId)" class="remove-tag">&times;</button>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    v-model="searchTerm"
+                                    placeholder="I want to..." 
+                                    class="add-skill-input" 
+                                    style="border: none;"
+                                />
+                            </div>
+                            <button type="submit" class="submit-topics-btn">
+                                <img src="/images/arrow_add_icon.svg" alt="add" class="add-skill-icon" />
+                            </button>
                         </div>
-                    </div>
+                    </form>
                        
-                        
-                        <div class="focus-options-container">
-                            
-                            <div class="focus-option"><img src="/images/bulb_icon.svg"/>Focus on top designs</div>
-                            <div class="focus-option"><img src="/images/bulb_icon.svg"/>Select Skills</div>
-                            <div class="focus-option"><img src="/images/bulb_icon.svg"/>Develop Skills to manage teams</div>
-                            <div class="focus-option"><img src="/images/bulb_icon.svg"/>Focus on top UI Ux designs</div>
-                            <div class="focus-option"><img src="/images/bulb_icon.svg"/>Explore your interest</div>
-                            <div class="focus-option"><img src="/images/bulb_icon.svg"/>Explore your Career</div>
+                    <div class="focus-options-container">
+                        <div v-for="topic in availableTopics" :key="topic.id" class="focus-option" @click="addTopic(topic)">
+                            <img src="/images/bulb_icon.svg"/>{{ topic.name }}
                         </div>
                     </div>
+                </div>
             </div>
         </div>
         <footer class="footer_upload_video" style="background-color: white; display: flex; justify-content: space-between; padding: 20px; align-items: baseline; margin-top: 30px;">
@@ -173,6 +258,8 @@ import { Head } from '@inertiajs/vue3';
 
 .goal-content {
     padding: 20px;
+    padding-bottom: 0px;
+    padding-top: 10px;
 }
 
 .goal-header {
@@ -185,10 +272,12 @@ import { Head } from '@inertiajs/vue3';
 
 .edit-icon {
     /* Add any specific icon styles here */
+    cursor: pointer;
 }
 
 .goal-description {
     margin-top: 10px;
+    border-top: 1px solid gray;
 }
 
 .goal-footer {
@@ -219,7 +308,7 @@ font-weight: 600;
  color: #4D4D4D;
 }
 .add-skill-input{
-    width: 80%;
+    
     height: 50px;
     border-radius: 24px;
     border: 1px solid gray;
@@ -236,14 +325,19 @@ font-weight: 600;
     border-radius: 50%;
     padding: 15px 10px;
 }
+.submit-topics-btn:hover .add-skill-icon {
+    background-color: #c7c7c766;
+    filter: brightness(0.5);
+}
 .focus-option{
     border-radius: 24px;
     border: 1px solid gray;
     padding: 10px;
-        padding-left: 24px;
+    padding-left: 24px;
     padding-right: 80px;
     display: flex;
     gap: 15px;
+    cursor: pointer;
 }
 @media (max-width: 340px) {
     .focus-option {
@@ -262,5 +356,68 @@ font-weight: 600;
         flex-direction: column;
         
     }
+}
+
+.topics-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.topics-input-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+.selected-topics-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    border: 1px solid gray;
+    border-radius: 24px;
+    padding: 5px 10px;
+    flex-grow: 1;
+}
+.topic-tag {
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 16px;
+    padding: 5px 10px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.remove-tag {
+    margin-left: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    color: #555;
+}
+.submit-topics-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.save-btn, .cancel-btn {
+    padding: 0px 6px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.save-btn {
+    background-color: #148ad9;
+    color: white;
+}
+.cancel-btn {
+    background-color: #bbbbbb;
+    color: white;
 }
 </style>

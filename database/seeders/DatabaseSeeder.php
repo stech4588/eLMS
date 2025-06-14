@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CourseTopicSeeder::class);
         $this->call(CourseIndustrySeeder::class);
         $this->call(CourseTypeSeeder::class);
-
+       
         User::updateOrCreate(
             [
                 'email' => 'test@example.com',

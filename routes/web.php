@@ -27,6 +27,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Auth\InstructorRegisteredUserController;
 use App\Http\Controllers\CourseFavoriteController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CareerJourneyController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -37,6 +38,14 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/privacy-policy', function () {
+    return Inertia::render('PrivacyPolicy');
+})->name('privacy.policy');
+
+Route::get('/terms-of-services', function () {
+    return Inertia::render('TermsOfService');
+})->name('terms.of.services');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -44,9 +53,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/swiper', function () {
     return Inertia::render('library/swiper');
 })->middleware(['auth', 'verified'])->name('swiper');
-Route::get('/careerJourney', function () {
-    return Inertia::render('careerJourney/myCareerJourney');
-})->middleware(['auth', 'verified'])->name('careerJourney');
+Route::get('/my-career-journey', [CareerJourneyController::class, 'index'])->middleware(['auth', 'verified'])->name('career.journey');
 Route::get('/library', [ContentController::class, 'mylibrary'])
     ->middleware(['auth', 'verified'])
     ->name('library');
@@ -101,6 +108,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/career-goal', [UserController::class, 'updateCareerGoal'])->name('career-goal.update');
+    Route::patch('/preferred-topics', [UserController::class, 'updatePreferredTopics'])->name('preferred-topics.update');
 
     // Invoice Management Routes
      Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
