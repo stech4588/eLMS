@@ -5,7 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
 import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
-import { Link, usePage, router } from '@inertiajs/vue3'
+import { Link, usePage, router, Head } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
 
 const user = usePage().props.auth?.user;
@@ -14,6 +14,7 @@ const isSidebarOpen = ref(false)
 const page = usePage();
 const isLoading = ref(false);
 const isDark = ref(false);
+const meta = computed(() => page.props.meta || {});
 
 // Check for saved theme preference or system preference
 onMounted(() => {
@@ -57,6 +58,11 @@ onMounted(() => {
 </script>
 
 <template>
+    <Head>
+        <title>{{ meta.meta_title }}</title>
+        <meta name="description" :content="meta.meta_description">
+        <meta name="keywords" :content="meta.meta_keywords">
+    </Head>
     <div :class="{'dark': isDark}" class="flex min-h-screen bg-[#97d5ff] dark:bg-dark-bg-primary mobile_view_style" style="flex-direction: column;">
         <nav class="border-b border-gray-100 dark:border-dark-border-primary bg-white dark:bg-dark-bg-secondary">
             <div class="mx-auto px-4 sm:px-6 lg:px-8" style="border-bottom: 1px solid rgb(225 225 225)">

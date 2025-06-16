@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CourseTopicSeeder::class);
         $this->call(CourseIndustrySeeder::class);
         $this->call(CourseTypeSeeder::class);
+        $this->call(PageSeeder::class);
        
         User::updateOrCreate(
             [

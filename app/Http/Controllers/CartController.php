@@ -4,22 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Course;
 
 class CartController extends Controller
 {
     public function index(Request $request)
     {
         $courseId = $request->query('course_id');
-        $title = $request->query('title');
-        $price = $request->query('price');
+        $course = Course::with(['videos', 'courseType', 'industry', 'certificate'])->find($courseId);
 
-        // You might want to validate that the course exists and the price is correct
-        // For now, we'll pass them directly to the view.
+        if (!$course) {
+            // Handle course not found, maybe redirect back with an error
+            return redirect()->back()->with('error', 'Course not found.');
+        }
 
         return Inertia::render('cart/cart', [
-            'course_id' => $courseId,
-            'title' => $title,
-            'price' => $price,
+            'course' => $course,
         ]);
     }
 }

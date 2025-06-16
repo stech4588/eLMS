@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\MetaTagHelper;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'course_id' => fn () => $request->session()->get('course_id'),
             ],
+            'meta' => MetaTagHelper::getMetaTags(),
         ];
     }
 }

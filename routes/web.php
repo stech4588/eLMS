@@ -28,6 +28,8 @@ use App\Http\Controllers\Auth\InstructorRegisteredUserController;
 use App\Http\Controllers\CourseFavoriteController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CareerJourneyController;
+use App\Http\Controllers\Admin\MetaTagController;
+use App\Http\Controllers\PageController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -136,6 +138,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('course-certificates', CourseCertificateController::class)->except(['index', 'create', 'show', 'edit']);
     Route::resource('course-industries', CourseIndustryController::class)->except(['index', 'create', 'show', 'edit']);
     Route::get('/trending-topics-list', [TopicController::class, 'fetchTrending'])->name('topics.fetchTrending');
+
+    // Meta Tags routes
+    Route::resource('metatags', MetaTagController::class);
+    Route::get('/api/pages', [PageController::class, 'index'])->name('api.pages.index');
 
     // Comments route
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');

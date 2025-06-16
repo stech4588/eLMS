@@ -42,10 +42,16 @@
                                     
                                     <div v-if="course.videos && course.videos.length > 0" class="mt-4" style="display: flex; justify-content: flex-end; align-items: center;">
                                         
-                                        <button v-if="!isPurchased && user && user.type === 'student'" @click="handleBuyNow" class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors">
+                                        <!-- Show "Buy Now" only to students who haven't purchased the course -->
+                                        <Link v-if="user && user.type === 'student' && !isPurchased" 
+                                              :href="route('cart', { course_id: course.id })" 
+                                              class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors">
                                             Buy Now for ${{ course.price }}
-                                        </button>
-                                        <Link v-else :href="route('courses.play', { course: course.id, video: course.videos[0].id })" 
+                                        </Link>
+                                        
+                                        <!-- Show "Play Course" to instructors, purchased students, and guests -->
+                                        <Link v-else 
+                                              :href="route('courses.play', { course: course.id, video: course.videos[0].id })" 
                                               class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">
                                             Play Course
                                         </Link>
@@ -82,18 +88,6 @@ const props = defineProps({
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
-
-const handleBuyNow = () => {
-    if (user.value) {
-        router.get(route('cart'), {
-            course_id: props.course.id,
-            price: props.course.price,
-            title: props.course.title,
-        });
-    } else {
-        router.visit(route('login'));
-    }
-};
 
 // You might want to fetch more detailed video information or other related data here
 // using onMounted or by passing more data from the controller.
