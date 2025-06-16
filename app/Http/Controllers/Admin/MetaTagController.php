@@ -69,8 +69,10 @@ class MetaTagController extends Controller
     public function edit(string $id)
     {
         $page = Page::with('metatag')->findOrFail($id);
+        $pages = Page::all();
         return Inertia::render('Admin/MetaTags/Edit', [
             'page' => $page,
+            'pages' => $pages,
         ]);
     }
 
@@ -79,21 +81,16 @@ class MetaTagController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $page = Page::findOrFail($id);
-        $request->validate([
+        $metatag = MetaTag::where('page_id', $id)->firstOrFail();
+
+        $validated = $request->validate([
+            'page_id' => 'required|exists:pages,id|unique:metatags,page_id,'.$metatag->id,
             'meta_title' => 'required|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string',
         ]);
-
-        MetaTag::updateOrCreate(
-            ['page_id' => $page->id],
-            [
-                'meta_title' => $request->meta_title,
-                'meta_description' => $request->meta_description,
-                'meta_keywords' => $request->meta_keywords,
-            ]
-        );
+        
+        $metatag->update($validated);
 
         return redirect()->route('metatags.index');
     }

@@ -1,30 +1,66 @@
 <template>
     <AuthenticatedLayout>
         <div class="bg-[#97d5ff] min-h-screen py-12 text-black">
+            
             <div class="container mx-auto px-4">
+                <!-- Promo Banner -->
+                <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-r from-[#9d85ff] to-[#6a6cff] p-1 text-white relative">
+                    <div class="flex items-center justify-between p-4">
+                        <div class="flex items-center gap-6">
+                            <!-- Countdown Box -->
+                            <div class="rounded-lg bg-[#6e58e0] p-3 text-center shadow-lg">
+                                <div class="text-xs font-bold uppercase tracking-wider">Don't miss out!</div>
+                                <div class="mt-1 font-mono text-2xl tracking-wider">
+                                    <span>{{ formattedTime.days }}</span>:
+                                    <span>{{ formattedTime.hours }}</span>:
+                                    <span>{{ formattedTime.minutes }}</span>:
+                                    <span>{{ formattedTime.seconds }}</span>
+                                </div>
+                            </div>
+                            <!-- Promo Text -->
+                            <div class="text-lg font-bold">
+                                + 2 months free with a 48-month plan
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Percentage Symbol -->
+                    <div class="absolute right-0 top-0 flex h-full items-center pr-6 text-8xl font-black text-white opacity-20 transform -translate-y-1">
+                        %
+                    </div>
+                </div>
                 <h1 class="text-4xl font-bold text-center mb-8">Your cart</h1>
                 <div class="flex flex-col lg:flex-row gap-8">
 
                     <!-- Left Side -->
                     <div class="lg:w-2/3">
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <img :src="course.videos[0].thumbnail_url" alt="Course Image" class=" h-48 object-cover rounded-lg mb-4" style="width: 40%;">
-                            <h2 class="text-2xl font-semibold mb-4">{{ course.title }}</h2>
-                            <p class="text-gray-600 mb-4">{{ course.description }}</p>
-                            
-                            <div v-if="course.videos && course.videos.length > 0">
-                                <h3 class="text-xl font-semibold mb-2">Topics included:</h3>
-                                <ul class="list-disc list-inside text-gray-600">
-                                    <li v-for="video in course.videos" :key="video.id">{{ video.title }}</li>
-                                </ul>
+                        <div class="bg-white rounded-lg shadow-md p-6 flex gap-4 cart_right_container">
+                            <div>
+                                <img :src="course.videos[0].thumbnail_url" alt="Course Image"
+                                    class=" h-45 object-cover rounded-lg mb-4" style="width: 512px;">
                             </div>
-                             <div class="mt-4">
-                                <p class="text-lg"><span class="font-semibold">Type:</span> {{ course.course_type ? course.course_type.name : 'N/A' }}</p>
+                            <div>
+                                <h2 class="text-2xl font-semibold mb-4">{{ course.title }}</h2>
+                                <p class="text-gray-600 mb-4">{{ truncatedDescription }}</p>
+                            
+
+                                <div v-if="course.videos && course.videos.length > 0">
+                                    <h3 class="text-xl font-semibold mb-2">Topics included:</h3>
+                                    <ul class="list-disc list-inside text-gray-600">
+                                        <li v-for="video in visibleVideos" :key="video.id">{{ video.title }}</li>
+                                    </ul>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-lg"><span class="font-semibold">Type:</span> {{ course.course_type ?
+                                        course.course_type.name : 'N/A' }}</p>
+                                </div>
+
+                                <div
+                                    class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-6 rounded-md">
+                                    <p><span class="font-bold">Great news!</span> Your course includes lifetime access
+                                        and all future updates for free.</p>
+                                </div>
                             </div>
 
-                            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-6 rounded-md">
-                                <p><span class="font-bold">Great news!</span> Your course includes lifetime access and all future updates for free.</p>
-                            </div>
                         </div>
                     </div>
 
@@ -32,7 +68,7 @@
                     <div class="lg:w-1/3">
                         <div class="bg-white rounded-lg shadow-md p-6">
                             <h2 class="text-2xl font-semibold mb-4">Order summary</h2>
-                            
+
                             <div class="flex justify-between items-center mb-4 pb-4 border-b">
                                 <span class="text-gray-600">{{ course.title }}</span>
                                 <span class="font-semibold">${{ course.price }}</span>
@@ -49,12 +85,14 @@
                             </div>
 
                             <div class="mb-6">
-                                 <div id="payment-element"></div>
+                                <div id="payment-element"></div>
                             </div>
-                           
 
-                             <form @submit.prevent="checkout">
-                                <button type="submit" class="w-full bg-[#3b82f6] text-white font-semibold py-3 rounded-lg hover:bg-[#5998ff] transition-colors" :disabled="paymentProcessing || !course.price">
+
+                            <form @submit.prevent="checkout">
+                                <button type="submit"
+                                    class="w-full bg-[#3b82f6] text-white font-semibold py-3 rounded-lg hover:bg-[#5998ff] transition-colors"
+                                    :disabled="paymentProcessing || !course.price">
                                     <span v-if="paymentProcessing">Processing...</span>
                                     <span v-else>Continue</span>
                                 </button>
@@ -69,12 +107,69 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onUnmounted, computed } from 'vue';
 import { loadStripe } from '@stripe/stripe-js';
 import { router } from '@inertiajs/vue3';
 
+const countdown = ref({
+    days: 2,
+    hours: 14,
+    minutes: 7,
+    seconds: 2
+});
+
+const targetDate = new Date();
+targetDate.setDate(targetDate.getDate() + countdown.value.days);
+targetDate.setHours(targetDate.getHours() + countdown.value.hours);
+targetDate.setMinutes(targetDate.getMinutes() + countdown.value.minutes);
+targetDate.setSeconds(targetDate.getSeconds() + countdown.value.seconds);
+
+let intervalId = null;
+
+const updateCountdown = () => {
+    const now = new Date();
+    const difference = targetDate.getTime() - now.getTime();
+
+    if (difference <= 0) {
+        countdown.value = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        if (intervalId) clearInterval(intervalId);
+        return;
+    }
+
+    countdown.value.days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    countdown.value.hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    countdown.value.minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    countdown.value.seconds = Math.floor((difference % (1000 * 60)) / 1000);
+};
+
+const pad = (num) => num.toString().padStart(2, '0');
+
+const formattedTime = computed(() => ({
+    days: pad(countdown.value.days),
+    hours: pad(countdown.value.hours),
+    minutes: pad(countdown.value.minutes),
+    seconds: pad(countdown.value.seconds),
+}));
+
 const props = defineProps({
     course: Object
+});
+
+const showFullDescription = ref(false);
+
+const truncatedDescription = computed(() => {
+    const description = props.course.description;
+    if (description && description.length > 300 && !showFullDescription.value) {
+        return description.substring(0, 300) + '...';
+    }
+    return description;
+});
+
+const visibleVideos = computed(() => {
+    if (props.course.videos) {
+        return props.course.videos.slice(0, 5);
+    }
+    return [];
 });
 
 const pk = 'pk_test_51RZFkqPF8BzoPAVhNu7Lpqi40TnbQETCQGyiisJyPfztajSTaZdBOfXem930W375gIMhjyaLK9VAJOMk4mUb9NNc009zifzCDs';
@@ -97,7 +192,13 @@ const loadStripeDate = async () => {
 };
 
 onMounted(() => {
+    updateCountdown();
+    intervalId = setInterval(updateCountdown, 1000);
     loadStripeDate();
+});
+
+onUnmounted(() => {
+    if (intervalId) clearInterval(intervalId);
 });
 
 const checkout = async () => {
@@ -140,5 +241,11 @@ const checkout = async () => {
 </script>
 
 <style>
+@media (max-width: 425px) {
+    .cart_right_container {
+        flex-direction: column !important;
+        width: 100% !important;
 
+    }
+}
 </style>

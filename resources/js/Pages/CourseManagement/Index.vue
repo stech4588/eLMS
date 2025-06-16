@@ -202,6 +202,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
     courseTypes: Object,
@@ -301,19 +302,41 @@ const submitForm = () => {
 };
 
 const deleteItem = (id) => {
-    if (!confirm('Are you sure you want to delete this item?')) return;
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const urlMap = {
+                courseType: '/course-types',
+                topic: '/topics',
+                courseCertificate: '/course-certificates',
+                courseIndustry: '/course-industries',
+            };
+            const url = `${urlMap[activeTab.value]}/${id}`;
 
-    const urlMap = {
-        courseType: '/course-types',
-        topic: '/topics',
-        courseCertificate: '/course-certificates',
-        courseIndustry: '/course-industries',
-    };
-    const url = `${urlMap[activeTab.value]}/${id}`;
-
-    router.delete(url, {
-        preserveScroll: true,
-        onSuccess: () => {
+            router.delete(url, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    Swal.fire(
+                        'Deleted!',
+                        'The item has been deleted.',
+                        'success'
+                    );
+                },
+                onError: () => {
+                    Swal.fire(
+                        'Error!',
+                        'There was a problem deleting the item.',
+                        'error'
+                    );
+                }
+            });
         }
     });
 };

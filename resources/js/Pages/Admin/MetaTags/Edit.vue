@@ -1,16 +1,25 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, Link } from '@inertiajs/vue3';
+import { Head, useForm, Link, router } from '@inertiajs/vue3';
+//import { ref, watch } from 'vue';
 
 const props = defineProps({
     page: Object,
+    pages: Array,
 });
 
 const form = useForm({
+    page_id: props.page.id,
     meta_title: props.page.metatag ? props.page.metatag.meta_title : '',
     meta_description: props.page.metatag ? props.page.metatag.meta_description : '',
     meta_keywords: props.page.metatag ? props.page.metatag.meta_keywords : '',
 });
+
+//const selectedPageId = ref(props.page.id);
+
+// watch(selectedPageId, (newPageId) => {
+//     //router.get(route('metatags.edit', newPageId));
+// });
 
 const submit = () => {
     form.put(route('metatags.update', props.page.id));
@@ -30,6 +39,12 @@ const submit = () => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
                         <form @submit.prevent="submit">
+                            <div>
+                                <label for="page_id" class="block font-medium text-sm text-gray-700">Page</label>
+                                <select id="page_id" v-model="form.page_id" class="block w-full mt-1">
+                                    <option v-for="page in pages" :key="page.id" :value="page.id">{{ page.name }}</option>
+                                </select>
+                            </div>
                             <div>
                                 <label for="meta_title" class="block font-medium text-sm text-gray-700">Meta Title</label>
                                 <input type="text" id="meta_title" v-model="form.meta_title" class="block w-full mt-1">

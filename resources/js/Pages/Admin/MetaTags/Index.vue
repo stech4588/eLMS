@@ -1,15 +1,41 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 defineProps({
     pages: Array,
 });
 
 const deletePage = (id) => {
-    if (confirm('Are you sure you want to delete this page?')) {
-        router.delete(route('metatags.destroy', id));
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('metatags.destroy', id), {
+                onSuccess: () => {
+                    Swal.fire(
+                        'Deleted!',
+                        'The page has been deleted.',
+                        'success'
+                    );
+                },
+                onError: () => {
+                    Swal.fire(
+                        'Error!',
+                        'There was a problem deleting the page.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
 };
 </script>
 

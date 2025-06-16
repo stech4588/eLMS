@@ -533,6 +533,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import { ref, reactive, onMounted, computed, defineProps, watch } from 'vue';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
     certificates: {
@@ -804,7 +805,11 @@ const nextStep = () => {
         }
 
         if (videosData.value.length === 0) {
-            alert('Please add at least one video.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please add at least one video.',
+            });
             return;
         }
 
@@ -897,7 +902,11 @@ const handleCertificateChange = () => {
 
 const submitNewCertificate = () => {
     if (!newCertificate.title.trim()) {
-        alert('Certificate title cannot be empty.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Certificate title cannot be empty.',
+        });
         return;
     }
     const newCert = {
@@ -907,7 +916,11 @@ const submitNewCertificate = () => {
     };
 
 
-    alert('New certificate created locally. Please ensure your backend saves this and refreshes the certificate list.'); // Placeholder alert
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'New certificate created locally. Please ensure your backend saves this and refreshes the certificate list.',
+    });
 
 
     form.certificates = newCert.value; // This will select the newly "added" certificate.
@@ -993,47 +1006,63 @@ const submitForm = async () => {
                      errorMessage = page.props.flash.error; // Or a more generic message
                 }
                 // Displaying a generic alert. In a real app, you'd likely update the UI to show errors near fields or in a notification area.
-                alert(errorMessage);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: errorMessage,
+                });
             }
         });
     } catch (error) {
         console.error('An unexpected error occurred during form submission:', error);
-        alert('An unexpected error occurred. Please try again.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'An unexpected error occurred. Please try again.',
+        });
     }
 };
 
 const removeVideo = (index) => {
-    if (!confirm('Are you sure you want to remove this video?')) {
-        return;
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Revoke object URLs to prevent memory leaks
+            const videoToRemove = videosData.value[index];
+            if (videoToRemove.videoFilePreview && videoToRemove.videoFilePreview.startsWith('blob:')) {
+                URL.revokeObjectURL(videoToRemove.videoFilePreview);
+            }
+            if (videoToRemove.thumbnailFilePreview && videoToRemove.thumbnailFilePreview.startsWith('blob:')) {
+                URL.revokeObjectURL(videoToRemove.thumbnailFilePreview);
+            }
 
-    // Revoke object URLs to prevent memory leaks
-    const videoToRemove = videosData.value[index];
-    if (videoToRemove.videoFilePreview && videoToRemove.videoFilePreview.startsWith('blob:')) {
-        URL.revokeObjectURL(videoToRemove.videoFilePreview);
-    }
-    if (videoToRemove.thumbnailFilePreview && videoToRemove.thumbnailFilePreview.startsWith('blob:')) {
-        URL.revokeObjectURL(videoToRemove.thumbnailFilePreview);
-    }
+            const wasEditingTheRemovedVideo = currentEditingVideoIndex.value === index;
+            const isEditingAfterTheRemovedVideo = currentEditingVideoIndex.value > index;
 
-    const wasEditingTheRemovedVideo = currentEditingVideoIndex.value === index;
-    const isEditingAfterTheRemovedVideo = currentEditingVideoIndex.value > index;
+            videosData.value.splice(index, 1);
 
-    videosData.value.splice(index, 1);
+            if (videosData.value.length === 0) {
+                currentEditingVideoIndex.value = -1;
+                addNewVideoSlot();
+                return;
+            }
 
-    if (videosData.value.length === 0) {
-        currentEditingVideoIndex.value = -1;
-        addNewVideoSlot();
-        return;
-    }
-
-    if (wasEditingTheRemovedVideo) {
-        const newIndex = Math.max(0, index - 1);
-        currentEditingVideoIndex.value = newIndex;
-        populateVideoDetailsForm(newIndex);
-    } else if (isEditingAfterTheRemovedVideo) {
-        currentEditingVideoIndex.value--;
-    }
+            if (wasEditingTheRemovedVideo) {
+                const newIndex = Math.max(0, index - 1);
+                currentEditingVideoIndex.value = newIndex;
+                populateVideoDetailsForm(newIndex);
+            } else if (isEditingAfterTheRemovedVideo) {
+                currentEditingVideoIndex.value--;
+            }
+        }
+    });
 };
 
 onMounted(() => {

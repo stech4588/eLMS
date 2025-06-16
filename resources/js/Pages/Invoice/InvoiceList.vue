@@ -1,24 +1,43 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 defineProps({
     invoices: Array,
 });
 
 const deleteInvoice = (invoiceId) => {
-    if (confirm('Are you sure you want to delete this invoice?')) {
-        router.delete(route('invoices.destroy', invoiceId), {
-            preserveScroll: true,
-            onSuccess: () => {
-                // Optional: Show success notification
-            },
-            onError: (errors) => {
-                console.error('Error deleting invoice:', errors);
-                // Optional: Handle errors, e.g., show error notification
-            },
-        });
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('invoices.destroy', invoiceId), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    Swal.fire(
+                        'Deleted!',
+                        'Your invoice has been deleted.',
+                        'success'
+                    )
+                },
+                onError: (errors) => {
+                    console.error('Error deleting invoice:', errors);
+                    Swal.fire(
+                        'Error!',
+                        'There was an error deleting the invoice.',
+                        'error'
+                    )
+                },
+            });
+        }
+    })
 };
 
 </script>
@@ -80,10 +99,13 @@ const deleteInvoice = (invoiceId) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.payment_method }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.payment_status }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.transaction_id }}</td>
-                                    <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
+                                    <td class="py-4 px-6 whitespace-nowrap text-sm font-medium flex space-x-2">
                                         <Link :href="route('invoices.show', invoice.id)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
-                                            <img src="/images/view_icon.svg" alt="View" style="max-width: 20px; max-height: 20px;" class="">
+                                            <img src="/images/view_icon.svg" alt="View" style="max-width: 20px; max-height: 20px;">
                                         </Link>
+                                        <button @click="deleteInvoice(invoice.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                            <img src="/images/delete_icon.svg" alt="Delete" style="max-width: 20px; max-height: 20px;">
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
