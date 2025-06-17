@@ -79,7 +79,7 @@ onMounted(() => {
                         </button>
                     </div>
 
-                    <a :href="user ? '/dashboard' : '/'">
+                    <a :href="user ? (user.type === 'instructor' ? '/coursess' : '/dashboard') : '/'">
                         <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav"
                             style="width: 80px; height: 80px;">
                     </a>
@@ -267,7 +267,7 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgb(255, 255, 255);
+    background-color: #97D5FF;
     display: flex;
     justify-content: center;
     align-items: center;
