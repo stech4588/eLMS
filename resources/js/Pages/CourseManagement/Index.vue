@@ -115,7 +115,7 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ topic.id }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ topic.name }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ topic.is_trending ? 'Yes' : 'No' }}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex; width:118px;">
                                                     <button @click="startEdit(topic)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
                                                     <button @click="deleteItem(topic.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
                                                 </td>

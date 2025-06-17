@@ -19,7 +19,7 @@ const form = useForm({
     email: '',
     // num_employees: '',
     password: '',
-    // phone_country_code: 'PK',
+    phone_country_code: 'PK',
     phone_number: '',
     primary_learning_goal: '',
     preferred_topics: [],
@@ -163,6 +163,13 @@ function getTopicName(topicId) {
                         <div class="phone-input-group">
                             <select v-model="form.phone_country_code" class="form-input country-code-select">
                                 <option value="PK">PK</option>
+                                <option value="US">US</option>
+                                <option value="UK">UK</option>
+                                <option value="CA">CA</option>
+                                <option value="AU">AU</option>
+                                <option value="NZ">NZ</option>
+                                <option value="ZA">ZA</option>
+                                <option value="IN">IN</option>
                                 <!-- Add other countries as needed -->
                             </select>
                             <TextInput
@@ -344,7 +351,7 @@ function getTopicName(topicId) {
 
 .form-label {
     display: block;
-    margin-bottom: 6px;
+    
     margin-top: 1px;
     font-size: 14px;
     font-weight: 500;
@@ -365,13 +372,15 @@ function getTopicName(topicId) {
     /* border-left: 4px solid #9CA3AF; Prominent left border as in image */
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     border: none;
+    padding-top: 0px;
 }
 
 .form-input:focus,
 .form-select:focus {
-    border-color: #4F46E5; /* Indigo focus color */
+    /* Indigo focus color */
+    border: none;
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+    box-shadow: none;
 }
 
 .form-select {
@@ -573,6 +582,7 @@ function getTopicName(topicId) {
 .file-input {
     padding: 8px;
     border-radius: 4px;
+    padding-top: 5px;
     /* border: 1px solid #ddd; */
 }
 .file-input:focus {
@@ -596,6 +606,9 @@ function getTopicName(topicId) {
     position: relative;
     width: 100%;
     padding: 2px 2px;
+    min-height: 38px;
+    max-height: 120px;
+    overflow-y: auto;
 }
 
 .selected-tags {
@@ -605,6 +618,8 @@ function getTopicName(topicId) {
     align-items: center;
     min-height: 38px;
     padding: 5px;
+    padding-top: 0px;
+    width: 100%;
 }
 
 .tag {
@@ -614,6 +629,8 @@ function getTopicName(topicId) {
     border-radius: 4px;
     padding: 3px 8px;
     font-size: 14px;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 .remove-tag {
@@ -632,6 +649,8 @@ function getTopicName(topicId) {
     outline: none;
     padding: 5px;
     font-size: 14px;
+    min-width: 120px;
+    max-width: 100%;
 }
 
 .dropdown-list {
@@ -649,15 +668,22 @@ function getTopicName(topicId) {
     padding: 0;
     margin: 0;
     z-index: 10;
+    width: 100%;
 }
 
 .dropdown-list li {
     padding: 10px 12px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dropdown-list li:hover {
     background-color: #f3f4f6;
+}
+select{
+    background-image: none;
 }
 
 </style>

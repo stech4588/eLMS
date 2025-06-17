@@ -54,9 +54,9 @@
         </div> -->
         <div style="">
             <div >
-                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="users"  /> User Listing</Link>
-                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> Course Management</Link>
-                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/metatags' }" href="/metatags"> Meta Tags</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  /> User Listing</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> <img class="sidebar_dark_icon" src="/images/course.svg" alt="users"  />Course Management</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/metatags' }" href="/metatags"> <img class="sidebar_dark_icon" src="/images/meta.svg" alt="users"  />Meta Tags</Link>
                 <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon" src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
                 <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/my-career-journey' }" href="/my-career-journey"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
                
@@ -191,6 +191,10 @@ const staticDropdowns = ref({
 }
 .dark .sidebar_dark_icon{
     filter: invert(1);
+    width: 23px;
+}
+ .sidebar_dark_icon{
+    width: 23px;
 }
 .active {
     background-color: #97d5ff;

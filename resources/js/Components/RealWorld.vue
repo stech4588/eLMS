@@ -45,7 +45,7 @@
             </div>
             <div class="real-col-2">
                 <div class="real-image">
-                    <img src="/images/placeholder.webp">
+                    <img src="/images/img1.png">
                 </div>
             </div>
         </div>
@@ -141,6 +141,7 @@ export default {
     width: 100%;
     height: 100%;
     border: 2px solid #fff;
+    object-fit: cover;
     border-radius: 12px;
 }
 
