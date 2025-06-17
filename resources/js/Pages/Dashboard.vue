@@ -24,7 +24,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedTopicText || 'Topics' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; top: 100%;background-color: #dedede; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute; top: 100%;background-color: #dedede; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect({ value: '', text: 'Topics' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Topics (All)</a></li>
                                     <li v-for="option in topicOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -39,7 +39,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseTypeText || 'Course Type' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute;overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute;overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box;border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect({ value: '', text: 'Course Type' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Type (All)</a></li>
                                     <li v-for="option in courseTypeOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -54,7 +54,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCertificateText || 'Certificate' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute; overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box;border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect({ value: '', text: 'Certificate' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Certificate (All)</a></li>
                                     <li v-for="option in certificateOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -69,7 +69,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseIndustryText || 'Course Industry' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; background-color: #dedede; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute; overflow: hidden; background-color: #dedede; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box;border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect({ value: '', text: 'Course Industry' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Industry (All)</a></li>
                                     <li v-for="option in courseIndustryOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -1176,5 +1176,8 @@ const toggleFavorite = async (course) => {
 }
 .dark .dark_save_button{
     filter: invert(1);
+}
+.dark .dark_home_dropdown{
+    background-color: #2d2d2d !important;
 }
 </style>
