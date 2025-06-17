@@ -144,7 +144,7 @@ function updateTopics() {
                        
                     <div class="focus-options-container">
                         <div v-for="topic in availableTopics" :key="topic.id" class="focus-option" @click="addTopic(topic)">
-                            <img class="dark_career_focus_option" src="/images/bulb_icon.svg"/>{{ topic.name }}
+                            <img class="dark_career_focus_option" src="/images/bulb_icon.svg"/><span>{{ topic.name }}</span>
                         </div>
                     </div>
                 </div>
@@ -338,6 +338,12 @@ font-weight: 600;
     display: flex;
     gap: 15px;
     cursor: pointer;
+    overflow: hidden;
+}
+.focus-option span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 @media (max-width: 340px) {
     .focus-option {

@@ -39,12 +39,12 @@
                             </div>
                             <div>
                                 <h2 class="text-2xl font-semibold mb-4">{{ course.title }}</h2>
-                                <p class="text-gray-600 mb-4">{{ truncatedDescription }}</p>
+                                <p class="text-gray-600 mb-4 dark:text-white">{{ truncatedDescription }}</p>
                             
 
                                 <div v-if="course.videos && course.videos.length > 0">
                                     <h3 class="text-xl font-semibold mb-2">Topics included:</h3>
-                                    <ul class="list-disc list-inside text-gray-600">
+                                    <ul class="list-disc list-inside text-gray-600 dark:text-white">
                                         <li v-for="video in visibleVideos" :key="video.id">{{ video.title }}</li>
                                     </ul>
                                 </div>
@@ -69,16 +69,16 @@
                             <h2 class="text-2xl font-semibold mb-4">Order summary</h2>
 
                             <div class="flex justify-between items-center mb-4 pb-4 border-b">
-                                <span class="text-gray-600">{{ course.title }}</span>
+                                <span class="text-gray-600 dark:text-white">{{ course.title }}</span>
                                 <span class="font-semibold">${{ course.price }}</span>
                             </div>
 
-                            <div class="flex justify-between items-center mb-4">
+                            <!-- <div class="flex justify-between items-center mb-4">
                                 <span class="text-gray-600">Taxes</span>
                                 <span class="text-gray-500 text-sm">Calculated at next step</span>
-                            </div>
+                            </div> -->
 
-                            <div class="flex justify-between items-center font-bold text-xl my-4 pt-4 border-t">
+                            <div class="flex justify-between items-center font-bold text-xl my-4 pt-4 ">
                                 <span>Subtotal</span>
                                 <span>${{ course.price }}</span>
                             </div>
@@ -180,9 +180,32 @@ const loadStripeDate = async () => {
     if (!props.course.price) return;
     stripe = await loadStripe(pk);
     try {
-        // const amountInCents = Math.round(props.course.price * 100);
         const response = await axios.get(`/fetch-intent/${props.course.price}`);
-        elements = stripe.elements({ clientSecret: response.data.client_secret });
+        
+        // Check if dark mode is enabled
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        
+        elements = stripe.elements({ 
+            clientSecret: response.data.client_secret,
+            appearance: {
+                theme: isDarkMode ? 'night' : 'stripe',
+                variables: {
+                    colorPrimary: isDarkMode ? '#3b82f6' : '#2563eb',
+                    colorBackground: isDarkMode ? '#2d2d2d' : '#ffffff',
+                    colorText: isDarkMode ? '#ffffff' : '#1f2937',
+                    colorDanger: '#ef4444',
+                    fontFamily: 'system-ui, sans-serif',
+                    spacingUnit: '4px',
+                    borderRadius: '8px',
+                    colorIcon: isDarkMode ? '#9ca3af' : '#6b7280',
+                    colorIconHover: isDarkMode ? '#ffffff' : '#1f2937',
+                    colorTextPlaceholder: isDarkMode ? '#9ca3af' : '#6b7280',
+                    colorTextSecondary: isDarkMode ? '#d1d5db' : '#4b5563',
+                    colorBorder: isDarkMode ? '#374151' : '#e5e7eb',
+                    colorBorderFocus: isDarkMode ? '#3b82f6' : '#2563eb',
+                }
+            }
+        });
         const paymentElement = elements.create('payment');
         paymentElement.mount('#payment-element');
     } catch (error) {
@@ -194,6 +217,43 @@ onMounted(() => {
     updateCountdown();
     intervalId = setInterval(updateCountdown, 1000);
     loadStripeDate();
+    
+    // Watch for theme changes
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                // Only update the appearance when theme changes
+                if (elements) {
+                    const isDarkMode = document.documentElement.classList.contains('dark');
+                    elements.update({
+                        appearance: {
+                            theme: isDarkMode ? 'night' : 'stripe',
+                            variables: {
+                                colorPrimary: isDarkMode ? '#3b82f6' : '#2563eb',
+                                colorBackground: isDarkMode ? '#2d2d2d' : '#ffffff',
+                                colorText: isDarkMode ? '#ffffff' : '#1f2937',
+                                colorDanger: '#ef4444',
+                                fontFamily: 'system-ui, sans-serif',
+                                spacingUnit: '4px',
+                                borderRadius: '8px',
+                                colorIcon: isDarkMode ? '#9ca3af' : '#6b7280',
+                                colorIconHover: isDarkMode ? '#ffffff' : '#1f2937',
+                                colorTextPlaceholder: isDarkMode ? '#9ca3af' : '#6b7280',
+                                colorTextSecondary: isDarkMode ? '#d1d5db' : '#4b5563',
+                                colorBorder: isDarkMode ? '#374151' : '#e5e7eb',
+                                colorBorderFocus: isDarkMode ? '#3b82f6' : '#2563eb',
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
 });
 
 onUnmounted(() => {

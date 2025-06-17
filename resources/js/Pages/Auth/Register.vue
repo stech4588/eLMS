@@ -606,6 +606,9 @@ function getTopicName(topicId) {
     position: relative;
     width: 100%;
     padding: 2px 2px;
+    min-height: 38px;
+    max-height: 120px;
+    overflow-y: auto;
 }
 
 .selected-tags {
@@ -616,6 +619,7 @@ function getTopicName(topicId) {
     min-height: 38px;
     padding: 5px;
     padding-top: 0px;
+    width: 100%;
 }
 
 .tag {
@@ -625,6 +629,8 @@ function getTopicName(topicId) {
     border-radius: 4px;
     padding: 3px 8px;
     font-size: 14px;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 .remove-tag {
@@ -643,6 +649,8 @@ function getTopicName(topicId) {
     outline: none;
     padding: 5px;
     font-size: 14px;
+    min-width: 120px;
+    max-width: 100%;
 }
 
 .dropdown-list {
@@ -660,11 +668,15 @@ function getTopicName(topicId) {
     padding: 0;
     margin: 0;
     z-index: 10;
+    width: 100%;
 }
 
 .dropdown-list li {
     padding: 10px 12px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dropdown-list li:hover {

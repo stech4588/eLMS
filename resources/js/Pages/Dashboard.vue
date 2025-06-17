@@ -807,6 +807,7 @@ const toggleFavorite = async (course) => {
 .mySwiper {
     width: 100%;
     padding: 10px 0;
+    overflow: visible;
 }
 
 .swiper-slide {

@@ -15,10 +15,10 @@
                             </div>
                             <div class="md:w-2/3">
                                 <h1 class="text-3xl font-bold mb-2 dark:text-white">{{ course.title }}</h1>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white"><span class="font-semibold dark:text-white">Type:</span> {{ course.type || 'N/A' }}</p>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white"><span class="font-semibold dark:text-white">Industry:</span> {{ course.industry_name || 'N/A' }}</p>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white"><span class="font-semibold dark:text-white">Certificate:</span> {{ course.certificate_name || 'N/A' }}</p>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white"><span class="font-semibold dark:text-white">Author:</span> {{ course.author || 'N/A' }}</p>
+                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Type:</span> {{ course.type || 'N/A' }}</p>
+                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Industry:</span> {{ course.industry_name || 'N/A' }}</p>
+                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Certificate:</span> {{ course.certificate_name || 'N/A' }}</p>
+                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Author:</span> {{ course.author || 'N/A' }}</p>
 
 
                                 <!-- Add more course details here as needed -->

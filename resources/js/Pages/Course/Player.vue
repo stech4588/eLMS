@@ -106,10 +106,10 @@
                                 <div v-for="comment in displayedComments" :key="comment.id" class="p-4 bg-gray-50 border border-[#7E7E7E] dark:bg-dark-bg-secondary dark:text-white">
                                     <div class="flex items-center mb-2 dark:bg-dark-bg-secondary">
                                         <img :src="comment.user.profile_photo_url ? comment.user.profile_photo_url : '/images/profile_photo.jpg'" alt="User avatar" class="w-8 h-8 rounded-full mr-3" style="object-fit: cover;"/>
-                                        <span class="dark:text-white" style="font-size: 13px; font-weight: 400; color: #000000;">{{ comment.user.name }}</span>
-                                        <span class="text-xs text-gray-500 ml-auto dark:text-white" style="font-size: 12px; font-weight: 400; color: black;">{{ new Date(comment.created_at).toLocaleString() }}</span>
+                                        <span class="dark:text-white" style="font-size: 13px; font-weight: 400; ">{{ comment.user.name }}</span>
+                                        <span class="text-xs text-gray-500 ml-auto dark:text-white" style="font-size: 12px; font-weight: 400;">{{ new Date(comment.created_at).toLocaleString() }}</span>
                                     </div>
-                                    <p class="text-gray-700 text-sm " style="font-size: 13px; font-weight: 400; color: #000000;">{{ comment.body }}</p>
+                                    <p class="text-gray-700 text-sm dark:text-white" style="font-size: 13px; font-weight: 400;">{{ comment.body }}</p>
                                 </div>
                             </div>
                             <div v-else-if="course.comments && course.comments.length === 0" class="text-gray-500 mb-6 player_dark_text">
@@ -127,14 +127,14 @@
                                 </button>
                                 <button v-if="!hasMoreComments && visibleCommentsCount > COMMENTS_TO_SHOW_INCREMENT && totalCommentsCount > COMMENTS_TO_SHOW_INCREMENT"
                                         @click="showLessComments"
-                                        class="text-sm text-[#2C15F5] hover:text-[#5f4fed] font-semibold" style="font-size: 18px; font-weight: 600; ">
+                                        class="text-sm hover:text-[#5f4fed] font-semibold" style="font-size: 18px; font-weight: 600; ">
                                     Show Less Comments
                                 </button>
                             </div>
 
                             <!-- New comment form -->
                             <div>
-                                <textarea v-model="newComment" rows="3" placeholder="Add a comment..." class="w-full p-2 border dark:bg-dark-bg-secondary border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                <textarea v-model="newComment" rows="3" placeholder="Add a comment..." class="w-full p-2 border dark:bg-dark-bg-secondary border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-whiet"></textarea>
                                 <button @click="submitComment" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">Post Comment</button>
                             </div>
                         </div>
@@ -153,7 +153,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import axios from 'axios'; // Import axios
 
@@ -478,7 +478,15 @@ const handleLoadedMetadata = () => {
     applySavedProgress();
 };
 
+// Add router event listeners to prevent loader
 onMounted(() => {
+    router.on('start', () => {
+        page.props.meta = { ...page.props.meta, disableLoader: true };
+    });
+    router.on('finish', () => {
+        page.props.meta = { ...page.props.meta, disableLoader: true };
+    });
+
     window.addEventListener('resize', updateScreenSize);
     updateScreenSize();
 

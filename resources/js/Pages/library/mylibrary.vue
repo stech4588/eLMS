@@ -163,7 +163,7 @@ const currentCourses = computed(() => {
                             </div> -->
                             <!-- Loop through currentCourses -->
                             <div v-if="currentCourses.length > 0" class="space-y-6">
-                                <div v-for="course in currentCourses" :key="course.id" class="p-6 bg-white rounded-lg shadow">
+                                <div v-for="course in currentCourses" :key="course.id" class="p-6 bg-white rounded-lg shadow dark:bg-dark-bg-secondary dark:text-white">
                                     <div class="flex library_videos">
                                         <img :src="course.thumbnail" alt="Course Thumbnail" style="width: 200px; "
                                             class="mr-4 rounded  h-15"> <!-- Make sure w-30 and h-21 are valid Tailwind classes or use style bindings -->
@@ -185,15 +185,15 @@ const currentCourses = computed(() => {
                                                 <!-- General case for other types if any -->
                                                 <span v-else> > {{ course.updated }}</span>
                                             </p>
-                                            <p v-if="selectedOption === 'Saved' && course.duration" class="mb-2 text-sm text-gray-600" style="font-size: 11px;">Duration: {{ course.duration }}</p>
+                                            <p v-if="selectedOption === 'Saved' && course.duration" class="mb-2 text-sm text-gray-600 dark:text-white" style="font-size: 11px;">Duration: {{ course.duration }}</p>
                                             <!-- Display Video duration if it's an In Progress Video -->
                                             <!-- <p v-if="selectedOption === 'In Progress' && course.duration" class="mb-2 text-sm text-gray-600" style="font-size: 11px;">Video Duration: {{ course.duration }}</p> -->
                                             
                                             <div class="" style="display: flex; justify-content: space-between; width: 100%;">
                                                 <div v-if="selectedOption !== 'Saved'" class="flex items-center mb-2" style="width: 60%;">
-                                                    <div class="w-full h-1 mr-2 bg-gray-200 rounded-full"
+                                                    <div class="w-full h-1 mr-2 bg-gray-200 rounded-full progress_bar_dark_main"
                                                         style="height: 2px;"> 
-                                                        <div class="h-1 bg-black rounded-full"
+                                                        <div class="h-1 bg-black rounded-full progress_bar_dark"
                                                             :style="{ width: course.progress + '%', height: '2px' }"></div> 
                                                     </div>
                                                     <span class="text-xs text-gray-500" style="min-width: 90px;">{{ course.timeLeft }}</span>
@@ -439,5 +439,11 @@ const currentCourses = computed(() => {
 }
 .dark .libaray_dark_text{
     color: white;
+}
+.dark .progress_bar_dark{
+    background-color: white;
+}
+.dark .progress_bar_dark_main{
+    background-color: #6c706f;
 }
 </style>
