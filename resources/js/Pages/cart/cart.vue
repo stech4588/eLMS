@@ -1,7 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div class="bg-[#97d5ff] min-h-screen py-12 text-black">
-            
+        <div class="bg-[#97d5ff] min-h-screen py-12 text-black dark:bg-dark-bg-primary dark:text-white">
             <div class="container mx-auto px-4">
                 <!-- Promo Banner -->
                 <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-r from-[#9d85ff] to-[#6a6cff] p-1 text-white relative">
@@ -33,7 +32,7 @@
 
                     <!-- Left Side -->
                     <div class="lg:w-2/3">
-                        <div class="bg-white rounded-lg shadow-md p-6 flex gap-4 cart_right_container">
+                        <div class="bg-white rounded-lg shadow-md p-6 flex gap-4 cart_right_container dark:bg-dark-bg-secondary">
                             <div>
                                 <img :src="course.videos[0].thumbnail_url" alt="Course Image"
                                     class=" h-45 object-cover rounded-lg mb-4" style="width: 512px;">
@@ -66,7 +65,7 @@
 
                     <!-- Right Side -->
                     <div class="lg:w-1/3">
-                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 dark:bg-dark-bg-secondary">
                             <h2 class="text-2xl font-semibold mb-4">Order summary</h2>
 
                             <div class="flex justify-between items-center mb-4 pb-4 border-b">

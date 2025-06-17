@@ -58,12 +58,14 @@ onMounted(() => {
 </script>
 
 <template>
+
     <Head>
         <title>{{ meta.meta_title }}</title>
         <meta name="description" :content="meta.meta_description">
         <meta name="keywords" :content="meta.meta_keywords">
     </Head>
-    <div :class="{'dark': isDark}" class="flex min-h-screen bg-[#97d5ff] dark:bg-dark-bg-primary mobile_view_style" style="flex-direction: column;">
+    <div :class="{ 'dark': isDark }" class="flex min-h-screen bg-[#97d5ff] dark:bg-dark-bg-primary mobile_view_style"
+        style="flex-direction: column;">
         <nav class="border-b border-gray-100 dark:border-dark-border-primary bg-white dark:bg-dark-bg-secondary">
             <div class="mx-auto px-4 sm:px-6 lg:px-8" style="border-bottom: 1px solid rgb(225 225 225)">
                 <div class="flex h-16 justify-between">
@@ -74,32 +76,48 @@ onMounted(() => {
                     </div>
 
                     <a :href="user ? '/dashboard' : '/'">
-                        <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav" style="width: 80px; height: 80px;">
+                        <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav"
+                            style="width: 80px; height: 80px;">
                     </a>
 
                     <!-- User Dropdown -->
                     <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                        <div class="relative ms-3">
+                        <div class="relative ms-3" style="display:flex;flex-direction: row;">
+                            <div><button @click="toggleDarkMode"
+                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                    <!-- <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i> -->
+                                    <span style="font-size: 22px;" :title="isDark ? 'Light Mode' : 'Dark Mode'">
+                                        {{ isDark ? '☀️' : '🌙' }}
+                                    </span>
+
+                                </button></div>
                             <Dropdown align="right" width="48">
                                 <template #trigger>
                                     <span class="inline-flex rounded-md">
-                                        <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-dark-bg-secondary px-3 py-2 text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none">
+                                        <button type="button"
+                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-dark-bg-secondary px-3 py-2 text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none">
                                             {{ $page.props.auth.user.name }}
-                                            <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
                                     </span>
                                 </template>
 
-                                <template #content>
-                                    <DropdownLink :href="route('profile.edit')" class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">Profile</DropdownLink>
-                                    <DropdownLink :href="route('cart')" class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">Cart</DropdownLink>
-                                    <button @click="toggleDarkMode" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
-                                        <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i>
-                                        <span class="ml-2">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
-                                    </button>
-                                    <DropdownLink :href="route('logout')" method="post" as="button" class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">Log Out</DropdownLink>
+                                <template #content class="dark:bg-dark-bg-secondary">
+                                    <DropdownLink :href="route('profile.edit')"
+                                        class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                        Profile</DropdownLink>
+                                    <DropdownLink :href="route('cart')"
+                                        class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                        Cart</DropdownLink>
+
+                                    <DropdownLink :href="route('logout')" method="post" as="button"
+                                        class="text-gray-700 dark:text-white dark:text-whitehover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                        Log Out</DropdownLink>
                                 </template>
                             </Dropdown>
                         </div>
@@ -107,10 +125,17 @@ onMounted(() => {
 
                     <!-- Mobile Hamburger -->
                     <div class="-me-2 flex items-center sm:hidden">
-                        <button @click="showingNavigationDropdown = !showingNavigationDropdown" class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 dark:text-dark-text-secondary transition hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary hover:text-gray-500 dark:hover:text-dark-text-primary focus:outline-none">
+                        <button @click="showingNavigationDropdown = !showingNavigationDropdown"
+                            class="inline-flex items-center justify-center rounded-md p-2 dark:bg-dark-bg-secondarytext-gray-400 dark:text-white transition hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary hover:text-gray-500 dark:hover:text-dark-text-primary focus:outline-none">
                             <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path :class="{ hidden: showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                <path :class="{ hidden: !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                <path
+                                    :class="{ hidden: showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                                <path
+                                    :class="{ hidden: !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
@@ -120,24 +145,35 @@ onMounted(() => {
             <!-- Responsive Menu -->
             <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
                 <div class="space-y-1 pb-3 pt-2">
-                    <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')" class="text-gray-900 dark:text-dark-text-primary">Dashboard</ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')"
+                        class="text-gray-900 dark:text-dark-text-primary">Dashboard</ResponsiveNavLink>
                 </div>
 
                 <!-- User Info -->
                 <div class="border-t border-gray-200 dark:border-dark-border-primary pb-1 pt-4">
                     <div class="px-4">
-                        <div class="text-base font-medium text-gray-800 dark:text-dark-text-primary">{{ $page.props.auth.user.name }}</div>
-                        <div class="text-sm font-medium text-gray-500 dark:text-dark-text-secondary">{{ $page.props.auth.user.email }}</div>
+                        <div class="text-base font-medium text-gray-800 dark:text-dark-text-primary">{{
+                            $page.props.auth.user.name
+                            }}</div>
+                        <div class="text-sm font-medium text-gray-500 dark:text-dark-text-secondary">{{
+                            $page.props.auth.user.email
+                            }}</div>
                     </div>
 
                     <div class="mt-3 space-y-1">
-                        <ResponsiveNavLink :href="route('profile.edit')" class="text-gray-700 dark:text-dark-text-secondary">Profile</ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('cart')" class="text-gray-700 dark:text-dark-text-secondary">Cart</ResponsiveNavLink>
-                        <button @click="toggleDarkMode" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                        <ResponsiveNavLink :href="route('profile.edit')"
+                            class="text-gray-700 dark:text-dark-text-secondary">Profile
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('cart')" class="text-gray-700 dark:text-dark-text-secondary">
+                            Cart
+                        </ResponsiveNavLink>
+                        <button @click="toggleDarkMode"
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
                             <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i>
                             <span class="ml-2">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
                         </button>
-                        <ResponsiveNavLink :href="route('logout')" method="post" as="button" class="text-gray-700 dark:text-dark-text-secondary">Log Out</ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('logout')" method="post" as="button"
+                            class="text-gray-700 dark:text-dark-text-secondary">Log Out</ResponsiveNavLink>
                     </div>
                 </div>
             </div>
@@ -157,7 +193,7 @@ onMounted(() => {
 
                 <!-- Page Content -->
                 <main class="flex-1 home_page_style flex-box relative">
-                    <div v-if="isLoading" class="page-transition-loader">
+                    <div v-if="isLoading && !meta.disableLoader" class="page-transition-loader dark:bg-dark">
                         <div id="loader">
                             <div id="box1"></div>
                             <div id="box2"></div>
@@ -175,35 +211,35 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.flex-box{
+.flex-box {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
 @media (max-width: 770px) {
-    .mobile_view_style{
+    .mobile_view_style {
         display: flex;
     }
 }
 
-.sidebar_button_nav{
+.sidebar_button_nav {
     display: none;
 }
 
 @media (max-width: 770px) {
-    .sidebar_button_nav{
+    .sidebar_button_nav {
         display: flex;
     }
 }
 
-.logo_image_nav{
+.logo_image_nav {
     display: block;
     cursor: pointer;
 }
 
 @media (max-width: 770px) {
-    .logo_image_nav{
+    .logo_image_nav {
         /*   */
     }
 }
@@ -217,12 +253,12 @@ onMounted(() => {
     background-color: #1a1a1a;
 }
 
-.h-16{
-    height:5rem!important;
+.h-16 {
+    height: 5rem !important;
 }
 
-.p-6{
-    padding:1.5rem;
+.p-6 {
+    padding: 1.5rem;
 }
 
 .page-transition-loader {
@@ -231,12 +267,16 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     border-radius: 8px;
+}
+
+.dark .page-transition-loader {
+    background-color: #1a1a1a !important;
 }
 
 main {
@@ -253,7 +293,9 @@ main {
     gap: 20px;
 }
 
-#box1, #box2, #box3 {
+#box1,
+#box2,
+#box3 {
     width: 50px;
     height: 50px;
     background: #2b2899;
@@ -261,26 +303,38 @@ main {
     border-radius: 3px;
 }
 
+.dark #box1,
+.dark #box2,
+.dark #box3 {
+    background: #4CCAFF !important;
+}
+
 @keyframes animate {
     17% {
         border-bottom-right-radius: 3px;
     }
+
     25% {
         transform: translateY(9px) rotate(22.5deg);
     }
+
     50% {
         transform: translateY(18px) scale(1, .9) rotate(45deg);
         border-bottom-right-radius: 40px;
     }
+
     75% {
         transform: translateY(9px) rotate(67.5deg);
     }
+
     100% {
         transform: translateY(0) rotate(90deg);
     }
 }
 
-#shadow1, #shadow2, #shadow3 {
+#shadow1,
+#shadow2,
+#shadow3 {
     width: 50px;
     height: 5px;
     background: #000;
@@ -291,9 +345,12 @@ main {
     animation: shadow .4s linear infinite;
 }
 
-#shadow1 { left: 0; }
-#shadow2 { left: 73px; }
-#shadow3 { left: 142px; }
+.dark #shadow1,
+.dark #shadow2,
+.dark #shadow3 {
+    background: #fff !important;
+    opacity: 0.2;
+}
 
 @keyframes shadow {
     50% {
@@ -314,5 +371,18 @@ main {
 /* Ensure all elements transition smoothly */
 * {
     @apply transition-colors duration-200;
+}
+
+/* Make SVGs light colored in dark mode */
+.dark svg {
+    @apply text-white;
+}
+
+.dark svg path {
+    @apply stroke-white;
+}
+
+.dark svg g {
+    @apply fill-white;
 }
 </style>

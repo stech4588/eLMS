@@ -36,8 +36,8 @@ const submit = () => {
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-dark-bg-secondary">
+                    <div class="p-6 bg-white border-b border-gray-200 dark:bg-dark-bg-secondary">
                         <form @submit.prevent="submit">
                             <div>
                                 <label for="page_id" class="block font-medium text-sm text-gray-700">Page</label>
@@ -46,18 +46,18 @@ const submit = () => {
                                 </select>
                             </div>
                             <div>
-                                <label for="meta_title" class="block font-medium text-sm text-gray-700">Meta Title</label>
-                                <input type="text" id="meta_title" v-model="form.meta_title" class="block w-full mt-1">
+                                <label for="meta_title" class="block font-medium text-sm text-gray-700 dark:text-white">Meta Title</label>
+                                <input type="text" id="meta_title" v-model="form.meta_title" class="block w-full mt-1 dark:bg-dark-bg-secondary">
                             </div>
 
                             <div class="mt-4">
-                                <label for="meta_description" class="block font-medium text-sm text-gray-700">Meta Description</label>
-                                <textarea id="meta_description" v-model="form.meta_description" rows="4" class="block w-full mt-1"></textarea>
+                                <label for="meta_description" class="block text-white font-medium text-sm text-gray-700">Meta Description</label>
+                                <textarea id="meta_description" v-model="form.meta_description" rows="4" class="block w-full mt-1 dark:bg-dark-bg-secondary" ></textarea>
                             </div>
 
                             <div class="mt-4">
-                                <label for="meta_keywords" class="block font-medium text-sm text-gray-700">Meta Keywords</label>
-                                <input type="text" id="meta_keywords" v-model="form.meta_keywords" class="block w-full mt-1">
+                                <label for="meta_keywords" class="block text-white font-medium text-sm text-gray-700">Meta Keywords</label>
+                                <input type="text" id="meta_keywords" v-model="form.meta_keywords" class="block w-full mt-1 dark:bg-dark-bg-secondary">
                             </div>
 
                             <div class="flex items-center justify-end mt-4">

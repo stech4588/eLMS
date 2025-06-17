@@ -50,18 +50,18 @@
                 </div>
 
                 <!-- Video Details -->
-                <div class="p-6 -auto bg-white flex-1">
+                <div class="p-6 -auto bg-white flex-1 dark:bg-dark-bg-secondary dark:text-white">
 
                     <div v-if="currentVideo">
-                        <h1 class="text-2xl font-bold mb-2">{{ currentVideo.title }}</h1>
+                        <h1 class="text-2xl font-bold mb-2 dark:text-white">{{ currentVideo.title }}</h1>
                         <div>
-                            <div style="font-size: 16px; font-weight: 600; color: #7E7E7E">
+                            <div class="dark:text-white" style="font-size: 16px; font-weight: 600; color: #7E7E7E">
                                 Instructor
                             </div>
                             <div class="flex items-center mt-2" style="gap: 14px;">
                                 <img :src="course.user.profile_photo_url ? course.user.profile_photo_url : '/images/profile_photo.jpg'"
                                     style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;" />
-                                <span class="ml-2 "
+                                <span class="ml-2 dark:text-white"
                                     style="font-size: 13px; font-weight: 400; display: flex; flex-direction: column; gap: 8px;">{{
                                         course.user.name }} <button class="text-[#2C15F5] text-xs"
                                         style="font-size: 14px; font-weight: 400; border: 1px solid #2C15F5; border-radius: 20px; padding: 4px 19px;">+
@@ -69,15 +69,15 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <div style="font-size: 16px; font-weight: 600; color:black">
+                            <div style="font-size: 16px; font-weight: 600;" class="dark:text-white">
                                 Video Discription
-                                <p class="text-black-400 whitespace-pre-wrap" style="font-size: 14px; line-height: 16px;">{{
+                                <p class="text-black-400 whitespace-pre-wrap dark:text-white" style="font-size: 14px; line-height: 16px;">{{
                             currentVideo.description || 'No description available.' }}</p>
                             </div>
                         </div>
 
                         <div class="mt-4">
-                            <div style="font-size: 16px; font-weight: 600; color:black">
+                            <div style="font-size: 16px; font-weight: 600; " class="dark:text-white">
                                 Course Details
                                 <div class="flex items-center mt-1" style="gap: 16px; color: #7E7E7E">
                                     <p>{{course.type}}</p>
@@ -103,13 +103,13 @@
                             <h3 class="text-xl font-semibold mb-4">Comments ({{ totalCommentsCount }})</h3>
                             <!-- Display existing comments -->
                             <div v-if="displayedComments.length > 0" class="space-y-4 mb-6">
-                                <div v-for="comment in displayedComments" :key="comment.id" class="p-4 bg-gray-50 border border-[#7E7E7E]">
-                                    <div class="flex items-center mb-2">
+                                <div v-for="comment in displayedComments" :key="comment.id" class="p-4 bg-gray-50 border border-[#7E7E7E] dark:bg-dark-bg-secondary dark:text-white">
+                                    <div class="flex items-center mb-2 dark:bg-dark-bg-secondary">
                                         <img :src="comment.user.profile_photo_url ? comment.user.profile_photo_url : '/images/profile_photo.jpg'" alt="User avatar" class="w-8 h-8 rounded-full mr-3" style="object-fit: cover;"/>
-                                        <span class="" style="font-size: 13px; font-weight: 400; color: #000000;">{{ comment.user.name }}</span>
-                                        <span class="text-xs text-gray-500 ml-auto" style="font-size: 12px; font-weight: 400; color: black;">{{ new Date(comment.created_at).toLocaleString() }}</span>
+                                        <span class="dark:text-white" style="font-size: 13px; font-weight: 400; color: #000000;">{{ comment.user.name }}</span>
+                                        <span class="text-xs text-gray-500 ml-auto dark:text-white" style="font-size: 12px; font-weight: 400; color: black;">{{ new Date(comment.created_at).toLocaleString() }}</span>
                                     </div>
-                                    <p class="text-gray-700 text-sm" style="font-size: 13px; font-weight: 400; color: #000000;">{{ comment.body }}</p>
+                                    <p class="text-gray-700 text-sm " style="font-size: 13px; font-weight: 400; color: #000000;">{{ comment.body }}</p>
                                 </div>
                             </div>
                             <div v-else-if="course.comments && course.comments.length === 0" class="text-gray-500 mb-6">
@@ -118,7 +118,7 @@
                             <!-- Loading/placeholder can be added here if props.course.comments is initially undefined -->
 
                             <!-- Show More / Show Less Buttons -->
-                            <div class="mt-4 mb-6" style="display: flex; justify-content: center; align-items: center; ">
+                            <div class="mt-4 mb-6 dark:bg-dark-bg-secondary" style="display: flex; justify-content: center; align-items: center; ">
                                 <button v-if="hasMoreComments"
                                         @click="showMoreComments"
                                         class="text-sm text-[#2C15F5] hover:text-[#5f4fed]" style="font-size: 18px; font-weight: 600; ">
@@ -134,7 +134,7 @@
 
                             <!-- New comment form -->
                             <div>
-                                <textarea v-model="newComment" rows="3" placeholder="Add a comment..." class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                <textarea v-model="newComment" rows="3" placeholder="Add a comment..." class="w-full p-2 border dark:bg-dark-bg-secondary border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
                                 <button @click="submitComment" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">Post Comment</button>
                             </div>
                         </div>
@@ -156,6 +156,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import axios from 'axios'; // Import axios
+
+const page = usePage();
+page.props.meta = { ...page.props.meta, disableLoader: true };
 
 const props = defineProps({
     course: Object, // Contains course details and an array of its videos

@@ -53,7 +53,7 @@ const currentCourses = computed(() => {
 
     <AuthenticatedLayout>
         
-        <div class="bg-white dark:bg-dark-bg-secondary p-6"
+        <div class="bg-white dark:bg-dark-bg-secondary p-6 dark:text-white"
              style="gap: 20px; display: flex; flex-direction: column;">
             <div style="font-size: 36px; font-weight: 600;">
                 My Library
@@ -145,7 +145,7 @@ const currentCourses = computed(() => {
                                 <li v-for="option in sidebarOptions" :key="option.name" class="mb-4 library_left_sidebar" style="font-size: 20px;">
                                     <a href="#"
                                        @click.prevent="selectOption(option.name)"
-                                       :class="['block p-3 rounded', selectedOption === option.name ? 'font-semibold text-black-600 border-l-4 border-black' : 'text-black-600 hover:bg-[#c3e6fd]']" style="border-radius: 0px; padding-left: 20px;">
+                                       :class="['block p-3 rounded dark:text-white', selectedOption === option.name ? 'font-semibold text-black-600 border-l-4 border-black dark:text-white' : 'text-black-600 hover:bg-[#c3e6fd]']" style="border-radius: 0px; padding-left: 20px;">
                                         {{ option.name }} ({{ option.count }})
                                     </a>
                                 </li>
@@ -236,10 +236,10 @@ const currentCourses = computed(() => {
                             </div>
                              <div v-else class="empty-library-state bg-white dark:bg-dark-bg-secondary p-6">
                                 <img src="/images/nothing_to_see.png" alt="No items" class="empty-library-image" />
-                                <p class="empty-library-message">
+                                <p class="empty-library-message dark:text-white">
                                     You don't have any courses in {{ selectedOption.toLowerCase() }}.
                                 </p>
-                                <p class="empty-library-submessage">
+                                <p class="empty-library-submessage dark:text-white">
                                     When you start a course you can find it here. Start watching videos that interest you.
                                 </p>
                                 <Link :href="route('dashboard')" class="empty-library-button">
@@ -252,7 +252,7 @@ const currentCourses = computed(() => {
             </div>
         </div>
 
-        <footer class="footer_upload_video">
+        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white">
             <div class="footer-lang-select">
                 Language(Eng)
             </div>
@@ -315,6 +315,9 @@ const currentCourses = computed(() => {
     .library_videos {
         flex-direction: column;
     }
+}
+.footer_upload_video {
+    background-color: white;
 }
 @media (max-width: 770px) {
     .footer_upload_video{

@@ -75,7 +75,7 @@ function updateTopics() {
     <AuthenticatedLayout>
         <div class="career-journey-container">
             <div class="career-journey-wrapper">
-                <div class="career-journey-content">
+                <div class="career-journey-content dark:bg-dark-bg-secondary dark:text-white">
                     <div class="career-journey-title">My Career Journey</div>
                     
                     <div class="profile-sections-container">
@@ -98,7 +98,7 @@ function updateTopics() {
                                 </div>
                                 <div v-else>
                                     <form @submit.prevent="saveCareerGoal">
-                                         <input type="text" v-model="goalForm.primary_learning_goal" class="add-skill-input" style="width: 100%; padding-left: 10px;height: 40px;"  />
+                                         <input type="text" v-model="goalForm.primary_learning_goal" class="add-skill-input dark:bg-dark-bg-secondary" style="width: 100%; padding-left: 10px;height: 40px;"  />
                                          <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
                                               <button type="submit" class="save-btn">Save</button>
                                           <button type="button" @click="cancelEditing" class="cancel-btn">Cancel</button>
@@ -116,7 +116,7 @@ function updateTopics() {
                 </div>
 
                 <!-- Learning Plan Section -->
-                <div class="learning-plan-section">
+                <div class="learning-plan-section dark:bg-dark-bg-secondary dark:text-white">
                     <div>
                          <div class="learning-plan-title">Choose a focus to unlock your personalized learning plan</div>
                         <p class="learning-plan-subtitle">We'll create a plan to help you there.</p>
@@ -124,15 +124,15 @@ function updateTopics() {
                     <form @submit.prevent="updateTopics" class="topics-form">
                         <div class="topics-input-wrapper">
                             <div class="selected-topics-container">
-                                <span v-for="topicId in topicForm.preferred_topic_ids" :key="topicId" class="topic-tag">
-                                    {{ getTopicName(topicId) }}
+                                <span v-for="topicId in topicForm.preferred_topic_ids" :key="topicId" class="topic-tag dark:bg-dark-bg-secondary">
+                                    <span>{{ getTopicName(topicId) }}</span>
                                     <button @click.prevent="removeTopic(topicId)" class="remove-tag">&times;</button>
                                 </span>
                                 <input 
                                     type="text" 
                                     v-model="searchTerm"
                                     placeholder="I want to..." 
-                                    class="add-skill-input" 
+                                    class="add-skill-input dark:bg-dark-bg-secondary" 
                                     style="border: none;"
                                 />
                             </div>
@@ -150,7 +150,7 @@ function updateTopics() {
                 </div>
             </div>
         </div>
-        <footer class="footer_upload_video" style="background-color: white; display: flex; justify-content: space-between; padding: 20px; align-items: baseline; margin-top: 30px;">
+        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white" style="display: flex; justify-content: space-between; padding: 20px; align-items: baseline; margin-top: 30px;">
             <div>
                 Language(Eng)
             </div>
@@ -351,6 +351,9 @@ font-weight: 600;
     align-items: center;
     flex-wrap: wrap;
 }
+.footer_upload_video {
+    background-color: white;
+}
 @media (max-width: 770px) {
     .footer_upload_video{
         flex-direction: column;
@@ -374,22 +377,33 @@ font-weight: 600;
     flex-wrap: wrap;
     gap: 5px;
     align-items: center;
-    border: 1px solid gray;
+    min-height: 40px;
+    padding: 5px;
+    border: 1px solid #8a8686;
     border-radius: 24px;
-    padding: 5px 10px;
-    flex-grow: 1;
+    width: 100%;
 }
 .topic-tag {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    background-color: #e0e0e0;
-    border-radius: 16px;
+    background: #f0f0f0;
     padding: 5px 10px;
-    font-size: 14px;
-    white-space: nowrap;
+    border-radius: 4px;
+    margin: 2px;
+    max-width: 200px;
+    position: relative;
 }
+
+.topic-tag span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    margin-right: 8px;
+}
+
 .remove-tag {
-    margin-left: 8px;
+    margin-left: 4px;
     border: none;
     background: none;
     cursor: pointer;
@@ -397,7 +411,22 @@ font-weight: 600;
     padding: 0;
     line-height: 1;
     color: #555;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
 }
+
+.dark .topic-tag {
+    background: #2d2d2d;
+}
+
+.dark .remove-tag {
+    color: #fff;
+}
+
 .submit-topics-btn {
     background: none;
     border: none;
