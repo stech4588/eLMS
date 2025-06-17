@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Course;
+use App\Models\Topic;
 use App\Models\CourseType; // For potential future use, if needed for filters etc.
 use Inertia\Response as InertiaResponse;
 use Illuminate\Support\Facades\Auth; // Auth facade can be used, but $request->user() is preferred
@@ -45,8 +46,11 @@ class ContentController extends Controller
                 ];
             });
         
+             $topics = Topic::all();
+             
         return Inertia::render('content/mycontent', [
             'skillBasedCourses' => $skillBasedCourses,
+            'topics' => $topics,
             // Pass other data if/when needed for this page, e.g.:
             // 'topics' => \App\Models\Topic::all(), 
             // 'courseTypesData' => CourseType::all(), 

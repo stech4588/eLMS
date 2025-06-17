@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Topic;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        $topics = Topic::all();
+        return Inertia::render('Auth/Register', [
+            'topics' => $topics,
+        ]);
     }
 
     /**
@@ -38,8 +42,29 @@ class RegisteredUserController extends Controller
             'password' => ['required', Rules\Password::defaults()],
             //'phone_country_code' => 'required|string|max:10',
             'phone_number' => 'required|string|max:20',
+            'primary_learning_goal' => 'required|string',
+            'preferred_topics' => 'required|array',
+            'preferred_topics.*' => 'exists:topics,id',
+            'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'profile_picture' => 'required|image|max:2048',
             'agree_to_terms' => 'accepted',
         ]);
+
+        $resumePath = null;
+        if ($request->hasFile('resume')) {
+            $file = $request->file('resume');
+            $filename = 'resume_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('resumes'), $filename);
+            $resumePath = 'resumes/' . $filename;
+        }
+
+        $profilePicturePath = null;
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('profile-pictures'), $filename);
+            $profilePicturePath = 'profile-pictures/' . $filename;
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -49,6 +74,10 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             //'phone_country_code' => $request->phone_country_code,
             'phone_number' => $request->phone_number,
+            'primary_learning_goal' => $request->primary_learning_goal,
+            'preferred_topic_ids' => $request->preferred_topics,
+            'resume_path' => $resumePath,
+            'profile_picture' => $profilePicturePath,
             'role_id' => 3,
             'type' => 'student',
         ]);

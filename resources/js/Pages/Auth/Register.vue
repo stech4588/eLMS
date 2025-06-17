@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const passwordFieldType = ref('password');
 
@@ -21,6 +21,10 @@ const form = useForm({
     password: '',
     // phone_country_code: 'PK',
     phone_number: '',
+    primary_learning_goal: '',
+    preferred_topics: [],
+    resume: null,
+    profile_picture: null,
     agree_to_terms: false,
 });
 
@@ -29,6 +33,39 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+const props = defineProps({
+    topics: Array,
+});
+
+const showDropdown = ref(false);
+const searchTerm = ref('');
+
+const filteredTopics = computed(() => {
+    const selectedIds = form.preferred_topics;
+    return props.topics.filter(topic => {
+        const isNotSelected = !selectedIds.includes(topic.id);
+        const matchesSearch = topic.name.toLowerCase().includes(searchTerm.value.toLowerCase());
+        return isNotSelected && matchesSearch;
+    });
+});
+
+function selectTopic(topic) {
+    if (!form.preferred_topics.includes(topic.id)) {
+        form.preferred_topics.push(topic.id);
+    }
+    searchTerm.value = '';
+    showDropdown.value = false;
+}
+
+function removeTopic(topicId) {
+    form.preferred_topics = form.preferred_topics.filter(id => id !== topicId);
+}
+
+function getTopicName(topicId) {
+    const topic = props.topics.find(t => t.id === topicId);
+    return topic ? topic.name : '';
+}
 </script>
 
 <template>
@@ -41,17 +78,17 @@ const submit = () => {
                 Welcome to LMS.360.pk! Please fill out the form below to start your free trial and begin learning today.
             </p>
 
-            <form @submit.prevent="submit" class="form-body">
+            <form @submit.prevent="submit" class="form-body" novalidate>
                 <!-- Row 1: Name and Company Name -->
                 <div class="form-row">
-                    <div class="form-group input_box_signup">
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.name }">
                         <InputLabel for="name" value="Name" class="form-label" />
                         <TextInput
                             id="name"
                             type="text"
                             class="form-input input_box_outline"
                             v-model="form.name"
-                            required
+                            
                             autofocus
                             autocomplete="name"
                         />
@@ -73,14 +110,14 @@ const submit = () => {
 
                 <!-- Row 2: Email and Number of Employees -->
                 <div class="form-row">
-                    <div class="form-group input_box_signup">
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.email }">
                         <InputLabel for="email" value="Email" class="form-label" />
                         <TextInput
                             id="email"
                             type="email"
                             class="form-input input_box_outline"
                             v-model="form.email"
-                            required
+                            
                             autocomplete="username"
                         />
                         <InputError class="form-error" :message="form.errors.email" />
@@ -91,7 +128,7 @@ const submit = () => {
                             id="num_employees"
                             class="form-input form-select input_box_outline"
                             v-model="form.num_employees"
-                            required
+                            
                         >
                             <option value="" disabled>Select an option</option>
                             <option value="1-10">1-10</option>
@@ -106,7 +143,7 @@ const submit = () => {
 
                 <!-- Row 3: Password and Phone Number -->
                 <div class="form-row">
-                    <div class="form-group input_box_signup">
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.password }">
                         <InputLabel for="password" value="Password" class="form-label" />
                         <div style="position: relative;">
                             <TextInput
@@ -114,14 +151,14 @@ const submit = () => {
                                 :type="passwordFieldType"
                                 class="form-input input_box_outline"
                                 v-model="form.password"
-                                required
+                                
                                 autocomplete="new-password"
                             />
                             <span class="password-eye-icon" @click="togglePasswordVisibility"><img src="/images/view_icon.svg"/></span>
                         </div>
                         <InputError class="form-error" :message="form.errors.password" />
                     </div>
-                    <div class="form-group input_box_signup">
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.phone_number }">
                         <InputLabel for="phone_number" value="Phone Number" class="form-label" style="margin-bottom: 0px; margin-top: 0px;"/>
                         <div class="phone-input-group">
                             <select v-model="form.phone_country_code" class="form-input country-code-select">
@@ -134,7 +171,7 @@ const submit = () => {
                                 class="form-input phone-number-input input_box_outline"
                                 v-model="form.phone_number"
                                 placeholder="0301 1234857"
-                                required
+                                
                                 autocomplete="tel-national"
                                 style="border: none;"
                             />
@@ -142,12 +179,80 @@ const submit = () => {
                         <InputError class="form-error" :message="form.errors.phone_number" />
                     </div>
                 </div>
-                 <div class="password-rules">
+                 <!-- <div class="password-rules">
                             <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
                             <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
                             <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
                             <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
+                        </div> -->
+
+                <!-- Row 4: Primary Learning Goal -->
+                <div class="form-row">
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.primary_learning_goal }">
+                        <InputLabel for="primary_learning_goal" value="Primary Learning Goal" class="form-label" />
+                        <TextInput
+                            id="primary_learning_goal"
+                            type="text"
+                            class="form-input input_box_outline"
+                            v-model="form.primary_learning_goal"
+                            
+                            autocomplete="off"
+                        />
+                        <InputError class="form-error" :message="form.errors.primary_learning_goal" />
+                    </div>
+                </div>
+
+                <!-- Row 6: Preferred Topics -->
+                <div class="form-row">
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.preferred_topics }">
+                        <InputLabel for="preferred_topics" value="Preferred Topics" class="form-label" />
+                        <div class="multiselect-container">
+                            <div class="selected-tags">
+                                <span v-for="topicId in form.preferred_topics" :key="topicId" class="tag">
+                                    {{ getTopicName(topicId) }}
+                                    <button @click.prevent="removeTopic(topicId)" class="remove-tag">&times;</button>
+                                </span>
+                                <input
+                                    v-model="searchTerm"
+                                    @focus="showDropdown = true"
+                                    @blur="() => setTimeout(() => showDropdown = false, 200)"
+                                    class="multiselect-input"
+                                    placeholder="Select topics..."
+                                />
+                            </div>
+                            <ul v-if="showDropdown && filteredTopics.length" class="dropdown-list">
+                                <li v-for="topic in filteredTopics" :key="topic.id" @click="selectTopic(topic)">
+                                    {{ topic.name }}
+                                </li>
+                            </ul>
                         </div>
+                        <InputError class="form-error" :message="form.errors.preferred_topics" />
+                    </div>
+                </div>
+
+                <!-- Row 7: Upload Resume and Profile Picture -->
+                <div class="form-row">
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.resume }">
+                        <InputLabel for="resume" value="Upload Resume" class="form-label" />
+                        <input
+                            type="file"
+                            id="resume"
+                            @input="form.resume = $event.target.files[0]"
+                            class="form-input file-input"
+                        />
+                        <InputError class="form-error" :message="form.errors.resume" />
+                    </div>
+                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.profile_picture }">
+                        <InputLabel for="profile_picture" value="Profile Picture" class="form-label" />
+                        <input
+                            type="file"
+                            id="profile_picture"
+                            @input="form.profile_picture = $event.target.files[0]"
+                            class="form-input file-input"
+                        />
+                        <InputError class="form-error" :message="form.errors.profile_picture" />
+                    </div>
+                </div>
 
                 <!-- Terms and Conditions -->
                 <div class="form-group terms-group">
@@ -155,11 +260,11 @@ const submit = () => {
                         type="checkbox"
                         id="agree_terms"
                         v-model="form.agree_to_terms"
-                        required
+                        
                         class="form-checkbox"
                     />
                     <label for="agree_terms" class="terms-label">
-                        I agree to the <Link href="/privacy-policy" class="form-link">Privacy Policy</Link> & <Link href="/terms-of-services" class="form-link">Terms Of Services</Link>
+                        I agree to the <a :href="route('privacy.policy')" target="_blank" rel="noopener noreferrer" class="form-link">Privacy Policy</a> & <a :href="route('terms.of.services')" target="_blank" rel="noopener noreferrer" class="form-link">Terms Of Services</a>
                     </label>
                     <InputError class="form-error" :message="form.errors.agree_to_terms" />
                 </div>
@@ -169,7 +274,7 @@ const submit = () => {
                     <PrimaryButton
                         class="submit-button"
                         :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing || !form.agree_to_terms"
+                        :disabled="form.processing"
                         style="    background-color: #1898e5;"
                     >
                         Sign Up
@@ -214,6 +319,7 @@ const submit = () => {
 
 .form-body {
     width: 100%;
+    text-align: start;
 }
 
 .form-row {
@@ -464,5 +570,94 @@ const submit = () => {
 
 }
 
+.file-input {
+    padding: 8px;
+    border-radius: 4px;
+    /* border: 1px solid #ddd; */
+}
+.file-input:focus {
+    outline: none;
+    /* border-color: #4F46E5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); */
+}
+.form-input.file-input {
+    /* border-left: 4px solid #9CA3AF; */
+}
+
+.form-group-error {
+    border: 1px solid #EF4444;
+    border-left: 4px solid #EF4444;
+}
+.shadow-sm{
+    box-shadow: none !important;
+}
+
+.multiselect-container {
+    position: relative;
+    width: 100%;
+    padding: 2px 2px;
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    min-height: 38px;
+    padding: 5px;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 14px;
+}
+
+.remove-tag {
+    margin-left: 5px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+}
+
+.multiselect-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    z-index: 10;
+}
+
+.dropdown-list li {
+    padding: 10px 12px;
+    cursor: pointer;
+}
+
+.dropdown-list li:hover {
+    background-color: #f3f4f6;
+}
 
 </style>

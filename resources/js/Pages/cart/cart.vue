@@ -1,58 +1,104 @@
 <template>
     <AuthenticatedLayout>
-        <div class=" min-h-screen flex flex-col items-center py-8">
-            <!-- <div class="text-3xl font-bold mb-8">Logo</div> -->
-            <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-                <h1 class="text-2xl font-semibold mb-2">Checkout</h1>
-                <p class="text-gray-600 mb-6">All transactions are secure and encrypted</p>
-
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <p class="text-lg font-medium">Monthly</p>
-                        <p class="text-sm text-gray-500">$29.99/mo</p>
-                    </div>
-                    <p class="text-lg font-semibold">Total: $30</p>
-                </div>
-
-                <button class="w-full bg-yellow-400 text-blue-800 font-semibold py-3 rounded-lg mb-4 flex items-center justify-center">
-                    <span class="text-xl italic font-bold mr-1">P</span> PayPal
-                </button>
-
-                <div class="flex items-center my-4">
-                    <hr class="w-full border-gray-300" />
-                    <span class="px-2 text-gray-500 text-sm" style="width: 600px; justify-content: center; align-items: center; display: flex;">or Pay with Card</span>
-                    <hr class="w-full border-gray-300" />
-                </div>
-
-                <form>
-                    <div class="mb-4">
-                        <label for="card-name" class="block text-sm font-medium text-gray-700 mb-1">Name on card</label>
-                        <input type="text" id="card-name" placeholder="Name on card" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="card-number" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                        <input type="text" id="card-number" placeholder="1234 1234 1234 1234" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label for="expiry-date" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                            <input type="text" id="expiry-date" placeholder="MM / YY" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
-                        </div>
-                        <div>
-                            <label for="cvc" class="block text-sm font-medium text-gray-700 mb-1">CVC</label>
-                            <input type="text" id="cvc" placeholder="CVC" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#76c3f1] focus:border-[#76c3f1]">
+        <div class="bg-[#97d5ff] min-h-screen py-12 text-black dark:bg-dark-bg-primary dark:text-white">
+            <div class="container mx-auto px-4">
+                <!-- Promo Banner -->
+                <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-r from-[#9d85ff] to-[#6a6cff] p-1 text-white relative">
+                    <div class="flex items-center justify-between p-4">
+                        <div class="flex items-center gap-6">
+                            <!-- Countdown Box -->
+                            <div class="rounded-lg bg-[#6e58e0] p-3 text-center shadow-lg">
+                                <div class="text-xs font-bold uppercase tracking-wider">Don't miss out!</div>
+                                <div class="mt-1 font-mono text-2xl tracking-wider">
+                                    <span>{{ formattedTime.days }}</span>:
+                                    <span>{{ formattedTime.hours }}</span>:
+                                    <span>{{ formattedTime.minutes }}</span>:
+                                    <span>{{ formattedTime.seconds }}</span>
+                                </div>
+                            </div>
+                            <!-- Promo Text -->
+                            <div class="text-lg font-bold">
+                                + 2 months free with a 48-month plan
+                            </div>
                         </div>
                     </div>
+                    <!-- Percentage Symbol -->
+                    <div class="absolute right-0 top-0 flex h-full items-center pr-6 text-8xl font-black text-white opacity-20 transform -translate-y-1">
+                        %
+                    </div>
+                </div>
+                <h1 class="text-4xl font-bold text-center mb-8">Your cart</h1>
+                <div class="flex flex-col lg:flex-row gap-8">
 
-                    <button type="submit" class="w-full bg-[#148ad9] text-white font-semibold py-3 rounded-lg hover:bg-[#76c3f1]">
-                        Pay $30.00
-                    </button>
-                </form>
-                <p class="text-xs text-gray-500 mt-6">
-                   We’re looking for passionate educators and industry experts. At LinkedIn Learning, your knowledge matters. Whether you’re a seasoned professional or an emerging leader in your field, we provide the tools and support to help you succeed.
-                </p>
+                    <!-- Left Side -->
+                    <div class="lg:w-2/3">
+                        <div class="bg-white rounded-lg shadow-md p-6 flex gap-4 cart_right_container dark:bg-dark-bg-secondary">
+                            <div>
+                                <img :src="course.videos[0].thumbnail_url" alt="Course Image"
+                                    class=" h-45 object-cover rounded-lg mb-4" style="width: 512px;">
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-semibold mb-4">{{ course.title }}</h2>
+                                <p class="text-gray-600 mb-4">{{ truncatedDescription }}</p>
+                            
+
+                                <div v-if="course.videos && course.videos.length > 0">
+                                    <h3 class="text-xl font-semibold mb-2">Topics included:</h3>
+                                    <ul class="list-disc list-inside text-gray-600">
+                                        <li v-for="video in visibleVideos" :key="video.id">{{ video.title }}</li>
+                                    </ul>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-lg"><span class="font-semibold">Type:</span> {{ course.course_type ?
+                                        course.course_type.name : 'N/A' }}</p>
+                                </div>
+
+                                <div
+                                    class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-6 rounded-md">
+                                    <p><span class="font-bold">Great news!</span> Your course includes lifetime access
+                                        and all future updates for free.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Right Side -->
+                    <div class="lg:w-1/3">
+                        <div class="bg-white rounded-lg shadow-md p-6 dark:bg-dark-bg-secondary">
+                            <h2 class="text-2xl font-semibold mb-4">Order summary</h2>
+
+                            <div class="flex justify-between items-center mb-4 pb-4 border-b">
+                                <span class="text-gray-600">{{ course.title }}</span>
+                                <span class="font-semibold">${{ course.price }}</span>
+                            </div>
+
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-gray-600">Taxes</span>
+                                <span class="text-gray-500 text-sm">Calculated at next step</span>
+                            </div>
+
+                            <div class="flex justify-between items-center font-bold text-xl my-4 pt-4 border-t">
+                                <span>Subtotal</span>
+                                <span>${{ course.price }}</span>
+                            </div>
+
+                            <div class="mb-6">
+                                <div id="payment-element"></div>
+                            </div>
+
+
+                            <form @submit.prevent="checkout">
+                                <button type="submit"
+                                    class="w-full bg-[#3b82f6] text-white font-semibold py-3 rounded-lg hover:bg-[#5998ff] transition-colors"
+                                    :disabled="paymentProcessing || !course.price">
+                                    <span v-if="paymentProcessing">Processing...</span>
+                                    <span v-else>Continue</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -60,12 +106,145 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { onMounted, ref, onUnmounted, computed } from 'vue';
+import { loadStripe } from '@stripe/stripe-js';
+import { router } from '@inertiajs/vue3';
+
+const countdown = ref({
+    days: 2,
+    hours: 14,
+    minutes: 7,
+    seconds: 2
+});
+
+const targetDate = new Date();
+targetDate.setDate(targetDate.getDate() + countdown.value.days);
+targetDate.setHours(targetDate.getHours() + countdown.value.hours);
+targetDate.setMinutes(targetDate.getMinutes() + countdown.value.minutes);
+targetDate.setSeconds(targetDate.getSeconds() + countdown.value.seconds);
+
+let intervalId = null;
+
+const updateCountdown = () => {
+    const now = new Date();
+    const difference = targetDate.getTime() - now.getTime();
+
+    if (difference <= 0) {
+        countdown.value = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        if (intervalId) clearInterval(intervalId);
+        return;
+    }
+
+    countdown.value.days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    countdown.value.hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    countdown.value.minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    countdown.value.seconds = Math.floor((difference % (1000 * 60)) / 1000);
+};
+
+const pad = (num) => num.toString().padStart(2, '0');
+
+const formattedTime = computed(() => ({
+    days: pad(countdown.value.days),
+    hours: pad(countdown.value.hours),
+    minutes: pad(countdown.value.minutes),
+    seconds: pad(countdown.value.seconds),
+}));
+
+const props = defineProps({
+    course: Object
+});
+
+const showFullDescription = ref(false);
+
+const truncatedDescription = computed(() => {
+    const description = props.course.description;
+    if (description && description.length > 300 && !showFullDescription.value) {
+        return description.substring(0, 300) + '...';
+    }
+    return description;
+});
+
+const visibleVideos = computed(() => {
+    if (props.course.videos) {
+        return props.course.videos.slice(0, 5);
+    }
+    return [];
+});
+
+const pk = 'pk_test_51RZFkqPF8BzoPAVhNu7Lpqi40TnbQETCQGyiisJyPfztajSTaZdBOfXem930W375gIMhjyaLK9VAJOMk4mUb9NNc009zifzCDs';
+let stripe = null;
+let elements = null;
+const paymentProcessing = ref(false);
+
+const loadStripeDate = async () => {
+    if (!props.course.price) return;
+    stripe = await loadStripe(pk);
+    try {
+        // const amountInCents = Math.round(props.course.price * 100);
+        const response = await axios.get(`/fetch-intent/${props.course.price}`);
+        elements = stripe.elements({ clientSecret: response.data.client_secret });
+        const paymentElement = elements.create('payment');
+        paymentElement.mount('#payment-element');
+    } catch (error) {
+        console.error("Error fetching payment intent:", error);
+    }
+};
+
+onMounted(() => {
+    updateCountdown();
+    intervalId = setInterval(updateCountdown, 1000);
+    loadStripeDate();
+});
+
+onUnmounted(() => {
+    if (intervalId) clearInterval(intervalId);
+});
+
+const checkout = async () => {
+    if (paymentProcessing.value || !stripe || !elements) {
+        return;
+    }
+    paymentProcessing.value = true;
+
+    const result = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+            return_url: window.location.href, // Or a specific success URL
+        },
+        redirect: 'if_required'
+    });
+
+    if (result.error) {
+        console.error(result.error.message);
+        paymentProcessing.value = false;
+    } else {
+        if (result.paymentIntent.status === 'succeeded') {
+            try {
+                await axios.post('/invoices/create-from-payment', {
+                    amount: result.paymentIntent.amount,
+                    payment_method: result.paymentIntent.payment_method_types[0],
+                    transaction_id: result.paymentIntent.id,
+                    course_id: props.course.id,
+                    price: props.course.price,
+                });
+                console.log("Invoice created successfully.");
+                router.visit(route('courses.show', { course: props.course.id }));
+            } catch (invoiceError) {
+                console.error("Error creating invoice:", invoiceError);
+            }
+        }
+    }
+
+    paymentProcessing.value = false;
+};
 </script>
 
 <style>
-@media (min-width: 770px) {
-    /* .main_sidebar{
-        display: none;
-    } */
+@media (max-width: 425px) {
+    .cart_right_container {
+        flex-direction: column !important;
+        width: 100% !important;
+
+    }
 }
 </style>

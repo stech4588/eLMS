@@ -79,4 +79,31 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('message', 'User deleted successfully.');
     }
+
+    public function updateCareerGoal(Request $request)
+    {
+        $validated = $request->validate([
+            'primary_learning_goal' => 'required|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $user->primary_learning_goal = $validated['primary_learning_goal'];
+        $user->save();
+
+        return redirect()->back()->with('message', 'Career goal updated successfully.');
+    }
+
+    public function updatePreferredTopics(Request $request)
+    {
+        $validated = $request->validate([
+            'preferred_topic_ids' => 'sometimes|array',
+            'preferred_topic_ids.*' => 'exists:topics,id',
+        ]);
+
+        $user = $request->user();
+        $user->preferred_topic_ids = $validated['preferred_topic_ids'] ?? [];
+        $user->save();
+
+        return redirect()->back()->with('message', 'Preferred topics updated successfully.');
+    }
 } 

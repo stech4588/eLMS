@@ -8,9 +8,11 @@
                         <h1>University?</h1>
                     </div>
                     <div class="real-dsp-col">
-                        <div class="rw-img">
-                            <img src="/images/MBM_Uni.png" alt="">
-                        </div>
+                         <div class="rw-img">
+                           <a :href="user ? '/dashboard' : '/'">
+                             <img src="/images/MBM_Uni.png" alt="MBM Logo">
+                           </a>
+                         </div>
                     </div>
                 </div>
                 <div class="real-dsp">
@@ -49,14 +51,32 @@
         </div>
     </div>
 </template>
-<script>
-import { Link } from '@inertiajs/vue3';
+<!-- <script setup>
+
+import { usePage } from '@inertiajs/vue3'
+
+const user = usePage().props.auth?.user
 export default {
     components: {
         Link,
     },
 }
+</script> -->
+<script>
+import { usePage, Link } from '@inertiajs/vue3'
+
+export default {
+  components: {
+    Link,
+  },
+  computed: {
+    user() {
+      return usePage().props.auth?.user
+    }
+  }
+}
 </script>
+
 <style>
 .silver {
     font-weight: 900;

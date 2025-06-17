@@ -53,7 +53,8 @@ const currentCourses = computed(() => {
 
     <AuthenticatedLayout>
         
-        <div style="background-color: white; padding: 32px 40px; gap: 20px; display: flex; flex-direction: column;">
+        <div class="bg-white dark:bg-dark-bg-secondary p-6 dark:text-white"
+             style="gap: 20px; display: flex; flex-direction: column;">
             <div style="font-size: 36px; font-weight: 600;">
                 My Library
             </div>
@@ -74,16 +75,16 @@ const currentCourses = computed(() => {
                                 </div>
                                 <div>
                                     <p class=" text-lg font-semibold">Weekly Goals <span
-                                            class="text-xs text-gray-500">(May12 to
+                                            class="text-xs text-gray-500 libaray_dark_text">(May12 to
                                             May18)</span>
                                     </p>
-                                    <p class="text-sm text-gray-500">2/120mins</p>
+                                    <p class="text-sm text-gray-500 libaray_dark_text">2/120mins</p>
                                 </div>
                             </div>
                         </div>
                         <button class="text-gray-500 hover:text-gray-700">
                             <!-- Placeholder for an edit icon -->
-                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6">
+                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                         </button>
                     </div>
                 </div>
@@ -94,17 +95,17 @@ const currentCourses = computed(() => {
                             <div class="flex items-center" style="gap: 10px;">
                                 <div class="">
                                     <!-- Placeholder for an icon -->
-                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6">
+                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                                 </div>
                                 <div>
                                     <p class=" text-lg font-semibold">Skills</p>
-                                    <p class="text-sm text-gray-500">28 Followed Skills</p>
+                                    <p class="text-sm text-gray-500 libaray_dark_text">28 Followed Skills</p>
                                 </div>
                             </div>
                         </div>
                         <button class="text-gray-500 hover:text-gray-700">
                             <!-- Placeholder for an edit icon -->
-                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6">
+                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                         </button>
                     </div>
                 </div>
@@ -115,36 +116,36 @@ const currentCourses = computed(() => {
                             <div class="flex items-center" style="gap: 10px;">
                                 <div class="">
                                     <!-- Placeholder for an icon -->
-                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6">
+                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                                 </div>
                                 <div>
                                     <p class=" text-lg font-semibold">Skill Evaluations</p>
-                                    <p class="text-sm text-gray-500">2 Evaluations</p>
+                                    <p class="text-sm text-gray-500 libaray_dark_text">2 Evaluations</p>
                                 </div>
                             </div>
                         </div>
                         <button class="text-gray-500 hover:text-gray-700">
                             <!-- Placeholder for an arrow icon -->
-                            <img src="/images/right_arrow_icon.svg" alt="diamond" class="w-6 h-6">
+                            <img src="/images/right_arrow_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="py-12" style="padding: 23px;">
+            <div class="mx-auto max-w-7xl">
                 <!-- Header Cards -->
 
-                <div class="flex library_main_div" >
+                <div class="flex library_main_div bg-white dark:bg-dark-bg" style="background-color: transparent;">
                     <!-- Sidebar -->
-                    <div class=" p-6 mr-6 bg-white rounded-lg library_main_div_left" style="padding-left: 0px; padding-right: 0px; width: 25%;">
+                    <div class="p-6 mr-6 bg-white rounded-lg library_main_div_left dark:bg-dark-bg-secondary" style="padding-left: 0px; padding-right: 0px; width: 25%;">
                         <nav>
                             <ul>
                                 <li v-for="option in sidebarOptions" :key="option.name" class="mb-4 library_left_sidebar" style="font-size: 20px;">
                                     <a href="#"
                                        @click.prevent="selectOption(option.name)"
-                                       :class="['block p-3 rounded', selectedOption === option.name ? 'font-semibold text-black-600 bg-[#97d5ff] border-l-4 border-black' : 'text-black-600 hover:bg-[#c3e6fd]']" style="border-radius: 0px; padding-left: 20px;">
+                                       :class="['block p-3 rounded dark:text-white', selectedOption === option.name ? 'font-semibold text-black-600 border-l-4 border-black dark:text-white' : 'text-black-600 hover:bg-[#c3e6fd]']" style="border-radius: 0px; padding-left: 20px;">
                                         {{ option.name }} ({{ option.count }})
                                     </a>
                                 </li>
@@ -233,8 +234,17 @@ const currentCourses = computed(() => {
                                     </div>
                                 </div>
                             </div>
-                             <div v-else class="p-6 text-center text-gray-500">
-                                No items to display in {{ selectedOption }}.
+                             <div v-else class="empty-library-state bg-white dark:bg-dark-bg-secondary p-6">
+                                <img src="/images/nothing_to_see.png" alt="No items" class="empty-library-image" />
+                                <p class="empty-library-message dark:text-white">
+                                    You don't have any courses in {{ selectedOption.toLowerCase() }}.
+                                </p>
+                                <p class="empty-library-submessage dark:text-white">
+                                    When you start a course you can find it here. Start watching videos that interest you.
+                                </p>
+                                <Link :href="route('dashboard')" class="empty-library-button">
+                                    Show recommended courses
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -242,26 +252,18 @@ const currentCourses = computed(() => {
             </div>
         </div>
 
-        <footer class="footer_upload_video" style="background-color: white; display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
-            <div>
+        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white">
+            <div class="footer-lang-select libaray_dark_text">
                 Language(Eng)
             </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-                About
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-               Become an instructor
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-                Privacy Policy
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-               Accessibility
-            </div>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">About</a>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">Become an instructor</a>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">Privacy Policy</a>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">Accessibility</a>
         </footer>
     </AuthenticatedLayout>
 </template>
@@ -314,10 +316,128 @@ const currentCourses = computed(() => {
         flex-direction: column;
     }
 }
+.footer_upload_video {
+    background-color: white;
+}
 @media (max-width: 770px) {
     .footer_upload_video{
         flex-direction: column;
         
     }
+}
+
+/* New styles for empty library state */
+.empty-library-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+    min-height: 400px; /* Ensure it takes up enough vertical space */
+}
+
+.empty-library-image {
+    width: 250px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.empty-library-message {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.empty-library-submessage {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    max-width: 400px;
+}
+
+.empty-library-button {
+    background-color: #0a66c2; /* LinkedIn blue */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.empty-library-button:hover {
+    background-color: #004182;
+}
+
+/* Enhanced styles for the existing footer content */
+.footer_upload_video {
+    background-color: #ffffff; /* Crisp white background */
+    padding: 20px 40px; /* Standard padding */
+    border-top: 1px solid #e7e7e7; /* Very subtle top border */
+    font-family: 'Arial', sans-serif; /* Common web-safe font */
+    font-size: 13px;
+    color: #5f6368; /* Standard dark grey for text */
+    display: flex;
+    justify-content: center; /* Center items */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 20px; /* Adjusted gap for spacing */
+    min-height: 50px; /* Minimum height */
+}
+
+.footer-lang-select {
+    color: #5f6368;
+    font-weight: normal;
+    white-space: nowrap;
+    padding: 2px 0;
+}
+
+.footer-link {
+    color: #5f6368;
+    text-decoration: none;
+    transition: color 0.2s, text-decoration 0.2s;
+    white-space: nowrap;
+    cursor: pointer;
+    line-height: 1.2;
+    padding: 2px 0;
+}
+
+.footer-link:hover {
+    color: #0073b1; /* LinkedIn blue for hover */
+    text-decoration: underline;
+}
+
+.footer-divider {
+    font-size: 14px; /* Small dot */
+    font-weight: bold;
+    color: #cccccc; /* Lighter grey for dots */
+    margin: 0 5px;
+    line-height: 1;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .footer_upload_video {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 20px; /* Reduced padding on small screens */
+        gap: 8px; /* Tighter vertical gap */
+    }
+    .footer-divider {
+        display: none;
+    }
+    .footer-link, .footer-lang-select {
+        margin-bottom: 0;
+    }
+}
+.dark .dark_library_pen_icon{
+    filter: invert(1);
+}
+.dark .libaray_dark_text{
+    color: white;
 }
 </style>

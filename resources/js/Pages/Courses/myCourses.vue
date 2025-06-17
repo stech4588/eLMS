@@ -98,12 +98,12 @@ const toggleFavorite = async (course) => {
                 </div>
 
                 <div class=" overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6  border-b border-gray-200">
+                <div class="p-6  border-b border-gray-200 dark:bg-dark-bg-secondary">
                         <div v-if="paginatedMyCourses && paginatedMyCourses.length > 0"
                             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div v-for="course in paginatedMyCourses" :key="course.id">
                                 <Link :href="route('courses.show', { course: course.id })" class="block hover:shadow-lg transition-shadow duration-200 ease-in-out rounded-lg h-full">
-                                    <div class="bg-white rounded-lg shadow-md overflow-hidden my_course_card h-full flex flex-col">
+                                    <div class="bg-white rounded-lg shadow-md overflow-hidden my_course_card h-full flex flex-col dark:bg-gray-800">
                                         <div class="relative w-full h-48">
                                             <img v-if="course.thumbnail_url" :src="course.thumbnail_url" alt="Course thumbnail"
                                                 class="absolute inset-0 w-full h-full object-cover">
@@ -115,10 +115,10 @@ const toggleFavorite = async (course) => {
                                             </div>
                                         </div>
                                         <div class="p-4 flex flex-col flex-grow">
-                                            <p class="text-gray-600 text-sm mb-1 truncate_description flex-grow">{{ course.type }}</p>
-                                            <h3 class="text-lg font-semibold mb-2 text-gray-800">{{ course.title }}</h3>
+                                            <p class="text-gray-600 text-sm mb-1 dark:text-gray-400 truncate_description flex-grow">{{ course.type }}</p>
+                                            <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">{{ course.title }}</h3>
                                             <div class="flex justify-between items-center mt-1">
-                                                <p class="text-xs text-gray-500">By: {{ course.author || "Placeholder Author" }}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">By: {{ course.author || "Placeholder Author" }}</p>
                                                 <button @click.stop.prevent="toggleFavorite(course)" class="p-1 rounded-full hover:bg-gray-200">
                                                     <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>

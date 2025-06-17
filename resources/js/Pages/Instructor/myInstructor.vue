@@ -8,18 +8,20 @@
             <div class="instructor-page-wrapper">
                 <div class="instructor-card">
                     <div style="border-bottom: 1px solid #414141;">
+                     <a :href="user ? '/dashboard' : '/'">   
                         <img src="/images/MBM_Uni.png" alt="logo" class="" style="margin-left: 55px; width: 100px; height: 100px;">
+                        </a>
                     </div>
-                    <div class="instructor-content-container">
+                    <div class="instructor-content-container" style="text-align: start;">
 
                         <!-- Left Column -->
                         <div class="instructor-left-column">
                             <div style="display: flex; flex-direction: column; gap: 40px;">
-                                 <h1 class="instructor-main-heading">Become a LinkedIn Learning Instructor</h1>
-                            <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of LinkedIn Learning Instructors and share your knowledge with millions of learners worldwide.</p>
+                                 <h1 class="instructor-main-heading">Become a MBM Learning Instructor</h1>
+                            <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of MBM Learning Instructors and share your knowledge with millions of learners worldwide.</p>
                             </div>
                            
-                            <p class="instructor-text" style="margin-bottom: 1rem;">At LinkedIn Learning, we believe that great education starts with great instructors. As a subject matter expert, you’ll have the opportunity to:</p>
+                            <p class="instructor-text" style="margin-bottom: 1rem;">At MBM Learning, we believe that great education starts with great instructors. As a subject matter expert, you’ll have the opportunity to:</p>
                             <ul class="instructor-list">
                                 <li>Teach what you love and reach a global audience.</li>
                                 <li>Collaborate with a world-class production team.</li>
@@ -29,19 +31,19 @@
 
                             <h2 class="instructor-subheading">About Working With us:</h2>
                             <p class="instructor-text">
-                                Working with LinkedIn Learning goes beyond simply recording courses—it’s a collaborative experience where you’ll team up with an expert group dedicated to helping you refine your content and message. They’ll guide you in delivering your knowledge in an engaging, easy-to-digest format while ensuring your course connects with the right learners at the perfect time. <a href="#" class="instructor-link">Here</a>
+                                Working with MBM Learning goes beyond simply recording courses—it’s a collaborative experience where you’ll team up with an expert group dedicated to helping you refine your content and message. They’ll guide you in delivering your knowledge in an engaging, easy-to-digest format while ensuring your course connects with the right learners at the perfect time. <a href="#" class="instructor-link">Here</a>
                             </p>
 
                             <div class="instructor-quote">
-                                "As an instructor, you're passionate about your subject matter. The thing I love about working with LinkedIn is, they help you bring it to life in really exciting ways."
-                                <p class="instructor-quote-author">—Lisa Earle McLeod, Sales Leadership Consultant & LinkedIn Learning Instructor</p>
+                                "As an instructor, you're passionate about your subject matter. The thing I love about working with MBM is, they help you bring it to life in really exciting ways."
+                                <p class="instructor-quote-author">—Lisa Earle McLeod, Sales Leadership Consultant & MBM Learning Instructor</p>
                             </div>
 
                             <h2 class="instructor-subheading">Apply Now!</h2>
                             <p class="instructor-text">
                                 If you're ready to inspire, educate, and make an impact, we’d love to hear from you.
 
-📩 Start your journey with LinkedIn Learning today. Apply to become an instructor! <a href="#" class="instructor-link">Here</a>
+📩 Start your journey with MBM Learning today. Apply to become an instructor! <a href="#" class="instructor-link">Here</a>
                             </p>
                         </div>
 
@@ -153,7 +155,9 @@
 
 <script>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 
+const user = usePage().props.auth?.user
 export default {
     components: {
         // AuthenticatedLayout, // Assuming this is not used for a public registration form

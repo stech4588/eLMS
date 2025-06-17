@@ -9,12 +9,14 @@
               <h1>You want</h1>
             </div>
             <div class="future-head-col-2">
-              <img src="/images/MBM_Uni.png" alt="Logo" />
+               <a :href="user ? '/dashboard' : '/'">  
+               <img src="/images/MBM_Uni.png" alt="MBM Logo">
+             </a>
             </div>
           </div>
         </div>
         <div class="future-description">
-          <p>MBM University students succeed because <span class="highlight">they take action.</span> We provide the
+          <p> MBM University students succeed because <span class="highlight">they take action.</span> We provide the
             tested path, and you shape your journey.</p>
           <p><span class="highlight">Business is a skill.</span> Like any other, it can be developed with dedication,
             the right coaches, and a supportive learning environment.</p>
@@ -73,10 +75,15 @@
 </template>
 <script>
 import apiClient from '@/Config/apiClient.js';
-import { Link } from '@inertiajs/vue3';
+import { usePage, Link } from '@inertiajs/vue3';
 export default {
   components: {
     Link,
+  },
+  computed: {
+    user() {
+      return usePage().props.auth?.user;
+    }
   },
   data() {
     return {

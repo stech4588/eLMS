@@ -1,344 +1,86 @@
 <template>
-    <div class="main-hero-section">
-        <div class="hero-logo">
-            <img src="/images/MBM_Uni.png" alt="">
-        </div>
-        <div class="hero-description">
-            <h1>Welcome to  <span class="real">MBM University</span></h1>
-        </div>
-        <div class="hero-video">
-            <div v-if="isPlaying" class="video-container">
-                <iframe width="100%" height="100%" :src="videoUrl" title="YouTube video player" frameborder="0"
-                    allow="autoplay; encrypted-media" allowfullscreen>
-                </iframe>
+    <section class="relative bg-light-bg-primary dark:bg-dark-bg-primary">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-light-bg-secondary dark:bg-dark-bg-secondary opacity-50"></div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-light-text-primary dark:text-dark-text-primary mb-6">
+                    Welcome to eLMS
+                </h1>
+                <p class="text-xl md:text-2xl text-light-text-secondary dark:text-dark-text-secondary mb-8 max-w-3xl mx-auto">
+                    Your gateway to quality education and professional development. Discover courses that will help you achieve your goals.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/courses" 
+                        class="px-8 py-3 bg-light-button-bg dark:bg-dark-button-bg text-light-button-text dark:text-dark-button-text 
+                        rounded-lg hover:bg-light-button-hover dark:hover:bg-dark-button-hover transition-colors duration-200">
+                        Browse Courses
+                    </a>
+                    <a href="/about" 
+                        class="px-8 py-3 border-2 border-light-border-primary dark:border-dark-border-primary 
+                        text-light-text-primary dark:text-dark-text-primary rounded-lg 
+                        hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary transition-colors duration-200">
+                        Learn More
+                    </a>
+                </div>
             </div>
-            <div v-else class="video-thumbnail" @click="playVideo">
-                <img src="/images/placeholder.webp" alt="">
-                <div class="overlay">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none">
-                        <g clip-path="url(#clip0_713_490)">
-                            <path
-                                d="M50 0C22.3859 0 0 22.3859 0 50C0 77.6141 22.3859 100 50 100C77.616 100 100 77.6141 100 50C100 22.3859 77.616 0 50 0ZM50 90C27.9439 90 10 72.0561 10 50C10 27.9439 27.9439 10 50 10C72.0561 10 90 27.9439 90 50C90 72.0561 72.0561 90 50 90Z"
-                                fill="url(#paint0_linear_713_490)"></path>
-                            <path
-                                d="M68.185 46.5008L43.9369 32.5008C40.6029 30.5768 37.875 32.1508 37.875 36.0008V64.0008C37.875 67.8508 40.6029 69.4268 43.9369 67.5008L68.185 53.5008C71.5189 51.5768 71.5189 48.4249 68.185 46.5008Z"
-                                fill="url(#paint1_linear_713_490)"></path>
-                        </g>
-                        <defs>
-                            <linearGradient id="paint0_linear_713_490" x1="50" y1="0" x2="50" y2="100"
-                                gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#FF9B01"></stop>
-                                <stop offset="1" stop-color="#FFC468"></stop>
-                            </linearGradient>
-                            <linearGradient id="paint1_linear_713_490" x1="54.2802" y1="31.6797" x2="54.2802"
-                                y2="68.3228" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#FF9B01"></stop>
-                                <stop offset="1" stop-color="#FFC468"></stop>
-                            </linearGradient>
-                            <clipPath id="clip0_713_490">
-                                <rect width="100" height="100" fill="white"></rect>
-                            </clipPath>
-                        </defs>
-                    </svg>
+
+            <!-- Features Grid -->
+            <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Expert-Led Courses
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Learn from industry professionals and experienced educators.
+                    </p>
+                </div>
+
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Secure Learning
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Your progress and achievements are safely stored and verified.
+                    </p>
+                </div>
+
+                <div class="p-6 bg-light-card-bg dark:bg-dark-card-bg rounded-lg shadow-light dark:shadow-dark">
+                    <div class="text-light-accent-primary dark:text-dark-accent-primary mb-4">
+                        <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-light-text-primary dark:text-dark-text-primary mb-2">
+                        Flexible Learning
+                    </h3>
+                    <p class="text-light-text-secondary dark:text-dark-text-secondary">
+                        Study at your own pace, anytime and anywhere.
+                    </p>
                 </div>
             </div>
         </div>
-
-        <div class="hero-advantage">
-            <div class="advantage-container">
-                <p><span class="gold">278,254+</span> have already taken advantage of this opportunity.</p>
-            </div>
-        </div>
-    </div>
+    </section>
 </template>
-<script>
-export default {
-    data() {
-        return {
-            isPlaying: false,
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-        };
-    },
-    methods: {
-        playVideo() {
-            this.isPlaying = true;
-        }
-    }
-};
+
+<script setup>
+// No additional setup needed for dark mode
 </script>
-<style>
 
-.video-container {
-    width: 100%;
-    height: 395px;
-    border-radius: 37px;
-    overflow: hidden;
-}
-
-.video-thumbnail {
-    position: relative;
-    cursor: pointer;
-}
-
-.video-thumbnail img {
-    width: 100%;
-    border-radius: 37px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    border: 2px solid #fff;
-}
-
-.overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.overlay svg {
-    height: 100px;
-    width: 100px;
-    fill: #fff;
-    filter: drop-shadow(1px 0 6px rgba(0, 0, 0, .3));
-}
-
-@media(max-width:768px) {
-    .hero-video {
-        width: 494px;
-    }
-    .video-container {
-        height: 280px;
-    }
-    .overlay svg {
-        height: 63px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-video {
-        width: 362px;
-    }
-    .video-container {
-        height: 220px;
-    }
-    .overlay svg {
-        height: 45px;
-    }
-}
-
-@media(max-width:430px) {
-    .hero-video {
-        width: 265px;
-    }
-    .video-container {
-        height: 160px;
-    }
-}
-.advantage-container p {
-    font-size: 20px;
-    margin: 9px;
-}
-
-@media(max-width:768px) {
-    .advantage-container p {
-        font-size: 13px;
-    }
-}
-
-@media(max-width:570px) {
-    .advantage-container p {
-        margin: 0px;
-    }
-}
-
-@media(max-width:430px) {
-    .advantage-container p {
-        font-size: 10px;
-    }
-}
-
-.gold {
-    color:  #87CEEB;
-    font-weight: 900;
-}
-
-.advantage-container {
-    margin-top: 30px;
-    margin-bottom: 40px;
-    border: 3px solid  #87CEEB;
-    background-color: #f1f1f1;
-    border-radius: 14px;
-    padding: 10px 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-@media(max-width:390px) {
-    .advantage-container {
-        margin: 30px;
-    }
-}
-
-.overlay svg {
-    height: 100px;
-    width: 100px;
-    fill: #fff;
-    filter: drop-shadow(1px 0 6px rgba(0, 0, 0, .3));
-}
-
-@media(max-width:768px) {
-    .overlay svg {
-        height: 63px;
-    }
-}
-
-@media(max-width:570px) {
-    .overlay svg {
-        height: 45px;
-    }
-}
-
-.overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    /* Ensure it spans the entire container */
-    height: 100%;
-    /* Same as above */
-}
-
-
-
-.hero-video {
-    position: relative;
-    /* Ensure relative positioning for absolute child */
-    padding-top: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Center content inside */
-    width: 702px;
-}
-
-@media(max-width:768px) {
-    .hero-video {
-        width: 494px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-video {
-        width: 362px;
-    }
-}
-
-@media(max-width:430px) {
-    .hero-video {
-        width: 265px;
-    }
-}
-
-
-.hero-video img {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    border: 2px solid #fff;
-    width: 100%;
-    border-radius: 37px;
-}
-
-.main-hero-section {
-    background-image: url(/images/hero-bg.webp);
-    background-position: center center;
-    background-size: cover;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.real {
-    background-image: linear-gradient(310deg, #38B6FF, #4CCAFF);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.hero-logo {
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-}
-
-@media(max-width:570px) {
-    .hero-logo {
-        margin-top: 4px;
-    }
-}
-
-.hero-logo img {
-    width: 163px;
-    height: auto;
-}
-
-@media(max-width:768px) {
-    .hero-logo img {
-        width: 120px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-logo img {
-        width: 80px;
-    }
-}
-
-.hero-description h1 {
-    font-size: 55px;
-    font-weight: 700;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    line-height: 85px;
-    letter-spacing: 3px;
-    color: #08080D;
-}
-
-@media(max-width:768px) {
-    .hero-description h1 {
-        font-size: 36px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-description h1 {
-        font-size: 23px;
-        line-height: 45px;
-    }
-}
-
-.hero-description h2 {
-    font-size: 40px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    color: #08080D;
-    letter-spacing: 3px;
-}
-
-@media(max-width:768px) {
-    .hero-description h2 {
-        margin-top: -5px;
-        font-size: 30px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-description h2 {
-        margin-top: -5px;
-        font-size: 16px;
-    }
-}
+<style scoped>
+/* No additional styles needed as we're using Tailwind classes */
 </style>
