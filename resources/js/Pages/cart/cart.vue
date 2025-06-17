@@ -1,13 +1,13 @@
 <template>
     <AuthenticatedLayout>
-        <div class="bg-[#97d5ff] min-h-screen py-12 text-black">
+        <div class="bg-[#97d5ff] min-h-screen py-12 text-black dark:bg-dark-bg-primary dark:text-white">
             <div class="container mx-auto px-4">
                 <h1 class="text-4xl font-bold text-center mb-8">Your cart</h1>
                 <div class="flex flex-col lg:flex-row gap-8">
 
                     <!-- Left Side -->
                     <div class="lg:w-2/3">
-                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 dark:bg-dark-bg-secondary">
                             <img :src="course.videos[0].thumbnail_url" alt="Course Image" class=" h-48 object-cover rounded-lg mb-4" style="width: 40%;">
                             <h2 class="text-2xl font-semibold mb-4">{{ course.title }}</h2>
                             <p class="text-gray-600 mb-4">{{ course.description }}</p>
@@ -30,7 +30,7 @@
 
                     <!-- Right Side -->
                     <div class="lg:w-1/3">
-                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 dark:bg-dark-bg-secondary">
                             <h2 class="text-2xl font-semibold mb-4">Order summary</h2>
                             
                             <div class="flex justify-between items-center mb-4 pb-4 border-b">

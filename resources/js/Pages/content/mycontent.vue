@@ -277,12 +277,16 @@ const toggleFavorite = async (course) => {
 
 .course-card-wrapper {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-between;
     gap: 16px;
     background-color: white;
     padding: 20px;
     border-radius: 16px;
+}
+@media (max-width:1290px) {
+    .course-card-wrapper {
+        flex-wrap: wrap;
+    }
 }
 
 .course-card {
@@ -294,7 +298,7 @@ const toggleFavorite = async (course) => {
     border-radius: 12px;
     padding: 16px;
     width: 100%;
-    max-width: 318px;
+    max-width: 388px;
     box-sizing: border-box;
     height: 249px;
 }
@@ -304,10 +308,16 @@ const toggleFavorite = async (course) => {
     flex-direction: column;
     justify-content: center;
     gap: 24px;
+    width: 100%;
+    align-items: flex-start;
     font-size: 20px;
     font-weight: 600;
 }
-
+@media(max-width:1435px){
+    .course-card-text{
+        align-items: center;
+    }
+}
 .course-card-button {
     font-size: 16px;
     border: 1px solid #000;

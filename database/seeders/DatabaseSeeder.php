@@ -25,11 +25,13 @@ class DatabaseSeeder extends Seeder
        
         User::updateOrCreate(
             [
-                'email' => 'test@example.com',
-                'name' => 'Test User',
-                'password'=>Hash::make('password'),
-                'role_id' => 1, // Assuming role_id 1 is for 'Super Admin'
+                'email' => 'test@example.com'
             ],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('password'),
+                'role_id' => 1 // Assuming role_id 1 is for 'Super Admin'
+            ]
         );
     }
 }

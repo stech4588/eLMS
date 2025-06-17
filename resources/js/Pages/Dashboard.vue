@@ -3,13 +3,13 @@
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <div class="bg-gray-100 dark:bg-dark-bg-primary p-6"
+        <div class="dark:bg-dark-bg-primary p-6"
             style="margin: 13px; margin-top: 0px; justify-content: center; display: flex;">
 
 
 
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10 bg-white dark:bg-dark-bg-secondary p-6"
-                style="margin: 0px; width: 100%; border-radius: 16px; text-align: start;">
+                style="margin: 0px; width: 100%; max-width:1730px; border-radius: 16px; text-align: start;">
                 <div class="main_filter_container bg-white dark:bg-dark-bg-secondary" style="display: flex; justify-content: space-between; padding: 10px; border-radius: 16px; padding-top: 25px;">
                     <div style=" display: flex; align-items: start; ">
                         <img src="/images/search_icon.svg" alt="Search" class="search_icon" style="position: absolute; margin-left: 10px;  padding: 15px 0px;"/>
@@ -24,7 +24,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedTopicText || 'Topics' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; top: 100%; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
+                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; top: 100%;background-color: #dedede; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect({ value: '', text: 'Topics' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Topics (All)</a></li>
                                     <li v-for="option in topicOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -39,7 +39,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseTypeText || 'Course Type' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute;overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute;overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect({ value: '', text: 'Course Type' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Type (All)</a></li>
                                     <li v-for="option in courseTypeOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -54,7 +54,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCertificateText || 'Certificate' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect({ value: '', text: 'Certificate' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Certificate (All)</a></li>
                                     <li v-for="option in certificateOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -69,7 +69,7 @@
                                     <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseIndustryText || 'Course Industry' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
+                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white" style="position: absolute; overflow: hidden; background-color: #dedede; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border-radius: 0.25rem;">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect({ value: '', text: 'Course Industry' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Industry (All)</a></li>
                                     <li v-for="option in courseIndustryOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -218,7 +218,7 @@
                     </div>
                 </div> -->
 
-                <div class="dark:bg-dark-bg-secondary dark:text-white" style="display:flex;flex-direction: row; justify-content:space-around; gap:15px;">
+                <div class="dark:bg-dark-bg-secondary dark:text-white f-direction" style="display:flex; justify-content:space-around; gap:15px;">
                     <div class="course-card dark:bg-gray-800 dark:text-white">
                         <div class="course-card-text">
                             Leadership & Management
@@ -867,7 +867,7 @@ const toggleFavorite = async (course) => {
         max-width: 100%;
         align-items: center;
         text-align: center;
-        height: 350px;
+        height: 300px;
     }
 }
 .course-card-text {
@@ -875,10 +875,16 @@ const toggleFavorite = async (course) => {
     flex-direction: column;
     justify-content: center;
     gap: 24px;
+    width: 100%;
+    align-items: flex-start;
     font-size: 20px;
     font-weight: 600;
 }
-
+@media(max-width:1435px){
+    .course-card-text{
+        align-items: center;
+    }
+}
 .course-card-button {
     font-size: 16px;
     border: 1px solid #000;
@@ -911,7 +917,14 @@ const toggleFavorite = async (course) => {
         justify-content: center;
     }
 }
-
+.f-direction {
+    flex-direction: row;
+}
+@media (max-width: 1110px) {
+    .f-direction {
+        flex-wrap: wrap;
+    }
+}
 @media (max-width: 940px) {
     .list_of_courses {
 

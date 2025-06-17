@@ -505,7 +505,7 @@
             </div>
         </div>
 
-        <footer class="footer_upload_video" style="background-color: white; display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
+        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white" style=" display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
             <div>
                 Language(Eng)
             </div>
@@ -1220,6 +1220,9 @@ onMounted(() => {
     padding-left: 0;
     padding-right: 0;
 
+}
+.footer_upload_video {
+    background-color: white;
 }
 @media (max-width: 770px) {
     .footer_upload_video{
