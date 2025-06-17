@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 defineProps({
     users: Array,
@@ -11,20 +12,36 @@ const editUser = (userId) => {
 };
 
 const deleteUser = (userId) => {
-    if (confirm('Are you sure you want to delete this user?')) {
-        router.delete(route('users.destroy', userId), {
-            preserveScroll: true,
-            onSuccess: () => {
-                // You might want to show a success notification here
-                // The page should automatically reload with the updated user list
-                // if your controller redirects back with Inertia::render or redirect()->route()
-            },
-            onError: (errors) => {
-                console.error('Error deleting user:', errors);
-                // Handle errors, e.g., show an error notification
-            },
-        });
-    }
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('users.destroy', userId), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    Swal.fire(
+                        'Deleted!',
+                        'The user has been deleted.',
+                        'success'
+                    );
+                },
+                onError: (errors) => {
+                    console.error('Error deleting user:', errors);
+                    Swal.fire(
+                        'Error!',
+                        'There was a problem deleting the user.',
+                        'error'
+                    );
+                },
+            });
+        }
+    });
 };
 </script>
 
