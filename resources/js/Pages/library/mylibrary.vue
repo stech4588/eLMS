@@ -75,16 +75,16 @@ const currentCourses = computed(() => {
                                 </div>
                                 <div>
                                     <p class=" text-lg font-semibold">Weekly Goals <span
-                                            class="text-xs text-gray-500">(May12 to
+                                            class="text-xs text-gray-500 libaray_dark_text">(May12 to
                                             May18)</span>
                                     </p>
-                                    <p class="text-sm text-gray-500">2/120mins</p>
+                                    <p class="text-sm text-gray-500 libaray_dark_text">2/120mins</p>
                                 </div>
                             </div>
                         </div>
                         <button class="text-gray-500 hover:text-gray-700">
                             <!-- Placeholder for an edit icon -->
-                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6">
+                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                         </button>
                     </div>
                 </div>
@@ -95,17 +95,17 @@ const currentCourses = computed(() => {
                             <div class="flex items-center" style="gap: 10px;">
                                 <div class="">
                                     <!-- Placeholder for an icon -->
-                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6">
+                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                                 </div>
                                 <div>
                                     <p class=" text-lg font-semibold">Skills</p>
-                                    <p class="text-sm text-gray-500">28 Followed Skills</p>
+                                    <p class="text-sm text-gray-500 libaray_dark_text">28 Followed Skills</p>
                                 </div>
                             </div>
                         </div>
                         <button class="text-gray-500 hover:text-gray-700">
                             <!-- Placeholder for an edit icon -->
-                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6">
+                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                         </button>
                     </div>
                 </div>
@@ -116,17 +116,17 @@ const currentCourses = computed(() => {
                             <div class="flex items-center" style="gap: 10px;">
                                 <div class="">
                                     <!-- Placeholder for an icon -->
-                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6">
+                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                                 </div>
                                 <div>
                                     <p class=" text-lg font-semibold">Skill Evaluations</p>
-                                    <p class="text-sm text-gray-500">2 Evaluations</p>
+                                    <p class="text-sm text-gray-500 libaray_dark_text">2 Evaluations</p>
                                 </div>
                             </div>
                         </div>
                         <button class="text-gray-500 hover:text-gray-700">
                             <!-- Placeholder for an arrow icon -->
-                            <img src="/images/right_arrow_icon.svg" alt="diamond" class="w-6 h-6">
+                            <img src="/images/right_arrow_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
                         </button>
                     </div>
                 </div>
@@ -253,17 +253,17 @@ const currentCourses = computed(() => {
         </div>
 
         <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white">
-            <div class="footer-lang-select">
+            <div class="footer-lang-select libaray_dark_text">
                 Language(Eng)
             </div>
-            <span class="footer-divider">•</span>
-            <a href="#" class="footer-link">About</a>
-            <span class="footer-divider">•</span>
-            <a href="#" class="footer-link">Become an instructor</a>
-            <span class="footer-divider">•</span>
-            <a href="#" class="footer-link">Privacy Policy</a>
-            <span class="footer-divider">•</span>
-            <a href="#" class="footer-link">Accessibility</a>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">About</a>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">Become an instructor</a>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">Privacy Policy</a>
+            <span class="footer-divider libaray_dark_text">•</span>
+            <a href="#" class="footer-link libaray_dark_text">Accessibility</a>
         </footer>
     </AuthenticatedLayout>
 </template>
@@ -433,5 +433,11 @@ const currentCourses = computed(() => {
     .footer-link, .footer-lang-select {
         margin-bottom: 0;
     }
+}
+.dark .dark_library_pen_icon{
+    filter: invert(1);
+}
+.dark .libaray_dark_text{
+    color: white;
 }
 </style>

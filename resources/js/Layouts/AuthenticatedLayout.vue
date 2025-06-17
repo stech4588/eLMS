@@ -85,11 +85,7 @@ onMounted(() => {
                         <div class="relative ms-3" style="display:flex;flex-direction: row;">
                             <div><button @click="toggleDarkMode"
                                     class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
-                                    <!-- <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i> -->
-                                    <span style="font-size: 22px;" :title="isDark ? 'Light Mode' : 'Dark Mode'">
-                                        {{ isDark ? '☀️' : '🌙' }}
-                                    </span>
-
+                                    <i style="font-size: 22px;" :class="isDark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon text-gray-700'" :title="isDark ? 'Light Mode' : 'Dark Mode'"></i>
                                 </button></div>
                             <Dropdown align="right" width="48">
                                 <template #trigger>

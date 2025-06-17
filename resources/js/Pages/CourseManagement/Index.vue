@@ -83,8 +83,8 @@
                                                 <td class="py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ courseType.id }}</td>
                                                 <td class=" py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ courseType.name }}</td>
                                                 <td class="py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
-                                                    <button @click="startEdit(courseType)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" /></button>
-                                                    <button @click="deleteItem(courseType.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4"/></button>
+                                                    <button @click="startEdit(courseType)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
+                                                    <button @click="deleteItem(courseType.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -116,8 +116,8 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ topic.name }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ topic.is_trending ? 'Yes' : 'No' }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
-                                                    <button @click="startEdit(topic)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" /></button>
-                                                    <button @click="deleteItem(topic.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4"/></button>
+                                                    <button @click="startEdit(topic)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
+                                                    <button @click="deleteItem(topic.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -149,8 +149,8 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ certificate.name }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ certificate.description }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
-                                                    <button @click="startEdit(certificate)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" /></button>
-                                                    <button @click="deleteItem(certificate.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4"/></button>
+                                                    <button @click="startEdit(certificate)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
+                                                    <button @click="deleteItem(certificate.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -180,8 +180,8 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ industry.id }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ industry.name }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
-                                                    <button @click="startEdit(industry)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" /></button>
-                                                    <button @click="deleteItem(industry.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4"/></button>
+                                                    <button @click="startEdit(industry)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
+                                                    <button @click="deleteItem(industry.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -353,4 +353,7 @@ const deleteItem = (id) => {
     flex-direction: column;
     
 }}
+.dark .course_management_dark_icons{
+    filter: invert(1);
+}
 </style>

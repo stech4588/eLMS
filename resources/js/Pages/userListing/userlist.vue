@@ -88,8 +88,8 @@ const deleteUser = (userId) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ user.email }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="display: flex; align-items: center;">
-                                        <Link :href="route('users.edit', user.id)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4"></Link>
-                                        <button @click="deleteUser(user.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"><img src="/images/delete_icon.svg" alt="Edit" class="w-4 h-4"></button>
+                                        <Link :href="route('users.edit', user.id)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 user_listing_dark_icons"></Link>
+                                        <button @click="deleteUser(user.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"><img src="/images/delete_icon.svg" alt="Edit" class="w-4 h-4 user_listing_dark_icons"></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -100,3 +100,9 @@ const deleteUser = (userId) => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style>
+.dark .user_listing_dark_icons{
+    filter: invert(1);
+}
+</style>

@@ -91,7 +91,7 @@ function updateTopics() {
                             <div class="goal-content" >
                                 <div class="goal-header">
                                     <span class="goal-title">Career Goal</span>
-                                    <img src="/images/pen_icon.svg" alt="pen" class="edit-icon" @click="startEditing" v-if="!isEditing"/>
+                                    <img src="/images/pen_icon.svg" alt="pen" class="edit-icon dark_career_focus_option" @click="startEditing" v-if="!isEditing"/>
                                 </div>
                                 <div v-if="!isEditing" class="goal-description">
                                     {{ user.primary_learning_goal }}
@@ -144,7 +144,7 @@ function updateTopics() {
                        
                     <div class="focus-options-container">
                         <div v-for="topic in availableTopics" :key="topic.id" class="focus-option" @click="addTopic(topic)">
-                            <img src="/images/bulb_icon.svg"/>{{ topic.name }}
+                            <img class="dark_career_focus_option" src="/images/bulb_icon.svg"/>{{ topic.name }}
                         </div>
                     </div>
                 </div>
@@ -448,5 +448,8 @@ font-weight: 600;
 .cancel-btn {
     background-color: #bbbbbb;
     color: white;
+}
+.dark .dark_career_focus_option{
+    filter: invert(1);
 }
 </style>

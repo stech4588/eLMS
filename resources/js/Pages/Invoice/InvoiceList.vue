@@ -92,19 +92,19 @@ const deleteInvoice = (invoiceId) => {
                                     <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">No invoices found.</td>
                                 </tr>
                                 <tr v-for="invoice in invoices" :key="invoice.id">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ invoice.id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ invoice.user.name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ invoice.details[0]?.course?.title }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ invoice.amount }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.payment_method }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.payment_status }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.transaction_id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 invoice_list_dark_text">{{ invoice.id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 invoice_list_dark_text">{{ invoice.user.name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 invoice_list_dark_text">{{ invoice.details[0]?.course?.title }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 invoice_list_dark_text">{{ invoice.amount }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 invoice_list_dark_text">{{ invoice.payment_method }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 invoice_list_dark_text">{{ invoice.payment_status }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 invoice_list_dark_text">{{ invoice.transaction_id }}</td>
                                     <td class="py-4 px-6 whitespace-nowrap text-sm font-medium flex space-x-2">
                                         <Link :href="route('invoices.show', invoice.id)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
-                                            <img src="/images/view_icon.svg" alt="View" style="max-width: 20px; max-height: 20px;">
+                                            <img src="/images/view_icon.svg" alt="View" class="invoice_list_dark_icons" style="max-width: 20px; max-height: 20px;">
                                         </Link>
                                         <button @click="deleteInvoice(invoice.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
-                                            <img src="/images/delete_icon.svg" alt="Delete" style="max-width: 20px; max-height: 20px;">
+                                            <img src="/images/delete_icon.svg" alt="Delete" class="invoice_list_dark_icons" style="max-width: 20px; max-height: 20px;">
                                         </button>
                                     </td>
                                 </tr>
@@ -116,3 +116,12 @@ const deleteInvoice = (invoiceId) => {
         </div>
     </AuthenticatedLayout>
 </template> 
+
+<style>
+.dark .invoice_list_dark_icons{
+    filter: invert(1);
+}
+.dark .invoice_list_dark_text{
+    color: white;
+}
+</style>

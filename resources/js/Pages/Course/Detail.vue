@@ -23,20 +23,20 @@
 
                                 <!-- Add more course details here as needed -->
                                 <h2 class="text-2xl font-semibold mb-2 mt-6 dark:text-white">Description</h2>
-                                <p class="text-gray-600 whitespace-pre-wrap">{{ course.description || 'No description available.' }}</p>
+                                <p class="text-gray-600 whitespace-pre-wrap dark:text-white">{{ course.description || 'No description available.' }}</p>
 
                                 <h2 class="text-2xl font-semibold mb-2 mt-6 dark:text-white">Additional Description</h2>
-                                <p class="text-gray-600 whitespace-pre-wrap ">{{ course.additional_description || 'No additional description available.' }}</p>
+                                <p class="text-gray-600 whitespace-pre-wrap dark:text-white">{{ course.additional_description || 'No additional description available.' }}</p>
 
                                 <h2 class="text-2xl font-semibold mb-2 mt-6">Recomendations</h2>
-                                <p class="text-gray-600 whitespace-pre-wrap">{{ course.recomendations || 'No recomendations available.' }}</p>
+                                <p class="text-gray-600 whitespace-pre-wrap dark:text-white">{{ course.recomendations || 'No recomendations available.' }}</p>
 
                                  <!-- Placeholder for video player or video list -->
                                 <div class="mt-6">
                                     <h3 class="text-xl font-semibold">Course Content</h3>
                                     <!-- If you have a list of videos, you can display them here -->
                                     <p v-if="!course.videos || course.videos.length === 0" class="text-gray-500">No videos available for this course.</p>
-                                    <ul v-else class="list-disc pl-5 mt-2 space-y-1 text-gray-600">
+                                    <ul v-else class="list-disc pl-5 mt-2 space-y-1 text-gray-600 dark:text-white">
                                         <li v-for="video in course.videos" :key="video.id">{{ video.title }}</li>
                                     </ul>
                                     

@@ -55,7 +55,7 @@
                     <div v-if="currentVideo">
                         <h1 class="text-2xl font-bold mb-2 dark:text-white">{{ currentVideo.title }}</h1>
                         <div>
-                            <div class="dark:text-white" style="font-size: 16px; font-weight: 600; color: #7E7E7E">
+                            <div class="dark:text-white player_dark_text" style="font-size: 16px; font-weight: 600; color: #7E7E7E">
                                 Instructor
                             </div>
                             <div class="flex items-center mt-2" style="gap: 14px;">
@@ -79,7 +79,7 @@
                         <div class="mt-4">
                             <div style="font-size: 16px; font-weight: 600; " class="dark:text-white">
                                 Course Details
-                                <div class="flex items-center mt-1" style="gap: 16px; color: #7E7E7E">
+                                <div class="flex items-center mt-1 player_dark_text" style="gap: 16px; color: #7E7E7E">
                                     <p>{{course.type}}</p>
                                     <p>Updated: {{ course.updated_at }}</p>
                                 </div>
@@ -112,7 +112,7 @@
                                     <p class="text-gray-700 text-sm " style="font-size: 13px; font-weight: 400; color: #000000;">{{ comment.body }}</p>
                                 </div>
                             </div>
-                            <div v-else-if="course.comments && course.comments.length === 0" class="text-gray-500 mb-6">
+                            <div v-else-if="course.comments && course.comments.length === 0" class="text-gray-500 mb-6 player_dark_text">
                                 No comments yet. Be the first to comment!
                             </div>
                             <!-- Loading/placeholder can be added here if props.course.comments is initially undefined -->
@@ -614,6 +614,9 @@ const updateScreenSize = () => {
 }
 .home_page_style{
  padding:0px !important;
+}
+.dark .player_dark_text{
+    color: white !important;
 }
 /* Ensure video player does not exceed viewport height, adjust h-[60vh] as needed */
 </style>
