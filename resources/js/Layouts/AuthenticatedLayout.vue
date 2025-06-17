@@ -88,14 +88,14 @@ onMounted(() => {
                     <div class="hidden sm:ms-6 sm:flex sm:items-center">
                         <div class="relative ms-3" style="display:flex;flex-direction: row;">
                             <div><button @click="toggleDarkMode"
-                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                    class="w-full text-left  text-sm text-gray-700 dark:text-dark-text-secondary " style="padding: 5px !important;">
                                     <i style="font-size: 22px;" :class="isDark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon text-gray-700'" :title="isDark ? 'Light Mode' : 'Dark Mode'"></i>
                                 </button></div>
                             <Dropdown align="right" width="48">
                                 <template #trigger>
                                     <span class="inline-flex rounded-md">
                                         <button type="button"
-                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-dark-bg-secondary px-3 py-2 text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none">
+                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-dark-bg-secondary text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none" style="padding:5px !important;">
                                             {{ $page.props.auth.user.name }}
                                             <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor">
@@ -168,7 +168,7 @@ onMounted(() => {
                             Cart
                         </ResponsiveNavLink>
                         <button @click="toggleDarkMode"
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                            class="w-full text-left text-sm text-gray-700 dark:text-dark-text-secondary" style="padding: 5px;">
                             <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i>
                             <span class="ml-2">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
                         </button>
