@@ -94,8 +94,6 @@ const user = computed(() => page.props.auth.user);
 </script>
 
 <style >
-.main_sidebar {
-    /* display: none ; */
-}
+
 /* Add any page-specific styles here */
 </style>

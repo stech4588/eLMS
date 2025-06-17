@@ -193,6 +193,9 @@ const staticDropdowns = ref({
     filter: invert(1);
     width: 23px;
 }
+ .sidebar_dark_icon{
+    width: 23px;
+}
 .active {
     background-color: #97d5ff;
     border-radius: 4px;
