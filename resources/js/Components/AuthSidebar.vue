@@ -54,21 +54,21 @@
         </div> -->
         <div style="">
             <div >
-                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img src="/images/career_icon.svg" alt="users"  /> User Listing</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="users"  /> User Listing</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> Course Management</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/metatags' }" href="/metatags"> Meta Tags</Link>
-                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
-                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/my-career-journey' }" href="/my-career-journey"><img src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
+                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon" src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
+                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/my-career-journey' }" href="/my-career-journey"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
                
             </div>
             
         </div>
          <div>
             <div ><div class="sidebar_titles">Learn</div>
-                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/library' }" href="/library"><img src="/images/library_icon.svg" alt="Library"  /> My Library</Link>
-                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/content' }" href="/content"><img src="/images/content_icon.svg" alt="Content"  /> Content</Link>
-                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/coursess' }" href="/coursess"> <img src="/images/courses_icon.svg" alt="Courses"  /> My Courses</Link>
-                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/addnewcourses' }" href="/addnewcourses"> <img src="/images/add_icon.svg" alt="Add"  />Add New Courses</Link>
+                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/library' }" href="/library"><img class="sidebar_dark_icon" src="/images/library_icon.svg" alt="Library"  /> My Library</Link>
+                <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/content' }" href="/content"><img class="sidebar_dark_icon" src="/images/content_icon.svg" alt="Content"  /> Content</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/coursess' }" href="/coursess"> <img class="sidebar_dark_icon" src="/images/courses_icon.svg" alt="Courses"  /> My Courses</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/addnewcourses' }" href="/addnewcourses"> <img class="sidebar_dark_icon" src="/images/add_icon.svg" alt="Add"  />Add New Courses</Link>
             </div>
             
         </div>
@@ -89,7 +89,7 @@
                 <!-- <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/Instructor' }" href="/Instructor">Become an Instructor</Link> -->
                 
             </div>
-            <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img src="/images/help_icon.svg" alt="Help"  /></Link>
+            <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img class="sidebar_dark_icon" src="/images/help_icon.svg" alt="Help"  /></Link>
             
         </div>
     </aside>
@@ -193,7 +193,9 @@ const staticDropdowns = ref({
 .dark .sidebar_subtitles {
     color: white;
 }
-
+.dark .sidebar_dark_icon{
+    filter: invert(1);
+}
 .active {
     background-color: #97d5ff;
     border-radius: 4px;
