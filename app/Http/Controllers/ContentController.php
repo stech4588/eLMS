@@ -11,6 +11,7 @@ use Inertia\Response as InertiaResponse;
 use Illuminate\Support\Facades\Auth; // Auth facade can be used, but $request->user() is preferred
 use App\Models\Progress;
 use App\Models\User; // Needed for type hinting $user and its relationships
+use App\Models\Invoice;
 // Assuming App\Models\Course is already created/updated with necessary relationships
 // Assuming App\Models\Video is already created/updated with necessary relationships
 use Carbon\Carbon;
@@ -32,10 +33,38 @@ class ContentController extends Controller
             
             ->get()
             ->map(function ($course) {
+                $firstVideo = $course->videos->first();
                 $firstVideoThumbnailUrl = null;
-                if ($course->videos->isNotEmpty() && $course->videos->first()->thumbnail_url) {
-                    $firstVideoThumbnailUrl = asset($course->videos->first()->thumbnail_url);
+                if ($firstVideo && $firstVideo->thumbnail_url) {
+                    $firstVideoThumbnailUrl = asset($firstVideo->thumbnail_url);
                 }
+
+                $isPurchased = false;
+                $progress = 0;
+                if (Auth::check()) {
+                    $userId = Auth::id();
+                    $isPurchased = Invoice::where('user_id', $userId)
+                        ->where('payment_status', 'paid')
+                        ->whereHas('details', function ($query) use ($course) {
+                            $query->where('course_id', $course->id);
+                        })
+                        ->exists();
+                    
+                    if ($firstVideo) {
+                        $videoProgress = Progress::where('user_id', $userId)
+                            ->where('video_id', $firstVideo->id)
+                            ->first();
+
+                        if ($videoProgress && $firstVideo->duration > 0) {
+                            if ($videoProgress->completed) {
+                                $progress = 100;
+                            } else {
+                                $progress = ($videoProgress->watched_duration / $firstVideo->duration) * 100;
+                            }
+                        }
+                    }
+                }
+
                 return [
                     'id' => $course->id,
                     'title' => $course->title,
@@ -43,6 +72,9 @@ class ContentController extends Controller
                     'first_video_thumbnail_url' => $firstVideoThumbnailUrl,
                     'author' => $course->user ? $course->user->name : 'Placeholder Author', // Get author name from user relationship
                     'is_favorited' => $course->is_favorited, // Explicitly include is_favorited
+                    'is_purchased' => $isPurchased,
+                    'first_video_id' => $course->videos->isNotEmpty() ? $course->videos->first()->id : null,
+                    'progress' => $progress,
                 ];
             });
         

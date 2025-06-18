@@ -87,12 +87,6 @@
                 <div class="section_box dark:bg-dark-bg-secondary dark:text-white">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-xl font-bold section-title">Because of Skills you Follow</h3>
-                        <div class="space-x-2 main_left_right_button">
-                            <button class="swiper-button-prev1 left_right_button"><img
-                                    src="/images/left_side_icon.svg" /></button>
-                            <button class="swiper-button-next1 left_right_button"><img
-                                    src="/images/right_side_icon.svg" /></button>
-                        </div>
                     </div>
                     <!-- Display Selected Filters -->
                     <div class="selected-filters-container mb-4" v-if="hasActiveFilters">
@@ -114,109 +108,64 @@
                         </span>
                     </div>
 
-                    <!-- <div class="flex gap-3 mb-4 main_skill_buttons">
-                        <button @click="selectedCourseType = 'java'" :class="[
-                            'px-4 py-1 border rounded-full skill_buttons',
-                            selectedCourseType === 'java' ? 'bg-[#148ad9] text-white border-none' : ''
-                        ]">
-                            Java
-                        </button>
-                        <button @click="selectedCourseType = 'database'" :class="[
-                            'px-4 py-1 border rounded-full skill_buttons',
-                            selectedCourseType === 'database' ? 'bg-[#148ad9] text-white border-none' : ''
-                        ]">
-                            Database Development
-                        </button>
-                    </div> -->
-
-                    <swiper :modules="modules" :navigation="{
-                        nextEl: '.swiper-button-next1',
-                        prevEl: '.swiper-button-prev1',
-                    }" :slides-per-view="'auto'" :space-between="16" class="mySwiper">
-                        <div class="list_of_courses"
-                            style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); justify-content: space-around; align-items: center; gap: 20px; ">
-                            <swiper-slide v-for="(course, index) in paginatedSkillBasedCourses" :key="`skill-${index}-${course.id}`" class=""
-                                style="width: ">
-                                <Link :href="route('courses.show', { course: course.id })">
-                                    <div class="shrink-0 bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
-                                        <img :src="getThumbnailSrc(course)" class="w-full object-cover course_listing_home_page"
-                                            alt="Course thumbnail" />
-                                        <div class="p-2">
-                                            <p class="text-xs text-gray-500 dark:text-gray-300">{{ course.type }}</p>
-                                            <p class="text-sm font-semibold leading-tight title_hidden dark:text-white">{{ course.title }}
-                                            </p>
-                                            <div class="flex justify-between items-center mt-1">
-                                                <p class="text-xs text-gray-500 dark:text-gray-300">By: {{ course.author || 'Placeholder Author' }}</p>
-                                                <button @click.stop.prevent="toggleFavorite(course)" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                                                    <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
-                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                                    </svg>
-                                                    <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-600 dark_save_button">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mt-6">
+                        <div v-for="(course, index) in displayedCourses" :key="`skill-${index}-${course.id}`" class="course-card-container">
+                            <div class="linkedin-card dark:bg-gray-800">
+                                <div class="flex flex-row">
+                                    <Link :href="route('courses.show', { course: course.id })" class="linkedin-card-img-wrap">
+                                    <img :src="getThumbnailSrc(course)" class="linkedin-card-img" alt="Course thumbnail" />
                                 </Link>
-                            </swiper-slide>
-                        </div>
-                    </swiper>
-                    <div v-if="totalPagesSkills > 1" class="flex justify-center items-center mt-4 space-x-2">
-                        <button @click="prevPageSkills" :disabled="currentPageSkills === 1"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-[#97d5ff] rounded-md hover:bg-[#63c0ff] disabled:opacity-50">
-                            Previous
-                        </button>
-                        <span>Page {{ currentPageSkills }} of {{ totalPagesSkills }}</span>
-                        <button @click="nextPageSkills" :disabled="currentPageSkills === totalPagesSkills"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-[#97d5ff] rounded-md hover:bg-[#63c0ff] disabled:opacity-50">
-                            Next
-                        </button>
-                    </div>
-                </div>
-
-                <!-- New releases Section -->
-                <!-- <div class="section_box">
-                    <div class="flex justify-between items-center mb-2 release_top_section">
-                        <h3 class="text-xl font-bold">New Releases</h3>
-                        <div class="space-x-2 main_left_right_button">
-                            <button class="swiper-button-prev2 left_right_button"><img
-                                    src="/images/left_side_icon.svg" /></button>
-                            <button class="swiper-button-next2 left_right_button"><img
-                                    src="/images/right_side_icon.svg" /></button>
-                        </div>
-                    </div>
-
-                    <swiper :modules="modules" :navigation="{
-                        nextEl: '.swiper-button-next2',
-                        prevEl: '.swiper-button-prev2',
-                    }" :slides-per-view="'auto'" :space-between="16" class="mySwiper">
-                        <swiper-slide v-for="(course, index) in paginatedNewReleaseCourses"
-                            :key="`release-${course.id}-${index}`" class="w-40">
-                            <div class="shrink-0 bg-white rounded-lg overflow-hidden">
-                                <img :src="getThumbnailSrc(course)" class="w-full h-24 object-cover"
-                                    alt="Course thumbnail" />
-                                <div class="p-2">
-                                    <p class="text-xs text-gray-500">{{ course.type }}</p>
-                                    <p class="text-sm font-semibold leading-tight title_hidden">{{ course.title }}</p>
+                                <div style="width: 100%; padding: 10px;">
+                                    <p class="linkedin-card-type">{{ course.type }}</p>
+                                    <p class="linkedin-card-title">{{ course.title }}</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 h-10 overflow-hidden text-ellipsis">{{ course.description || 'No description available.' }}</p>
                                     
                                 </div>
+                                </div>
+                               
+                                <div class="linkedin-card-body dark:text-white">
+                                   
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
+                                        <div class="bg-blue-600 h-1.5 rounded-full" :style="{ width: course.progress + '%' }"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-300 mb-4">{{ Math.round(course.progress) }}% complete</p>
+
+                                    <div class="linkedin-card-footer mt-auto">
+                                        <p class="linkedin-card-author">By: {{ course.author || 'Placeholder' }}</p>
+                                        <button @click.stop.prevent="toggleFavorite(course)" class="linkedin-card-fav-btn">
+                                            <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                            </svg>
+                                            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-600 dark:text-gray-400">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between mt-4 space-x-2">
+                                        <Link :href="route('courses.show', { course: course.id })" class="course-action-btn-details dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                                            Details
+                                        </Link>
+                                        
+                                        <div v-if="course.is_purchased" class="flex-grow">
+                                            <Link :href="course.first_video_id ? route('courses.play', { course: course.id, video: course.first_video_id }) : '#'" 
+                                                  class="course-action-btn-play dark:bg-blue-600 dark:text-white w-full">
+                                                Play Course
+                                            </Link>
+                                        </div>
+                                        <div v-else class="flex-grow">
+                                            <Link :href="route('cart', { course_id: course.id })" class="course-action-btn-buy dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full">
+                                                <span>Buy Now</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                                </svg>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </swiper-slide>
-                    </swiper>
-                    
-                    <div v-if="totalPages > 1" class="flex justify-center items-center mt-4 space-x-2">
-                        <button @click="prevPage" :disabled="currentPage === 1"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50">
-                            Previous
-                        </button>
-                        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-                        <button @click="nextPage" :disabled="currentPage === totalPages"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50">
-                            Next
-                        </button>
+                        </div>
                     </div>
-                </div> -->
+                </div>
 
                 <div class="dark:bg-dark-bg-secondary dark:text-white f-direction" style="display:flex; justify-content:space-around; gap:15px;">
                     <div class="course-card dark:bg-gray-800 dark:text-white">
@@ -286,10 +235,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import { Navigation } from 'swiper/modules'; // Only Navigation for this Swiper setup, ensure Pagination is imported if used by other swipers
 
 // Define props to receive data from the controller
 const props = defineProps({
@@ -451,70 +396,6 @@ const removeSelectedCourseIndustry = (courseIndustryId) => {
     }
 };
 
-const modules = [Navigation]; // Only Navigation is globally registered now unless other swipers need Pagination
-
-// Pagination for Skills Section
-const currentPageSkills = ref(1);
-const itemsPerPageSkills = ref(9);
-
-// Computed property that applies all filters (dropdowns and search)
-const displayedCourses = computed(() => {
-    let coursesToDisplay = props.skillBasedCourses || [];
-
-    // Apply dropdown filters
-    if (selectedTopics.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedTopics.value.includes(course.topic_id));
-    }
-    if (selectedCourseTypes.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseTypes.value.includes(course.course_type_id));
-    }
-    if (selectedCertificates.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedCertificates.value.includes(course.certificate_id));
-    }
-    if (selectedCourseIndustries.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseIndustries.value.includes(course.industry_id));
-    }
-
-    // Then apply search query filter
-    if (searchQuery.value && searchQuery.value.trim() !== '') {
-        const lowerSearchQuery = searchQuery.value.toLowerCase().trim();
-        coursesToDisplay = coursesToDisplay.filter(course => {
-            const titleMatch = course.title && course.title.toLowerCase().includes(lowerSearchQuery);
-            const typeMatch = course.type && course.type.toLowerCase().includes(lowerSearchQuery);
-            const authorMatch = course.author && typeof course.author === 'string' && course.author.toLowerCase().includes(lowerSearchQuery);
-            return titleMatch || typeMatch || authorMatch;
-        });
-    }
-    return coursesToDisplay;
-});
-
-// Computed properties for Skills Section Pagination
-const totalFilteredCoursesCount = computed(() => displayedCourses.value.length);
-
-const totalPagesSkills = computed(() => {
-    if (totalFilteredCoursesCount.value === 0) return 1; // Avoid division by zero, ensure at least 1 page
-    return Math.ceil(totalFilteredCoursesCount.value / itemsPerPageSkills.value);
-});
-
-const paginatedSkillBasedCourses = computed(() => {
-    const start = (currentPageSkills.value - 1) * itemsPerPageSkills.value;
-    const end = start + itemsPerPageSkills.value;
-    return displayedCourses.value.slice(start, end); // Paginate the already filtered list
-});
-
-// Methods for Skills Section Pagination
-function nextPageSkills() {
-    if (currentPageSkills.value < totalPagesSkills.value) {
-        currentPageSkills.value++;
-    }
-}
-
-function prevPageSkills() {
-    if (currentPageSkills.value > 1) {
-        currentPageSkills.value--;
-    }
-}
-
 // Dropdown toggle methods
 const toggleTopicDropdown = () => {
     isTopicDropdownOpen.value = !isTopicDropdownOpen.value;
@@ -609,121 +490,36 @@ onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
 });
 
-// Watch for filter changes to reset current page for skills section
-watch([selectedTopics, selectedCourseTypes, selectedCertificates, selectedCourseIndustries, searchQuery], () => {
-    currentPageSkills.value = 1;
+// Computed property that applies all filters (dropdowns and search)
+const displayedCourses = computed(() => {
+    let coursesToDisplay = props.skillBasedCourses || [];
+
+    // Apply dropdown filters
+    if (selectedTopics.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedTopics.value.includes(course.topic_id));
+    }
+    if (selectedCourseTypes.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseTypes.value.includes(course.course_type_id));
+    }
+    if (selectedCertificates.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedCertificates.value.includes(course.certificate_id));
+    }
+    if (selectedCourseIndustries.value.length > 0) {
+        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseIndustries.value.includes(course.industry_id));
+    }
+
+    // Then apply search query filter
+    if (searchQuery.value && searchQuery.value.trim() !== '') {
+        const lowerSearchQuery = searchQuery.value.toLowerCase().trim();
+        coursesToDisplay = coursesToDisplay.filter(course => {
+            const titleMatch = course.title && course.title.toLowerCase().includes(lowerSearchQuery);
+            const typeMatch = course.type && course.type.toLowerCase().includes(lowerSearchQuery);
+            const authorMatch = course.author && typeof course.author === 'string' && course.author.toLowerCase().includes(lowerSearchQuery);
+            return titleMatch || typeMatch || authorMatch;
+        });
+    }
+    return coursesToDisplay;
 });
-
-// Pagination for New Releases
-const currentPage = ref(1);
-const itemsPerPage = ref(9);
-
-const totalPages = computed(() => {
-    if (!props.allNewReleaseCourses || props.allNewReleaseCourses.length === 0) return 1;
-    return Math.ceil(props.allNewReleaseCourses.length / itemsPerPage.value);
-});
-
-const paginatedNewReleaseCourses = computed(() => {
-    if (!props.allNewReleaseCourses) return [];
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return props.allNewReleaseCourses.slice(start, end);
-});
-
-function nextPage() {
-    if (currentPage.value < totalPages.value) {
-        currentPage.value++;
-    }
-}
-
-function prevPage() {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-    }
-}
-
-const selectedCourseType = ref('java'); // default selected for other sections if still used
-
-function showCourses(type) {
-    selectedCourseType.value = type;
-}
-
-const courseJavaList = [
-    {
-        title: 'Spring Boost: Test-Driven Development',
-        author: 'Syed Usman',
-        type: 'Course'
-    },
-    {
-        title: 'Java for Beginners',
-        author: 'Ayesha Nadeem',
-        type: 'Course'
-    },
-    {
-        title: 'Spring Boost: Test-Driven Development',
-        author: 'Syed Usman',
-        type: 'Course'
-    },
-    {
-        title: 'Java for Beginners',
-        author: 'Ayesha Nadeem',
-        type: 'Course'
-    },
-    {
-        title: 'Spring Boost: Test-Driven Development',
-        author: 'Syed Usman',
-        type: 'Course'
-    },
-    {
-        title: 'Java for Beginners',
-        author: 'Ayesha Nadeem',
-        type: 'Course'
-    },
-    {
-        title: 'Spring Boost: Test-Driven Development',
-        author: 'Syed Usman',
-        type: 'Course'
-    },
-    {
-        title: 'Java for Beginners',
-        author: 'Ayesha Nadeem',
-        type: 'Course'
-    }
-];
-
-const courseDatabaseList = [
-    {
-        title: 'Summer Boost: Test-Driven Development',
-        author: 'Syed Daniyal',
-        type: 'Course'
-    },
-    {
-        title: 'Database Design Basics',
-        author: 'Talha Yousuf',
-        type: 'Course'
-    }
-];
-
-const activeFilters = computed(() => {
-    return [
-        { value: selectedTopics.value.join(','), text: selectedTopicText },
-        { value: selectedCourseTypes.value.join(','), text: selectedCourseTypeText },
-        { value: selectedCertificates.value.join(','), text: selectedCertificateText },
-        { value: selectedCourseIndustries.value.join(','), text: selectedCourseIndustryText },
-    ].filter(filter => filter.text);
-});
-
-function clearFilter(value) {
-    if (value.startsWith('topics')) {
-        clearSelectedTopic();
-    } else if (value.startsWith('courseTypes')) {
-        clearSelectedCourseTypeFilter();
-    } else if (value.startsWith('certificates')) {
-        clearSelectedCertificate();
-    } else if (value.startsWith('courseIndustries')) {
-        clearSelectedCourseIndustry();
-    }
-}
 
 const toggleFavorite = async (course) => {
     // Optimistically update the UI first
@@ -811,9 +607,14 @@ const toggleFavorite = async (course) => {
 }
 
 .swiper-slide {
-    /* width: 150px; */
     margin-right: 24px !important;
-    width: 100% !important;
+    width: auto !important;
+}
+
+.course-card-slide {
+    width: 320px !important;
+    height: auto;
+    display: flex;
 }
 
 .title_hidden {
@@ -1098,77 +899,106 @@ const toggleFavorite = async (course) => {
     flex-direction: column;
     transition: box-shadow 0.2s, transform 0.2s;
     border: 1px solid #e6e6e6;
-    min-width: 220px;
-    max-width: 320px;
-    margin: auto;
+    width: 100%;
 }
 .linkedin-card:hover {
     box-shadow: 0 8px 24px rgba(0,0,0,0.16);
-    transform: translateY(-2px) scale(1.02);
+    transform: translateY(-2px);
 }
 .linkedin-card-img-wrap {
-    width: 100%;
-    height: 120px;
-    background: #f3f6f8;
+    /* width: 100%;
+    height: 160px; */
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 10px;
+    /* background-color: white;    */
+    padding-right: 0px;
 }
 .linkedin-card-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    background-color: white;   
+    border-radius: 10px;
 }
 .linkedin-card-body {
-    padding: 16px 16px 12px 16px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex-grow: 1;
 }
 .linkedin-card-type {
     font-size: 12px;
     color: #6b7280;
     margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 .linkedin-card-title {
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     color: #222;
-    margin-bottom: 8px;
-    white-space: nowrap;
+    /* margin-bottom: 8px; */
+    height: 23px; /* 2 lines with 20px line-height */
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 .linkedin-card-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: auto;
 }
 .linkedin-card-author {
     font-size: 12px;
     color: #6b7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 .linkedin-card-fav-btn {
     background: none;
     border: none;
-    padding: 0;
-    margin-left: 8px;
+    padding: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    transition: background 0.2s;
     border-radius: 50%;
 }
-.linkedin-card-fav-btn:hover {
-    background: #f3f6f8;
+
+.course-action-btn-details, .course-action-btn-play, .course-action-btn-buy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+    flex-grow: 1;
 }
+
+.course-action-btn-details {
+    background-color: transparent;
+    border: 1px solid #7E7E7E;
+    color: #333;
+}
+
+.course-action-btn-play {
+    background-color: #0073b1;
+    color: white;
+    border: 1px solid transparent;
+}
+
+.course-action-btn-buy {
+    background-color: transparent;
+    border: 1px solid #7E7E7E;
+    color: #333;
+}
+
+.course-action-btn-details:hover, .course-action-btn-buy:hover {
+    background-color: #f0f0f0;
+}
+
+.course-action-btn-play:hover {
+    background-color: #005a8c;
+}
+
 .dark .dropdown_arrow{
     filter: invert(1);
 }
@@ -1180,5 +1010,19 @@ const toggleFavorite = async (course) => {
 }
 .dark .dark_home_dropdown{
     background-color: #2d2d2d !important;
+}
+
+.course-card-container {
+    display: flex; /* Ensures the card within takes up the full space */
+}
+
+.linkedin-card-img-wrap {
+    width: 55%;
+    height: 100px;
+
+    /* background: #ffffff; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>
