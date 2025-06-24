@@ -345,6 +345,11 @@ font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.focus-option:hover{
+    border: 1px solid #148ad9;
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
 @media (max-width: 340px) {
     .focus-option {
         padding-right: 20px;
@@ -399,6 +404,9 @@ font-weight: 600;
     max-width: 200px;
     position: relative;
 }
+.dark .topic-tag{
+    background: #696969;
+}
 
 .topic-tag span {
     white-space: nowrap;
@@ -406,6 +414,11 @@ font-weight: 600;
     text-overflow: ellipsis;
     flex: 1;
     margin-right: 8px;
+}
+.topic-tag:hover{
+    border: 1px solid #148ad9;
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
 }
 
 .remove-tag {
@@ -425,9 +438,6 @@ font-weight: 600;
     height: 16px;
 }
 
-.dark .topic-tag {
-    background: #2d2d2d;
-}
 
 .dark .remove-tag {
     color: #fff;

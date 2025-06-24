@@ -21,7 +21,7 @@
                             <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of MBM Learning Instructors and share your knowledge with millions of learners worldwide.</p>
                             </div>
                            
-                            <p class="instructor-text" style="margin-bottom: 1rem;">At MBM Learning, we believe that great education starts with great instructors. As a subject matter expert, you’ll have the opportunity to:</p>
+                            <p class="instructor-text" style="margin-bottom: 1rem;">At MBM Learning, we believe that great education starts with great instructors. As a subject matter expert, you'll have the opportunity to:</p>
                             <ul class="instructor-list">
                                 <li>Teach what you love and reach a global audience.</li>
                                 <li>Collaborate with a world-class production team.</li>
@@ -31,7 +31,7 @@
 
                             <h2 class="instructor-subheading">About Working With us:</h2>
                             <p class="instructor-text">
-                                Working with MBM Learning goes beyond simply recording courses—it’s a collaborative experience where you’ll team up with an expert group dedicated to helping you refine your content and message. They’ll guide you in delivering your knowledge in an engaging, easy-to-digest format while ensuring your course connects with the right learners at the perfect time. <a href="#" class="instructor-link">Here</a>
+                                Working with MBM Learning goes beyond simply recording courses—it's a collaborative experience where you'll team up with an expert group dedicated to helping you refine your content and message. They'll guide you in delivering your knowledge in an engaging, easy-to-digest format while ensuring your course connects with the right learners at the perfect time. <a href="#" class="instructor-link">Here</a>
                             </p>
 
                             <div class="instructor-quote">
@@ -41,7 +41,7 @@
 
                             <h2 class="instructor-subheading">Apply Now!</h2>
                             <p class="instructor-text">
-                                If you're ready to inspire, educate, and make an impact, we’d love to hear from you.
+                                If you're ready to inspire, educate, and make an impact, we'd love to hear from you.
 
 📩 Start your journey with MBM Learning today. Apply to become an instructor! <a href="#" class="instructor-link">Here</a>
                             </p>
@@ -50,6 +50,22 @@
                         <!-- Right Column -->
                         <div class="instructor-right-column">
                             <h2 class="instructor-form-heading">Instructor Application</h2>
+                             <div class="form-row" style="justify-content: center; margin-bottom: 1rem;">
+                                <div class="relative">
+                                    <div @click="selectProfilePicture" class="profile-picture-container">
+                                        <img v-if="profilePicturePreview" :src="profilePicturePreview" class="profile-picture-image" />
+                                        <span v-else class="profile-picture-initial">{{ nameInitial }}</span>
+                                    </div>
+                                    <div @click="selectProfilePicture" class="camera-icon-container">
+                                        <svg class="camera-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                    <input type="file" ref="profilePictureInput" @change="onProfilePictureChange" class="hidden" accept="image/*">
+                                </div>
+                            </div>
+                            <div v-if="form.errors.profile_picture" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem; text-align: center; margin-top: -1rem; margin-bottom: 1rem;">{{ form.errors.profile_picture }}</div>
                             <button class="instructor-linkedin-btn">AutoFill with LinkedIn</button>
 
                             <form @submit.prevent="submit">
@@ -157,7 +173,6 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 
-const user = usePage().props.auth?.user
 export default {
     components: {
         // AuthenticatedLayout, // Assuming this is not used for a public registration form
@@ -166,6 +181,7 @@ export default {
     },
     data() {
         return {
+            profilePicturePreview: null,
             form: useForm({
                 name: '',
                 phone_number: '',
@@ -176,8 +192,17 @@ export default {
                 followers: null, // Default to null for the select placeholder
                 linkedin_programs: [], // Initialize as an empty array for checkboxes
                 teaching_language: '', // Initialize as empty for radio buttons
+                profile_picture: null,
             }),
         };
+    },
+    computed: {
+        user() {
+            return usePage().props.auth?.user;
+        },
+        nameInitial() {
+            return this.form.name ? this.form.name.charAt(0).toUpperCase() : '';
+        }
     },
     methods: {
         submit() {
@@ -189,6 +214,20 @@ export default {
                     }
                 },
             });
+        },
+        selectProfilePicture() {
+            this.$refs.profilePictureInput.click();
+        },
+        onProfilePictureChange(e) {
+            const file = e.target.files[0];
+            if (file) {
+                this.form.profile_picture = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.profilePicturePreview = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         },
     },
     mounted() {
@@ -425,5 +464,56 @@ export default {
 }
 .home_page_style{
     padding: 0;
+}
+
+.relative {
+    position: relative;
+}
+
+.profile-picture-container {
+    width: 8rem; 
+    height: 8rem;
+    background-color: #4CAF50; 
+    border-radius: 9999px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    color: white;
+    margin: 0 auto;
+}
+
+.profile-picture-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-picture-initial {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+.camera-icon-container {
+    position: absolute;
+    bottom: 0.5rem; 
+    right: 0.5rem; 
+    background-color: white;
+    border-radius: 9999px;
+    padding: 0.5rem; 
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.camera-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #4A5568; 
+}
+
+.hidden {
+    display: none;
 }
 </style>

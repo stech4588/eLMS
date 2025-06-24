@@ -6,11 +6,52 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+// import * as pdfjsLib from 'pdfjs-dist';
+
+// pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString();
+
+const step = ref(1);
+
+const nextStep = () => {
+    step.value++;
+};
+
+const prevStep = () => {
+    step.value--;
+};
 
 const passwordFieldType = ref('password');
 
 const togglePasswordVisibility = () => {
     passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+};
+
+const profilePicturePreview = ref(null);
+const profilePictureInput = ref(null);
+const resumeInput = ref(null);
+
+const selectProfilePicture = () => {
+    profilePictureInput.value.click();
+}
+
+const selectResume = () => {
+    resumeInput.value.click();
+};
+
+const onProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        form.profile_picture = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            profilePicturePreview.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+const onResumeChange = (e) => {
+    form.resume = e.target.files[0];
 };
 
 const form = useForm({
@@ -38,247 +79,322 @@ const props = defineProps({
     topics: Array,
 });
 
-const showDropdown = ref(false);
 const searchTerm = ref('');
+const visibleTopicsCount = ref(9);
 
 const filteredTopics = computed(() => {
-    const selectedIds = form.preferred_topics;
-    return props.topics.filter(topic => {
-        const isNotSelected = !selectedIds.includes(topic.id);
-        const matchesSearch = topic.name.toLowerCase().includes(searchTerm.value.toLowerCase());
-        return isNotSelected && matchesSearch;
-    });
+    if (!searchTerm.value) {
+        return props.topics;
+    }
+    return props.topics.filter(topic =>
+        topic.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+    );
 });
 
-function selectTopic(topic) {
-    if (!form.preferred_topics.includes(topic.id)) {
-        form.preferred_topics.push(topic.id);
+const visibleTopics = computed(() => {
+    return filteredTopics.value.slice(0, visibleTopicsCount.value);
+});
+
+const nameInitial = computed(() => {
+    return form.name ? form.name.charAt(0).toUpperCase() : '';
+});
+
+function showMoreTopics() {
+    visibleTopicsCount.value += 6;
+}
+
+function showLessTopics() {
+    visibleTopicsCount.value = 9;
+}
+
+function toggleTopic(topicId) {
+    const index = form.preferred_topics.indexOf(topicId);
+    if (index === -1) {
+        form.preferred_topics.push(topicId);
+    } else {
+        form.preferred_topics.splice(index, 1);
     }
-    searchTerm.value = '';
-    showDropdown.value = false;
 }
 
-function removeTopic(topicId) {
-    form.preferred_topics = form.preferred_topics.filter(id => id !== topicId);
-}
-
-function getTopicName(topicId) {
-    const topic = props.topics.find(t => t.id === topicId);
-    return topic ? topic.name : '';
-}
+const topicColors = ['#f5b014', '#448cff', '#9b59b6', '#34d399', '#ef4444', '#6366f1'];
+const getTopicColor = (index) => topicColors[index % topicColors.length];
 </script>
 
 <template>
     <GuestLayout>
         <Head title="Register" />
 
+        
+            
+        
+
         <div class="form-container">
+            <div class="form-row" style="justify-content: center; margin-bottom: 1rem;">
+                <div class="relative">
+                    <div @click="selectProfilePicture" class="profile-picture-container">
+                        <img v-if="profilePicturePreview" :src="profilePicturePreview" class="profile-picture-image" />
+                        <span v-else class="profile-picture-initial">{{ nameInitial }}</span>
+                    </div>
+                    <div @click="selectProfilePicture" class="camera-icon-container">
+                        <svg class="camera-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <input type="file" ref="profilePictureInput" @change="onProfilePictureChange" class="hidden" accept="image/*">
+                </div>
+            </div>
+            <InputError class="form-error" :message="form.errors.profile_picture" style="text-align: center; margin-top: -1rem; margin-bottom: 1rem;" />
+            <div class="flex flex-row justify-center items-center form-title">
+                <h1>Step {{ step }} to 3</h1>
+            </div>
             <h1 class="form-title">Empower Your Learning Journey</h1>
             <p class="form-subtitle">
                 Welcome to LMS.360.pk! Please fill out the form below to start your free trial and begin learning today.
             </p>
 
             <form @submit.prevent="submit" class="form-body" novalidate>
-                <!-- Row 1: Name and Company Name -->
-                <div class="form-row">
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.name }">
-                        <InputLabel for="name" value="Name" class="form-label" />
-                        <TextInput
-                            id="name"
-                            type="text"
-                            class="form-input input_box_outline"
-                            v-model="form.name"
-                            
-                            autofocus
-                            autocomplete="name"
-                        />
-                        <InputError class="form-error" :message="form.errors.name" />
-                    </div>
-                    <!-- <div class="form-group input_box_signup">
-                        <InputLabel for="company_name" value="Company Name" class="form-label" />
-                        <TextInput
-                            id="company_name"
-                            type="text"
-                            class="form-input input_box_outline"
-                            v-model="form.company_name"
-                            required
-                            autocomplete="organization"
-                        />
-                        <InputError class="form-error" :message="form.errors.company_name" />
-                    </div> -->
-                </div>
-
-                <!-- Row 2: Email and Number of Employees -->
-                <div class="form-row">
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.email }">
-                        <InputLabel for="email" value="Email" class="form-label" />
-                        <TextInput
-                            id="email"
-                            type="email"
-                            class="form-input input_box_outline"
-                            v-model="form.email"
-                            
-                            autocomplete="username"
-                        />
-                        <InputError class="form-error" :message="form.errors.email" />
-                    </div>
-                    <!-- <div class="form-group input_box_signup">
-                        <InputLabel for="num_employees" value="Number of Employee's" class="form-label" />
-                        <select
-                            id="num_employees"
-                            class="form-input form-select input_box_outline"
-                            v-model="form.num_employees"
-                            
-                        >
-                            <option value="" disabled>Select an option</option>
-                            <option value="1-10">1-10</option>
-                            <option value="11-50">11-50</option>
-                            <option value="51-200">51-200</option>
-                            <option value="201-500">201-500</option>
-                            <option value="500+">500+</option>
-                        </select>
-                        <InputError class="form-error" :message="form.errors.num_employees" />
-                    </div> -->
-                </div>
-
-                <!-- Row 3: Password and Phone Number -->
-                <div class="form-row">
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.password }">
-                        <InputLabel for="password" value="Password" class="form-label" />
-                        <div style="position: relative;">
+                <div v-if="step === 1">
+                    <!-- Row 1: Name and Company Name -->
+                    <div class="form-row">
+                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.name }">
+                            <InputLabel for="name" value="Name" class="form-label" />
                             <TextInput
-                                id="password"
-                                :type="passwordFieldType"
+                                id="name"
+                                type="text"
                                 class="form-input input_box_outline"
-                                v-model="form.password"
+                                v-model="form.name"
                                 
-                                autocomplete="new-password"
+                                autofocus
+                                autocomplete="name"
                             />
-                            <span class="password-eye-icon" @click="togglePasswordVisibility"><img src="/images/view_icon.svg"/></span>
+                            <InputError class="form-error" :message="form.errors.name" />
                         </div>
-                        <InputError class="form-error" :message="form.errors.password" />
-                    </div>
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.phone_number }">
-                        <InputLabel for="phone_number" value="Phone Number" class="form-label" style="margin-bottom: 0px; margin-top: 0px;"/>
-                        <div class="phone-input-group">
-                            <select v-model="form.phone_country_code" class="form-input country-code-select">
-                                <option value="PK">PK</option>
-                                <option value="US">US</option>
-                                <option value="UK">UK</option>
-                                <option value="CA">CA</option>
-                                <option value="AU">AU</option>
-                                <option value="NZ">NZ</option>
-                                <option value="ZA">ZA</option>
-                                <option value="IN">IN</option>
-                                <!-- Add other countries as needed -->
-                            </select>
+                        <!-- <div class="form-group input_box_signup">
+                            <InputLabel for="company_name" value="Company Name" class="form-label" />
                             <TextInput
-                                id="phone_number"
-                                type="tel"
-                                class="form-input phone-number-input input_box_outline"
-                                v-model="form.phone_number"
-                                placeholder="0301 1234857"
-                                
-                                autocomplete="tel-national"
-                                style="border: none;"
+                                id="company_name"
+                                type="text"
+                                class="form-input input_box_outline"
+                                v-model="form.company_name"
+                                required
+                                autocomplete="organization"
                             />
-                        </div>
-                        <InputError class="form-error" :message="form.errors.phone_number" />
-                    </div>
-                </div>
-                 <!-- <div class="password-rules">
-                            <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                            <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                            <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                            <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
+                            <InputError class="form-error" :message="form.errors.company_name" />
                         </div> -->
-
-                <!-- Row 4: Primary Learning Goal -->
-                <div class="form-row">
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.primary_learning_goal }">
-                        <InputLabel for="primary_learning_goal" value="Primary Learning Goal" class="form-label" />
-                        <TextInput
-                            id="primary_learning_goal"
-                            type="text"
-                            class="form-input input_box_outline"
-                            v-model="form.primary_learning_goal"
-                            
-                            autocomplete="off"
-                        />
-                        <InputError class="form-error" :message="form.errors.primary_learning_goal" />
                     </div>
-                </div>
 
-                <!-- Row 6: Preferred Topics -->
-                <div class="form-row">
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.preferred_topics }">
-                        <InputLabel for="preferred_topics" value="Preferred Topics" class="form-label" />
-                        <div class="multiselect-container">
-                            <div class="selected-tags">
-                                <span v-for="topicId in form.preferred_topics" :key="topicId" class="tag">
-                                    {{ getTopicName(topicId) }}
-                                    <button @click.prevent="removeTopic(topicId)" class="remove-tag">&times;</button>
-                                </span>
-                                <input
-                                    v-model="searchTerm"
-                                    @focus="showDropdown = true"
-                                    @blur="() => setTimeout(() => showDropdown = false, 200)"
-                                    class="multiselect-input"
-                                    placeholder="Select topics..."
+                    <!-- Row 2: Email and Number of Employees -->
+                    <div class="form-row">
+                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.email }">
+                            <InputLabel for="email" value="Email" class="form-label" />
+                            <TextInput
+                                id="email"
+                                type="email"
+                                class="form-input input_box_outline"
+                                v-model="form.email"
+                                
+                                autocomplete="username"
+                            />
+                            <InputError class="form-error" :message="form.errors.email" />
+                        </div>
+                        <!-- <div class="form-group input_box_signup">
+                            <InputLabel for="num_employees" value="Number of Employee's" class="form-label" />
+                            <select
+                                id="num_employees"
+                                class="form-input form-select input_box_outline"
+                                v-model="form.num_employees"
+                                
+                            >
+                                <option value="" disabled>Select an option</option>
+                                <option value="1-10">1-10</option>
+                                <option value="11-50">11-50</option>
+                                <option value="51-200">51-200</option>
+                                <option value="201-500">201-500</option>
+                                <option value="500+">500+</option>
+                            </select>
+                            <InputError class="form-error" :message="form.errors.num_employees" />
+                        </div> -->
+                    </div>
+
+                    <!-- Row 3: Password and Phone Number -->
+                    <div class="form-row">
+                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.password }">
+                            <InputLabel for="password" value="Password" class="form-label" />
+                            <div style="position: relative;">
+                                <TextInput
+                                    id="password"
+                                    :type="passwordFieldType"
+                                    class="form-input input_box_outline"
+                                    v-model="form.password"
+                                    
+                                    autocomplete="new-password"
+                                />
+                                <span class="password-eye-icon" @click="togglePasswordVisibility"><img src="/images/view_icon.svg"/></span>
+                            </div>
+                            <InputError class="form-error" :message="form.errors.password" />
+                        </div>
+                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.phone_number }">
+                            <InputLabel for="phone_number" value="Phone Number" class="form-label" style="margin-bottom: 0px; margin-top: 0px;"/>
+                            <div class="phone-input-group">
+                                <select v-model="form.phone_country_code" class="form-input country-code-select">
+                                    <option value="PK">PK</option>
+                                    <option value="US">US</option>
+                                    <option value="UK">UK</option>
+                                    <option value="CA">CA</option>
+                                    <option value="AU">AU</option>
+                                    <option value="NZ">NZ</option>
+                                    <option value="ZA">ZA</option>
+                                    <option value="IN">IN</option>
+                                    <!-- Add other countries as needed -->
+                                </select>
+                                <TextInput
+                                    id="phone_number"
+                                    type="tel"
+                                    class="form-input phone-number-input input_box_outline"
+                                    v-model="form.phone_number"
+                                    placeholder="0301 1234857"
+                                    
+                                    autocomplete="tel-national"
+                                    style="border: none;"
                                 />
                             </div>
-                            <ul v-if="showDropdown && filteredTopics.length" class="dropdown-list">
-                                <li v-for="topic in filteredTopics" :key="topic.id" @click="selectTopic(topic)">
-                                    {{ topic.name }}
-                                </li>
-                            </ul>
+                            <InputError class="form-error" :message="form.errors.phone_number" />
                         </div>
-                        <InputError class="form-error" :message="form.errors.preferred_topics" />
+                    </div>
+                     <!-- <div class="password-rules">
+                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
+                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
+                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
+                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
+                            </div> -->
+                </div>
+
+                <!-- Step 2: Learning Goals and Topics -->
+                <div v-if="step === 2">
+                    <!-- Row 4: Primary Learning Goal -->
+                    <div class="form-row">
+                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.primary_learning_goal }">
+                            <InputLabel for="primary_learning_goal" value="Primary Learning Goal" class="form-label" />
+                            <TextInput
+                                id="primary_learning_goal"
+                                type="text"
+                                class="form-input input_box_outline"
+                                v-model="form.primary_learning_goal"
+                                
+                                autocomplete="off"
+                            />
+                            <InputError class="form-error" :message="form.errors.primary_learning_goal" />
+                        </div>
+                    </div>
+
+                    <!-- Row 6: Preferred Topics -->
+                    <div class="form-row">
+                        <div class="form-group" :class="{ 'form-group-error': form.errors.preferred_topics }">
+                            <InputLabel value="Preferred Topics" class="form-label" style="margin-bottom: 10px; margin-left: 0;" />
+                            <div class="topics-container">
+                                <div class="topics-search-container">
+                                    <svg aria-hidden="true" class="search-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <input v-model="searchTerm" class="topics-search-input" placeholder="Find a role" />
+                                </div>
+
+                                <div class="topics-grid">
+                                    <div v-for="(topic, index) in visibleTopics"
+                                        :key="topic.id"
+                                        class="topic-card"
+                                        :class="{ 'selected': form.preferred_topics.includes(topic.id) }"
+                                        @click="toggleTopic(topic.id)">
+                                        <div class="flex flex-row">
+                                            <div class="topic-icon" :style="{ backgroundColor: getTopicColor(index) }">
+                                             <svg v-if="index % 3 === 0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                             <svg v-if="index % 3 === 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                             <svg v-if="index % 3 === 2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                        </div>
+                                        <span class="topic-name">{{ topic.name }}</span>
+                                        </div>
+                                        
+                                        <span class="topic-add-icon">{{ form.preferred_topics.includes(topic.id) ? '✓' : '+' }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-row">
+                                    <a v-if="!searchTerm && visibleTopicsCount < filteredTopics.length" href="#" class="view-more-roles" @click="showMoreTopics">+ View more topics</a>
+                                    <a v-if="!searchTerm && visibleTopicsCount > 9" href="#" class="view-more-roles" @click="showLessTopics">- View less topics</a>
+                                </div>
+                            </div>
+                            <InputError class="form-error" :message="form.errors.preferred_topics" />
+                        </div>
                     </div>
                 </div>
 
-                <!-- Row 7: Upload Resume and Profile Picture -->
-                <div class="form-row">
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.resume }">
-                        <InputLabel for="resume" value="Upload Resume" class="form-label" />
-                        <input
-                            type="file"
-                            id="resume"
-                            @input="form.resume = $event.target.files[0]"
-                            class="form-input file-input"
-                        />
-                        <InputError class="form-error" :message="form.errors.resume" />
+                <!-- Step 3: Resume, Profile Picture, and Terms -->
+                <div v-if="step === 3">
+                    <!-- Row 7: Upload Resume and Profile Picture -->
+                    <div class="form-row">
+                        <div class="form-group" :class="{ 'form-group-error': form.errors.resume }">
+                            <InputLabel value="Upload Resume" class="form-label" />
+                            <input
+                                type="file"
+                                id="resume"
+                                ref="resumeInput"
+                                @change="onResumeChange"
+                                class="hidden"
+                                accept=".pdf,.doc,.docx"
+                            />
+                            <div class="resume-upload-container" @click="selectResume">
+                                <div v-if="form.resume" class="resume-details">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    <span>{{ form.resume.name }}</span>
+                                </div>
+                                <div v-else class="resume-placeholder">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path><polyline points="16 16 12 12 8 16"></polyline></svg>
+                                    <span>Click to upload resume</span>
+                                </div>
+                            </div>
+                            <InputError class="form-error" :message="form.errors.resume" />
+                        </div>
                     </div>
-                    <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.profile_picture }">
-                        <InputLabel for="profile_picture" value="Profile Picture" class="form-label" />
-                        <input
-                            type="file"
-                            id="profile_picture"
-                            @input="form.profile_picture = $event.target.files[0]"
-                            class="form-input file-input"
-                        />
-                        <InputError class="form-error" :message="form.errors.profile_picture" />
-                    </div>
-                </div>
 
-                <!-- Terms and Conditions -->
-                <div class="form-group terms-group">
-                    <input
-                        type="checkbox"
-                        id="agree_terms"
-                        v-model="form.agree_to_terms"
-                        
-                        class="form-checkbox"
-                    />
-                    <label for="agree_terms" class="terms-label">
-                        I agree to the <a :href="route('privacy.policy')" target="_blank" rel="noopener noreferrer" class="form-link">Privacy Policy</a> & <a :href="route('terms.of.services')" target="_blank" rel="noopener noreferrer" class="form-link">Terms Of Services</a>
-                    </label>
-                    <InputError class="form-error" :message="form.errors.agree_to_terms" />
+                    <!-- Terms and Conditions -->
+                    <div class="form-group terms-group">
+                        <input
+                            type="checkbox"
+                            id="agree_terms"
+                            v-model="form.agree_to_terms"
+                            
+                            class="form-checkbox"
+                        />
+                        <label for="agree_terms" class="terms-label">
+                            I agree to the <a :href="route('privacy.policy')" target="_blank" rel="noopener noreferrer" class="form-link">Privacy Policy</a> & <a :href="route('terms.of.services')" target="_blank" rel="noopener noreferrer" class="form-link">Terms Of Services</a>
+                        </label>
+                        <InputError class="form-error" :message="form.errors.agree_to_terms" />
+                    </div>
                 </div>
 
                 <!-- Buttons -->
                 <div class="form-actions">
+                    <button
+                        v-if="step > 1"
+                        type="button"
+                        @click.prevent="prevStep"
+                        class="login-button-link"
+                    >
+                        Back
+                    </button>
+                    <Link v-if="step === 1" :href="route('login')" class="login-button-link">
+                        Log In
+                    </Link>
                     <PrimaryButton
+                        v-if="step < 3"
+                        @click.prevent="nextStep"
+                        class="submit-button"
+                        style="background-color: #1898e5;"
+                    >
+                        Next
+                    </PrimaryButton>
+                    <PrimaryButton
+                        v-if="step === 3"
                         class="submit-button"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
@@ -286,9 +402,7 @@ function getTopicName(topicId) {
                     >
                         Sign Up
                     </PrimaryButton>
-                    <Link :href="route('login')" class="login-button-link">
-                        Log In
-                    </Link>
+                   
                 </div>
             </form>
         </div>
@@ -305,12 +419,13 @@ function getTopicName(topicId) {
     background-color: #fff;
     max-width: 900px; /* Increased max-width */
     margin: 2rem auto; /* Centering and margin */
+    margin-top: 0px;
 }
 
 .form-title {
     font-size: 28px; /* Adjusted as per image */
     font-weight: 600; /* Semi-bold */
-    color: #111827; /* Darker gray */
+    color: #000000; /* Darker gray */
     margin-bottom: 8px; /* Adjusted margin */
     text-align: left;
     width: 100%;
@@ -500,6 +615,7 @@ function getTopicName(topicId) {
     display: flex;
    gap: 20px; /* Space between buttons */
     align-items: center;
+    justify-content: flex-end;
     margin-top: 10px;
 }
 
@@ -602,48 +718,31 @@ function getTopicName(topicId) {
     box-shadow: none !important;
 }
 
-.multiselect-container {
+.topics-container {
     position: relative;
     width: 100%;
     padding: 2px 2px;
-    min-height: 38px;
+    /* min-height: 38px;
     max-height: 120px;
-    overflow-y: auto;
+    overflow-y: auto; */
 }
 
-.selected-tags {
+.topics-search-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
     align-items: center;
-    min-height: 38px;
     padding: 5px;
-    padding-top: 0px;
-    width: 100%;
-}
-
-.tag {
-    display: flex;
-    align-items: center;
-    background-color: #e0e0e0;
+    border: 1px solid #D1D5DB;
     border-radius: 4px;
-    padding: 3px 8px;
-    font-size: 14px;
-    max-width: 100%;
-    word-break: break-word;
+    border-left: 4px solid #9CA3AF;
 }
 
-.remove-tag {
-    margin-left: 5px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 0;
-    line-height: 1;
+.search-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
 }
 
-.multiselect-input {
+.topics-search-input {
     flex-grow: 1;
     border: none;
     outline: none;
@@ -653,37 +752,156 @@ function getTopicName(topicId) {
     max-width: 100%;
 }
 
-.dropdown-list {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #d1d5db;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    max-height: 200px;
-    overflow-y: auto;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    z-index: 10;
+.topics-search-input:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.topics-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    min-height: 38px;
+    margin-top: 10px;
+    padding-top: 0px;
     width: 100%;
 }
 
-.dropdown-list li {
-    padding: 10px 12px;
+.topic-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+    justify-content: space-between;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
     cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    width: calc(33.33% - 10px);
+}
+.topic-card:hover {
+    transform: scale(1.05);
+    transition: transform 0.4s ease-in-out;
 }
 
-.dropdown-list li:hover {
+.topic-icon {
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.topic-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+    margin-left: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.topic-add-icon {
+    font-size: 12px;
+    font-weight: 500;
+    color: #4B5563;
+}
+
+.view-more-roles {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4F46E5;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.selected {
     background-color: #f3f4f6;
 }
-select{
-    background-image: none;
+
+.profile-picture-container {
+    width: 8rem; 
+    height: 8rem;
+    background-color: #4CAF50; 
+    border-radius: 9999px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    color: white;
 }
 
+.profile-picture-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-picture-initial {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+.camera-icon-container {
+    position: absolute;
+    bottom: 0.5rem; 
+    right: 0.5rem; 
+    background-color: white;
+    border-radius: 9999px;
+    padding: 0.5rem; 
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.camera-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #4A5568; 
+}
+
+.hidden {
+    display: none;
+}
+
+.resume-upload-container {
+    border: 2px dashed #d1d5db;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+}
+
+.resume-upload-container:hover {
+    border-color: #4f46e5;
+}
+
+.resume-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #6b7280;
+}
+
+.resume-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #374151;
+    font-weight: 500;
+}
+select{
+    background-image: none !important;
+}
 </style>

@@ -30,6 +30,10 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CareerJourneyController;
 use App\Http\Controllers\Admin\MetaTagController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\Admin\InstructorController;
+use App\Http\Controllers\UserListingController;
+use App\Http\Controllers\NotificationController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -71,18 +75,18 @@ Route::get('/coursess', [CourseController::class, 'myCourses'])
 Route::get('/addnewcourses', [CourseController::class, 'create'])
     ->middleware(['auth', 'verified'])
     ->name('addnewcourses');
-Route::get('/leadershipAndManagement', function () {
-    return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
-})->middleware(['auth', 'verified'])->name('leadershipAndManagement');
+// Route::get('/leadershipAndManagement', function () {
+//     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
+// })->middleware(['auth', 'verified'])->name('leadershipAndManagement');
 Route::get('/joinnow', function () {
     return Inertia::render('joinNow/join_now');
 })->name('joinnow');    
-Route::get('/artificialIntelligence', function () {
-    return Inertia::render('artificialIntelligence/myartificialIntelligence');
-})->middleware(['auth', 'verified'])->name('artificialIntelligence');
-Route::get('/cyberSecurity', function () {
-    return Inertia::render('cyberSecurity/mycyberSecurity');
-})->middleware(['auth', 'verified'])->name('cyberSecurity');
+// Route::get('/artificialIntelligence', function () {
+//     return Inertia::render('artificialIntelligence/myartificialIntelligence');
+// })->middleware(['auth', 'verified'])->name('artificialIntelligence');
+// Route::get('/cyberSecurity', function () {
+//     return Inertia::render('cyberSecurity/mycyberSecurity');
+// })->middleware(['auth', 'verified'])->name('cyberSecurity');
 Route::get('/Instructor', function () {
     return Inertia::render('Instructor/myInstructor');
 })->name('Instructor');
@@ -104,6 +108,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile/upload-resume', [ProfileController::class, 'uploadResume'])->name('profile.uploadResume');
+    Route::post('/profile/upload-picture', [ProfileController::class, 'uploadPicture'])->name('profile.uploadPicture');
 
     // User Management Routes
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -129,7 +135,15 @@ Route::middleware('auth')->group(function () {
 
 
     // permission routes
-    Route::post('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
+     Route::post('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
+    // Route::post('/check-permissions', function (Request $request) {
+    //     $permissions = $request->input('permissions', []);
+    //     $results = [];
+    //     foreach ($permissions as $permission) {
+    //         $results[$permission] = auth()->user()->can($permission);
+    //     }
+    //     return response()->json(['permissions' => $results]);
+    // })->name('check-permissions');
 
     // Course Type routes
     Route::get('/course-management', [CourseTypeController::class, 'showManagementPage'])->name('course-management.index');
@@ -149,6 +163,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/progresses/storeUserVideoProgress', [ProgressController::class, 'storeUserVideoProgress'])
     ->name('progress.storeUserVideoProgress');
     Route::get('/video-progress/{video}', [ProgressController::class, 'getUserVideoProgress'])->name('progress.getUserVideoProgress');
+
+    Route::get('/admin/instructors', [InstructorController::class, 'index'])->name('admin.instructors.index');
+    Route::get('/admin/instructors/{user}', [InstructorController::class, 'show'])->name('admin.instructors.show');
+    Route::post('/admin/instructors/{instructor}/approve', [InstructorController::class, 'approve'])->name('admin.instructors.approve');
+    Route::post('/admin/instructors/{instructor}/reject', [InstructorController::class, 'reject'])->name('admin.instructors.reject');
+    Route::post('/admin/instructors/{user}/toggle-status', [InstructorController::class, 'toggleStatus'])->name('admin.instructors.toggleStatus');
+    Route::delete('/admin/instructors/{user}', [InstructorController::class, 'destroy'])->name('admin.instructors.destroy');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
 });
 
 // //For Roles Routes
@@ -189,6 +213,6 @@ Route::middleware('guest')->group(function () {
     Route::post('instructor/register', [InstructorRegisteredUserController::class, 'store']);
 });
 
-
+Route::get('/topic/{topic:name}', [TopicController::class, 'show'])->middleware(['auth'])->name('topic.show');
 
 require __DIR__.'/auth.php';

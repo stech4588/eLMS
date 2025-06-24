@@ -49,6 +49,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if (!$user->is_active) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account is not active. Please wait for admin approval or contact support.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

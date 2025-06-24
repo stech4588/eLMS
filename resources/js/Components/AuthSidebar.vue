@@ -55,6 +55,8 @@
         <div style="">
             <div >
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  /> User Listing</Link>
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/admin/instructors' }" href="/admin/instructors"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  />Instructor Listing</Link>
+                
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> <img class="sidebar_dark_icon" src="/images/course.svg" alt="users"  />Course Management</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/metatags' }" href="/metatags"> <img class="sidebar_dark_icon" src="/images/meta.svg" alt="users"  />Meta Tags</Link>
                 <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon" src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
@@ -79,7 +81,7 @@
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/artificialIntelligence' }" href="/artificialIntelligence">Artificial Intelligence</Link>
                 <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/cyberSecurity' }" href="/cyberSecurity">Cyber Security</Link> -->
                 <Link v-for="topic in trendingTopicsList" :key="topic.id" class="sidebar_subtitles"
-                    :class="{ 'active': page.url === ('/topic/' + topic.slug) }" :href="'/topic/' + topic.slug">
+                    :class="{ 'active': page.url === ('/topic/' + topic.name) }" :href="'/topic/' + topic.name">
                 {{ topic.name }}
                 </Link>
                 <!-- <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/Instructor' }" href="/Instructor">Become an Instructor</Link> -->

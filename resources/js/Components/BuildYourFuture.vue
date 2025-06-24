@@ -1,85 +1,78 @@
 <template>
-  <div class="main-future-container">
-    <div class="future-row">
-      <div class="future-col-1">
-        <div class="future-head">
-          <div class="future-head-row">
-            <div class="future-head-col-1">
-              <h1>Design the life</h1>
-              <h1>You want</h1>
-            </div>
-            <div class="future-head-col-2">
-               <a :href="user ? '/dashboard' : '/'">  
-               <img src="/images/MBM_Uni.png" alt="MBM Logo">
-             </a>
+  <section class="future-section">
+    <div class="animated-gradient-bg"></div>
+    <div class="main-future-container">
+      <div class="future-row">
+        <!-- Left Column -->
+        <div class="future-col-1">
+          <div class="future-head">
+            <div class="future-head-row">
+              <div class="future-head-col-1">
+                <h1>Design the life</h1>
+                <h1>You want</h1>
+              </div>
+              <div class="future-head-col-2">
+                <a :href="user ? '/dashboard' : '/'">
+                  <img src="/images/MBM_Uni.png" alt="MBM Logo" />
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="future-description">
-          <p> MBM University students succeed because <span class="highlight">they take action.</span> We provide the
-            tested path, and you shape your journey.</p>
-          <p><span class="highlight">Business is a skill.</span> Like any other, it can be developed with dedication,
-            the right coaches, and a supportive learning environment.</p>
-          <p>Our expert coaches practice what they teach and stay ahead with cutting-edge strategies and technologies.
-            They provide actionable insights to help you with your business.</p>
-          <p>In life, <span class="highlight">you have two choices:</span> seize opportunities, take action, and live
-            without regrets, or hesitate, let chances slip away, and live with "what ifs."</p>
-          <p>Which path will you choose?</p>
-        </div>
-      </div>
-      <div class="future-col-2-m">
-        <div class="future-col-2">
-          <div class="future-col-2-description">
-            <h2>Get Full Access</h2>
-            <h1><span class="old-price">${{ oldPrice }}</span> <span class="new-price">${{ newPrice }}</span>/month</h1>
-            <p>Cancel membership at any time</p>
-            <ul class="future-points">
-              <li>
-                <div class="tick">✔</div> &nbsp; Guided
-                step-by-step lessons
-              </li>
-              <li>
-                <div class="tick">✔</div> &nbsp; 19 modern
-                business models
-              </li>
-              <li>
-                <div class="tick">✔</div> &nbsp; Access to
-                industry experts
-              </li>
-              <li>
-                <div class="tick">✔</div> &nbsp; Community
-                chat groups
-              </li>
-              <li>
-                <div class="tick">✔</div> &nbsp; No
-                experience needed
-              </li>
-              <li>
-                <div class="tick">✔</div> &nbsp; Custom-made
-                learning app
-              </li>
-              <li>
-                <div class="tick"><img src="/images/money-icon.svg" alt="" srcset=""></div> &nbsp; 24/7
-                customer support Monthly price locked
-              </li>
-            </ul>
-
+          <div class="future-description">
+            <p>
+              MBM University students succeed because
+              <span class="highlight">they take action.</span> We provide the tested path, and you shape your journey.
+            </p>
+            <p>
+              <span class="highlight">Business is a skill.</span> Like any other, it can be developed with dedication, the right coaches, and a supportive learning environment.
+            </p>
+            <p>
+              Our expert coaches practice what they teach and stay ahead with cutting-edge strategies and technologies. They provide actionable insights to help you with your business.
+            </p>
+            <p>
+              In life,
+              <span class="highlight">you have two choices:</span> seize opportunities, take action, and live without regrets, or hesitate, let chances slip away, and live with "what ifs."
+            </p>
+            <p>Which path will you choose?</p>
           </div>
-
         </div>
-        <Link href="/register"><button class="join-btn">JOIN NOW</button></Link>
-      </div>
 
+        <!-- Right Column -->
+        <div class="future-col-2-m">
+          <div class="future-col-2 glass-effect">
+            <div class="future-col-2-description">
+              <h2>Get Full Access</h2>
+              <!-- <h1><span class="old-price">${{ oldPrice }}</span> <span class="new-price">${{ newPrice }}</span>/month</h1> -->
+              <h1><span class="old-price">$123</span> <span class="new-price">$55</span>/month</h1>
+              <p>Cancel membership at any time</p>
+              <ul class="future-points">
+                <li><div class="tick">✔</div>&nbsp; Guided step-by-step lessons</li>
+                <li><div class="tick">✔</div>&nbsp; 19 modern business models</li>
+                <li><div class="tick">✔</div>&nbsp; Access to industry experts</li>
+                <li><div class="tick">✔</div>&nbsp; Community chat groups</li>
+                <li><div class="tick">✔</div>&nbsp; No experience needed</li>
+                <li><div class="tick">✔</div>&nbsp; Custom-made learning app</li>
+                <li>
+                  <div class="tick">
+                    <img src="/images/money-icon.svg" alt="" />
+                  </div>
+                  &nbsp; 24/7 customer support Monthly price locked
+                </li>
+              </ul>
+            </div>
+            <Link href="/register"><button class="join-btn">JOIN NOW</button></Link>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 </template>
+
 <script>
 import apiClient from '@/Config/apiClient.js';
 import { usePage, Link } from '@inertiajs/vue3';
 export default {
-  components: {
-    Link,
-  },
+  components: { Link },
   computed: {
     user() {
       return usePage().props.auth?.user;
@@ -100,7 +93,7 @@ export default {
       try {
         const response = await apiClient.get('/api/pricing-plans');
         if (response.data.length > 0) {
-          const plan = response.data[0]; // Fetch the first plan
+          const plan = response.data[0];
           this.oldPrice = plan.old_price;
           this.newPrice = plan.new_price;
           this.features = plan.features;
@@ -112,154 +105,121 @@ export default {
   },
 };
 </script>
+
 <style scoped>
-@media(max-width:580px) {
-  .future-col-2-description h1 {
-    font-size: 20px !important;
+.future-head-row{
+  display: flex;
+  flex-direction: row;
+}
+@media(max-width:533px){
+  .future-head-row{
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
   }
 }
-@media(max-width:580px) {
-  .future-col-2-description h2 {
-    font-size: 20px !important;
-  }
+* {
+  font-family: 'Segoe UI', sans-serif;
+  box-sizing: border-box;
 }
 
-.future-col-2-description p {
-  padding-bottom: 19px;
-  border-bottom: 2px solid #fff;
-}
-@media(max-width:580px) {
-  .future-col-2-description p {
-    font-size: 15px !important;
-  }
-}
-.future-col-2-m {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.main-future-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #08080D;
+.future-section {
+  position: relative;
+  overflow: hidden;
+  padding: 60px 20px;
+  background: #12121D;
   color: white;
-  padding: 40px;
 }
-
-@media(max-width:580px) {
-  .main-future-container {
-    padding: 20px;
-  }
+.main-future-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  margin: auto;
 }
 
 .future-row {
   display: flex;
-  max-width: 1200px;
-  width: 100%;
   flex-direction: row;
   gap: 40px;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: self-start;
-}
-
-@media(max-width:955px) {
-  .future-row {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-.future-col-1 {
-  width: 50%;
-}
-
-@media(max-width:955px) {
-  .future-col-1 {
-    width: 100%;
-  }
-}
-
-.future-head-row {
-  display: flex;
   align-items: flex-start;
 }
 
-@media(max-width:580px) {
-  .future-head-row {
-    justify-content: center;
-    align-items: center;
-    flex-direction: column-reverse;
-  }
+.future-col-1 {
+  flex: 1 1 500px;
+  min-width: 300px;
 }
 
 .future-head-col-1 h1 {
-  font-size: 3rem;
+  font-size: 2.8rem;
   font-weight: bold;
-  margin: 0;
   text-align: left;
-}
-
-@media(max-width:580px) {
-  .future-head-col-1 h1 {
-    font-size: 2rem;
-    text-align: center;
-  }
+  margin: 0;
 }
 
 .future-head-col-2 img {
-  width: 130px;
+  width: 153px;
   margin-left: 10px;
 }
 
 .future-description p {
-  font-size: 1.1rem;
+  line-height: 1.7;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
   text-align: left;
-  line-height: 1.6;
-  margin-bottom: 10px;
 }
-
-@media(max-width:580px) {
+@media(max-width:532px){
   .future-description p {
     text-align: center;
   }
 }
-
-.future-description .highlight {
+.highlight {
   color: #87CEEB;
   font-weight: bold;
 }
 
-.future-col-2 {
-  /* width: 21%; */
-  background: #08080D;
+.future-col-2-m {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 360px;
+  min-width: 300px;
+}
+
+.future-col-2.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #87CEEB;
+  border-radius: 16px;
   padding: 30px;
-  border-radius: 12px;
-  border: 2px solid #87CEEB;
   text-align: center;
-  box-shadow: 0 0 15px rgba(97, 244, 232, 0.514);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 35px rgba(135, 206, 235, 0.3);
 }
 
 .future-col-2 h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 10px;
 }
 
 .future-col-2 h1 {
-  border-radius: 19px;
-  font-size: 2.2rem;
-  border: 2px solid #87CEEB;
-  padding: 13px;
-  margin-bottom: 10px;
+  font-size: 2rem;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #87CEEB;
+  border-radius: 10px;
 }
 
 .old-price {
   text-decoration: line-through;
-  font-weight: bold;
+  color: #bbb;
+  margin-right: 8px;
 }
 
 .new-price {
@@ -267,59 +227,70 @@ export default {
   font-weight: bold;
 }
 
+.future-col-2-description p {
+  border-bottom: 2px solid #fff;
+  padding-bottom: 12px;
+}
+
 .future-points {
   list-style: none;
   padding: 0;
-  margin: 20px 0;
+  margin: 20px 0 0 0;
   text-align: left;
 }
 
 .future-points li {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.tick {
+  color: #87CEEB;
+  font-weight: bold;
   display: flex;
   align-items: center;
 }
-@media(max-width:580px){
-  
-.future-points li {
-  font-size: 0.7rem;
+
+.tick img {
+  width: 18px;
+  height: 18px;
 }
-}
+
 .join-btn {
+  background-image: linear-gradient(135deg, #38B6FF, #4CCAFF);
   border: none;
-  margin-top: 30px;
-  width: 121px;
-  font-weight: 800 !important;
-  border-radius: 50px;
-  background-image: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  border-radius: 40px;
+  padding: 12px 25px;
   color: black;
-  padding: 8px 0px;
-
+  font-weight: bold;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* .join-btn:hover {
-    background-color: #e76f51;
-    transform: scale(1.05);
-  } */
-
-@media (max-width: 768px) {
-  .future-row {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .future-col-2 {
-    width: 100%;
-    max-width: 400px;
-  }
+.join-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(72, 202, 255, 0.3);
 }
 
-@media (max-width: 580px) {
-
-  .future-col-2 {
-    width: auto;
-    padding: 15px;
+@media (max-width: 400px) {
+  .future-head-col-1 h1 {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  .future-col-2 h2 {
+    font-size: 1.5rem;
+  }
+  .future-col-2 h1 {
+    font-size: 1.5rem;
+  }
+  .future-col-2-description p {
+    font-size: 0.9rem;
+  }
+  .future-points li {
+    font-size: 0.85rem;
   }
 }
 </style>

@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Instructor;
+use App\Mail\NewInstructorNotification;
+use App\Notifications\NewInstructorRegisteredNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -41,8 +45,16 @@ class InstructorRegisteredUserController extends Controller
             'linkedin_programs' => 'nullable|array', // Assuming this comes as an array of selected programs
             'linkedin_programs.*' => 'string|max:255',
             'teaching_language' => 'required|string|max:255', // Assuming one language is selected
-            // Add validation for other fields from myInstructor.vue if necessary
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        $profilePicturePath = null;
+        if ($request->hasFile('profile_picture')) {
+            $image = $request->file('profile_picture');
+            $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('profile-pictures'), $imageName);
+            $profilePicturePath = 'profile-pictures/' . $imageName;
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -51,6 +63,8 @@ class InstructorRegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'role_id' => 2, // Role ID for Instructor
             'type' => 'instructor', // Type for Instructor
+            'is_active' => 0, // Set as inactive by default for instructors
+            'profile_picture' => $profilePicturePath,
         ]);
 
         $instructorData = [
@@ -58,6 +72,7 @@ class InstructorRegisteredUserController extends Controller
             'linkedin_url' => $request->linkedin_url,
             'followers' => $request->followers,
             'teaching_language' => $request->teaching_language,
+            'status' => 'pending',
         ];
 
         if ($request->has('linkedin_programs') && is_array($request->linkedin_programs)) {
@@ -72,9 +87,16 @@ class InstructorRegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Notify admins via database notification
+        $admins = User::where('type', 'admin')->get();
+        Notification::send($admins, new NewInstructorRegisteredNotification($user));
+
+        // Notify admin via email
+        Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
+
+        // Auth::login($user);
 
         // Consider redirecting to an instructor-specific dashboard or page
-        return redirect(route('dashboard', absolute: false)); 
+        return redirect(route('login'))->with('status', 'Your instructor application has been submitted and is pending approval.'); 
     }
 }
