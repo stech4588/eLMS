@@ -18,12 +18,12 @@
         <div class="footer-section">
           <h3 class="section-title dark:text-dark-text-primary">Quick Links</h3>
           <ul>
-            <li><router-link to="/login" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Log In</router-link></li>
-            <li><router-link to="/download" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Download</router-link></li>
-            <li><router-link to="/terms" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Terms & Conditions</router-link></li>
-            <li><router-link to="/privacypolicy" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Privacy Policy</router-link></li>
-            <li><router-link to="/about" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">About Us</router-link></li>
-            <li><router-link to="/contact" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Need help? <span class="highlight dark:text-dark-accent-primary">Contact us</span></router-link></li>
+            <li><Link href="/login" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Log In</Link></li>
+            <li><Link href="/download" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Download</Link></li>
+            <li><Link href="/terms" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Terms & Conditions</Link></li>
+            <li><Link href="/privacypolicy" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Privacy Policy</Link></li>
+            <li><Link href="/about" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">About Us</Link></li>
+            <li><Link href="/contact" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Need help? <span class="highlight dark:text-dark-accent-primary">Contact us</span></Link></li>
             <li><a href="mailto:support@mbmuniversity.com" class="footer-email dark:text-dark-text-primary dark:hover:text-dark-accent-primary">support@mbmuniversity.com</a></li>
           </ul>
         </div>

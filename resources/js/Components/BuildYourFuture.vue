@@ -69,7 +69,6 @@
 </template>
 
 <script>
-import apiClient from '@/Config/apiClient.js';
 import { usePage, Link } from '@inertiajs/vue3';
 export default {
   components: { Link },
@@ -77,31 +76,6 @@ export default {
     user() {
       return usePage().props.auth?.user;
     }
-  },
-  data() {
-    return {
-      oldPrice: '',
-      newPrice: '',
-      features: [],
-    };
-  },
-  mounted() {
-    this.fetchPricingData();
-  },
-  methods: {
-    async fetchPricingData() {
-      try {
-        const response = await apiClient.get('/api/pricing-plans');
-        if (response.data.length > 0) {
-          const plan = response.data[0];
-          this.oldPrice = plan.old_price;
-          this.newPrice = plan.new_price;
-          this.features = plan.features;
-        }
-      } catch (error) {
-        console.error('Error fetching pricing data:', error);
-      }
-    },
   },
 };
 </script>
