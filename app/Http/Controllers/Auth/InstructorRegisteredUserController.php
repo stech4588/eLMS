@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -92,7 +93,11 @@ class InstructorRegisteredUserController extends Controller
         Notification::send($admins, new NewInstructorRegisteredNotification($user));
 
         // Notify admin via email
-        Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
+        try {
+            Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
+        } catch (\Exception $e) {
+            Log::error("Failed to send new instructor notification email: " . $e->getMessage());
+        }
 
         // Auth::login($user);
 
