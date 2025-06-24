@@ -1227,7 +1227,7 @@ onMounted(() => {
 }
 
 .custom-radio:checked {
-  background-image: url('/images/check_black.svg');
+  /* background-image: url('/images/check_black.svg'); */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 14px 14px;
