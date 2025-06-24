@@ -1,601 +1,280 @@
 <template>
-    <div class="Teconinner" id="education">
-        <div class="Telementorelement">
-            <div class="Telementorwidgetcontainer">
-                <h2>What You Will Learn?</h2>
-            </div>
-        </div>
-        <div class="Telementorelement Telementorwidget">
-            <div class="Tbox">
+    <section class="learn-section" id="education">
+        <div class="container">
+            <h2 class="main-heading">What You Will Learn?</h2>
 
-                <div class="Tdiscription">
-                    <div class="TstepHeading">
-                        <h3>
-                            <span>Learn Relevant Digital Skills</span>
-                        </h3>
-
-                    </div>
-                    <div class="Tborderline">
-
-                    </div>
-                    <div class="T_models">
-                        <p>The business models we teach are:</p>
-                    </div>
-                    <div class="Tsteps">
-                        <ul>
+            <div class="card-grid">
+                <!-- Section 1 -->
+                <div class="learn-card">
+                    <img class="card-image" src="/images/Mobile_pc.jpg" alt="Digital Skills" />
+                    <div class="card-content">
+                        <h3 class="card-title">Learn Relevant Digital Skills</h3>
+                        <div class="separator"></div>
+                        <p class="card-text">The business models we teach are:</p>
+                        <ul class="card-list">
                             <li><strong>Completely online</strong></li>
                             <li><strong>Location-independent</strong></li>
                             <li><strong>Scalable to your skill level</strong></li>
                             <li><strong>Focused on growth markets (AI)</strong></li>
                         </ul>
+                        <div class="card-icon-group">
+                            <figure v-for="(icon, index) in icons1" :key="index" class="icon-box">
+                                <img :src="icon.src" alt="icon" />
+                                <figcaption>{{ icon.caption }}</figcaption>
+                            </figure>
+                        </div>
+                        <p class="click-note">Click One To Learn More</p>
                     </div>
-
                 </div>
-                <div class="Tdiscription2">
-                    <div class="TH_icons">
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/1.png">
-                                </a>
-                                <figcaption style="color: white;">Digital Literacy</figcaption>
+
+                <!-- Section 2 -->
+                <div class="learn-card">
+                    <img class="card-image" src="/images/modern-market-strategies.jpg" alt="Modern Strategies" />
+                    <div class="card-content">
+                        <h3 class="card-title">Modern Market Strategies</h3>
+                        <div class="separator"></div>
+                        <p class="card-text">
+                            <strong>Cutting-edge strategies</strong> designed and catered to your specific objectives
+                            and time commitments.
+                        </p>
+                        <ul class="card-list">
+                            <li><strong>Latest market trends</strong></li>
+                            <li><strong>Results-oriented techniques</strong></li>
+                            <li><strong>Time-saving tactics</strong></li>
+                            <li><strong>Flexible to fit your goals</strong></li>
+                        </ul>
+                        <div class="card-icon-group">
+                            <figure v-for="(icon, index) in icons2" :key="index" class="icon-box">
+                                <img :src="icon.src" alt="icon" />
+                                <figcaption>{{ icon.caption }}</figcaption>
                             </figure>
                         </div>
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/2.png">
-                                </a>
-                                <figcaption style="color: white;">Critical Thinking</figcaption>
-                            </figure>
-                        </div>
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/3.png">
-                                </a>
-                                <figcaption style="color: white;">Problem-Solving</figcaption>
-                            </figure>
-                        </div>
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/4.png">
-                                </a>
-                                <figcaption style="color: white;">Collaboration</figcaption>
-                            </figure>
-                        </div>
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/5.png">
-                                </a>
-                                <figcaption style="color: white;">Creativity</figcaption>
-                            </figure>
-                        </div>
+                        <p class="click-note">Click One To Learn More</p>
                     </div>
-
                 </div>
-                <div class="Tdiscription3">
-                    <div class="T_onclick">
-                        <p>Click One To Learn More</p>
+
+                <!-- Section 3 -->
+                <div class="learn-card">
+                    <img class="card-image" src="/images/automate-your-business.webp" alt="Automation" />
+                    <div class="card-content">
+                        <h3 class="card-title">Automate & Grow Your Business</h3>
+                        <div class="separator"></div>
+                        <p class="card-text">
+                            Learn how to <strong>scale your business</strong> and outsource effectively, enabling you to
+                            focus on key areas for potential growth.
+                        </p>
+                        <ul class="card-list">
+                            <li><strong>Outsource smartly</strong></li>
+                            <li><strong>Focus on growth</strong></li>
+                            <li><strong>Improve efficiency</strong></li>
+                            <li><strong>Use modern automation</strong></li>
+                        </ul>
+                        <div class="card-icon-group">
+                            <figure v-for="(icon, index) in icons3" :key="index" class="icon-box">
+                                <img :src="icon.src" alt="icon" />
+                                <figcaption>{{ icon.caption }}</figcaption>
+                            </figure>
+                        </div>
+                        <p class="click-note">Click One To Learn More</p>
                     </div>
-
                 </div>
-            </div>
-            <div class="TsidePic1">
-                <img src="/images/Mobile_pc.jpg" alt="step1">
             </div>
         </div>
-
-        <div class="Telementorelement Telementorwidget">
-            <div class="Tbox">
-
-                <div class="Tdiscription">
-                    <div class="TstepHeading">
-                        <h3>
-                            <span>Modern Market Strategies</span>
-                        </h3>
-
-                    </div>
-                    <div class="Tborderline">
-
-                    </div>
-                    <div class="T_models" style="line-height: 30px;">
-                        <p><strong>Cutting-edge strategies</strong> designed and catered to your specific objectives and
-                            time commitments.</p>
-                    </div>
-
-                </div>
-                <div class="Tdiscription2">
-                    <div class="TH_icons">
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/6.png">
-                                </a>
-                                <figcaption style="color: white;">Data Analytics
-                                </figcaption>
-                            </figure>
-                        </div>
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/7.png">
-                                </a>
-                                <figcaption style="color: white;">Digital Marketing</figcaption>
-                            </figure>
-                        </div>
-
-                    </div>
-
-                </div>
-                <div class="Tdiscription3">
-                    <div class="T_onclick">
-                        <p>Click One To Learn More</p>
-                    </div>
-
-                </div>
-            </div>
-            <div class="TsidePic">
-                <img src="/images/modern-market-strategies.jpg" alt="step1">
-            </div>
-        </div>
-        <div class="Telementorelement Telementorwidget">
-            <div class="Tbox">
-
-                <div class="Tdiscription">
-                    <div class="TstepHeading">
-                        <h3>
-                            <span>Automate & Grow Your Business</span>
-                        </h3>
-
-                    </div>
-                    <div class="Tborderline">
-
-                    </div>
-                    <div class="T_models" style="line-height: 30px;">
-                        <p>Learn how to<strong> scale your business</strong> and outsource effectively, enabling you to
-                            focus on key areas for potential growth.</p>
-                    </div>
-
-
-                </div>
-                <div class="Tdiscription2">
-                    <div class="TH_icons">
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/8.png">
-                                </a>
-                                <figcaption style="color: white;">Leadership</figcaption>
-                            </figure>
-                        </div>
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/9.png">
-                                </a>
-                                <figcaption style="color: white;">Adaptability</figcaption>
-                            </figure>
-                        </div>
-                        <div class="T_bgicon">
-                            <figure>
-                                <a class="T_icon">
-                                    <img src="/images/10.png">
-                                </a>
-                                <figcaption style="color: white;">Negotiation</figcaption>
-                            </figure>
-                        </div>
-
-                    </div>
-
-                </div>
-                <div class="Tdiscription3">
-                    <div class="T_onclick">
-                        <p>Click One To Learn More</p>
-                    </div>
-
-                </div>
-            </div>
-            <div class="TsidePic">
-                <img src="/images/automate-your-business.webp" alt="step1">
-            </div>
-        </div>
-
-    </div>
+    </section>
 </template>
 
 <script>
 export default {
     name: 'WebTeaching',
-}
+    data() {
+        return {
+            icons1: [
+                { src: '/images/1.png', caption: 'Digital Literacy' },
+                { src: '/images/2.png', caption: 'Critical Thinking' },
+                { src: '/images/3.png', caption: 'Problem-Solving' },
+                { src: '/images/4.png', caption: 'Collaboration' },
+                { src: '/images/5.png', caption: 'Creativity' },
+            ],
+            icons2: [
+                { src: '/images/6.png', caption: 'Data Analytics' },
+                { src: '/images/7.png', caption: 'Digital Marketing' },
+            ],
+            icons3: [
+                { src: '/images/8.png', caption: 'Leadership' },
+                { src: '/images/9.png', caption: 'Adaptability' },
+                { src: '/images/10.png', caption: 'Negotiation' },
+            ],
+        };
+    },
+};
 </script>
 
-<style>
-@media(max-width:580px){
-    .Telementorwidgetcontainer h2{
-        font-size: 20px;
-    }
-}
-.TsidePic1 {
-    width: 59%;
-}
-@media(max-width:720px){
-    .TsidePic1 {
-    width: 100%;
-}
-}
-.TsidePic1 img{
-    width: 100%;
-}
-.T_models p {
-    text-align: left;
+<style scoped>
+* {
+    font-family: 'Segoe UI', sans-serif;
+    box-sizing: border-box;
 }
 
-.T_onclick {
+.learn-section {
+    background: linear-gradient(135deg, #f0f4ff, #e2e8f0);
+    padding: 80px 20px;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1300px;
+    margin: auto;
+    text-align: center;
+}
+
+.main-heading {
+    background: linear-gradient(90deg, #4f46e5, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 51px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.learn-card {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: -110px;
-}
-
-@media (max-width: 1600px) {
-    .T_onclick {
-
-        margin-left: 0px;
-    }
-
-}
-
-@media (max-width: 1050px) {
-    .T_onclick {
-        display: none;
-        margin-left: 0px;
-    }
-
-}
-
-.Teconinner {
     flex-direction: column;
-    padding-top: 50px;
-    align-items: center;
-    background-position: center center;
-    background-size: cover;
-    justify-content: center;
-    display: flex;
-    background-image: url("/images/bg.png");
-}
-
-.T_icon img {
-    width: 80px;
-    height: 80px;
-
-
-}
-
-.T_bgicon {
-    background-color: #08080D;
-    width: 120px;
-    height: 140px;
-    align-items: center;
-    padding-bottom: 10px;
-    justify-content: center;
-    display: flex;
-    border-radius: 20px;
-
-}
-
-.TH_icons {
-
-    /* display: inline-grid;
-    grid-template-columns: repeat(2, 1fr);  */
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 10px;
-    padding-left: 0px;
-    padding-right: 0px;
-    justify-content: center;
-    align-self: stretch;
-    flex-grow: 1;
     height: 100%;
-    width: 250px;
-
 }
 
-@media (max-width: 1050px) {
-    .TH_icons {
-        flex-direction: column;
-        align-items: end;
-        margin-left: 100px;
-
-    }
+.learn-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
 }
 
-@media (max-width: 760px) {
-    .TH_icons {
-        flex-direction: row;
-        margin-left: 0px;
-        /* align-items: end;
-        margin-left: 100px; */
-
-    }
-}
-
-.Telementorwidget {
-    flex-direction: row;
-    display: flex;
-    width: 66%;
-    justify-content: space-between;
-    padding: 40px;
-    background-color: #f1f1f1;
-    border-radius: 20px;
-    margin-bottom: 30px;
-}
-
-@media (max-width: 1200px) {
-    .Telementorwidget {
-        /* height: 680px ;
-        width: 70%; */
-
-        width: 65%;
-        /* padding-left: 4% !important;
-        justify-content: none;
-        align-items: flex-start; */
-    }
-}
-
-@media (max-width: 1050px) {
-    .Telementorwidget {
-        /* height: 680px ;
-        width: 70%; */
-        flex-direction: column;
-        width: 85%;
-        /* padding-left: 4% !important;
-        justify-content: none;
-        align-items: flex-start; */
-    }
-}
-@media (max-width: 800px) {
-    .Telementorwidget {
-      padding: 10px;
-    }
-}
-
-.Tborderline {
-    border-block-start: 2px solid #87CEEB;
-}
-
-.TsidePic img {
+.card-image {
     width: 100%;
+    height: 300px;
+    object-fit: cover;
 }
 
-@media (max-width: 1520px) {
-    .TsidePic img {
-        width: 550px;
-        height: 400px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .TsidePic img {
-        width: 320px;
-        height: 300px;
-    }
-}
-
-@media (max-width: 1050px) {
-    .TsidePic img {
-        width: 490px;
-        height: 360px;
-    }
-}
-
-@media (max-width: 550px) {
-    .TsidePic img {
-        width: 300px;
-        height: 230px;
-    }
-}
-
-@media (max-width: 760px) {
-    .TsidePic {
-        justify-content: center;
-        align-items: center;
-        display: flex;
-
-    }
-}
-
-/* @media (max-width: 726px) {
-    .TsidePic img{
-        width: 290px ;
-        height: 290px ; 
-    } 
-} */
-.TsidePic1 img {
-
-    /* height: 650px;
-width: 650px; */
-}
-
-@media (max-width: 1520px) {
-    .TsidePic1 img {
-        width: 550px;
-        height: 500px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .TsidePic1 img {
-        width: 320px;
-        height: 300px;
-    }
-}
-
-@media (max-width: 1050px) {
-    .TsidePic1 img {
-        width: 390px;
-        height: 390px;
-        margin-top: -300px;
-    }
-}
-
-@media (max-width: 760px) {
-    .TsidePic1 img {
-
-        margin-top: 0px;
-
-    }
-}
-
-@media (max-width: 760px) {
-    .TsidePic1 img {
-        width: 250px;
-        height: 250px;
-        margin-top: 0px;
-
-    }
-}
-.TsidePic {
-    width: 66%;
-}
-@media(max-width:720px){
-    .TsidePic {
-    width: 100%;
-}}
-.TsidePic1 {
-    /* margin-top: 60px; */
-}
-
-@media (max-width: 760px) {
-    .TsidePic1 {
-        justify-content: center;
-        align-items: center;
-        display: flex;
-    }
-}
-
-.Tsteps ul {
-    list-style: none;
-    /* Remove default bullets */
-    padding: 0;
-}
-
-.Tsteps ul li {
-    position: relative;
+.card-content {
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
     text-align: left;
-    padding-left: 20px;
-    /* Space for custom bullet */
-    font-size: 16px;
-    line-height: 25px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.Tsteps ul li::before {
-    content: "◆";
-    /* Unicode for diamond shape */
+.card-title {
+    font-size: 22px;
+    color: #00bfff;
+    margin-top: 5px;
+}
+
+.separator {
+    width: 40px;
+    height: 3px;
+    background-color: #00bfff;
+    margin: 10px 0;
+}
+
+.card-text {
+    color: #e0e0e0;
+    line-height: 24px;
+    margin-bottom: 10px;
+}
+
+.card-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.card-list li {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 8px;
+    color: white;
+    font-size: 14px;
+    line-height: 22px;
+}
+
+.card-list li::before {
+    content: '◆';
     position: absolute;
     left: 0;
-    color: #87CEEB;
-    /* Adjust color */
-    font-size: 12px;
-    /* Adjust size */
+    color: #00bfff;
+    font-size: 10px;
 }
 
-.TstepHeading h3 {
-    margin: 0;
-    text-align: left;
-    margin-bottom: 20px;
+.click-note {
+    font-style: italic;
+    margin-top: 15px;
+    color: #aaa;
+    text-align: center;
+    font-size: 13px;
 }
-@media(max-width:580px){
-    .TstepHeading h3 {
-    font-size: 16px;
+
+.card-icon-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.icon-box {
+    background-color: #1e1e1e;
+    padding: 10px;
+    width: 80px;
+    height: 100px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.icon-box img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.icon-box figcaption {
+    margin-top: 6px;
+    font-size: 11px;
+    text-align: center;
+}
+
+@media (max-width: 400px) {
+    .main-heading {
+        font-size: 24px;
     }
 
-}
-.TstepHeading {
-    font-size: 30px;
-    line-height: 40px;
-    color: #08080d;
-}
-
-.Telementorwidgetcontainer {
-
-    color: #30353a;
-    font-size: 30px;
-    font-size: 700;
-    font-family: 'Montserrat';
-}
-
-.Tbox {
-    width: 31%;
-}
-
-@media (max-width: 1050px) {
-    .Tbox {
-        flex-direction: row;
-        display: flex;
-        /* gap: 50px; */
-        width: 100%;
+    .card-title {
+        font-size: 18px;
     }
-}
 
-@media (max-width: 760px) {
-    .Tbox {
-        flex-direction: column;
-        /* display: flex; */
-        /* gap: 50px; */
-        width: 100%;
+    .card-content {
+        padding: 15px;
     }
-}
 
-@media (max-width: 1050px) {
-    .Tdiscription {
-        width: 150%;
-
-    }
-}
-
-@media (max-width: 760px) {
-    .Tdiscription {
-        width: 100%;
-    }
-}
-
-@media (max-width: 760px) {
-    .Tdiscription2 {
-        width: 100%;
-    }
-}
-
-@media (max-width: 760px) {
-    .Tdiscription2 {
-        align-items: center;
-        justify-content: center;
-        display: flex;
-
-
-    }
-}
-
-@media (max-width: 760px) {
-    .Tdiscription2 {
-        width: 100%;
-    }
-}
-
-@media (max-width: 1050px) {
-    .Tdiscription3 {
-        width: 150%;
-        display: contents;
-    }
-}
-
-@media (max-width: 760px) {
-    .T_onclick {
-
-        display: flex;
+    .card-image {
+        height: 160px;
     }
 }
 </style>

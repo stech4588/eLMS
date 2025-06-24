@@ -1,75 +1,57 @@
 <template>
-    <div class="main-hero-section2" id="choice">
-        <div class="hero-description">
-            <h2>You get to<span class="real"> Choose</span></h2>
-            <p>We have opened up a mass portal to give you the tools to break free from <span class="bold">modern-day
-                    limitations</span> and
-                succeed.</p>
-            <p>We’ve spent years developing our fully independent and modern-day educational platform and we continue to
-                <span class="bold">innovate and improve daily.</span>
-            </p>
-            <p>Become <span class="bold">prosperous, strong, and well-connected</span> in this world. With your effort
-                and our guidance, success
-                is within reach.</p>
-        </div>
-        <div class="control-section">
-            <h3>Do you want to <span class="underline">take control of your future?</span></h3>
-            <div class="control-row">
-                <div class="cn-1">
-                    <img src="/images/pill1.webp" alt="">
-                    <h4>GO WATCH NETFLIX</h4>
-                </div>
-                <div class="cn-1">
-                    <img src="/images/pill2.webp" alt="">
-                    <h4>JOIN MBM UNIVERSITY</h4>
+    <div class="hero-section-modern" id="choice">
+        <div class="floating-bg"></div>
+        <div class="hero-wrapper">
+            <div class="hero-left">
+                <h1 class="hero-heading">You get to <span class="gradient-text">Choose</span></h1>
+                <p>
+                    We have opened up a mass portal to give you the tools to break free from
+                    <strong>modern-day limitations</strong> and succeed.
+                </p>
+                <p>
+                    We’ve spent years developing our fully independent and modern-day educational platform and we
+                    continue to
+                    <strong>innovate and improve daily.</strong>
+                </p>
+                <p>
+                    Become <strong>prosperous, strong, and well-connected</strong> in this world. With your effort and
+                    our guidance,
+                    success is within reach.
+                </p>
+                <div class="cta-section">
+                    <h3>Do you want to <span class="underline">take control of your future?</span></h3>
+                    <div class="cta-options">
+                        <div class="pill pill-red">
+                            <img src="/images/pill1.webp" alt="Netflix">
+                            <span>GO WATCH NETFLIX</span>
+                        </div>
+                        <div class="pill pill-blue">
+                            <img src="/images/pill2.webp" alt="MBM">
+                            <span>JOIN MBM UNIVERSITY</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="hero-video">
-            <div v-if="isPlaying" class="video-container">
-                <iframe width="100%" height="100%" :src="videoUrl" title="YouTube video player" frameborder="0"
-                    allow="autoplay; encrypted-media" allowfullscreen>
-                </iframe>
-            </div>
-            <div v-else class="video-thumbnail" @click="playVideo">
-                <img src="/images/placeholder.webp" alt="">
-                <div class="overlay">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none">
-                        <g clip-path="url(#clip0_713_490)">
-                            <path
-                                d="M50 0C22.3859 0 0 22.3859 0 50C0 77.6141 22.3859 100 50 100C77.616 100 100 77.6141 100 50C100 22.3859 77.616 0 50 0ZM50 90C27.9439 90 10 72.0561 10 50C10 27.9439 27.9439 10 50 10C72.0561 10 90 27.9439 90 50C90 72.0561 72.0561 90 50 90Z"
-                                fill="url(#paint0_linear_713_490)"></path>
-                            <path
-                                d="M68.185 46.5008L43.9369 32.5008C40.6029 30.5768 37.875 32.1508 37.875 36.0008V64.0008C37.875 67.8508 40.6029 69.4268 43.9369 67.5008L68.185 53.5008C71.5189 51.5768 71.5189 48.4249 68.185 46.5008Z"
-                                fill="url(#paint1_linear_713_490)"></path>
-                        </g>
-                        <defs>
-                            <linearGradient id="paint0_linear_713_490" x1="50" y1="0" x2="50" y2="100"
-                                gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#FF9B01"></stop>
-                                <stop offset="1" stop-color="#FFC468"></stop>
-                            </linearGradient>
-                            <linearGradient id="paint1_linear_713_490" x1="54.2802" y1="31.6797" x2="54.2802"
-                                y2="68.3228" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#FF9B01"></stop>
-                                <stop offset="1" stop-color="#FFC468"></stop>
-                            </linearGradient>
-                            <clipPath id="clip0_713_490">
-                                <rect width="100" height="100" fill="white"></rect>
-                            </clipPath>
-                        </defs>
-                    </svg>
+            <div class="hero-right">
+                <div class="video-box">
+                    <iframe v-if="isPlaying" :src="videoUrl" frameborder="0" allowfullscreen
+                        allow="autoplay; encrypted-media"></iframe>
+                    <div v-else class="video-placeholder" @click="playVideo">
+                        <img src="/images/placeholder.webp" alt="Play">
+                        <div class="video-play-icon">▶</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
 <script>
 export default {
     data() {
         return {
             isPlaying: false,
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
         };
     },
     methods: {
@@ -79,264 +61,210 @@ export default {
     }
 };
 </script>
-<style>
-.cn-1 {
-    margin: 20px;
+
+<style scoped>
+* {
+    font-family: 'Segoe UI', sans-serif!important;
 }
 
-.cn-1 img {
-    width: 90px;
+.hero-section-modern {
+    position: relative;
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #E6EAFF, #f8f9ff);
+    overflow: hidden;
 }
 
-.control-row {
+.floating-bg {
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(187, 224, 255, 0.4) 20%, transparent 70%);
+    animation: float 12s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(20px);
+    }
+}
+
+.hero-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: auto;
     display: flex;
-    flex-direction: row;
+    gap: 40px;
+    align-items: center;
     justify-content: center;
 }
-
-@media(max-width:435px) {
-    .control-row {
+@media(max-width:960px){
+    .hero-wrapper{
         flex-direction: column;
     }
 }
-
-.underline {
-    padding-bottom: 3px;
-    border-bottom: 2px solid #ffb54c;
-}
-
-.bold {
-    color: #000;
-    font-weight: bolder;
-}
-
-.hero-description {
-    align-items: center;
+.hero-left {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: flex-start;
+    min-width: 320px;
+    text-align: left;
 }
-
-.hero-description p {
-    color: #000;
-    width: 50%;
-}
-
-@media(max-width:540px) {
-    .hero-description p {
-        width: auto;
-        margin: 10px;
+@media(max-width:960px){
+    .hero-left{
+        padding: 23px;
+        margin-top: -20px!important;
+        align-items: center;
+        text-align: center;
     }
 }
-
-.advantage-container p {
-    font-size: 20px;
-    margin: 9px;
-}
-
-@media(max-width:768px) {
-    .advantage-container p {
-        font-size: 13px;
-    }
-}
-
-@media(max-width:570px) {
-    .advantage-container p {
-        margin: 0px;
-    }
-}
-
-@media(max-width:430px) {
-    .advantage-container p {
-        font-size: 10px;
-    }
-}
-
-.gold {
-    color:  #87CEEB;
-    font-weight: 900;
-}
-
-.advantage-container {
-    margin-top: 30px;
-    margin-bottom: 40px;
-    border: 3px solid  #87CEEB;
-    background-color: #f1f1f1;
-    border-radius: 14px;
-    padding: 10px 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-@media(max-width:390px) {
-    .advantage-container {
-        margin: 30px;
-    }
-}
-
-.overlay svg {
-    height: 100px;
-    width: 100px;
-    fill: #fff;
-    filter: drop-shadow(1px 0 6px rgba(0, 0, 0, .3));
-}
-
-@media(max-width:768px) {
-    .overlay svg {
-        height: 63px;
-    }
-}
-
-@media(max-width:570px) {
-    .overlay svg {
-        height: 45px;
-    }
-}
-
-.overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.hero-right {
+    flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
-    width: 100%;
-    /* Ensure it spans the entire container */
-    height: 100%;
-    /* Same as above */
 }
 
-
-
-.hero-video {
-    position: relative;
-    /* Ensure relative positioning for absolute child */
-    padding-top: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Center content inside */
-    width: 702px;
+.hero-heading {
+    font-size: 42px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 20px;
 }
 
-@media(max-width:768px) {
-    .hero-video {
-        width: 494px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-video {
-        width: 362px;
-    }
-}
-
-@media(max-width:430px) {
-    .hero-video {
-        width: 265px;
-    }
-}
-
-.hero-video img {
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    border: 2px solid #fff;
-    width: 100%;
-    border-radius: 37px;
-}
-
-.control-section h3 {
-    color: #000;
-}
-
-.main-hero-section2 {
-    padding-top: 50px;
-    padding-bottom: 80px;
-    background-image: url(/images/choice.webp);
-    background-position: center center;
-    background-size: cover;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.real {
-    background-image: linear-gradient(310deg, #38B6FF, #4CCAFF);
+.gradient-text {
+    background: linear-gradient(90deg, #4f46e5, #3b82f6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.hero-logo {
-    margin-top: 40px;
+.hero-left p {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1.2rem;
+    color: #374151;
+    max-width: 700px;
+    margin: 0 auto 30px;
+}
+
+.underline {
+    border-bottom: 2px solid #3b82f6;
+}
+
+.cta-section {
+    margin-top: 30px;
+}
+
+.cta-options {
     display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    padding: 20px;
+    border-radius: 20px;
+    color: #fff;
+    width: 200px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
 }
 
-@media(max-width:570px) {
-    .hero-logo {
-        margin-top: 4px;
+/* .pill:hover {
+    transform: translateY(-6px) scale(1.04);
+} */
+
+.pill img {
+    width: 64px;
+    margin-bottom: 12px;
+}
+
+.pill-red {
+    background: linear-gradient(135deg, #f43f5e, #fb7185);
+}
+
+.pill-blue {
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+}
+
+.video-box {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 11 / 9;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+@media (max-width: 960px) {
+    .video-box{
+        margin: 20px;
     }
 }
-
-.hero-logo img {
-    width: 163px;
-    height: auto;
+.video-box iframe {
+    width: 100%;
+    height: 100%;
 }
 
-@media(max-width:768px) {
-    .hero-logo img {
-        width: 120px;
+.video-placeholder {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+.video-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 18px 26px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s;
+}
+
+.video-play-icon:hover {
+    background: rgba(0, 0, 0, 0.75);
+}
+
+@media (max-width: 768px) {
+    .hero-heading {
+        font-size: 42px;
+    }
+
+    .pill {
+        width: 100%;
     }
 }
-
-@media(max-width:570px) {
-    .hero-logo img {
-        width: 80px;
-    }
-}
-
-.hero-description h1 {
-    font-size: 55px;
-    font-weight: 700;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    line-height: 85px;
-    letter-spacing: 3px;
-    color: #000;
-}
-
-@media(max-width:768px) {
-    .hero-description h1 {
-        font-size: 36px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-description h1 {
-        font-size: 23px;
-        line-height: 45px;
-    }
-}
-
-.hero-description h2 {
-    font-size: 40px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    color: #000;
-    letter-spacing: 3px;
-}
-
-@media(max-width:768px) {
-    .hero-description h2 {
-        margin-top: -5px;
-        font-size: 30px;
-    }
-}
-
-@media(max-width:570px) {
-    .hero-description h2 {
-        margin-top: -5px;
-        font-size: 16px;
+@media(max-width: 576px) {
+    .hero-heading {
+        font-size: 32px;
     }
 }
 </style>

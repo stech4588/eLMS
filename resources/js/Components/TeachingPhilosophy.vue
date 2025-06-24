@@ -1,293 +1,183 @@
 <template>
-    <div class="testimonial-section">
-        <div class="content">
-            <div class="content-1">
-                <h2>Our Teaching</h2>
-                <h2>Philosophy</h2>
+  <section class="teaching-philosophy">
+    <div class="tp-container">
+      <!-- Left content -->
+      <div class="tp-text">
+        <h2>Our Teaching</h2>
+        <h2>Philosophy</h2>
+        <ul>
+          <li>
+            Learn around <span class="gold">like-minded people</span>, and from
+            <span class="gold">like-minded mentors</span>.
+          </li>
+          <li>
+            Teaching practical skills <span class="gold">through action</span>, not just textbooks.
+          </li>
+          <li>
+            Guiding our students to gain real-world experience
+            <span class="gold">promptly and effectively</span>.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Slider content -->
+      <div class="tp-slider">
+        <swiper
+          :slides-per-view="slidesPerView"
+          :space-between="20"
+          :loop="true"
+          :autoplay="{ delay: 3000, disableOnInteraction: false }"
+          :navigation="true"
+          :modules="modules"
+          class="swiper-container"
+        >
+          <swiper-slide v-for="n in 11" :key="n">
+            <div class="slide-card">
+              <img :src="`/images/slide-${n}.webp`" :alt="`Slide ${n}`" />
             </div>
-            <div class="content-2">
-                <ul>
-                    <li> Learn around <strong class="gold">like-minded people</strong>, and from <strong
-                            class="gold">like-minded
-                            mentors</strong>.
-                    </li>
-                    <li> Teaching practical skills <strong class="gold">through action</strong>, not just textbooks.
-                    </li>
-                    <li> Guiding our students to gain real-world experience <strong class="gold">promptly and
-                            effectively</strong>.
-                    </li>
-                </ul>
-            </div>
+          </swiper-slide>
+        </swiper>
+      </div>
 
-        </div>
-
-        <!-- Swiper Slider -->
-        <div class="slider-container">
-            <swiper :slides-per-view="slidesPerView" :space-between="20" :loop="true" :autoplay="{
-                delay: 3000,
-                disableOnInteraction: false
-            }" :navigation="true" :modules="modules" class="swiper-container">
-
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-1.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-2.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-3.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-4.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-5.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-6.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-7.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-8.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-9.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-10.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-                <swiper-slide>
-                    <div class="testimonial-card">
-                        <img src="/images/slide-11.webp" alt="Testimonial 1" />
-                    </div>
-                </swiper-slide>
-
-            </swiper>
-        </div>
-
-        <Link href="/register"> <button class="join-btn">JOIN NOW</button></Link>
+      <!-- Join Button -->
+      <Link href="/register">
+        <button class="tp-button">JOIN NOW</button>
+      </Link>
     </div>
+  </section>
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3';
-import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/css";
-import "swiper/css/navigation";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Link } from '@inertiajs/vue3'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import { Autoplay, Navigation } from 'swiper/modules'
 
 export default {
-    components: { Swiper, SwiperSlide, Link },
-    data() {
-        return {
-            modules: [Autoplay, Navigation],
-            slidesPerView: window.innerWidth <= 700 ? 1 : 2,
-        };
-    },
-    mounted() {
-        window.addEventListener("resize", this.updateSlides);
-    },
-    beforeUnmount() {
-        window.removeEventListener("resize", this.updateSlides);
-    },
-    methods: {
-        updateSlides() {
-            this.slidesPerView = window.innerWidth <= 700 ? 1 : 2;
-        }
-    },
-
-};
+  components: { Swiper, SwiperSlide, Link },
+  data() {
+    return {
+      modules: [Autoplay, Navigation],
+      slidesPerView: window.innerWidth <= 700 ? 1 : 2
+    }
+  },
+  mounted() {
+    window.addEventListener('resize', this.updateSlides)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.updateSlides)
+  },
+  methods: {
+    updateSlides() {
+      this.slidesPerView = window.innerWidth <= 700 ? 1 : 2
+    }
+  }
+}
 </script>
 
 <style scoped>
-.content-2 ul {
-    list-style: none;
-    /* Default bullets hatane ke liye */
-    padding: 0;
+.teaching-philosophy {
+  background-color: #12121d;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  padding: 60px 20px;
+  text-align: center;
 }
 
-.content-2 li {
-    position: relative;
-    line-height: 1.3;
-    margin: 0;
-    padding-left: 25px;
+.tp-container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-@media(max-width:580px) {
-    .content-2 li {
-        font-size: 12px;
-    }
+.tp-text {
+  max-width: 900px;
+  margin: 0 auto 50px auto;
+  text-align: left;
 }
 
-.content-2 li::before {
-    content: "🔹";
-    position: absolute;
-    left: 0;
-    top: -4px;
-    font-size: 1.2rem;
+.tp-text h2 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
 }
 
-.content-1 h2 {
-    margin: 0;
-    text-align: left;
-}
-
-::v-deep(.swiper-button-next),
-::v-deep(.swiper-button-prev) {
-    color: #87CEEB !important;
-    width: 2px !important;
-}
-
-::v-deep(.swiper-button-next:hover),
-::v-deep(.swiper-button-prev:hover) {
-    color: #87CEEB !important;
-}
-
-.testimonial-section {
+@media (max-width: 600px) {
+  .tp-text h2 {
+    font-size: 1.6rem;
     text-align: center;
-    background: #08080d;
-    color: white;
-    padding: 40px 20px;
+  }
 }
 
-.content {
-    max-width: 1025px;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+.tp-text ul {
+  margin-top: 20px;
+  padding-left: 0;
+  list-style: none;
 }
 
-@media(max-width:715px) {
-    .content {
-        flex-direction: column;
-    }
+.tp-text li {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.6;
 }
 
-.content h2 {
-    font-size: 2.5rem;
-    font-weight: bold;
+.tp-text li::before {
+  content: '✔';
+  color: #38b6ff;
+  position: absolute;
+  left: 0;
+  font-size: 1.1rem;
+  top: 2px;
 }
 
-@media(max-width:580px) {
-    .content h2 {
-        font-size: 1.2rem;
-    }
+.gold {
+  color: #87CEEB;
+  font-weight: 700;
 }
 
-.content-1 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 40%;
-}
-
-@media(max-width:715px) {
-    .content-1 {
-        text-align: center;
-        margin-bottom: 10px;
-        align-items: center;
-        width: 100%;
-    }
-}
-
-.content-2 {
-    width: 40%;
-}
-
-@media(max-width:715px) {
-    .content-2 {
-        width: 100%;
-    }
-}
-
-
-ul {
-    list-style: none;
-    padding: 0;
-    text-align: left;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-ul li {
-    font-size: 0.9rem;
-    margin: 10px 0;
-}
-
-.slider-container {
-    max-width: 855px;
-    margin: 20px auto;
-}
-
-@media(max-width:725px) {
-    .slider-container {
-        max-width: 100%;
-    }
+.tp-slider {
+  max-width: 900px;
+  margin: 0 auto 30px auto;
 }
 
 .swiper-container {
-    overflow: hidden;
+  overflow: hidden;
 }
 
-.testimonial-card {
-    width: 415px;
-    text-align: center;
+.slide-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
 }
 
-@media(max-width:865px) {
-    .testimonial-card {
-        width: 330px;
-    }
+.slide-card img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-@media(max-width:700px) {
-    .testimonial-card {
-        width: 100%;
-    }
+.slide-card:hover img {
+  transform: scale(1.02);
 }
 
-.testimonial-card img {
-    /* width: 100px; */
-    /* height: 100px; */
-    width: 100%;
-    /* border-radius: 50%; */
-    object-fit: cover;
+.tp-button {
+  font-weight: 800;
+  border-radius: 30px;
+  background-image: linear-gradient(310deg, #38b6ff, #4ccaff);
+  color: black;
+  padding: 12px 30px;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
-.join-btn {
-    font-weight: 800 !important;
-    border-radius: 50px;
-    background-image: linear-gradient(310deg, #38B6FF, #4CCAFF);
-    color: black;
-    padding: 10px 20px;
-    font-size: 0.7rem;
-    border-radius: 20px;
-    margin-top: 20px;
-    cursor: pointer;
-    border: none;
+.tp-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(72, 192, 255, 0.3);
 }
 </style>
