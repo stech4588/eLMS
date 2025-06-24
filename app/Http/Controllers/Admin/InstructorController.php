@@ -9,6 +9,7 @@ use App\Models\Instructor;
 use App\Mail\InstructorApproved;
 use App\Mail\InstructorRejected;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
 
@@ -46,8 +47,11 @@ class InstructorController extends Controller
         $instructor->user->is_active = true;
         $instructor->user->save();
 
-        // Send approval email
-        Mail::to($instructor->user->email)->send(new InstructorApproved($instructor->user));
+        try {
+            Mail::to($instructor->user->email)->send(new InstructorApproved($instructor->user));
+        } catch (\Exception $e) {
+            Log::error("Failed to send approval email: " . $e->getMessage());
+        }
 
         return back()->with('success', 'Instructor approved successfully.');
     }
@@ -62,8 +66,11 @@ class InstructorController extends Controller
         $instructor->user->is_active = false;
         $instructor->user->save();
 
-        // Send rejection email
-        Mail::to($instructor->user->email)->send(new InstructorRejected($instructor->user, $request->reason));
+        try {
+            Mail::to($instructor->user->email)->send(new InstructorRejected($instructor->user, $request->reason));
+        } catch (\Exception $e) {
+            Log::error("Failed to send rejection email: " . $e->getMessage());
+        }
 
         return back()->with('success', 'Instructor rejected successfully.');
     }
