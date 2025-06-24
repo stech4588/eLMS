@@ -1433,7 +1433,7 @@ onMounted(() => {
 .dark .add_course_dark_left_videos_item{
     background-color: #2d2d2d !important;
     color: white !important;
-    
+
 }
 .dark .add_course_dark_left_videos_item_active{
     border-left: 2px solid white !important;
