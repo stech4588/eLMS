@@ -3,7 +3,7 @@
         <div class="hero-overlay"></div>
         <div class="hero-container">
             <div class="hero-text">
-                <h1>Welcome to LMS</h1>
+                <h1>Welcome to MBM University</h1>
                 <p>
                     Your gateway to quality education and professional development.
                     Discover courses that will help you achieve your goals.
