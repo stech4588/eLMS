@@ -20,7 +20,7 @@
                 </p>
                 <div class="cta-section">
                     <h3>Do you want to <span class="underline">take control of your future?</span></h3>
-                    <div class="cta-options">
+                    <!-- <div class="cta-options">
                         <div class="pill pill-red">
                             <img src="/images/pill1.webp" alt="Netflix">
                             <span>GO WATCH NETFLIX</span>
@@ -29,7 +29,7 @@
                             <img src="/images/pill2.webp" alt="MBM">
                             <span>JOIN MBM UNIVERSITY</span>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="hero-right">
@@ -155,9 +155,9 @@ export default {
     margin: 0 auto 30px;
 }
 
-.underline {
+/* .underline {
     border-bottom: 2px solid #3b82f6;
-}
+} */
 
 .cta-section {
     margin-top: 30px;

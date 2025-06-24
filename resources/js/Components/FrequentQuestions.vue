@@ -37,7 +37,7 @@
       </div>
     </div>
     <Link href="/register" class="cta">
-      <button class="join-button">JOIN NOW</button>
+      <button class="join-btn">JOIN NOW</button>
     </Link>
   </section>
     </div>
@@ -107,6 +107,26 @@ export default {
 </script>
 
 <style scoped>
+
+.join-btn {
+  margin-top: 26px;
+  padding: 12px 32px;
+  background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  color: black;
+  border: none;
+  border-radius: 30px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  align-self: flex-start;
+}
+
+.join-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
+}
+
 .main-faq {
     background:#E3F0FF;
     padding: 100px 0;

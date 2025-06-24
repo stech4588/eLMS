@@ -77,6 +77,44 @@ export default {
 </script>
 
 <style scoped>
+/* Make arrows visible and styled properly */
+::v-deep(.swiper-button-prev) {
+  color: #38b6ff;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  top: 55%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  left: -10px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+/* Make arrows visible and styled properly */
+::v-deep(.swiper-button-next) {
+  color: #38b6ff;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  top: 55%;
+  right: -10px;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* Make arrow icons look nicer */
+::v-deep(.swiper-button-next::after),
+::v-deep(.swiper-button-prev::after) {
+  font-size: 33px;
+  font-weight: bold;
+}
+
 .teaching-philosophy {
   background-color: #12121d;
   color: #ffffff;

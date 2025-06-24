@@ -42,7 +42,8 @@
           <div class="future-col-2 glass-effect">
             <div class="future-col-2-description">
               <h2>Get Full Access</h2>
-              <h1><span class="old-price">${{ oldPrice }}</span> <span class="new-price">${{ newPrice }}</span>/month</h1>
+              <!-- <h1><span class="old-price">${{ oldPrice }}</span> <span class="new-price">${{ newPrice }}</span>/month</h1> -->
+              <h1><span class="old-price">$123</span> <span class="new-price">$55</span>/month</h1>
               <p>Cancel membership at any time</p>
               <ul class="future-points">
                 <li><div class="tick">✔</div>&nbsp; Guided step-by-step lessons</li>

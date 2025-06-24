@@ -103,6 +103,7 @@ export default {
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
+  cursor: pointer;
   padding: 6px 10px;
   transition: color 0.3s ease;
 }

@@ -10,7 +10,7 @@
                     <div class="card-content">
                         <h3 class="card-title">Learn Relevant Digital Skills</h3>
                         <div class="separator"></div>
-                        <p class="card-text">The business models we teach are:</p>
+                        <p class="card-text">The <strong>Business Models</strong> we teach are:</p>
                         <ul class="card-list">
                             <li><strong>Completely online</strong></li>
                             <li><strong>Location-independent</strong></li>
@@ -34,8 +34,7 @@
                         <h3 class="card-title">Modern Market Strategies</h3>
                         <div class="separator"></div>
                         <p class="card-text">
-                            <strong>Cutting-edge strategies</strong> designed and catered to your specific objectives
-                            and time commitments.
+                            The <strong>Modern Market Strategies</strong> we teach are:
                         </p>
                         <ul class="card-list">
                             <li><strong>Latest market trends</strong></li>
@@ -60,8 +59,7 @@
                         <h3 class="card-title">Automate & Grow Your Business</h3>
                         <div class="separator"></div>
                         <p class="card-text">
-                            Learn how to <strong>scale your business</strong> and outsource effectively, enabling you to
-                            focus on key areas for potential growth.
+                            The <strong>methods for growing Business</strong> we teach are:
                         </p>
                         <ul class="card-list">
                             <li><strong>Outsource smartly</strong></li>
@@ -232,8 +230,18 @@ export default {
     justify-content: flex-start;
     gap: 10px;
     margin-top: 10px;
+    height: 230px;
 }
-
+@media(max-width:670px){
+    .card-icon-group {
+        height: 370px;
+    }
+}
+@media(max-width:650px){
+    .card-icon-group {
+        height:100%;
+    }
+}
 .icon-box {
     background-color: #1e1e1e;
     padding: 10px;
