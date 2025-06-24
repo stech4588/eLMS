@@ -1,26 +1,38 @@
 <template>
-  <nav class="navbar">
-    <div class="navbar-content">
-      <Link href="/register" class="join-now">JOIN NOW</Link>
-      <a @click="scrollToSection('access')">ACCESS</a>
-      <a @click="scrollToSection('education')">EDUCATION</a>
-      <a @click="scrollToSection('result')">RESULTS</a>
-      <a @click="scrollToSection('choice')">CHOICE</a>
-      <Link href="/login" class="login-btn">LOG IN</Link>
+  <nav class="modern-navbar">
+    <div class="navbar-container">
+      <div class="logo">
+        <img src="/images/MBM_Uni.png" alt="" />
+      </div>
+
+      <ul class="nav-links" v-if="!menuOpen">
+        <li><a @click="scrollToSection('access')">ACCESS</a></li>
+        <li><a @click="scrollToSection('education')">EDUCATION</a></li>
+        <li><a @click="scrollToSection('result')">RESULTS</a></li>
+        <li><a @click="scrollToSection('choice')">CHOICE</a></li>
+      </ul>
+
+      <div class="action-buttons" v-if="!menuOpen">
+        <Link href="/register" class="join">JOIN NOW</Link>
+        <Link href="/login" class="login">LOG IN</Link>
+      </div>
+
       <div class="hamburger" @click="toggleMenu">
-        <div :class="menuOpen ? 'bar cross-bar1' : 'bar'"></div>
-        <div :class="menuOpen ? 'bar cross-bar2' : 'bar'"></div>
-        <div :class="menuOpen ? 'bar cross-bar3' : 'bar'"></div>
+        <span :class="{ open: menuOpen }"></span>
+        <span :class="{ open: menuOpen }"></span>
+        <span :class="{ open: menuOpen }"></span>
       </div>
     </div>
+
+    <!-- Smooth Animated Dropdown -->
     <transition name="dropdown">
-      <div v-if="menuOpen" class="dropdown-menu">
-        <Link href="/register" class="menu-item1">JOIN NOW</Link>
-        <a @click="scrollToSection('access')" class="menu-item ">ACCESS</a>
-        <a @click="scrollToSection('education')" class="menu-item ">EDUCATION</a>
-        <a @click="scrollToSection('result')" class="menu-item ">RESULTS</a>
-        <a @click="scrollToSection('choice')" class="menu-item ">CHOICE</a>
-        <Link href="/login" class="menu-item ">LOG IN</Link>
+      <div v-show="menuOpen" class="custom-dropdown">
+        <Link href="/register">JOIN NOW</Link>
+        <a @click="scrollToSection('access')">ACCESS</a>
+        <a @click="scrollToSection('education')">EDUCATION</a>
+        <a @click="scrollToSection('result')">RESULTS</a>
+        <a @click="scrollToSection('choice')">CHOICE</a>
+        <Link href="/login">LOG IN</Link>
       </div>
     </transition>
   </nav>
@@ -28,10 +40,9 @@
 
 <script>
 import { Link } from '@inertiajs/vue3';
+
 export default {
-  components: {
-    Link,
-  },
+  components: { Link },
   data() {
     return {
       menuOpen: false,
@@ -41,164 +52,199 @@ export default {
     toggleMenu() {
       this.menuOpen = !this.menuOpen;
     },
-    scrollToSection(sectionId) {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
+    scrollToSection(id) {
+      const section = document.getElementById(id);
+      if (section) section.scrollIntoView({ behavior: 'smooth' });
+      this.menuOpen = false;
     },
   },
 };
 </script>
 
 <style scoped>
-.access {
-  font-weight: 800 !important;
-  -webkit-text-fill-color: #FFB54C;
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap');
+
+* {
+  box-sizing: border-box;
 }
 
-/* Navbar Styles */
-.navbar {
-  padding: 20px 20px;
+.modern-navbar {
+  font-family: 'Segoe UI', sans-serif;
+  background: #12121d;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 0px 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* position: sticky; */
-  top: 0;
-  z-index: 1000;
-  color: rgb(0, 0, 0);
+  flex-wrap: wrap;
 }
 
-.navbar-content {
+.logo {
+  width: 90px;
+}
+
+.nav-links {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 20px;
+  list-style: none;
+}
+
+.nav-links a {
+  position: relative;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 6px 10px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a::before,
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: 0;
+  background: #4ccaff;
+  transition: all 0.3s ease;
+}
+
+.nav-links a::before {
+  left: 0;
+}
+
+.nav-links a::after {
+  right: 0;
+}
+
+.nav-links a:hover::before,
+.nav-links a:hover::after {
   width: 100%;
 }
 
-.navbar-content a {
-  padding: 8px 16px;
-  cursor: pointer;
+.nav-links a:hover {
+  color: #4ccaff;
+  text-shadow: 0 0 5px #4ccaffaa;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.join,
+.login {
+  padding: 6px 14px;
+  font-weight: bold;
+  border-radius: 50px;
   text-decoration: none;
-  color: rgb(0, 0, 0);
-  font-weight: 500;
-  transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
-  position: relative;
+  transition: all 0.3s ease;
 }
 
-.navbar-content a:hover {
-  transform: scale(1.1) rotateX(10deg);
-  /* Halki si tilt aur zoom-out effect */
-  box-shadow: 0px 10px 20px rgba(255, 255, 255, 0.3);
-  /* Shadow effect */
+.join {
+  background: linear-gradient(45deg, #38b6ff, #4ccaff);
+  color: #000;
 }
 
-.join-now {
-  font-weight: 800 !important;
-  border-radius: 50px;
-  background-image: linear-gradient(310deg, #38B6FF, #4CCAFF);
-  color: black;
-  padding: 5px;
-  cursor: pointer;
+.login {
+  border: 2px solid #4ccaff;
+  color: #fff;
 }
 
-.login-btn {
-  font-weight: 800 !important;
-  border-radius: 50px;
-  border: 2px solid #08080D;
-  color: rgb(0, 0, 0);
-  padding: 5px;
-  cursor: pointer;
+.login:hover {
+  background-color: #4ccaff;
+  color: #000;
 }
 
 .hamburger {
   display: none;
   flex-direction: column;
+  gap: 5px;
   cursor: pointer;
 }
 
-.bar {
-  background-color: rgb(0, 0, 0);
-  height: 3.5px;
+.hamburger span {
   width: 25px;
-  margin: 2px 0;
+  height: 3px;
+  background-color: #ffffff;
+  border-radius: 2px;
   transition: all 0.3s ease;
 }
 
-.cross-bar1 {
+.hamburger span.open:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
 
-.cross-bar2 {
+.hamburger span.open:nth-child(2) {
   opacity: 0;
 }
 
-.cross-bar3 {
+.hamburger span.open:nth-child(3) {
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* Dropdown Menu */
-.dropdown-menu {
+/* Smooth Dropdown Styling */
+.custom-dropdown {
+  background: rgba(30, 30, 47, 0.9);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid #333;
   display: flex;
-  margin-top: 18px;
+  padding-bottom:30px!important;
   flex-direction: column;
-  background-color: #08080D;
-  position: absolute;
-  top: 60px;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  padding: 0;
-  transform: translateY(-20px);
+  gap: 15px;
+  padding: 0 30px;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
 }
 
-.menu-item {
-  padding: 14px 20px;
-  font-weight: 800 !important;
-  color: white;
-  text-align: center;
-  border-bottom: 1px solid #333;
+.custom-dropdown a {
+  color: #ffffff;
+  font-weight: 600;
   text-decoration: none;
-  font-size: 1rem;
-}
-
-.menu-item:hover {
-  background-color: #333;
-}
-
-.menu-item1 {
-  text-decoration: none;
-  padding: 14px 20px;
-  color: #ffb543;
-  text-align: center;
+  padding: 10px 0;
   border-bottom: 1px solid #333;
-  font-size: 1rem;
-  font-weight: 800 !important;
+  transition: all 0.3s ease;
 }
 
-.menu-item:hover {
-  background-color: #333;
+.custom-dropdown a:hover {
+  color: #4ccaff;
+  transform: translateX(5px);
 }
 
-/* Dropdown Slide Transition */
+/* Vue Transition Classes */
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.4s ease;
+  overflow: hidden;
 }
 
-.dropdown-enter {
-  opacity: 0;
-  transform: translateY(-20px);
-}
-
+.dropdown-enter-from,
 .dropdown-leave-to {
+  max-height: 0;
   opacity: 0;
-  transform: translateY(-20px);
+  transform: scaleY(0.9);
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-  .navbar-content a {
+.dropdown-enter-to,
+.dropdown-leave-from {
+  max-height: 500px;
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* Responsive */
+@media (max-width: 895px) {
+  .nav-links,
+  .action-buttons {
     display: none;
   }
 
