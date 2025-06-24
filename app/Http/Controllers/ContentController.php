@@ -75,6 +75,7 @@ class ContentController extends Controller
                     'is_purchased' => $isPurchased,
                     'first_video_id' => $course->videos->isNotEmpty() ? $course->videos->first()->id : null,
                     'progress' => $progress,
+                    'description' => $course->description,
                 ];
             });
         

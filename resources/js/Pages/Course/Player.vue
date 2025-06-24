@@ -4,42 +4,16 @@
 
     <AuthenticatedLayout v-slot="{ isSidebarOpen, isPlayerPage }">
         <div class="flex bg-gray-100" style="height: 100%">
-            <!-- Sidebar for Videos -->
-            <div v-if="isPlayerPage && (isSidebarOpen || isLargeScreen)"
-                class="w-80 bg-gray-800 text-white p-4 space-y-4 overflow-y-auto flex-shrink-0 player_sidebar">
-                <h2 class="text-xl font-semibold mb-4">{{ course.title }}</h2>
-                <ul class="space-y-2">
-                    <li v-for="video in sortedVideos" :key="video.id">
-                        <button @click="selectVideo(video)"
-                            :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors',
-                                currentVideo && currentVideo.id === video.id ? 'bg-blue-500 text-white' : 'hover:bg-gray-700']">
-                            {{ video.title }}
-                        </button>
-                    </li>
-                </ul>
-                <div class="mt-auto pt-4">
-                    <Link :href="route('courses.show', { course: course.id })"
-                        class="block w-full text-center px-3 py-2 rounded-md text-sm bg-gray-600 hover:bg-gray-500 transition-colors">
-                    Back to Course Details
-                    </Link>
-                </div>
-            </div>
 
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col ">
                 <!-- Video Player -->
                 <div class="bg-black flex-shrink-0">
-                    <video v-if="currentVideo && currentVideo.video_url"
-                        ref="videoPlayer" 
-                        :key="currentVideo.id"
-                        :src="currentVideo.video_url" controls autoplay 
-                        @timeupdate="handleTimeUpdate"
-                        @pause="handlePause"
-                        @ended="() => { handleEnded(); playNextVideo(); }"
-                        @loadedmetadata="handleLoadedMetadata"
-                        class="w-full h-[60vh] object-contain player_video" 
-                        @play="() => { lastProgressSaveTime = Date.now(); /* Reset timer when play starts/resumes */ }"
-                        >
+                    <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
+                        :src="currentVideo.video_url" controls autoplay @timeupdate="handleTimeUpdate"
+                        @pause="handlePause" @ended="() => { handleEnded(); playNextVideo(); }"
+                        @loadedmetadata="handleLoadedMetadata" class="w-full h-[60vh] object-contain player_video"
+                        @play="() => { lastProgressSaveTime = Date.now(); /* Reset timer when play starts/resumes */ }">
                         <!-- <source :src="currentVideo.video_url" type="video/mp4"> -->
                         Your browser does not support the video tag.
                     </video>
@@ -49,13 +23,43 @@
                     </div>
                 </div>
 
+                <!-- Prev/Next Video Buttons -->
+                <div v-if="currentVideo && sortedVideos.length > 1"
+                    class="flex items-center justify-between px-6 py-4 bg-white dark:bg-dark-bg-secondary">
+                    <button v-if="currentVideoIndex > 0" @click="playPreviousVideo"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#3b82f6] border border-transparent rounded-md shadow-sm hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <!-- Heroicon name: solid/chevron-left -->
+                        <svg class="w-5 h-5 mr-2 -ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Previous
+                    </button>
+                    <div v-else>&nbsp;</div> <!-- Placeholder to maintain layout -->
+
+                    <button v-if="currentVideoIndex < sortedVideos.length - 1" @click="playNextVideo"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#3b82f6] border border-transparent rounded-md shadow-sm hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Next
+                        <!-- Heroicon name: solid/chevron-right -->
+                        <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
                 <!-- Video Details -->
                 <div class="p-6 -auto bg-white flex-1 dark:bg-dark-bg-secondary dark:text-white">
 
                     <div v-if="currentVideo">
                         <h1 class="text-2xl font-bold mb-2 dark:text-white">{{ currentVideo.title }}</h1>
                         <div>
-                            <div class="dark:text-white player_dark_text" style="font-size: 16px; font-weight: 600; color: #7E7E7E">
+                            <div class="dark:text-white player_dark_text"
+                                style="font-size: 16px; font-weight: 600; color: #7E7E7E">
                                 Instructor
                             </div>
                             <div class="flex items-center mt-2" style="gap: 14px;">
@@ -71,29 +75,34 @@
                         <div class="mt-4">
                             <div style="font-size: 16px; font-weight: 600;" class="dark:text-white">
                                 Video Discription
-                                <p class="text-black-400 whitespace-pre-wrap dark:text-white" style="font-size: 14px; line-height: 16px;">{{
-                            currentVideo.description || 'No description available.' }}</p>
+                                <p class="text-black-400 whitespace-pre-wrap dark:text-white"
+                                    style="font-size: 14px; line-height: 16px; font-weight: 100;">{{
+                                        currentVideo.description || 'No description available.' }}</p>
                             </div>
                         </div>
 
                         <div class="mt-4">
                             <div style="font-size: 16px; font-weight: 600; " class="dark:text-white">
                                 Course Details
-                                <div class="flex items-center mt-1 player_dark_text" style="gap: 16px; color: #7E7E7E">
-                                    <p>{{course.type}}</p>
+                                <div class="flex items-center mt-1 player_dark_text"
+                                    style="gap: 16px; color: #7E7E7E; font-weight: 100;">
+                                    <p>{{ course.type }}</p>
                                     <p>Updated: {{ course.updated_at }}</p>
                                 </div>
                                 <div class="mt-2">Course Description
-                                    <p class="text-black-400 whitespace-pre-wrap mt-1" style="font-size: 14px;">{{
-                            course.description || 'No description available.' }}</p>
+                                    <p class="text-black-400 whitespace-pre-wrap mt-1"
+                                        style="font-size: 14px; font-weight: 100;">{{
+                                            course.description || 'No description available.' }}</p>
                                 </div>
                                 <div class="mt-2">Course Additional Description
-                                    <p class="text-black-400 whitespace-pre-wrap mt-1" style="font-size: 14px; line-height: 16px;">{{
-                            course.additional_description || 'No additional description available.' }}</p>
+                                    <p class="text-black-400 whitespace-pre-wrap mt-1"
+                                        style="font-size: 14px; line-height: 16px; font-weight: 100;">{{
+                                            course.additional_description || 'No additional description available.' }}</p>
                                 </div>
                                 <div class="mt-2">Course Recommendations
-                                    <p class="text-black-400 whitespace-pre-wrap mt-1" style="font-size: 14px; line-height: 16px;">{{
-                                course.recommendations || 'No recommendations available.' }}</p>
+                                    <p class="text-black-400 whitespace-pre-wrap mt-1"
+                                        style="font-size: 14px; line-height: 16px; font-weight: 100;">{{
+                                            course.recommendations || 'No recommendations available.' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -103,48 +112,82 @@
                             <h3 class="text-xl font-semibold mb-4">Comments ({{ totalCommentsCount }})</h3>
                             <!-- Display existing comments -->
                             <div v-if="displayedComments.length > 0" class="space-y-4 mb-6">
-                                <div v-for="comment in displayedComments" :key="comment.id" class="p-4 bg-gray-50 border border-[#7E7E7E] dark:bg-dark-bg-secondary dark:text-white">
+                                <div v-for="comment in displayedComments" :key="comment.id"
+                                    class="p-4 bg-gray-50 border border-[#7E7E7E] dark:bg-dark-bg-secondary dark:text-white">
                                     <div class="flex items-center mb-2 dark:bg-dark-bg-secondary">
-                                        <img :src="comment.user.profile_photo_url ? comment.user.profile_photo_url : '/images/profile_photo.jpg'" alt="User avatar" class="w-8 h-8 rounded-full mr-3" style="object-fit: cover;"/>
-                                        <span class="dark:text-white" style="font-size: 13px; font-weight: 400; ">{{ comment.user.name }}</span>
-                                        <span class="text-xs text-gray-500 ml-auto dark:text-white" style="font-size: 12px; font-weight: 400;">{{ new Date(comment.created_at).toLocaleString() }}</span>
+                                        <img :src="comment.user.profile_photo_url ? comment.user.profile_photo_url : '/images/profile_photo.jpg'"
+                                            alt="User avatar" class="w-8 h-8 rounded-full mr-3"
+                                            style="object-fit: cover;" />
+                                        <span class="dark:text-white" style="font-size: 13px; font-weight: 400; ">{{
+                                            comment.user.name }}</span>
+                                        <span class="text-xs text-gray-500 ml-auto dark:text-white"
+                                            style="font-size: 12px; font-weight: 400;">{{ new
+                                            Date(comment.created_at).toLocaleString() }}</span>
                                     </div>
-                                    <p class="text-gray-700 text-sm dark:text-white" style="font-size: 13px; font-weight: 400;">{{ comment.body }}</p>
+                                    <p class="text-gray-700 text-sm dark:text-white"
+                                        style="font-size: 13px; font-weight: 400;">{{ comment.body }}</p>
                                 </div>
                             </div>
-                            <div v-else-if="course.comments && course.comments.length === 0" class="text-gray-500 mb-6 player_dark_text">
+                            <div v-else-if="course.comments && course.comments.length === 0"
+                                class="text-gray-500 mb-6 player_dark_text">
                                 No comments yet. Be the first to comment!
                             </div>
                             <!-- Loading/placeholder can be added here if props.course.comments is initially undefined -->
 
                             <!-- Show More / Show Less Buttons -->
-                            <div class="mt-4 mb-6 dark:bg-dark-bg-secondary" style="display: flex; justify-content: center; align-items: center; ">
-                                <button v-if="hasMoreComments"
-                                        @click="showMoreComments"
-                                        class="text-sm text-[#2C15F5] hover:text-[#5f4fed]" style="font-size: 18px; font-weight: 600; ">
-                                    Show More Comments 
+                            <div class="mt-4 mb-6 dark:bg-dark-bg-secondary"
+                                style="display: flex; justify-content: center; align-items: center; ">
+                                <button v-if="hasMoreComments" @click="showMoreComments"
+                                    class="text-sm text-[#2C15F5] hover:text-[#5f4fed]"
+                                    style="font-size: 18px; font-weight: 600; ">
+                                    Show More Comments
                                     <!-- ({{ totalCommentsCount - visibleCommentsCount }} remaining) -->
                                 </button>
-                                <button v-if="!hasMoreComments && visibleCommentsCount > COMMENTS_TO_SHOW_INCREMENT && totalCommentsCount > COMMENTS_TO_SHOW_INCREMENT"
-                                        @click="showLessComments"
-                                        class="text-sm hover:text-[#5f4fed] font-semibold" style="font-size: 18px; font-weight: 600; ">
+                                <button
+                                    v-if="!hasMoreComments && visibleCommentsCount > COMMENTS_TO_SHOW_INCREMENT && totalCommentsCount > COMMENTS_TO_SHOW_INCREMENT"
+                                    @click="showLessComments" class="text-sm hover:text-[#5f4fed] font-semibold"
+                                    style="font-size: 18px; font-weight: 600; ">
                                     Show Less Comments
                                 </button>
                             </div>
 
                             <!-- New comment form -->
                             <div>
-                                <textarea v-model="newComment" rows="3" placeholder="Add a comment..." class="w-full p-2 border dark:bg-dark-bg-secondary border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-whiet"></textarea>
-                                <button @click="submitComment" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">Post Comment</button>
+                                <textarea v-model="newComment" rows="3" placeholder="Add a comment..."
+                                    class="w-full p-2 border dark:bg-dark-bg-secondary border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-whiet"></textarea>
+                                <button @click="submitComment"
+                                    class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">Post
+                                    Comment</button>
                             </div>
                         </div>
-                       
+
                     </div>
 
                     <div v-else>
                         <p class="text-gray-600">Video details will appear here once a video is selected.</p>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- Sidebar for Videos -->
+            <div v-if="isPlayerPage && (isSidebarOpen || isLargeScreen)"
+                class="w-80 bg-gray-800 text-white p-4 space-y-4 overflow-y-auto flex-shrink-0 player_sidebar">
+                <h2 class="text-xl font-semibold mb-4">{{ course.title }}</h2>
+                <ul class="space-y-2">
+                    <li v-for="video in sortedVideos" :key="video.id">
+                        <button @click="selectVideo(video)"
+                            :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors',
+                                currentVideo && currentVideo.id === video.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
+                            {{ video.title }}
+                        </button>
+                    </li>
+                </ul>
+                <div class="mt-auto pt-4">
+                    <Link :href="route('courses.show', { course: course.id })"
+                        class="block w-full text-center px-3 py-2 rounded-md text-sm bg-gray-600 hover:bg-gray-500 transition-colors">
+                    Back to Course Details
+                    </Link>
                 </div>
             </div>
         </div>
@@ -173,7 +216,6 @@ const { props: pageProps } = usePage();
 const authUser = computed(() => usePage().props.value.auth.user);
 const currentVideoSavedProgress = ref(null); // To store fetched progress
 const initialTimeApplied = ref(false); // New ref to track if initial time has been set
-
 let lastProgressSaveTime = 0;
 const progressSaveInterval = 5000; // Save progress every 5 seconds
 
@@ -194,6 +236,13 @@ const sortedVideos = computed(() => {
     }
     // Ensure videos are sorted by their 'order' property
     return [...props.course.videos].sort((a, b) => a.order - b.order);
+});
+
+const currentVideoIndex = computed(() => {
+    if (!currentVideo.value || !sortedVideos.value.length) {
+        return -1;
+    }
+    return sortedVideos.value.findIndex(v => v.id === currentVideo.value.id);
 });
 
 const selectVideo = (video) => {
@@ -225,12 +274,15 @@ const selectVideo = (video) => {
     // but changing the :src and :key should be sufficient for most browsers with autoplay.
 };
 
-const playNextVideo = () => {
-    if (!currentVideo.value || !sortedVideos.value.length) return;
+const playPreviousVideo = () => {
+    if (currentVideoIndex.value > 0) {
+        selectVideo(sortedVideos.value[currentVideoIndex.value - 1]);
+    }
+};
 
-    const currentIndex = sortedVideos.value.findIndex(v => v.id === currentVideo.value.id);
-    if (currentIndex !== -1 && currentIndex < sortedVideos.value.length - 1) {
-        selectVideo(sortedVideos.value[currentIndex + 1]);
+const playNextVideo = () => {
+    if (currentVideoIndex.value !== -1 && currentVideoIndex.value < sortedVideos.value.length - 1) {
+        selectVideo(sortedVideos.value[currentVideoIndex.value + 1]);
     } else {
         // Optionally, handle what happens when the last video ends (e.g., show a message, loop, etc.)
         console.log("Last video finished.");
@@ -288,9 +340,9 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
     // Get auth user at the start of the function
     const { props: pageProps } = usePage();
     const currentUser = pageProps.auth?.user;
-    
-    console.log('[[SAVE PROGRESS ATTEMPT]]: Function saveProgress initiated.', { 
-        isExplicitlyCompleted, 
+
+    console.log('[[SAVE PROGRESS ATTEMPT]]: Function saveProgress initiated.', {
+        isExplicitlyCompleted,
         videoId: currentVideo.value?.id,
         isBackgroundSave
     });
@@ -352,7 +404,7 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
 
         progressForm.post(route('progress.storeUserVideoProgress'), {
             preserveScroll: true,
-            preserveState: true, 
+            preserveState: true,
             onError: (errors) => {
                 console.error('Error saving progress (Inertia form):', errors);
             },
@@ -367,7 +419,7 @@ const handleTimeUpdate = () => {
     if (!videoPlayer.value || !currentVideo.value) return;
     const now = Date.now();
     if (now - lastProgressSaveTime > progressSaveInterval) {
-        if (!videoPlayer.value.paused && videoPlayer.value.duration > 0) { 
+        if (!videoPlayer.value.paused && videoPlayer.value.duration > 0) {
             console.log("handleTimeUpdate: Interval reached, attempting background save.");
             saveProgress(false, true); // Call with isBackgroundSave = true
         }
@@ -376,8 +428,8 @@ const handleTimeUpdate = () => {
 
 const handlePause = () => {
     if (videoPlayer.value && videoPlayer.value.readyState >= 2 && !videoPlayer.value.ended && videoPlayer.value.duration > 0) {
-         console.log("handlePause: Video paused, attempting foreground save.");
-         saveProgress(false, false); // Explicitly false, or rely on default
+        console.log("handlePause: Video paused, attempting foreground save.");
+        saveProgress(false, false); // Explicitly false, or rely on default
     }
 };
 
@@ -396,7 +448,7 @@ const fetchVideoProgress = async (videoId) => {
         if (response.data) {
             currentVideoSavedProgress.value = response.data;
             console.log(`Fetched progress for video ID ${videoId}:`, response.data);
-            
+
             // If we already have the video element, try to apply the progress immediately
             if (videoPlayer.value && currentVideo.value?.id === videoId) {
                 applySavedProgress();
@@ -417,17 +469,17 @@ const applySavedProgress = () => {
     }
 
     const progress = currentVideoSavedProgress.value;
-    
+
     // Only apply if:
     // 1. We have progress for this video
     // 2. The video has some watch time saved
     // 3. The video wasn't completed
-    if (progress.video_id === currentVideo.value.id && 
-        progress.watched_duration > 0 && 
+    if (progress.video_id === currentVideo.value.id &&
+        progress.watched_duration > 0 &&
         !progress.completed) {
-        
+
         console.log(`Applying saved progress: setting currentTime to ${progress.watched_duration}`);
-        
+
         // Wait for video to be ready
         const checkReady = () => {
             if (videoPlayer.value.readyState > 0) {
@@ -438,7 +490,7 @@ const applySavedProgress = () => {
                 setTimeout(checkReady, 100);
             }
         };
-        
+
         checkReady();
     }
 };
@@ -447,7 +499,7 @@ const applySavedProgress = () => {
 const handleLoadedMetadata = () => {
 
     console.log('Video metadata loaded');
-    
+
     console.log(`[[LOADEDMETADATA]] Fired for video ID: ${currentVideo.value ? currentVideo.value.id : 'N/A'}. Current player time: ${videoPlayer.value?.currentTime}. Initial time applied: ${initialTimeApplied.value}`);
     console.log(`[[LOADEDMETADATA]] currentVideoSavedProgress:`, currentVideoSavedProgress.value ? JSON.parse(JSON.stringify(currentVideoSavedProgress.value)) : null);
 
@@ -468,7 +520,7 @@ const handleLoadedMetadata = () => {
                 console.log('[[LOADEDMETADATA]] Conditions to apply progress not fully met or already applied.');
             }
         } else {
-            console.warn('[[LOADEDMETADATA]] Mismatch: currentVideoSavedProgress.video_id does not match currentVideo.value.id.', 
+            console.warn('[[LOADEDMETADATA]] Mismatch: currentVideoSavedProgress.video_id does not match currentVideo.value.id.',
                 { progressVideoId: progress.video_id, currentVideoId: currentVideo.value?.id });
         }
     } else {
@@ -513,27 +565,27 @@ onMounted(() => {
     }
 });
 
- watch(() => props.initialVideoId, (newId) => {
-     if (newId && sortedVideos.value.length > 0) {
-         const videoToPlay = sortedVideos.value.find(v => v.id == newId);
-         if (videoToPlay) {
-             selectVideo(videoToPlay);
-         }
-     } else if (!newId && currentVideo.value && sortedVideos.value.length > 0) {
-         // If initialVideoId is removed (e.g. navigating to base player URL), perhaps keep current video or reset
-         // For now, let's stick to the first video if no specific one is requested
-         if (!currentVideo.value && sortedVideos.value.length > 0) {
-             selectVideo(sortedVideos.value[0]);
+watch(() => props.initialVideoId, (newId) => {
+    if (newId && sortedVideos.value.length > 0) {
+        const videoToPlay = sortedVideos.value.find(v => v.id == newId);
+        if (videoToPlay) {
+            selectVideo(videoToPlay);
+        }
+    } else if (!newId && currentVideo.value && sortedVideos.value.length > 0) {
+        // If initialVideoId is removed (e.g. navigating to base player URL), perhaps keep current video or reset
+        // For now, let's stick to the first video if no specific one is requested
+        if (!currentVideo.value && sortedVideos.value.length > 0) {
+            selectVideo(sortedVideos.value[0]);
         }
     }
- });
+});
 
 watch(currentVideo, (newVideo, oldVideo) => {
     if (oldVideo && videoPlayer.value) {
         // Save progress for the old video if it was playing and had progress
         // This is somewhat covered by selectVideo, but good for robustness if video changes externally
         if (!videoPlayer.value.paused && videoPlayer.value.currentTime > 0) {
-             saveProgress(videoPlayer.value.currentTime >= videoPlayer.value.duration - 2);
+            saveProgress(videoPlayer.value.currentTime >= videoPlayer.value.duration - 2);
         }
     }
     if (newVideo && videoPlayer.value) {
@@ -547,8 +599,8 @@ watch(currentVideo, (newVideo, oldVideo) => {
 
 onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
-    console.warn('[[PLAYER UNMOUNTING]]: Attempting to save final progress (foreground save).', { 
-        hasPlayer: !!videoPlayer.value, 
+    console.warn('[[PLAYER UNMOUNTING]]: Attempting to save final progress (foreground save).', {
+        hasPlayer: !!videoPlayer.value,
         hasCurrentVideo: !!currentVideo.value,
         currentTime: videoPlayer.value?.currentTime,
         duration: videoPlayer.value?.duration,
@@ -558,7 +610,7 @@ onUnmounted(() => {
     if (videoPlayer.value && currentVideo.value) {
         const currentTime = videoPlayer.value.currentTime;
         const duration = videoPlayer.value.duration;
-        
+
         if (duration > 0 && currentTime > 0 && !videoPlayer.value.ended) {
             const isCompletedOnUnmount = currentTime >= duration - 2;
             console.log(`Unmount save: videoId=${currentVideo.value.id}, currentTime=${currentTime}, duration=${duration}, isCompleted=${isCompletedOnUnmount}`);
@@ -620,11 +672,14 @@ const updateScreenSize = () => {
         height: 30vh !important;
     }
 }
-.home_page_style{
- padding:0px !important;
+
+.home_page_style {
+    padding: 0px !important;
 }
-.dark .player_dark_text{
+
+.dark .player_dark_text {
     color: white !important;
 }
+
 /* Ensure video player does not exceed viewport height, adjust h-[60vh] as needed */
 </style>

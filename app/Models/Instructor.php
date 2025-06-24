@@ -21,6 +21,7 @@ class Instructor extends Model
         'followers',
         'linkedin_programs',
         'teaching_language',
+        'status',
     ];
 
     /**

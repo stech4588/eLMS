@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -31,6 +32,7 @@ class User extends Authenticatable
         'preferred_topic_ids',
         'resume_path',
         'profile_picture',
+        'is_active',
         // 'bio',
         // 'type',
     ];
@@ -106,5 +108,13 @@ class User extends Authenticatable
     public function progressEntries(): HasMany
     {
         return $this->hasMany(Progress::class);
+    }
+
+    /**
+     * Get the instructor record associated with the user.
+     */
+    public function instructor(): HasOne
+    {
+        return $this->hasOne(Instructor::class);
     }
 }

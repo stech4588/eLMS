@@ -145,7 +145,7 @@ const toggleFavorite = async (course) => {
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-xl font-bold dark:text-white">Because of Skills you Follow</h3>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6" style="gap: 25px; padding: 20px;">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6 mycontent_grid" style="gap: 25px; padding: 20px;">
                         <div v-for="(course, index) in displayedCourses" :key="`skill-${index}-${course.id}`" class="course-card-container">
                             <div class="linkedin-card dark:bg-gray-800">
                                 <div class="flex flex-row">
@@ -153,9 +153,9 @@ const toggleFavorite = async (course) => {
                                     <img :src="getThumbnailSrc(course)" class="linkedin-card-img" alt="Course thumbnail" />
                                 </Link>
                                 <div style="width: 100%; padding: 10px;">
-                                    <p class="linkedin-card-type">{{ course.type }}</p>
-                                    <p class="linkedin-card-title">{{ course.title }}</p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 h-10 overflow-hidden text-ellipsis">{{ course.description || 'No description available.' }}</p>
+                                    <p class="linkedin-card-type dark:text-[#d1d5db]">{{ course.type }}</p>
+                                    <p class="linkedin-card-title dark:text-white">{{ course.title }}</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 h-10 overflow-hidden text-ellipsis dark:text-[#d1d5db]">{{ course.description || 'No description available.' }}</p>
                                     
                                 </div>
                                 </div>
@@ -168,7 +168,7 @@ const toggleFavorite = async (course) => {
                                     <p class="text-xs text-gray-500 dark:text-gray-300 mb-4">{{ Math.round(course.progress) }}% complete</p>
 
                                     <div class="linkedin-card-footer mt-auto">
-                                        <p class="linkedin-card-author">By: {{ course.author || 'Placeholder' }}</p>
+                                        <p class="linkedin-card-author dark:text-[#d1d5db]">By: {{ course.author || 'Placeholder' }}</p>
                                         <button @click.stop.prevent="toggleFavorite(course)" class="linkedin-card-fav-btn">
                                             <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
                                                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -401,6 +401,8 @@ const toggleFavorite = async (course) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 10px;
+    padding-right: 0px;
 }
 .linkedin-card-img {
     width: 100%;
@@ -485,5 +487,24 @@ const toggleFavorite = async (course) => {
 }
 .course-card-container {
     display: flex; /* Ensures the card within takes up the full space */
+}
+@media (max-width: 1024px) {
+    .course-card{
+        flex-direction: row;
+        height: 200px;
+        max-width: 100%;
+       
+    }
+    .course-card-text{
+        align-items: flex-start;
+        text-align: left;
+        justify-content: flex-start;
+    }
+}
+@media (max-width: 1024px) {
+    .mycontent_grid{
+       padding-left: 0px !important;
+       padding-right: 0px !important;
+    }
 }
 </style>

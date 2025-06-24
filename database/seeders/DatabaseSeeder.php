@@ -30,7 +30,9 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Test User',
                 'password' => Hash::make('password'),
-                'role_id' => 1 // Assuming role_id 1 is for 'Super Admin'
+                'role_id' => 1, // Assuming role_id 1 is for 'Super Admin'
+                'type' => 'admin',
+                'is_active' => 1,
             ]
         );
     }

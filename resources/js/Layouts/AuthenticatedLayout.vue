@@ -7,6 +7,7 @@ import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
 import { Link, usePage, router, Head } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
+import axios from 'axios';
 
 const user = usePage().props.auth?.user;
 const showingNavigationDropdown = ref(false)
@@ -15,9 +16,24 @@ const page = usePage();
 const isLoading = ref(false);
 const isDark = ref(false);
 const meta = computed(() => page.props.meta || {});
+const notifications = ref([]);
+
+const fetchNotifications = async () => {
+    if (user?.type === 'admin') {
+        try {
+            const response = await axios.get(route('notifications.index'));
+            notifications.value = response.data;
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    }
+};
 
 // Check for saved theme preference or system preference
 onMounted(() => {
+    if (user) {
+        fetchNotifications();
+    }
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         isDark.value = true;
         document.documentElement.classList.add('dark');
@@ -87,6 +103,28 @@ onMounted(() => {
                     <!-- User Dropdown -->
                     <div class="hidden sm:ms-6 sm:flex sm:items-center">
                         <div class="relative ms-3" style="display:flex;flex-direction: row;">
+                            <div class="flex items-center justify-center mr-4">
+                                <Dropdown align="right" width="48">
+                                    <template #trigger>
+                                        <button class="flex items-center justify-center relative">
+                                            <img src="/images/notification_icon.svg" alt="notification" class="w-6 h-6 dark:invert">
+                                            <span v-if="notifications.length > 0" class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-xs text-white bg-red-500 rounded-full w-4 h-4 flex items-center justify-center">
+                                                {{ notifications.length }}
+                                            </span>
+                                        </button>
+                                    </template>
+                                    <template #content>
+                                        <div v-if="notifications.length > 0">
+                                            <DropdownLink v-for="notification in notifications" :key="notification.id" :href="route('notifications.read', notification.id)" class="text-gray-700 bg-gray-100 dark:text-dark-text-secondary hover:bg-[#97d5ff] dark:hover:bg-dark-bg-tertiary">
+                                                {{ notification.data.message }}
+                                            </DropdownLink>
+                                        </div>
+                                        <div v-else class="px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary">
+                                            No new notifications
+                                        </div>
+                                    </template>
+                                </Dropdown>
+                            </div>
                             <div><button @click="toggleDarkMode"
                                     class="w-full text-left  text-sm text-gray-700 dark:text-dark-text-secondary " style="padding: 5px !important;">
                                     <i style="font-size: 22px;" :class="isDark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon text-gray-700'" :title="isDark ? 'Light Mode' : 'Dark Mode'"></i>
