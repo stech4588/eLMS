@@ -1,21 +1,22 @@
 <template>
   <div class="main-footer">
-    <footer class="footer dark:bg-dark-bg-primary transition-colors duration-200">
+    <footer class="footer dark:bg-dark-bg-primary">
       <div class="footer-container">
         <!-- Newsletter Signup -->
         <div class="newsletter">
           <Link :href="user ? '/dashboard' : '/'">
-            <img src="/images/MBM_Uni.png" alt="CFO Logo" class="logo dark:brightness-90" />
+            <img src="/images/MBM_Uni.png" alt="MBM Logo" class="logo dark:brightness-90" />
           </Link>
-          <h2 class="dark:text-dark-text-primary">NewsLetter Signup</h2>
-          <label for="email" class="dark:text-dark-text-secondary">Enter Email</label>
-          <input type="email" id="email" placeholder="Enter your email" class="dark:bg-dark-bg-secondary dark:text-dark-text-primary dark:border-dark-border-primary" />
+          <h2 class="newsletter-title dark:text-dark-text-primary">Newsletter Signup</h2>
+          <label for="email" class="newsletter-label dark:text-dark-text-secondary">Enter Email</label>
+          <input type="email" id="email" placeholder="Enter your email"
+                 class="newsletter-input dark:bg-dark-bg-secondary dark:text-dark-text-primary dark:border-dark-border-primary" />
           <button class="subscribe-btn dark:bg-dark-accent-primary dark:hover:bg-dark-accent-secondary">Subscribe</button>
         </div>
 
         <!-- Quick Links -->
         <div class="footer-section">
-          <h3 class="text-xl font-bold text-light-text-primary dark:text-dark-text-primary">Quick Links</h3>
+          <h3 class="section-title dark:text-dark-text-primary">Quick Links</h3>
           <ul>
             <li><router-link to="/login" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Log In</router-link></li>
             <li><router-link to="/download" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Download</router-link></li>
@@ -23,26 +24,28 @@
             <li><router-link to="/privacypolicy" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Privacy Policy</router-link></li>
             <li><router-link to="/about" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">About Us</router-link></li>
             <li><router-link to="/contact" class="footer-link dark:text-dark-text-primary dark:hover:text-dark-accent-primary">Need help? <span class="highlight dark:text-dark-accent-primary">Contact us</span></router-link></li>
-            <li><a href="mailto:support@therealworldportal.com" class="footer-email dark:text-dark-text-primary dark:hover:text-dark-accent-primary">support@therealworldportal.com</a></li>
+            <li><a href="mailto:support@mbmuniversity.com" class="footer-email dark:text-dark-text-primary dark:hover:text-dark-accent-primary">support@mbmuniversity.com</a></li>
           </ul>
         </div>
 
         <!-- Office Information -->
         <div class="footer-section">
-          <h3 class="text-xl font-bold text-light-text-primary dark:text-dark-text-primary">Office</h3>
-          <p class="dark:text-dark-text-secondary">Owned and Managed by New Era Learning LLC</p>
-          <p class="dark:text-dark-text-secondary">Distributed by our partners:</p>
-          <p class="dark:text-dark-text-primary"><strong>Thrifty Consulting LLC</strong></p>
-          <p class="dark:text-dark-text-secondary">800 North State St. Ste 403, Dover, DE 19901</p>
-          <p class="dark:text-dark-text-primary"><strong>Legendary Courses, Inc</strong></p>
-          <p class="dark:text-dark-text-secondary">221 N. Broad St. Middletown, DE 19709</p>
+          <h3 class="section-title dark:text-dark-text-primary">Office</h3>
+          <p class="footer-text dark:text-dark-text-secondary">Owned and Managed by New Era Learning LLC</p>
+          <p class="footer-text dark:text-dark-text-secondary">Distributed by our partners:</p>
+          <p class="footer-text dark:text-dark-text-primary"><strong>Thrifty Consulting LLC</strong></p>
+          <p class="footer-text dark:text-dark-text-secondary">800 North State St. Ste 403, Dover, DE 19901</p>
+          <p class="footer-text dark:text-dark-text-primary"><strong>Legendary Courses, Inc</strong></p>
+          <p class="footer-text dark:text-dark-text-secondary">221 N. Broad St. Middletown, DE 19709</p>
         </div>
       </div>
 
-      <hr class="dark:border-dark-border-primary" />
+      <hr class="divider dark:border-dark-border-primary" />
+
       <div class="footer-bottom">
-        <p class="dark:text-dark-text-secondary">Everything taught within MBM University is for education purposes only. It is up to each student to implement and do the work.</p>
-        <p class="dark:text-dark-text-secondary">MBM University team does not guarantee any specific outcomes or success. Results may vary based on individual effort and circumstances.</p>
+        <p class="bottom-text">Everything taught within MBM University is for education purposes only. It is up to each student to implement and do the work.</p>
+        <p class="bottom-text">MBM University team does not guarantee any specific outcomes or success. Results may vary based on individual effort and circumstances.</p>
+        <p class="bottom-text">© {{ new Date().getFullYear() }} MBM University. All rights reserved.</p>
       </div>
     </footer>
   </div>
@@ -50,155 +53,150 @@
 
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
-
 const user = usePage().props.auth?.user
 </script>
 
 <style scoped>
 .footer {
-  background-color: #08080D;
+  background-color: #12121D;
   color: white;
-  padding: 40px 20px;
-  transition: all 0.3s ease;
+  padding: 60px 20px;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .footer-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 90px;
-  max-width: 1420px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 40px;
+  max-width: 1300px;
   margin: auto;
 }
 
 .newsletter {
-  flex: 1 1 250px;
   display: flex;
+  text-align:left;
   flex-direction: column;
-  align-items: flex-start;
 }
 
 .logo {
-  width: 220px;
-  margin-bottom: 15px;
-  transition: all 0.3s ease;
+  width: 200px;
+  margin-bottom: 20px;
 }
 
-.newsletter h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  transition: all 0.3s ease;
+.newsletter-title {
+  font-size: 22px;
+  margin-bottom: 8px;
 }
 
-.newsletter label {
-  font-size: 12px;
+.newsletter-label {
+  font-size: 13px;
   margin-bottom: 5px;
-  display: block;
-  transition: all 0.3s ease;
 }
 
-.newsletter input {
-  padding: 8px;
-  margin-top: 5px;
-  width: 80%;
+.newsletter-input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
   margin-bottom: 10px;
-  border: none;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  width: 100%;
+  transition: border 0.3s;
+}
+
+.newsletter-input:focus {
+  border: 1px solid #03BFD7;
+  outline: none;
 }
 
 .subscribe-btn {
   background-color: #03BFD7;
-  border: none;
   color: white;
-  padding: 10px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.3s;
 }
 
 .subscribe-btn:hover {
   background-color: #02a8be;
 }
 
-.footer-section {
-  flex: 1 1 200px;
-}
-
 .footer-section h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: 600;
 }
 
 .footer-section ul {
   list-style: none;
-  padding: 0px;
+  padding: 0;
 }
 
-.footer-section ul li {
-  text-align: left;
+.footer-section li {
+  margin-bottom: 8px;
+}
+
+.footer-section li a {
+  text-decoration: none;
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.footer-section li a:hover {
+  color: #03BFD7;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: #ccc;
   margin-bottom: 6px;
 }
 
-.footer-section ul li a {
-  color: white;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.footer-section ul li a:hover {
-  text-decoration: underline;
-}
-
-.footer-section p {
-  margin-bottom: 6px;
-  text-align: left;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.social-icons a {
-  margin-right: 10px;
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-hr {
-  margin: 40px 0 20px;
-  border: 0;
-  border-top: 1px solid #ffffff30;
-  transition: all 0.3s ease;
+.divider {
+  margin: 40px 0 30px;
+  border: none;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .footer-bottom {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  font-size: 15px;
-  max-width: 1200px;
-  margin: auto;
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  max-width: 1000px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
-.footer-bottom p {
-  margin: 0px;
-  transition: all 0.3s ease;
+.bottom-text {
+  margin-bottom: 10px;
 }
 
-/* Responsive */
+/* Dark mode enhancements */
+.dark .footer-section li a,
+.dark .footer-text,
+.dark .footer-bottom {
+  color: #bbb;
+}
+
+.dark .footer-section li a:hover {
+  color: #00bcd4;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
-  .footer-container {
-    flex-direction: column;
-    gap: 40px;
+  .footer {
+    padding: 40px 15px;
+  }
+
+  .logo {
+    width: 160px;
   }
 
   .footer-bottom {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
+    padding-top: 20px;
   }
 }
 </style>
