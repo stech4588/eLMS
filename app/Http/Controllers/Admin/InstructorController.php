@@ -29,14 +29,20 @@ class InstructorController extends Controller
 
     public function show(Request $request, User $user)
     {
-        if ($user->role_id !== 2 || !$user->instructor) {
-            abort(404);
+        // if ($user->role_id !== 2 || !$user->instructor) {
+        //     abort(404);
+        // }
+
+        try {
+            $user->load('instructor');
+            return Inertia::render('Admin/Instructors/Show', [
+                'instructorUser' => $user,
+                'source' => $request->query('source'),
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Failed to show instructor details: " . $e->getMessage());
+            return back()->with('error', 'An error occurred while fetching instructor details.');
         }
-        $user->load('instructor');
-        return Inertia::render('Admin/Instructors/Show', [
-            'instructorUser' => $user,
-            'source' => $request->query('source'),
-        ]);
     }
 
     public function approve(Instructor $instructor): RedirectResponse
