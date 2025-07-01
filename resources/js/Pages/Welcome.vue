@@ -387,8 +387,13 @@ function handleImageError() {
 
 
 <template>
-    <NavbarComponent/>
-    <HeroSection />
+    <div class="welcome-navbar-hero-section">
+        <NavbarComponent/>
+        <HeroSection />
+    </div>
+    
+    <ConsolidatePlatform />
+    <!-- <SequenceCanvas /> -->
     <RealWorld />
     <FeatureContainer />
     <TeachingPhilosophy />
@@ -415,6 +420,8 @@ function handleImageError() {
   import FrequentQuestions from '../Components/FrequentQuestions.vue';
   import YourChoice from '../Components/YourChoice.vue';
   import FooterContainer from '../Components/Footer-Container.vue';
+  import SequenceCanvas from '../Components/SequenceCanvas.vue'
+  import ConsolidatePlatform from '../Components/ConsolidatePlatform.vue';
   
   export default {
     name: 'App',
@@ -431,6 +438,8 @@ function handleImageError() {
       FeatureContainer,
       RealWorld,
       HeroSection,
+      SequenceCanvas,
+      ConsolidatePlatform,
     }
   }
   </script>
@@ -442,6 +451,12 @@ function handleImageError() {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+  }
+  .welcome-navbar-hero-section {
+    background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;
+    border-bottom-left-radius: 100px;
+    border-bottom-right-radius: 100px;
+    height: 100vh;
   }
   </style>
   
