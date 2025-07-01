@@ -8,18 +8,69 @@
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col ">
                 <!-- Video Player -->
-                <div class="bg-black flex-shrink-0">
+                <div class="bg-black flex-shrink-0 relative group">
                     <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
                         :src="currentVideo.video_url" controls autoplay @timeupdate="handleTimeUpdate"
-                        @pause="handlePause" @ended="() => { handleEnded(); playNextVideo(); }"
+                        @pause="onPause" @ended="() => { handleEnded(); playNextVideo(); }"
                         @loadedmetadata="handleLoadedMetadata" class="w-full h-[60vh] object-contain player_video"
-                        @play="() => { lastProgressSaveTime = Date.now(); /* Reset timer when play starts/resumes */ }">
+                        @play="onPlay">
                         <!-- <source :src="currentVideo.video_url" type="video/mp4"> -->
                         Your browser does not support the video tag.
                     </video>
                     <div v-else class="w-full h-[60vh] bg-black flex items-center justify-center text-white">
                         <p v-if="!course.videos || course.videos.length === 0">No videos available for this course.</p>
                         <p v-else>Select a video to play.</p>
+                    </div>
+
+                    <!-- Custom Controls Overlay -->
+                    <div v-if="currentVideo && currentVideo.video_url"
+                        class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="flex items-center justify-center space-x-12 pointer-events-auto">
+                            <button @click="skipBackward(10)"
+                                class="text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110">
+                                <svg width="60" height="60" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10.0003 4.16666L9.08033 2.87916C8.73866 2.39916 8.56616 2.15916 8.67449 1.93749C8.78283 1.71416 9.05783 1.70166 9.60783 1.67582C9.73783 1.66971 9.86866 1.66666 10.0003 1.66666C14.6028 1.66666 18.3337 5.39749 18.3337 9.99999C18.3337 14.6025 14.6028 18.3333 10.0003 18.3333C5.39783 18.3333 1.66699 14.6025 1.66699 9.99999C1.66635 8.70617 1.96727 7.43 2.54589 6.27277C3.1245 5.11554 3.96488 4.1091 5.00033 3.33332"
+                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M6.66016 9.16998C7.10016 8.81998 7.50016 8.24165 7.75016 8.34998C8.00016 8.45665 7.92016 8.80998 7.92016 9.35998V13.34M13.3352 10.5C13.3352 9.34998 13.3902 9.03998 13.1702 8.66998C12.9502 8.29998 12.4002 8.33165 11.8502 8.33165C11.3002 8.33165 10.9002 8.29998 10.6352 8.59998C10.3102 8.94998 10.4502 9.59998 10.4102 10.5C10.5002 11.7 10.2552 12.65 10.6302 13.05C10.9002 13.38 11.3802 13.33 11.9502 13.34C12.5168 13.3333 12.8602 13.36 13.1402 13.04C13.4502 12.76 13.3002 11.65 13.3352 10.5Z"
+                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+
+                            <button @click="togglePlayPause"
+                                class="text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110">
+                                <svg v-if="!isPlaying" xmlns="http://www.w3.org/2000/svg" width="64" height="64"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="64" height="64"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16">
+                                    <rect x="6" y="4" width="4" height="16"></rect>
+                                    <rect x="14" y="4" width="4" height="16"></rect>
+                                </svg>
+                            </button>
+
+                            <button @click="skipForward(10)"
+                                class="text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110">
+                                <svg width="60" height="60" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10.0003 4.16666L10.9203 2.87916C11.262 2.39916 11.4345 2.15916 11.3262 1.93749C11.2178 1.71416 10.9428 1.70166 10.3928 1.67582C10.2628 1.66971 10.132 1.66666 10.0003 1.66666C5.39783 1.66666 1.66699 5.39749 1.66699 9.99999C1.66699 14.6025 5.39783 18.3333 10.0003 18.3333C14.6028 18.3333 18.3337 14.6025 18.3337 9.99999C18.3343 8.70617 18.0334 7.43 17.4548 6.27277C16.8762 5.11554 16.0358 4.1091 15.0003 3.33332"
+                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M6.66016 9.16998C7.10016 8.81998 7.50016 8.24165 7.75016 8.34998C8.00016 8.45665 7.92016 8.80998 7.92016 9.35998V13.34M13.3352 10.5C13.3352 9.34998 13.3902 9.03998 13.1702 8.66998C12.9502 8.29998 12.4002 8.33165 11.8502 8.33165C11.3002 8.33165 10.9002 8.29998 10.6352 8.59998C10.3102 8.94998 10.4502 9.59998 10.4102 10.5C10.5002 11.7 10.2552 12.65 10.6302 13.05C10.9002 13.38 11.3802 13.33 11.9502 13.34C12.5168 13.3333 12.8602 13.36 13.1402 13.04C13.4502 12.76 13.3002 11.65 13.3352 10.5Z"
+                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -216,6 +267,7 @@ const { props: pageProps } = usePage();
 const authUser = computed(() => usePage().props.value.auth.user);
 const currentVideoSavedProgress = ref(null); // To store fetched progress
 const initialTimeApplied = ref(false); // New ref to track if initial time has been set
+const isPlaying = ref(true); // For play/pause toggle, defaults to true due to autoplay
 let lastProgressSaveTime = 0;
 const progressSaveInterval = 5000; // Save progress every 5 seconds
 
@@ -226,6 +278,28 @@ const progressForm = useForm({
     completed: false,
     last_watched_at: null,
 });
+
+const togglePlayPause = () => {
+    if (videoPlayer.value) {
+        if (videoPlayer.value.paused) {
+            videoPlayer.value.play();
+        } else {
+            videoPlayer.value.pause();
+        }
+    }
+};
+
+const skipForward = (seconds) => {
+    if (videoPlayer.value) {
+        videoPlayer.value.currentTime += seconds;
+    }
+};
+
+const skipBackward = (seconds) => {
+    if (videoPlayer.value) {
+        videoPlayer.value.currentTime -= seconds;
+    }
+};
 
 const COMMENTS_TO_SHOW_INCREMENT = 3;
 const visibleCommentsCount = ref(COMMENTS_TO_SHOW_INCREMENT);
@@ -528,6 +602,16 @@ const handleLoadedMetadata = () => {
     }
     lastProgressSaveTime = Date.now(); // Reset save timer as video metadata is loaded/reloaded
     applySavedProgress();
+};
+
+const onPlay = () => {
+    isPlaying.value = true;
+    lastProgressSaveTime = Date.now();
+};
+
+const onPause = () => {
+    isPlaying.value = false;
+    handlePause(); // Call original handlePause for saving progress
 };
 
 // Add router event listeners to prevent loader

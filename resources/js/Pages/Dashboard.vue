@@ -434,36 +434,40 @@ onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
 });
 
-// Computed property that applies all filters (dropdowns and search)
+// Computed property that no longer applies filters, just returns the prop
 const displayedCourses = computed(() => {
-    let coursesToDisplay = props.skillBasedCourses || [];
-
-    // Apply dropdown filters
-    if (selectedTopics.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedTopics.value.includes(course.topic_id));
-    }
-    if (selectedCourseTypes.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseTypes.value.includes(course.course_type_id));
-    }
-    if (selectedCertificates.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedCertificates.value.includes(course.certificate_id));
-    }
-    if (selectedCourseIndustries.value.length > 0) {
-        coursesToDisplay = coursesToDisplay.filter(course => selectedCourseIndustries.value.includes(course.industry_id));
-    }
-
-    // Then apply search query filter
-    if (searchQuery.value && searchQuery.value.trim() !== '') {
-        const lowerSearchQuery = searchQuery.value.toLowerCase().trim();
-        coursesToDisplay = coursesToDisplay.filter(course => {
-            const titleMatch = course.title && course.title.toLowerCase().includes(lowerSearchQuery);
-            const typeMatch = course.type && course.type.toLowerCase().includes(lowerSearchQuery);
-            const authorMatch = course.author && typeof course.author === 'string' && course.author.toLowerCase().includes(lowerSearchQuery);
-            return titleMatch || typeMatch || authorMatch;
-        });
-    }
-    return coursesToDisplay;
+    return props.skillBasedCourses || [];
 });
+
+const debounce = (fn, delay) => {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn(...args), delay);
+    };
+};
+
+watch(
+    [searchQuery, selectedTopics, selectedCourseTypes, selectedCertificates, selectedCourseIndustries],
+    debounce(() => {
+        router.get(
+            route('dashboard'),
+            {
+                search: searchQuery.value,
+                topics: selectedTopics.value,
+                course_types: selectedCourseTypes.value,
+                certificates: selectedCertificates.value,
+                course_industries: selectedCourseIndustries.value,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            }
+        );
+    }, 500),
+    { deep: true }
+);
 
 const toggleFavorite = async (course) => {
     // Optimistically update the UI first

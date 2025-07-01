@@ -17,16 +17,42 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Fetch first 3 courses for "Skills you Follow"
-        $skillBasedCourses = Course::with(['courseType', 'videos' => function ($query) {
+        $coursesQuery = Course::with(['courseType', 'videos' => function ($query) {
             $query->orderBy('order', 'asc');
         }, 'user']) // Eager load the user relationship
-            ->latest()
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $coursesQuery->where(function ($query) use ($search) {
+                $query->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('topics')) {
+            $coursesQuery->whereIn('topic_id', $request->input('topics'));
+        }
+
+        if ($request->filled('course_types')) {
+            $coursesQuery->whereIn('course_type_id', $request->input('course_types'));
+        }
+
+        if ($request->filled('certificates')) {
+            $coursesQuery->whereIn('certificate_id', $request->input('certificates'));
+        }
+
+        if ($request->filled('course_industries')) {
+            $coursesQuery->whereIn('industry_id', $request->input('course_industries'));
+        }
             
-            ->get()
-            ->map(function ($course) {
+        $skillBasedCourses = $coursesQuery->get()->map(function ($course) {
                 $firstVideo = $course->videos->first();
                 $firstVideoThumbnailUrl = null;
                 if ($firstVideo && $firstVideo->thumbnail_url) {
