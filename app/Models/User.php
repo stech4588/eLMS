@@ -57,6 +57,20 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'preferred_topic_ids' => 'array',
+        ];
+    }
+
+    /**
      * Get the URL to the user's profile photo.
      *
      * @return string|null
@@ -70,20 +84,6 @@ class User extends Authenticatable
             return asset($this->profile_picture);
         }
         return null; // Fallback will be handled by the frontend
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'preferred_topic_ids' => 'array',
-        ];
     }
 
     /**
@@ -116,5 +116,10 @@ class User extends Authenticatable
     public function instructor(): HasOne
     {
         return $this->hasOne(Instructor::class);
+    }
+
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'users.'.$this->id;
     }
 }

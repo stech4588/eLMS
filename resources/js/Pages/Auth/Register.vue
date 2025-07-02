@@ -4,11 +4,11 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
-// import * as pdfjsLib from 'pdfjs-dist';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref, computed, onMounted } from 'vue';
 
-// pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString();
+const page = usePage();
+const authUser = computed(() => page.props.auth.user);
 
 const step = ref(1);
 
@@ -56,9 +56,7 @@ const onResumeChange = (e) => {
 
 const form = useForm({
     name: '',
-    // company_name: '',
     email: '',
-    // num_employees: '',
     password: '',
     phone_country_code: 'PK',
     phone_number: '',
@@ -69,9 +67,20 @@ const form = useForm({
     agree_to_terms: false,
 });
 
+onMounted(() => {
+    if (authUser.value) {
+        form.name = authUser.value.name;
+        form.email = authUser.value.email;
+    }
+});
+
 const submit = () => {
     form.post(route('register'), {
-        onFinish: () => form.reset('password'),
+        onFinish: () => {
+            if (!authUser.value) {
+                form.reset('password');
+            }
+        },
     });
 };
 
@@ -124,10 +133,6 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     <GuestLayout>
         <Head title="Register" />
 
-        
-            
-        
-
         <div class="form-container">
             <div class="form-row" style="justify-content: center; margin-bottom: 1rem;">
                 <div class="relative">
@@ -155,7 +160,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 
             <form @submit.prevent="submit" class="form-body" novalidate>
                 <div v-if="step === 1">
-                    <!-- Row 1: Name and Company Name -->
+                    <!-- Row 1: Name and Email for new users -->
                     <div class="form-row">
                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.name }">
                             <InputLabel for="name" value="Name" class="form-label" />
@@ -167,25 +172,10 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                 
                                 autofocus
                                 autocomplete="name"
+                                :disabled="!!authUser"
                             />
                             <InputError class="form-error" :message="form.errors.name" />
                         </div>
-                        <!-- <div class="form-group input_box_signup">
-                            <InputLabel for="company_name" value="Company Name" class="form-label" />
-                            <TextInput
-                                id="company_name"
-                                type="text"
-                                class="form-input input_box_outline"
-                                v-model="form.company_name"
-                                required
-                                autocomplete="organization"
-                            />
-                            <InputError class="form-error" :message="form.errors.company_name" />
-                        </div> -->
-                    </div>
-
-                    <!-- Row 2: Email and Number of Employees -->
-                    <div class="form-row">
                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.email }">
                             <InputLabel for="email" value="Email" class="form-label" />
                             <TextInput
@@ -195,46 +185,13 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                 v-model="form.email"
                                 
                                 autocomplete="username"
+                                :disabled="!!authUser"
                             />
                             <InputError class="form-error" :message="form.errors.email" />
                         </div>
-                        <!-- <div class="form-group input_box_signup">
-                            <InputLabel for="num_employees" value="Number of Employee's" class="form-label" />
-                            <select
-                                id="num_employees"
-                                class="form-input form-select input_box_outline"
-                                v-model="form.num_employees"
-                                
-                            >
-                                <option value="" disabled>Select an option</option>
-                                <option value="1-10">1-10</option>
-                                <option value="11-50">11-50</option>
-                                <option value="51-200">51-200</option>
-                                <option value="201-500">201-500</option>
-                                <option value="500+">500+</option>
-                            </select>
-                            <InputError class="form-error" :message="form.errors.num_employees" />
-                        </div> -->
                     </div>
-
-                    <!-- Row 3: Password and Phone Number -->
                     <div class="form-row">
-                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.password }">
-                            <InputLabel for="password" value="Password" class="form-label" />
-                            <div style="position: relative;">
-                                <TextInput
-                                    id="password"
-                                    :type="passwordFieldType"
-                                    class="form-input input_box_outline"
-                                    v-model="form.password"
-                                    
-                                    autocomplete="new-password"
-                                />
-                                <span class="password-eye-icon" @click="togglePasswordVisibility"><img src="/images/view_icon.svg"/></span>
-                            </div>
-                            <InputError class="form-error" :message="form.errors.password" />
-                        </div>
-                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.phone_number }">
+                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.phone_number }">
                             <InputLabel for="phone_number" value="Phone Number" class="form-label" style="margin-bottom: 0px; margin-top: 0px;"/>
                             <div class="phone-input-group">
                                 <select v-model="form.phone_country_code" class="form-input country-code-select">
@@ -246,7 +203,6 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                     <option value="NZ">NZ</option>
                                     <option value="ZA">ZA</option>
                                     <option value="IN">IN</option>
-                                    <!-- Add other countries as needed -->
                                 </select>
                                 <TextInput
                                     id="phone_number"
@@ -262,16 +218,30 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                             <InputError class="form-error" :message="form.errors.phone_number" />
                         </div>
                     </div>
-                     <!-- <div class="password-rules">
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                            </div> -->
+
+                    <!-- Row 3: Password for new users -->
+                    <div v-if="!authUser" class="form-row">
+                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.password }">
+                            <InputLabel for="password" value="Password" class="form-label" />
+                            <div style="position: relative;">
+                                <TextInput
+                                    id="password"
+                                    :type="passwordFieldType"
+                                    class="form-input input_box_outline"
+                                    v-model="form.password"
+                                    
+                                    autocomplete="new-password"
+                                />
+                                <span class="password-eye-icon" @click="togglePasswordVisibility"><img src="/images/view_icon.svg"/></span>
+                            </div>
+                            <InputError class="form-error" :message="form.errors.password" />
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Step 2: Learning Goals and Topics -->
                 <div v-if="step === 2">
+                     
                     <!-- Row 4: Primary Learning Goal -->
                     <div class="form-row">
                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.primary_learning_goal }">
@@ -382,9 +352,9 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                     >
                         Back
                     </button>
-                    <Link v-if="step === 1" :href="route('login')" class="login-button-link">
+                    <!-- <Link v-if="step === 1" :href="route('login')" class="login-button-link">
                         Log In
-                    </Link>
+                    </Link> -->
                     <PrimaryButton
                         v-if="step < 3"
                         @click.prevent="nextStep"
@@ -400,9 +370,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                         :disabled="form.processing"
                         style="    background-color: #1898e5;"
                     >
-                        Sign Up
+                        {{ authUser ? 'Wellcom to MBM University' : 'Sign Up' }}
                     </PrimaryButton>
-                   
                 </div>
             </form>
         </div>
@@ -576,6 +545,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     border-radius: 4px;
     border: 1px solid #D1D5DB;
     accent-color: #000000; /* Indigo for checkbox */
+    padding: 10px;
 
 }
 .form-checkbox:checked {
@@ -595,6 +565,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     font-size: 14px;
     color: #374151;
     font-weight: normal; /* Normal weight for terms label */
+    margin-bottom: 0px;
 }
 
 .form-link {
@@ -750,6 +721,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     font-size: 14px;
     min-width: 120px;
     max-width: 100%;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 .topics-search-input:focus {

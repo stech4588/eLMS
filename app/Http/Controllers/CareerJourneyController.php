@@ -21,7 +21,11 @@ class CareerJourneyController extends Controller
         
         $preferredTopics = collect();
         if ($user && !empty($user->preferred_topic_ids)) {
-            $preferredTopics = Topic::whereIn('id', $user->preferred_topic_ids)->get();
+            $topicIds = $user->preferred_topic_ids;
+            if (is_string($topicIds)) {
+                $topicIds = json_decode($topicIds, true);
+            }
+            $preferredTopics = Topic::whereIn('id', $topicIds)->get();
         }
 
         $allTopics = Topic::all();

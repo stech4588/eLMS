@@ -13,7 +13,7 @@
       </ul>
 
       <div class="action-buttons" v-if="!menuOpen">
-        <Link href="/register" class="join">JOIN NOW</Link>
+        <Link href="/joinnow" class="join">JOIN NOW</Link>
         <Link href="/login" class="login">LOG IN</Link>
       </div>
 

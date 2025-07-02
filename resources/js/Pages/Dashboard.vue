@@ -181,6 +181,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import SequenceCanvas from '@/Components/SequenceCanvas.vue'
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import CourseCard from '@/Components/CourseCard.vue';
