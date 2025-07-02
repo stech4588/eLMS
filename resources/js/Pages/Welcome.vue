@@ -391,19 +391,24 @@ function handleImageError() {
         <NavbarComponent/>
         <HeroSection />
     </div>
-    <!-- <MainHeroSection /> -->
-    <ConsolidatePlatform />
+    <div id="access">
+      <ConsolidatePlatform />
+    </div>
     <ScrollingLogos />
-    <!-- <SequenceCanvas /> -->
-    <!-- <RealWorld /> -->
-    <FeatureContainer />
+    <div id="education">
+      <FeatureContainer />
+    </div>
     <TeachingPhilosophy />
     <Teaching />
     <Professors />
-    <Results />
+    <div id="result">
+      <Results />
+    </div>
     <BuildYourFuture />
     <FrequentQuestions />
-    <YourChoice />
+    <div id="choice">
+      <YourChoice />
+    </div>
     <FooterContainer />
     
   </template>
