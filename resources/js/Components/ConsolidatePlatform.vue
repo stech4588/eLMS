@@ -7,7 +7,7 @@
         </div>
       <div class="fusion-builder-row">
         <div class="fusion-layout-column fusion_builder_column_1_2">
-          <div class="fusion-column-wrapper">
+          <div class="fusion-column-wrapper2">
             <div class="fusion-video">
               <div class="video-wrapper" style="border-radius:12px;">
                 <video playsinline="true" width="100%" style="object-fit: cover;" autoplay="true" muted="true" loop="true" preload="auto">
@@ -130,8 +130,16 @@ export default {
 </script>
 
 <style scoped>
+.fusion-builder-row-inner {
+  overflow: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.fusion-builder-row-inner::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
 .fusion-fullwidth-container {
-  padding: 120px 0;
+  padding: 43px 0;
   background-color: #f8f8f8; /* A light grey as a placeholder */
   
 }
@@ -165,6 +173,11 @@ export default {
   margin-bottom: 2rem;
   color: #102548;
 }
+@media(max-width:550px){
+  .large-p{
+    font-size: 32px!important;
+  }
+}
 .box {
   display: flex;
   align-items: center;
@@ -181,7 +194,11 @@ export default {
     width: 100%;
 }
 .fusion-column-wrapper{
-    height: 80vh;
+    height: 90vh;
+    overflow: hidden;
+}
+.fusion-column-wrapper2{
+    height: 40vh;
     overflow: hidden;
 }
 
