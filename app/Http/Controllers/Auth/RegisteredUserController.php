@@ -178,7 +178,7 @@ class RegisteredUserController extends Controller
     
             event(new Registered($user));
     
-            return redirect()->intended(route('register'));
+            return redirect()->route('register.complete');
     
         } catch (\Exception $e) {
             DB::rollBack();

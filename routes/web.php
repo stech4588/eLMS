@@ -174,6 +174,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
+
+    Route::get('/register/complete', [RegisteredUserController::class, 'create'])->name('register.complete');
 });
 
 // //For Roles Routes
