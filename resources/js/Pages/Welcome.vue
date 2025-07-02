@@ -391,6 +391,7 @@ function handleImageError() {
         <NavbarComponent/>
         <HeroSection />
     </div>
+    <!-- <MainHeroSection /> -->
     <ConsolidatePlatform />
     <ScrollingLogos />
     <!-- <SequenceCanvas /> -->
@@ -423,11 +424,13 @@ function handleImageError() {
   import SequenceCanvas from '../Components/SequenceCanvas.vue'
   import ConsolidatePlatform from '../Components/ConsolidatePlatform.vue';
   import ScrollingLogos from '../Components/ScrollingLogos.vue';
+// import MainHeroSection from '@/Components/MainHeroSection.vue';
   
   export default {
     name: 'App',
     components: {
       FooterContainer,
+    //   MainHeroSection,
       YourChoice,
       FrequentQuestions,
       NavbarComponent,
@@ -460,6 +463,11 @@ function handleImageError() {
     border-bottom-left-radius: 100px;
     border-bottom-right-radius: 100px;
     height: 100vh;
+  }
+  @media(max-width:770px){
+    .welcome-navbar-hero-section {
+      height: 152vh;
+    }
   }
   </style>
   
