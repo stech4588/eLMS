@@ -43,14 +43,14 @@
                                     <div v-if="course.videos && course.videos.length > 0" class="mt-4" style="display: flex; justify-content: flex-end; align-items: center;">
                                         
                                         <!-- Show "Buy Now" only to students who haven't purchased the course -->
-                                        <Link v-if="user && user.type === 'student' && !isPurchased" 
+                                        <!-- <Link v-if="user && user.type === 'student' && !isPurchased" 
                                               :href="route('cart', { course_id: course.id })" 
                                               class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors">
                                             Buy Now for ${{ course.price }}
-                                        </Link>
+                                        </Link> -->
                                         
                                         <!-- Show "Play Course" to instructors, purchased students, and guests -->
-                                        <Link v-else 
+                                        <Link 
                                               :href="route('courses.play', { course: course.id, video: course.videos[0].id })" 
                                               class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">
                                             Play Course

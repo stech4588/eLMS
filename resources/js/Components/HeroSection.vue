@@ -3,7 +3,7 @@
         <div class="hero-overlay"></div>
         <div class="hero-container">
             <div class="hero-text">
-                <h1>Welcome to MBM University</h1>
+                <h1>Welcome<br> <span>to MBM University</span></h1>
                 <p>
                     Your gateway to quality education and professional development.
                     Discover courses that will help you achieve your goals.
@@ -14,99 +14,238 @@
                 </div>
             </div>
 
-            <div class="features">
-                <div class="feature-card">
-                    <div class="icon-box">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                    </div>
-                    <h3>Expert-Led Courses</h3>
-                    <p>Learn from industry professionals and experienced educators.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="icon-box">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                    </div>
-                    <h3>Secure Learning</h3>
-                    <p>Your progress and achievements are safely stored and verified.</p>
-                </div>
-
-                <div class="feature-card">
-                    <div class="icon-box">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <h3>Flexible Learning</h3>
-                    <p>Study at your own pace, anytime and anywhere.</p>
+            <div class="mbm-right">
+                <div class="mbm-chain">
+                    <div ref="link1" class="mbm-link-piece mbm-top-link"></div>
+                    <div ref="link2" class="mbm-link-piece mbm-mid-link"></div>
+                    <div ref="link3" class="mbm-link-piece mbm-bottom-link"></div>
                 </div>
             </div>
         </div>
     </section>
 </template>
+<script setup>
+import { onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
 
+const link1 = ref(null)
+const link2 = ref(null)
+const link3 = ref(null)
+
+onMounted(() => {
+  const pieces = [link1.value, link2.value, link3.value]
+
+  const animateChain = () => {
+    // Reset everything before starting
+    gsap.set(pieces, {
+      y: -200,
+      opacity: 0,
+      scale: 0.7,
+      rotation: 0,
+      filter: 'blur(0px)',
+    })
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'bounce.out' },
+      onComplete: animateChain // loop forever
+    })
+
+    // Drop with bounce and stagger
+    tl.to(pieces, {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.2,
+    })
+
+    // Individual circular rotation
+    tl.to(pieces, {
+      rotation: 360,
+      duration: 1.5,
+      ease: 'power2.inOut',
+      transformOrigin: '50% 50%',
+      stagger: {
+        each: 0.1,
+        from: 'center',
+      }
+    }, '+=0.3')
+
+    // Fade + blur as they disappear
+    tl.to(pieces, {
+      opacity: 0,
+      scale: 0.5,
+      duration: 0.6,
+      ease: 'power1.in',
+      filter: 'blur(6px)',
+      stagger: 0.1,
+    }, '+=0.2')
+  }
+
+  animateChain()
+})
+</script>
 <style>
+
+/* Right Side Chain */
+.mbm-right {
+  flex: 1 1 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+@media(max-width:770px){
+  .mbm-right{
+    margin-top: -91px;
+  }
+}
+.mbm-chain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: -20px;
+  margin-top: 30px;
+}
+
+.mbm-link-piece {
+  width: 80px;
+  height: 120px;
+  border: 14px solid;
+  border-radius: 50px;
+  background-color: transparent;
+  transform-origin: top center;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mbm-top-link {
+  border-color: #4dd6e8;
+}
+
+.mbm-mid-link {
+  border-color: #0078d4;
+  margin-top: -40px;
+}
+
+.mbm-bottom-link {
+  border-color: #005bbb;
+  margin-top: -40px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mbm-hero-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .mbm-title {
+    font-size: 2rem;
+  }
+
+  .mbm-subtext {
+    font-size: 1rem;
+  }
+
+  .mbm-buttons {
+    justify-content: center;
+  }
+
+  .mbm-chain {
+    margin-top: 40px;
+  }
+
+  .mbm-link-piece {
+    width: 60px;
+    height: 90px;
+  }
+}
 .hero-section {
     position: relative;
     padding: 100px 20px;
-    background: linear-gradient(120deg, #f0f4ff, #e5eaff);
+    /* background: linear-gradient(120deg, #f0f4ff, #e5eaff); */
     overflow: hidden;
     font-family: 'Segoe UI', sans-serif;
+    background-color: transparent !important;
+    height: 90vh;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
-
+@media(max-width:770px){
+    .hero-section{
+        height: 144vh;
+    }
+}
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, #c7d2fe 0%, transparent 70%);
-    opacity: 0.3;
+    /* background: linear-gradient(115deg, #102548 30%, #004c8d 65%, #009ada 100%) !important; */
+    /* opacity: 0.3; */
     z-index: 0;
+    background-color: transparent !important;
 }
 
 .hero-container {
     max-width: 1200px;
+    display: flex;
     margin: 0 auto;
     position: relative;
     z-index: 1;
 }
-
+@media(max-width:770px){
+    .hero-container{
+        flex-direction: column;
+    }
+}
 .hero-text {
     text-align: center;
     margin-bottom: 60px;
 }
 
 .hero-text h1 {
-    background: linear-gradient(90deg, #4f46e5, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #fff;
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 20px;
+    text-align: left;
+}
+
+@media(max-width:550px) {
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+}
+
+.hero-text h1 span {
+    color: #4ACFF8;
 }
 
 .hero-text p {
     font-size: 1.2rem;
-    color: #374151;
+    color: #fff;
     max-width: 700px;
-    margin: 0 auto 30px;
+    margin: 0 0 30px;
     line-height: 1.7;
+    text-align: left;
+}
+
+@media(max-width:550px) {
+    .hero-text p {
+        font-size: 1rem;
+    }
 }
 
 .hero-buttons {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: left;
     gap: 15px;
+    text-align: left;
 }
 
 .btn-primary {
-    background: #3b82f6;
+    background: #789b4a;
     color: white;
     padding: 12px 28px;
     border-radius: 50px;
@@ -116,13 +255,19 @@
     box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
 }
 
+@media(max-width:550px) {
+    .btn-primary {
+        font-size: 12px;
+    }
+}
+
 .btn-primary:hover {
-    background: #1d4ed8;
+    background: #009ada;
 }
 
 .btn-secondary {
-    border: 2px solid #3b82f6;
-    color: #3b82f6;
+    border: 2px solid #fff;
+    color: #fff;
     padding: 12px 28px;
     border-radius: 50px;
     text-decoration: none;
@@ -131,7 +276,7 @@
 }
 
 .btn-secondary:hover {
-    background: #dbeafe;
+    background: #009ada;
 }
 
 .features {

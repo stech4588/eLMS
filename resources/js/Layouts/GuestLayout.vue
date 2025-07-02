@@ -7,7 +7,7 @@ const user = usePage().props.auth?.user
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col items-center bg-white-100 pt-6 sm:justify-center sm:pt-0">
+    <div class="flex min-h-screen flex-col items-center bg-white-100 pt-6 sm:justify-center sm:pt-0 main_auth_layout_container">
         <!-- <div style="width:100%; display: flex; justify-content: center; align-items: center;"> -->
             <!-- <Link href="/">
                 <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
@@ -27,3 +27,8 @@ const user = usePage().props.auth?.user
         </div>
     </div>
 </template>
+<style>
+.main_auth_layout_container{
+    background-color: #ffffff;
+}
+</style>

@@ -132,8 +132,8 @@ function togglePassword() {
           </PrimaryButton>
 
           
-            <Link :href="route('register')" class="signup-link signup-btn-wrapper">
-              Sign Up with Student
+            <Link :href="route('joinnow')" class="signup-link signup-btn-wrapper">
+              Join Now
             </Link>
          
 

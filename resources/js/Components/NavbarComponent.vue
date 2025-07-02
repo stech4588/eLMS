@@ -13,7 +13,7 @@
       </ul>
 
       <div class="action-buttons" v-if="!menuOpen">
-        <Link href="/register" class="join">JOIN NOW</Link>
+        <Link href="/joinnow" class="join">JOIN NOW</Link>
         <Link href="/login" class="login">LOG IN</Link>
       </div>
 
@@ -70,14 +70,14 @@ export default {
 
 .modern-navbar {
   font-family: 'Segoe UI', sans-serif;
-  background: #12121d;
+  /* background: linear-gradient(115deg, #102548 30%, #004c8d 65%, #009ada 100%) !important; */
   color: #fff;
-  position: sticky;
+  /* position: sticky; */
   top: 0;
   width: 100%;
   z-index: 1000;
   padding: 0px 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  background-color: transparent !important;
 }
 
 .navbar-container {
@@ -152,18 +152,24 @@ export default {
 }
 
 .join {
-  background: linear-gradient(45deg, #38b6ff, #4ccaff);
-  color: #000;
+  /* background: linear-gradient(45deg, #38b6ff, #4ccaff); */
+  background: #789b4a;
+  color: #ffffff;
 }
 
+.join:hover {
+  background: #009ada !important;
+}
+
+
 .login {
-  border: 2px solid #4ccaff;
+  border: 2px solid #fff;
   color: #fff;
 }
 
 .login:hover {
-  background-color: #4ccaff;
-  color: #000;
+  background-color: #009ada !important;
+  color: #fff;
 }
 
 .hamburger {

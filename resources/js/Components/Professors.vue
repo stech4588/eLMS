@@ -1,137 +1,169 @@
 <template>
-  <section class="meet-section">
-    <div class="meet-container">
-      <div class="meet-content">
-        <h2 class="meet-title">Meet The Professors</h2>
-        <p class="meet-paragraph">
-          We call our instructors “Professors”, but their teachings come from
-          <strong class="highlight">MBM University experience</strong>, not just theory.
-        </p>
-        <p class="meet-paragraph">
-          All of our professors are hand-picked by MBM and reached
-          <strong class="highlight">seven-figure success</strong> using the methods they teach inside MBM University.
-        </p>
-        <p class="meet-paragraph">
-          Their mission is to <strong class="highlight">guide, teach, and mentor</strong> you throughout your business journey every single day.
-        </p>
-        <Link href="/register" class="join-button-wrapper">
-          <button class="join-button">JOIN NOW</button>
-        </Link>
-      </div>
-
-      <div class="meet-image-wrapper">
-        <img src="/images/meet-the-professors.png" alt="Meet the Professors" class="meet-image" />
+  <section class="mbm-lms-solution" ref="solutionSection">
+    <div class="mbm-lms-container">
+      <h2 class="mbm-lms-title">Why 6 million users choose our LMS Solution</h2>
+      <div class="mbm-lms-grid">
+        <div class="mbm-lms-stat" v-for="(stat, index) in countedStats" :key="index">
+          <div class="mbm-lms-value">{{ stat.displayValue }}</div>
+          <div class="mbm-lms-label" v-html="stat.label"></div>
+        </div>
+        <div class="mbm-lms-award">
+          <img src="/images/icon1.svg" alt="Award Badge" />
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3';
-
 export default {
-  name: 'MeetProfessors',
-  components: {
-    Link
+  data() {
+    return {
+      stats: [
+        { value: '19', label: 'Industry best<br>practice awards' },
+        { value: '97%', label: 'Customer<br>retention rate' },
+        { value: '20+', label: 'Years of<br>experience' },
+        { value: '190+', label: 'Countries use<br>our LMS' },
+        { value: '$2B', label: 'Orders booked<br>per year' },
+        { value: '42K', label: 'Average<br>customer size' }
+      ],
+      countedStats: [],
+      hasAnimated: false
+    };
+  },
+  mounted() {
+    this.initObserver();
+  },
+  methods: {
+    initObserver() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && !this.hasAnimated) {
+            this.startCountUp();
+            this.hasAnimated = true;
+            observer.disconnect(); // Only run once
+          }
+        },
+        { threshold: 0.4 } // 40% visible triggers the animation
+      );
+      observer.observe(this.$refs.solutionSection);
+    },
+
+    startCountUp() {
+      const duration = 2000; // 2 seconds
+      const frameRate = 60;
+      const totalFrames = Math.round((duration / 1000) * frameRate);
+
+      this.countedStats = this.stats.map(stat => {
+        const numeric = parseFloat(stat.value.replace(/[^0-9.]/g, ''));
+        const suffix = stat.value.replace(/[0-9.]/g, '');
+        return {
+          value: numeric,
+          suffix: suffix,
+          label: stat.label,
+          displayValue: '0' + suffix
+        };
+      });
+
+      let frame = 0;
+      const animate = () => {
+        frame++;
+        this.countedStats = this.countedStats.map(stat => {
+          const progress = Math.min(frame / totalFrames, 1);
+          const current = Math.round(stat.value * progress);
+          return {
+            ...stat,
+            displayValue: current.toLocaleString() + stat.suffix
+          };
+        });
+
+        if (frame < totalFrames) {
+          requestAnimationFrame(animate);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }
   }
 };
 </script>
 
+
 <style scoped>
-/* Font family applied to everything in the section */
-.meet-section {
-  background-color: #12121D;
-  font-family: 'Segoe UI', sans-serif;
+.mbm-lms-solution {
+  background-color: #0f2b55;
+  color: #fff;
   padding: 60px 20px;
-  color: #ffffff;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
 }
 
-.meet-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
+.mbm-lms-container {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
   margin: 0 auto;
-  gap: 40px;
-  flex-wrap: wrap;
 }
 
-.meet-content {
-  flex: 1 1 500px;
+.mbm-lms-title {
   text-align: left;
+  font-size: 34px;
+  font-weight: bold;
+  margin-bottom: 40px;
 }
 
-.meet-title {
-  font-size: 48px;
-  font-weight: 800;
-  margin-bottom: 20px;
-}
-
-.meet-paragraph {
-  font-size: 18px;
-  line-height: 1.7;
-  margin-bottom: 16px;
-}
-
-.highlight {
-  color: #38B6FF;
-  font-weight: 700;
-}
-
-.join-button-wrapper {
-  margin-top: 20px;
-}
-
-.join-button {
-  background-image: linear-gradient(310deg, #38B6FF, #4CCAFF);
-  color: #000;
-  font-weight: 700;
-  font-size: 16px;
-  padding: 12px 30px;
-  border-radius: 30px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.join-button:hover {
-  transform: scale(1.05);
-}
-
-.meet-image-wrapper {
-  flex: 1 1 400px;
+.mbm-lms-grid {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  gap: 30px;
 }
 
-.meet-image {
+.mbm-lms-stat {
+  min-width: 100px;
+  max-width: 140px;
+}
+
+.mbm-lms-value {
+  font-size: 42px;
+  font-weight: bold;
+  color: #00a3e0;
+  margin-bottom: 8px;
+}
+
+.mbm-lms-label {
+  font-size: 13px;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.mbm-lms-award {
+  flex: 0 0 auto;
+  max-width: 110px;
+}
+
+.mbm-lms-award img {
   width: 100%;
-  max-width: 450px;
-  border-radius: 12px;
+  height: auto;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
-  .meet-container {
-    flex-direction: column;
-    text-align: center;
+  .mbm-lms-title {
+    font-size: 20px;
   }
 
-  .meet-content {
-    text-align: center;
+  .mbm-lms-grid {
+    gap: 20px;
   }
 
-  .meet-title {
-    font-size: 32px;
+  .mbm-lms-value {
+    font-size: 22px;
   }
 
-  .meet-paragraph {
-    font-size: 16px;
-  }
-
-  .join-button {
-    font-size: 14px;
-    padding: 10px 24px;
+  .mbm-lms-label {
+    font-size: 12px;
   }
 }
 </style>

@@ -32,20 +32,20 @@
                     Details
                 </Link>
                 
-                <div v-if="course.is_purchased" class="flex-grow">
+                <!-- <div v-if="course.is_purchased" class="flex-grow"> -->
                     <Link :href="course.first_video_id ? route('courses.play', { course: course.id, video: course.first_video_id }) : '#'" 
                           class="course-action-btn-play dark:bg-blue-600 dark:text-white w-full">
                         Play Course
                     </Link>
-                </div>
-                <div v-else class="flex-grow">
+                <!-- </div> -->
+                <!-- <div v-else class="flex-grow">
                     <Link :href="route('cart', { course_id: course.id })" class="course-action-btn-buy dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full">
                         <span>Buy Now</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                         </svg>
                     </Link>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

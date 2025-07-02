@@ -387,17 +387,23 @@ function handleImageError() {
 
 
 <template>
-    <NavbarComponent/>
-    <HeroSection />
-    <RealWorld />
+    <div class="welcome-navbar-hero-section">
+        <NavbarComponent/>
+        <HeroSection />
+    </div>
+    <!-- <MainHeroSection /> -->
+    <ConsolidatePlatform />
+    <ScrollingLogos />
+    <!-- <SequenceCanvas /> -->
+    <!-- <RealWorld /> -->
     <FeatureContainer />
     <TeachingPhilosophy />
     <Teaching />
     <Professors />
     <Results />
     <BuildYourFuture />
-    <YourChoice />
     <FrequentQuestions />
+    <YourChoice />
     <FooterContainer />
     
   </template>
@@ -408,18 +414,23 @@ function handleImageError() {
   import NavbarComponent from '../Components/NavbarComponent.vue'
   import Teaching from '../Components/Teaching.vue';
   import Professors from '../Components/Professors.vue';
-  import RealWorld from '../Components/RealWorld.vue';
+//   import RealWorld from '../Components/RealWorld.vue';
   import Results from '../Components/Results.vue';
   import TeachingPhilosophy from '../Components/TeachingPhilosophy.vue';
   import BuildYourFuture from '../Components/BuildYourFuture.vue';
   import FrequentQuestions from '../Components/FrequentQuestions.vue';
   import YourChoice from '../Components/YourChoice.vue';
   import FooterContainer from '../Components/Footer-Container.vue';
+  import SequenceCanvas from '../Components/SequenceCanvas.vue'
+  import ConsolidatePlatform from '../Components/ConsolidatePlatform.vue';
+  import ScrollingLogos from '../Components/ScrollingLogos.vue';
+// import MainHeroSection from '@/Components/MainHeroSection.vue';
   
   export default {
     name: 'App',
     components: {
       FooterContainer,
+    //   MainHeroSection,
       YourChoice,
       FrequentQuestions,
       NavbarComponent,
@@ -429,8 +440,11 @@ function handleImageError() {
       Teaching,
       TeachingPhilosophy,
       FeatureContainer,
-      RealWorld,
+    //   RealWorld,
       HeroSection,
+      SequenceCanvas,
+      ConsolidatePlatform,
+      ScrollingLogos,
     }
   }
   </script>
@@ -439,9 +453,21 @@ function handleImageError() {
   #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    background-color: white;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+  }
+  .welcome-navbar-hero-section {
+    background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;
+    border-bottom-left-radius: 100px;
+    border-bottom-right-radius: 100px;
+    height: 100vh;
+  }
+  @media(max-width:770px){
+    .welcome-navbar-hero-section {
+      height: 152vh;
+    }
   }
   </style>
   

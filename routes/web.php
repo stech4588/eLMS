@@ -33,6 +33,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\UserListingController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -207,6 +208,7 @@ Route::post('/courses/{course}/favorite', [CourseFavoriteController::class, 'tog
     ->name('courses.toggleFavorite');
 
 Route::middleware('guest')->group(function () {
+    Route::post('/register-from-payment', [RegisteredUserController::class, 'storeFromPayment'])->name('register.from.payment');
     Route::get('instructor/register', [InstructorRegisteredUserController::class, 'create'])
         ->name('instructor.register');
 
