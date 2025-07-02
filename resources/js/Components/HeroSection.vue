@@ -94,7 +94,11 @@
     margin-bottom: 20px;
     text-align: left;
 }
-
+@media(max-width:550px){
+    .hero-text h1{
+        font-size: 2rem;
+    }
+}
 .hero-text h1 span {
     color: #4ACFF8;
 }
@@ -107,7 +111,11 @@
     line-height: 1.7;
     text-align: left;
 }
-
+@media(max-width:550px){
+    .hero-text p{
+        font-size: 1rem;
+    }
+}
 .hero-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -126,7 +134,11 @@
     transition: 0.3s;
     box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
 }
-
+@media(max-width:550px){
+    .btn-primary{
+        font-size: 12px;
+    }
+}
 .btn-primary:hover {
     background: #009ada;
 }

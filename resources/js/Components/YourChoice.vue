@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="hero-section-modern" id="choice">
         <div class="floating-bg"></div>
         <div class="hero-wrapper">
@@ -20,16 +20,6 @@
                 </p>
                 <div class="cta-section">
                     <h3>Do you want to <span class="underline">take control of your future?</span></h3>
-                    <!-- <div class="cta-options">
-                        <div class="pill pill-red">
-                            <img src="/images/pill1.webp" alt="Netflix">
-                            <span>GO WATCH NETFLIX</span>
-                        </div>
-                        <div class="pill pill-blue">
-                            <img src="/images/pill2.webp" alt="MBM">
-                            <span>JOIN MBM UNIVERSITY</span>
-                        </div>
-                    </div> -->
                 </div>
             </div>
             <div class="hero-right">
@@ -44,25 +34,36 @@
             </div>
         </div>
     </div>
-</template>
+</template> -->
+<template>
+    <div class="main-nbm-banner">
+        <div class="nbm-banner-row">
+            <section class="mbm-banner">
+                <div class="mbm-banner-content">
+                    <h2 class="mbm-banner-heading">
+                        Don’t let your LMS <span class="mbm-nowrap">or LXP Solution</span> hold you back.
+                    </h2>
+                    <div class="subtext">
+                        <p class="mbm-banner-subtext">
+                            Contact us today to see how we can help you!&nbsp;&nbsp;
+                        </p><button class="mbm-banner-button">➜ JOIN NOW</button>
+                    </div>
 
+
+                </div>
+            </section>
+        </div>
+    </div>
+</template>
 <script>
 export default {
-    data() {
-        return {
-            isPlaying: false,
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-        };
-    },
-    methods: {
-        playVideo() {
-            this.isPlaying = true;
-        }
-    }
+
 };
 </script>
 
-<style scoped>
+<style>
+</style>
+<!-- <style scoped>
 * {
     font-family: 'Segoe UI', sans-serif!important;
 }
@@ -267,4 +268,4 @@ export default {
         font-size: 32px;
     }
 }
-</style>
+</style> -->
