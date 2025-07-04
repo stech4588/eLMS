@@ -84,13 +84,15 @@
                                 </div>
                                 <div v-if="form.errors.email" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.email }}</div>
 
-                                <div class="instructor-form-group">
-                                    <input type="password" class="instructor-form-input" placeholder="Password*" v-model="form.password" required>
+                                <div class="instructor-form-group" style="position: relative;">
+                                    <input :type="showPassword ? 'text' : 'password'" class="instructor-form-input" placeholder="Password*" v-model="form.password" required>
+                                    <img src="/images/view_icon.svg" alt="Toggle visibility" class="view-icon" @click="togglePassword" />
                                 </div>
                                 <div v-if="form.errors.password" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem;">{{ form.errors.password }}</div>
 
-                                <div class="instructor-form-group">
-                                    <input type="password" class="instructor-form-input" placeholder="Confirm Password*" v-model="form.password_confirmation" required>
+                                <div class="instructor-form-group" style="position: relative;">
+                                    <input :type="showPasswordConfirmation ? 'text' : 'password'" class="instructor-form-input" placeholder="Confirm Password*" v-model="form.password_confirmation" required>
+                                    <img src="/images/view_icon.svg" alt="Toggle visibility" class="view-icon" @click="togglePasswordConfirmation" />
                                 </div>
                                 <!-- No separate error for password_confirmation, usually covered by password 'confirmed' rule -->
 
@@ -182,6 +184,8 @@ export default {
     data() {
         return {
             profilePicturePreview: null,
+            showPassword: false,
+            showPasswordConfirmation: false,
             form: useForm({
                 name: '',
                 phone_number: '',
@@ -214,6 +218,12 @@ export default {
                     }
                 },
             });
+        },
+        togglePassword() {
+            this.showPassword = !this.showPassword;
+        },
+        togglePasswordConfirmation() {
+            this.showPasswordConfirmation = !this.showPasswordConfirmation;
         },
         selectProfilePicture() {
             this.$refs.profilePictureInput.click();
@@ -515,5 +525,14 @@ export default {
 
 .hidden {
     display: none;
+}
+.view-icon {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 1.25rem;
+    height: 1.25rem;
 }
 </style>

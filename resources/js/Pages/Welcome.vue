@@ -393,8 +393,8 @@ function handleImageError() {
     </div>
     <!-- <MainHeroSection /> -->
     <ConsolidatePlatform />
-    <ScrollingLogos />
-    <!-- <SequenceCanvas /> -->
+    <!-- <ScrollingLogos /> -->
+    <SequenceCanvas />
     <!-- <RealWorld /> -->
     <FeatureContainer />
     <TeachingPhilosophy />

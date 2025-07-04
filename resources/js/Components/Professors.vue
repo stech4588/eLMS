@@ -1,5 +1,5 @@
 <template>
-  <section class="mbm-lms-solution" ref="solutionSection">
+  <section class="mbm-lms-solution" ref="solutionSection" id="why-us">
     <div class="mbm-lms-container">
       <h2 class="mbm-lms-title">Why 6 million users choose our LMS Solution</h2>
       <div class="mbm-lms-grid">
@@ -7,9 +7,9 @@
           <div class="mbm-lms-value">{{ stat.displayValue }}</div>
           <div class="mbm-lms-label" v-html="stat.label"></div>
         </div>
-        <div class="mbm-lms-award">
+        <!-- <div class="mbm-lms-award">
           <img src="/images/icon1.svg" alt="Award Badge" />
-        </div>
+        </div> -->
       </div>
     </div>
   </section>

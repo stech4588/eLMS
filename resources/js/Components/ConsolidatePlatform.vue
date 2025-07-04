@@ -1,9 +1,9 @@
 <template>
-  <div class="fusion-fullwidth-container">
+  <div class="fusion-fullwidth-container" id="access">
     <div class="fusion-fullwidth">
         <div class="large-p text-left px-4" style="font-size: 40px;">
-            <p>Less frustration. <span class="text-[#028cc8]">More flexibility.</span><br>
-                Finally, learning that works for you.</p>
+            <p>Simplify Learning. <span class="text-[#028cc8]">Maximize flexibility.</span><br>
+              Experience a smarter way to train and grow.</p>
         </div>
       <div class="fusion-builder-row">
         <div class="fusion-layout-column fusion_builder_column_1_2">
@@ -21,8 +21,8 @@
         <div class="fusion-layout-column fusion_builder_column_1_2">
           <div class="fusion-column-wrapper">
             <div class="large-p" style="font-size: 20px; text-align: left; margin-bottom: 20px;">
-              <p>Consolidate your disconnected systems<br>
-              into a single platform:</p>
+              <p>Bring all your learning tools together<br>
+                in one seamless LMS:</p>
             </div>
             <div class="fusion-builder-row-inner">
               
@@ -30,7 +30,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1.svg" alt="Ecommerce Systems" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Ecommerce Systems</p>
+                    <p class="awb-imageframe-caption-text">E-Commerce Integration</p>
                   </div>
                 </div>
               </div>
@@ -48,7 +48,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                      <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-2.svg" alt="Reporting &amp; Analytics Systems" class="img-responsive">
-                     <p class="awb-imageframe-caption-text">Reporting &amp; Analytics Systems</p>
+                     <p class="awb-imageframe-caption-text">Advanced Reporting &amp; Analytics</p>
                   </div>
                 </div>
               </div>
@@ -57,7 +57,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-3.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">On the Job Training (OJT) Systems</p>
+                    <p class="awb-imageframe-caption-text">On-the-Job Training (OJT) Tools</p>
                   </div>
                 </div>
               </div>
@@ -66,7 +66,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-4.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Content Management &amp; Delivery Systems</p>
+                    <p class="awb-imageframe-caption-text">Content Management & Delivery</p>
                   </div>
                 </div>
               </div>
@@ -75,7 +75,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-5.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Assessment Certification &amp; Survey Platforms</p>
+                    <p class="awb-imageframe-caption-text">Assessments, Certifications & Surveys</p>
                   </div>
                 </div>
               </div>
@@ -84,7 +84,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-6.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Personal Development Planning Systems</p>
+                    <p class="awb-imageframe-caption-text">Personal Development Planning</p>
                   </div>
                 </div>
               </div>
@@ -93,7 +93,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-7.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Competency Management Systems</p>
+                    <p class="awb-imageframe-caption-text">Competency Management</p>
                   </div>
                 </div>
               </div>
@@ -102,7 +102,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-8.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Induction / Onboarding Systems</p>
+                    <p class="awb-imageframe-caption-text">Induction & Onboarding Modules</p>
                   </div>
                 </div>
               </div>
@@ -111,7 +111,7 @@
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-9.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Compliance Systems</p>
+                    <p class="awb-imageframe-caption-text">Compliance Management</p>
                   </div>
                 </div>
               </div>

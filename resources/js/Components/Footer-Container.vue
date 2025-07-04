@@ -51,20 +51,20 @@
     <footer class="mbm-footer">
       <div class="mbm-footer-container">
         <div class="mbm-footer-columns">
-          <div class="mbm-footer-logo">
+          <a :href="user ? '/dashboard' : '/'" class="mbm-footer-logo">
             <img src="/images/MBM_Uni.png" alt="" class="mbm-footer-logo" />
-          </div>
+          </a>
           <!-- Column 1: Logo + Quick Links -->
           <div class="mbm-footer-row">
             <div class="mbm-footer-column">
               <h3 class="mbm-footer-heading">QUICK LINKS</h3>
               <ul class="mbm-footer-links">
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Solutions</a></li>
-                <li><a href="#">Resources</a></li>
-                <li><a href="#">Contact Us</a></li>
+                <li><a @click="scrollToSection('why-us')" style="cursor: pointer;">why Us</a></li>
+                <li><a @click="scrollToSection('learn')" style="cursor: pointer;">Learn</a></li>
+                <li><a @click="scrollToSection('result')" style="cursor: pointer;">Result</a></li>
+                <li><a @click="scrollToSection('pricing')" style="cursor: pointer;">Pricing</a></li>
               </ul>
-              <button class="mbm-footer-button">JOIN NOW ➜</button>
+              <a href="/joinnow" class="mbm-footer-button">JOIN NOW ➜</a>
             </div>
 
             <!-- Column 2: Asia Pacific Inquiries -->
@@ -82,7 +82,7 @@
               <h3 class="mbm-footer-heading">USA INQUIRIES</h3>
               <p>300 Union Boulevard,<br />
                 Suite 360, Lakewood, CO 80228</p>
-              <p>info@seertechsolutions.com</p>
+              <p>info@mbmuniversity.com</p>
             </div>
 
             <!-- Column 4: EMEA Inquiries -->
@@ -91,14 +91,14 @@
               <p>Office 3, Level 27, Unit 2705<br />
                 Marina Plaza, Dubai Marina, DUBAI,<br />
                 UNITED ARAB EMIRATES</p>
-              <p>info@seertechsolutions.com</p>
+              <p>info@mbmuniversity.com</p>
             </div>
           </div>
 
         </div>
 
         <!-- Badges Row -->
-        <div class="mbm-badges">
+        <!-- <div class="mbm-badges">
           <img src="/images/footer-img1.png" alt="" class="mbm-footer-img" />
           <img src="/images/footer-img2.svg" alt="" class="mbm-footer-img" />
           <img src="/images/footer-img3.png" alt="" class="mbm-footer-img" />
@@ -106,11 +106,11 @@
           <img src="/images/footer-img5.png" alt="" class="mbm-footer-img" />
           <img src="/images/footer-img6.svg" alt="" class="mbm-footer-img" />
           <img src="/images/footer-img7.svg" alt="" class="mbm-footer-img" />
-        </div>
+        </div> -->
 
         <!-- Bottom Bar -->
         <div class="mbm-footer-bottom">
-          <p>© Seertech Solutions 2025</p>
+          <p>© MBM University 2025</p>
           <p>
             <a href="#">Privacy Policy</a> |
             <a href="#">Terms of Service</a>
@@ -121,9 +121,23 @@
     </footer>
   </div>
 </template>
-<script setup>
+<script>
 import { Link, usePage } from '@inertiajs/vue3'
-const user = usePage().props.auth?.user
+
+export default {
+  components: { Link },
+  computed: {
+    user() {
+      return usePage().props.auth?.user;
+    }
+  },
+  methods: {
+    scrollToSection(id) {
+      const section = document.getElementById(id);
+      if (section) section.scrollIntoView({ behavior: 'smooth' });
+    },
+  },
+};
 </script>
 
 <style scoped>

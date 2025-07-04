@@ -1,14 +1,19 @@
 <template>
   <nav class="modern-navbar">
     <div class="navbar-container">
-      <div class="logo">
+      <a :href="user ? '/dashboard' : '/'" class="logo">
         <img src="/images/MBM_Uni.png" alt="" />
-      </div>
+      </a>
 
       <ul class="nav-links" v-if="!menuOpen">
         <li><a @click="scrollToSection('access')">ACCESS</a></li>
+        <li><a @click="scrollToSection('learn')">LEARN</a></li>
         <li><a @click="scrollToSection('education')">EDUCATION</a></li>
+        <li><a @click="scrollToSection('features')">FEATURES</a></li>
+        <li><a @click="scrollToSection('why-us')">WHY US</a></li>
         <li><a @click="scrollToSection('result')">RESULTS</a></li>
+        <li><a @click="scrollToSection('pricing')">PRICING</a></li>
+        <li><a @click="scrollToSection('faq')">FAQ</a></li>
         <li><a @click="scrollToSection('choice')">CHOICE</a></li>
       </ul>
 
@@ -29,8 +34,13 @@
       <div v-show="menuOpen" class="custom-dropdown">
         <Link href="/register">JOIN NOW</Link>
         <a @click="scrollToSection('access')">ACCESS</a>
+        <a @click="scrollToSection('learn')">LEARN</a>
         <a @click="scrollToSection('education')">EDUCATION</a>
+        <a @click="scrollToSection('features')">FEATURES</a>
+        <a @click="scrollToSection('why-us')">WHY US</a>
         <a @click="scrollToSection('result')">RESULTS</a>
+        <a @click="scrollToSection('pricing')">PRICING</a>
+        <a @click="scrollToSection('faq')">FAQ</a>
         <a @click="scrollToSection('choice')">CHOICE</a>
         <Link href="/login">LOG IN</Link>
       </div>
@@ -88,7 +98,13 @@ export default {
 }
 
 .logo {
-  width: 90px;
+  width: 140px;
+}
+@media (max-width: 768px) {
+  .logo {
+    width: 140px;
+    height: 80px;
+  }
 }
 
 .nav-links {
@@ -249,7 +265,7 @@ export default {
 }
 
 /* Responsive */
-@media (max-width: 895px) {
+@media (max-width: 1320px) {
   .nav-links,
   .action-buttons {
     display: none;

@@ -16,12 +16,12 @@ const user = usePage().props.auth?.user
         </div> -->
          <div style="width:100%; display: flex; justify-content: center; align-items: center;">
     <a :href="user ? '/dashboard' : '/'">
-      <img src="/images/MBM_Uni.png" alt="logo" style="width: 100px; height: 100px;">
+      <img src="/images/MBM_Uni.png" alt="logo" style="width: 150px; height: 150px;">
     </a>
   </div>
 
         <div
-            class="mt-6 w-full overflow-hidden bg-white px-6 py-4 "
+            class="mt-6 w-full overflow-hidden bg-white px-6 py-4 main_auth_layout_container"
         >
             <slot />
         </div>
@@ -29,6 +29,6 @@ const user = usePage().props.auth?.user
 </template>
 <style>
 .main_auth_layout_container{
-    background-color: #ffffff;
+    background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;
 }
 </style>

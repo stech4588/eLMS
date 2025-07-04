@@ -1,8 +1,8 @@
 <template>
-    <div class="lms-mart">
+    <div class="lms-mart" id="learn">
         <div class="lms-wrapper">
             <h2 class="lms-heading">
-                The most <span class="lms-highlight">configurable and personalized</span><br />
+                The most <span class="lms-highlight">Configurable and Personalized</span><br />
                 LMS solution on the market
             </h2>
 
@@ -14,7 +14,7 @@
                     <p class="lms-desc">
                         Harness AI and machine learning to grow your people faster with personalized career pathways.
                     </p>
-                    <button class="lms-button">➜ Learn more</button>
+                    <a href="/joinnow" class="lms-button">➜ Learn more</a>
                 </div>
 
                 <!-- Card 2 -->
@@ -24,7 +24,7 @@
                     <p class="lms-desc">
                         Expand learning to external partners and grow your revenue at global scale.
                     </p>
-                    <button class="lms-button">➜ Learn more</button>
+                    <a href="/joinnow" class="lms-button">➜ Learn more</a>
                 </div>
 
                 <!-- Card 3 -->
@@ -35,7 +35,7 @@
                         Accelerate workforce capabilities, manage compliance requirements, and drive operational
                         outcomes.
                     </p>
-                    <button class="lms-button">➜ Learn more</button>
+                    <a href="/joinnow" class="lms-button">➜ Learn more</a>
                 </div>
             </div>
         </div>

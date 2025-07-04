@@ -261,7 +261,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                     <!-- Row 6: Preferred Topics -->
                     <div class="form-row">
                         <div class="form-group" :class="{ 'form-group-error': form.errors.preferred_topics }">
-                            <InputLabel value="Preferred Topics" class="form-label" style="margin-bottom: 10px; margin-left: 0;" />
+                            <InputLabel value="Preferred Topics" class="form-label" style="margin-bottom: 10px; margin-left: 0; background-color: none !important; background: none !important; color: #ffffff;" />
                             <div class="topics-container">
                                 <div class="topics-search-container">
                                     <svg aria-hidden="true" class="search-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -303,7 +303,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                     <!-- Row 7: Upload Resume and Profile Picture -->
                     <div class="form-row">
                         <div class="form-group" :class="{ 'form-group-error': form.errors.resume }">
-                            <InputLabel value="Upload Resume" class="form-label" />
+                            <InputLabel value="Upload Resume" class="form-label" style="background-color: none !important; background: none !important; color: #ffffff;" />
                             <input
                                 type="file"
                                 id="resume"
@@ -385,8 +385,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     align-items: center;
     padding: 20px 40px; /* Added more horizontal padding */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; /* Modern sans-serif font stack */
-    background-color: #fff;
-    max-width: 900px; /* Increased max-width */
+    background-color: transparent;
+    max-width: 950px; /* Increased max-width */
     margin: 2rem auto; /* Centering and margin */
     margin-top: 0px;
 }
@@ -394,7 +394,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 .form-title {
     font-size: 28px; /* Adjusted as per image */
     font-weight: 600; /* Semi-bold */
-    color: #000000; /* Darker gray */
+    color: #ffffff; /* Darker gray */
     margin-bottom: 8px; /* Adjusted margin */
     text-align: left;
     width: 100%;
@@ -402,7 +402,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 
 .form-subtitle {
     font-size: 14px;
-    color: #6B7280; /* Medium gray */
+    color: #c9c9c9; /* Medium gray */
     margin-bottom: 30px;
     text-align: left;
     width: 100%;
@@ -429,7 +429,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     border-left: 4px solid #9CA3AF;
     border-radius: 6px;
     justify-content: center;
-    
+    background-color: #ffffff;
     display: flex;
 }
 
@@ -439,8 +439,9 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     margin-top: 1px;
     font-size: 14px;
     font-weight: 500;
-    color: #555555; /* Slightly lighter than title */
+    color: #000000; /* Slightly lighter than title */
     margin-left: 12px;
+    background-color: #ffffff;
 }
 
 .form-input,
@@ -450,8 +451,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     /* border: 1px solid #D1D5DB; Light gray border */
     /* border-radius: 6px; */
     font-size: 14px;
-    color: #111827;
-    background-color: #fff;
+    color: #000000;
+    background-color: #ffffff !important;
     line-height: 1.5;
     /* border-left: 4px solid #9CA3AF; Prominent left border as in image */
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -563,7 +564,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 
 .terms-label {
     font-size: 14px;
-    color: #374151;
+    color: #ffffff;
     font-weight: normal; /* Normal weight for terms label */
     margin-bottom: 0px;
 }
@@ -705,12 +706,14 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     border: 1px solid #D1D5DB;
     border-radius: 4px;
     border-left: 4px solid #9CA3AF;
+    background-color: #ffffff;
 }
 
 .search-icon {
     width: 16px;
     height: 16px;
     margin-right: 8px;
+    color: #000000;
 }
 
 .topics-search-input {
@@ -767,9 +770,9 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 }
 
 .topic-name {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 500;
-    color: #111827;
+    color: #ffffff;
     margin-left: 10px;
     justify-content: center;
     align-items: center;
@@ -779,7 +782,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 .topic-add-icon {
     font-size: 12px;
     font-weight: 500;
-    color: #4B5563;
+    color: #ffffff;
 }
 
 .view-more-roles {
