@@ -165,6 +165,9 @@ function togglePassword() {
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Arial', sans-serif;
+  /* background-color: #0D1016;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px; */
 }
 
 .login-header {
@@ -175,14 +178,14 @@ function togglePassword() {
 .login-header h2 {
   font-weight: 600;
   font-size: 30px;
-  color: black;
+  color: rgb(255, 255, 255);
   margin-top: 0.5rem;
 }
 
 .login-header p {
   font-size: 12px;
   text-align: justify;
-  color: #777;
+  color: #cccccc;
   margin-top: 1.5rem;
 }
 
@@ -209,10 +212,15 @@ function togglePassword() {
   padding: 0.75rem;
   border-radius: 4px;
   border: 1px solid #ddd;
-  color: black;
+  color: #000000;
   font-size: 1rem;
-  background-color: white;
-  border-left: 5px solid #7E7E7E;
+  background-color: #ffffff !important;
+  border-left: 5px solid #c9c9c9;
+
+}
+.floating-input:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .floating-label {
@@ -222,8 +230,8 @@ function togglePassword() {
   transform: translateY(-50%);
   font-size: 16px;
   font-weight: 500;
-  color: #666;
-  background: white;
+  color: #000000;
+  background: #ffffff !important;
   padding: 0 5px;
   transition: all 0.3s ease;
   pointer-events: none;
@@ -232,7 +240,7 @@ function togglePassword() {
 .floating-label.active {
   top: 5px;
   font-size: 14px;
-  color: #2b2899;
+  color: #000000;
 }
 
 .view-icon {
@@ -251,7 +259,7 @@ function togglePassword() {
 
 .forgot-password-link {
   font-size: 0.875rem;
-  color: #666;
+  color: #c9c9c9;
   text-decoration: none;
 }
 
@@ -291,13 +299,13 @@ function togglePassword() {
 .signup-link {
   text-decoration: none;
   font-size: 12px;
-  color: #7E7E7E;
+  color: #c9c9c9;
 }
 
 .signup-link-instructor {
   text-decoration: none;
   font-size: 12px;
-  color: #7E7E7E;
+  color: #c9c9c9;
 }
 .or-divider {
   display: flex;

@@ -1,9 +1,9 @@
-<template>
+billing-cycle-switcher<template>
     <div class="trw-background">
         <div class="trw-container">
             <div class="trw-header">
                 <!-- <div class="price-guarantee">PRICE GUARANTEE HAS EXPIRED</div> -->
-                <img src="/images/MBM_Uni.png" alt="Logo" class="trw-logo">
+                <img src="/images/MBM_Uni.png" alt="Logo" class="trw-logo" style="width: 150px; height: 150px;">
                 <h1 class="trw-title">CHOOSE YOUR PATH TO SUCCESS</h1>
                 <p class="trw-subtitle">Join thousands crushing their competition and building enemies</p>
             </div>
@@ -17,7 +17,7 @@
                 <span>Yearly</span>
             </div>
             <div class="save-yearly-banner">
-                <img src="/images/key.svg" alt="Sparkle" style="filter: invert(75%) sepia(85%) saturate(849%) hue-rotate(359deg) brightness(101%) contrast(101%);">
+                <img src="/images/key.svg" alt="Sparkle" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);">
                 SAVE UP TO 17% WITH YEARLY
             </div>
 
@@ -26,11 +26,11 @@
                     <h2 class="plan-title">EARN</h2>
                     <div class="plan-price">${{ getPrice('earn') }}<span style="font-size: 25px; font-weight: 700;">/{{ isYearly ? 'year' : 'month' }}</span></div>
                     <ul class="plan-features">
-                        <li><img src="/images/tick.svg" alt="tick"> Choose 1 Business Model</li>
-                        <li><img src="/images/tick.svg" alt="tick"> Daily Live Broadcasts</li>
-                        <li><img src="/images/tick.svg" alt="tick"> Real-Time Course Updates</li>
-                        <li><img src="/images/tick.svg" alt="tick"> 3 Connected Devices</li>
-                        <li><img src="/images/tick.svg" alt="tick"> Community Access</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Choose 1 Business Model</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Daily Live Broadcasts</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Real-Time Course Updates</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 3 Connected Devices</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Community Access</li>
                     </ul>
                     <button class="join-button" :class="{ 'selected': selectedPlan === 'earn' }">
                         <img src="/images/p_box.svg" style="filter: invert(1); height:1rem" />
@@ -42,11 +42,11 @@
                     <h2 class="plan-title">PROSPER</h2>
                     <div class="plan-price">${{ getPrice('prosper') }}<span style="font-size: 25px; font-weight: 700;">/{{ isYearly ? 'year' : 'month' }}</span></div>
                     <ul class="plan-features">
-                        <li><img src="/images/tick.svg" alt="tick"> Everything in Earn</li>
-                        <li><img src="/images/tick.svg" alt="tick"> 1 Extra Business Model</li>
-                        <li><img src="/images/tick.svg" alt="tick"> Priority Support</li>
-                        <li><img src="/images/tick.svg" alt="tick"> 5 Connected Devices</li>
-                        <li><img src="/images/tick.svg" alt="tick"> Exclusive Workshops</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Everything in Earn</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 1 Extra Business Model</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Priority Support</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 5 Connected Devices</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Exclusive Workshops</li>
                     </ul>
                     <button class="join-button" :class="{ 'selected': selectedPlan === 'prosper' }">
                         <img src="/images/p_box.svg" style="filter: invert(1); height:1rem" />
@@ -58,11 +58,11 @@
                     <h2 class="plan-title">CONQUER</h2>
                     <div class="plan-price">${{ getPrice('conquer') }}<span style="font-size: 25px; font-weight: 700;">/{{ isYearly ? 'year' : 'month' }}</span></div>
                     <ul class="plan-features">
-                        <li><img src="/images/tick.svg" alt="tick"> Everything in Prosper</li>
-                        <li><img src="/images/tick.svg" alt="tick"> 9+ Extra Business Models</li>
-                        <li><img src="/images/tick.svg" alt="tick"> VIP Community Access</li>
-                        <li><img src="/images/tick.svg" alt="tick"> 7 Connected Devices</li>
-                        <li><img src="/images/tick.svg" alt="tick"> Early Access to New Content</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Everything in Prosper</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 9+ Extra Business Models</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> VIP Community Access</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 7 Connected Devices</li>
+                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Early Access to New Content</li>
                     </ul>
                      <button class="join-button" :class="{ 'selected': selectedPlan === 'conquer' }">
                         <img src="/images/p_box.svg" style="filter: invert(1); height:1rem" />
@@ -128,7 +128,10 @@
                     <div class="form-row">
                         <div class="form-group password">
                             <label for="password">Password</label>
-                            <input type="password" id="password" placeholder="Password" v-model="formData.password" class="stripe-input">
+                            <div class="password-input-wrapper">
+                                <input :type="passwordFieldType" id="password" placeholder="Password" v-model="formData.password" class="stripe-input password-input">
+                                <img src="/images/view_icon.svg" @click="togglePasswordVisibility" class="view-icon" alt="Toggle password visibility">
+                            </div>
                             <div v-if="formErrors.password" class="text-red-500 mt-1 text-xs">{{ formErrors.password }}</div>
                         </div>
                     </div>
@@ -178,6 +181,7 @@ export default {
             isYearly: false,
             selectedPlan: 'prosper',
             paymentError: null,
+            passwordFieldType: 'password',
             formData: {
                 name: '',
                 email: '',
@@ -202,6 +206,9 @@ export default {
         this.stripe = await loadStripe(this.pk);
     },
     methods: {
+        togglePasswordVisibility() {
+            this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+        },
         selectPlan(plan) {
             this.selectedPlan = plan;
             this.showPaymentForm = true;
@@ -232,7 +239,7 @@ export default {
             this.elements = this.stripe.elements();
             const elementStyles = {
                 base: {
-                    color: '#fff',
+                    color: '#000',
                     fontFamily: '"Montserrat", sans-serif',
                     fontSmoothing: 'antialiased',
                     fontSize: '16px',
@@ -360,11 +367,7 @@ body {
 }
 
 .trw-background {
-    background-color: #0D1016;
-    background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
+    background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;
     min-height: 100vh;
     padding: 2rem;
 }
@@ -443,8 +446,10 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #E9B20A;
+    background-color: #1897e5 ;
     transition: .4s;
+    outline: white;
+    border: 1px solid white;
 }
 
 .slider:before {
@@ -475,10 +480,10 @@ input:checked + .slider:before {
     align-items: center;
     gap: 0.5rem;
     background-color: rgba(233, 178, 10, 0.1);
-    border: 1px solid #E9B20A;
+    border: 1px solid #1897e5;
     padding: 0.5rem 1.5rem;
     border-radius: 20px;
-    color: #E9B20A;
+    color: #1897e5;
     font-weight: 600;
     margin: 1rem 0 2rem 0;
 }
@@ -504,7 +509,7 @@ input:checked + .slider:before {
     color: #FFFFFF;
 }
 .plan.prosper {
-    border-color: #E9B20A;
+    border-color: #1897e5;
 }
 
 .plan.conquer {
@@ -512,7 +517,7 @@ input:checked + .slider:before {
 }
 
 .plan:hover, .plan.selected {
-    border-color: #E9B20A;
+    border-color: #1897e5;
 }
 
 .plan-title {
@@ -567,8 +572,13 @@ input:checked + .slider:before {
     gap: 0.5rem;
 }
 .join-button.selected{
-    border: 1px solid #ECC870;
-    background: linear-gradient(109.78deg, rgba(255, 255, 255, 0.15) -13.37%, rgba(236, 200, 112, 0.15) 38.96%, rgba(134, 114, 64, 0.15) 138.03%);
+    border: 1px solid #1897e5;
+    background: linear-gradient(
+  109.78deg,
+  rgba(24, 151, 229, 0.15) -13.37%,    /* base color */
+  rgba(20, 130, 198, 0.15) 38.96%,     /* slightly darker */
+  rgba(16, 110, 167, 0.15) 138.03%     /* even darker */
+);
 }
 
 /* Join Info */
@@ -641,11 +651,11 @@ input:checked + .slider:before {
 }
 
 .form-group input {
-    background-color: #1B1E26;
+    background-color: #ffffff;
     border: 1px solid #333;
     border-radius: 5px;
     padding: 1rem;
-    color: white;
+    color: black;
     font-size: 1rem;
     width: 100%;
 }
@@ -670,11 +680,12 @@ input:checked + .slider:before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #0d1a25;
+    background-color: #ffffff;
     border: 1px solid #3a4d5e;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1rem;
+    color: black;
 }
 .total-due p {
     margin: 0;
@@ -683,7 +694,7 @@ input:checked + .slider:before {
 .total-due .total-price {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #ecc870;
+    color: #1897e5;
 }
 
 .total-due .total-price span {
@@ -718,14 +729,20 @@ input:checked + .slider:before {
     height: 24px;
 }
 .custom-checkbox:checked {
-    background-color: #E9B20A;
-    border-color: #E9B20A;
+    background-color: #1897e5;
+    border-color: #1897e5;
 }
 
 /* Submit button */
 .submit-payment-btn {
     width: 100%;
-    background: linear-gradient(109.78deg, rgb(255, 255, 255) -13.37%, rgb(236, 200, 112) 38.96%, rgb(134, 114, 64) 138.03%);
+    background: linear-gradient(
+  109.78deg,
+  rgb(255, 255, 255) -13.37%,         /* Keep white if you want light start */
+  rgb(24, 151, 229) 38.96%,           /* Base blue */
+  rgb(14, 100, 165) 138.03%           /* Deeper blue for depth */
+);
+
     color: black;
     border: none;
     padding: 1.5rem;
@@ -781,11 +798,11 @@ input:checked + .slider:before {
 }
 
 .stripe-element {
-    background-color: #0d1a25;
+    background-color: #ffffff;
     border: 1px solid #3a4d5e;
     border-radius: 5px;
     padding: 1rem;
-    color: white;
+    color: black !important;
     font-size: 1rem;
     width: 100%;
 }
@@ -793,12 +810,29 @@ input:checked + .slider:before {
     padding-left: 3.5rem;
 }
 .stripe-input {
-    background-color: #0d1a25 !important;
+    background-color: #ffffff !important;
     border: 1px solid #3a4d5e !important;
     border-radius: 5px;
     padding: 1rem;
-    color: white;
+    color: black !important;
     font-size: 1rem;
     width: 100%;
 }
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+.password-input{
+    padding-right: 45px !important;
+}
+.view-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    filter: invert(0.5);
+    height: 20px;
+}
+
 </style>

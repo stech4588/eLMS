@@ -3,14 +3,14 @@
         <div class="hero-overlay"></div>
         <div class="hero-container">
             <div class="hero-text">
-                <h1>Welcome<br> <span>to MBM University</span></h1>
+                <h1>Welcome<br> <span>To MBM University</span></h1>
                 <p>
                     Your gateway to quality education and professional development.
                     Discover courses that will help you achieve your goals.
                 </p>
                 <div class="hero-buttons">
-                    <a href="/courses" class="btn-primary">Browse Courses</a>
-                    <a href="/about" class="btn-secondary">Learn More</a>
+                    <a href="/joinnow" class="btn-primary">Browse Courses</a>
+                    <a href="/login" class="btn-secondary">Learn More</a>
                 </div>
             </div>
 

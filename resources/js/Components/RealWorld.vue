@@ -29,7 +29,7 @@
             Develop essential business skills with the help of our coaches through
             <span class="gold">our comprehensive education system.</span>
           </p>
-          <Link href="/register">
+          <Link href="/joinnow">
             <button class="join-btn">JOIN NOW</button>
           </Link>
         </div>

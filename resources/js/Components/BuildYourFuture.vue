@@ -1,5 +1,5 @@
 <template>
-  <section class="future-section">
+  <section class="future-section" id="pricing">
     <div class="animated-gradient-bg"></div>
     <div class="main-future-container">
       <div class="future-row">
@@ -8,8 +8,8 @@
           <div class="future-head">
             <div class="future-head-row">
               <div class="future-head-col-1">
-                <h1>Design the life</h1>
-                <h1>You want</h1>
+                <h1>Design The Life</h1>
+                <h1>You Want</h1>
               </div>
               <div class="future-head-col-2">
                 <a :href="user ? '/dashboard' : '/'">
@@ -60,7 +60,7 @@
                 </li>
               </ul>
             </div>
-            <Link href="/register"><button class="join-btn">JOIN NOW</button></Link>
+            <Link href="/joinnow"><button class="join-btn">JOIN NOW</button></Link>
           </div>
         </div>
       </div>

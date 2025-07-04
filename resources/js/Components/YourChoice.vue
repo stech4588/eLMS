@@ -9,7 +9,7 @@
                     <strong>modern-day limitations</strong> and succeed.
                 </p>
                 <p>
-                    We’ve spent years developing our fully independent and modern-day educational platform and we
+                    We've spent years developing our fully independent and modern-day educational platform and we
                     continue to
                     <strong>innovate and improve daily.</strong>
                 </p>
@@ -36,17 +36,17 @@
     </div>
 </template> -->
 <template>
-    <div class="main-nbm-banner">
+    <div class="main-nbm-banner" id="choice">
         <div class="nbm-banner-row">
             <section class="mbm-banner">
                 <div class="mbm-banner-content">
                     <h2 class="mbm-banner-heading">
-                        Don’t let your LMS <span class="mbm-nowrap">or LXP Solution</span> hold you back.
+                        Don't let your LMS <span class="mbm-nowrap">or LXP Solution</span> hold you back.
                     </h2>
                     <div class="subtext">
                         <p class="mbm-banner-subtext">
                             Contact us today to see how we can help you!&nbsp;&nbsp;
-                        </p><button class="mbm-banner-button">➜ JOIN NOW</button>
+                        </p><a href="/joinnow" class="mbm-banner-button">➜ JOIN NOW</a>
                     </div>
 
 

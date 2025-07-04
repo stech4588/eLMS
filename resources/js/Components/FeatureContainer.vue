@@ -1,10 +1,10 @@
 <template>
-    <section class="why-lms-section">
+    <section class="why-lms-section" id="features">
         <div class="container">
             <div class="section-header">
-                <h2>Why Choose LMS?</h2>
+                <h2>Why Choose MBM?</h2>
                 <p>
-                    Discover the features that make our learning platform stand out from the rest.
+                    We’re the only platform that empowers both learner-centric and organization-driven outcomes through a scalable Learning Enablement Platform (LEP).
                 </p>
             </div>
 

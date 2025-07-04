@@ -1,5 +1,5 @@
 <template>
-    <div class="main-faq">
+    <div class="main-faq" id="faq">
         <section class="faq-wrapper">
     <div class="faq-header">
       <h2>Frequently Asked Questions</h2>
@@ -36,8 +36,8 @@
         </transition>
       </div>
     </div>
-    <Link href="/register" class="cta">
-      <button class="join-btn">JOIN NOW</button>
+    <Link href="/joinnow" class="cta">
+      <button href="/joinnow" class="join-btn">JOIN NOW</button>
     </Link>
   </section>
     </div>
@@ -93,7 +93,7 @@ export default {
         {
           question: "Does it matter that I'm from X country?",
           answer:
-            "No, it's not an issue at all! MBM University focuses on online income, so your location won’t hold you back.",
+            "No, it's not an issue at all! MBM University focuses on online income, so your location won't hold you back.",
         },
       ],
     };
