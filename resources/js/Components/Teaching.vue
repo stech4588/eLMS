@@ -3,7 +3,7 @@
         <div class="lms-wrapper">
             <h2 class="lms-heading">
                 The most <span class="lms-highlight">Configurable and Personalized</span><br />
-                LMS solution on the market
+                Built for the future of MBM University
             </h2>
 
             <div class="lms-box">
@@ -14,7 +14,7 @@
                     <p class="lms-desc">
                         Harness AI and machine learning to grow your people faster with personalized career pathways.
                     </p>
-                    <a href="/joinnow" class="lms-button">➜ Learn more</a>
+                    <a :href="joinNowUrl" class="lms-button">➜ Learn more</a>
                 </div>
 
                 <!-- Card 2 -->
@@ -24,7 +24,7 @@
                     <p class="lms-desc">
                         Expand learning to external partners and grow your revenue at global scale.
                     </p>
-                    <a href="/joinnow" class="lms-button">➜ Learn more</a>
+                    <a :href="joinNowUrl" class="lms-button">➜ Learn more</a>
                 </div>
 
                 <!-- Card 3 -->
@@ -35,7 +35,7 @@
                         Accelerate workforce capabilities, manage compliance requirements, and drive operational
                         outcomes.
                     </p>
-                    <a href="/joinnow" class="lms-button">➜ Learn more</a>
+                    <a :href="joinNowUrl" class="lms-button">➜ Learn more</a>
                 </div>
             </div>
         </div>
@@ -43,5 +43,21 @@
 
 </template>
 
+<script setup>
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+
+const user = usePage().props.auth.user
+
+const joinNowUrl = computed(() => {
+    if (user) {
+        if (usePage().props.auth.profile_incomplete) {
+            return '/register/complete';
+        }
+        return '/dashboard';
+    }
+    return '/joinnow';
+});
+</script>
 <style>
 </style>

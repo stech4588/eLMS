@@ -1,7 +1,7 @@
 <template>
   <section class="mbm-lms-solution" ref="solutionSection" id="why-us">
     <div class="mbm-lms-container">
-      <h2 class="mbm-lms-title">Why 6 million users choose our LMS Solution</h2>
+      <h2 class="mbm-lms-title">Why MBM University chooses smart technology for smarter learning.</h2>
       <div class="mbm-lms-grid">
         <div class="mbm-lms-stat" v-for="(stat, index) in countedStats" :key="index">
           <div class="mbm-lms-value">{{ stat.displayValue }}</div>

@@ -9,8 +9,8 @@
                     Discover courses that will help you achieve your goals.
                 </p>
                 <div class="hero-buttons">
-                    <a href="/joinnow" class="btn-primary">Browse Courses</a>
-                    <a href="/login" class="btn-secondary">Learn More</a>
+                    <a :href="joinNowUrl" class="btn-primary">Browse Courses</a>
+                    <a :href="loginUrl" class="btn-secondary">Learn More</a>
                 </div>
             </div>
 
@@ -25,12 +25,36 @@
     </section>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref,computed } from 'vue'
 import { gsap } from 'gsap'
+import { usePage } from '@inertiajs/vue3'
 
 const link1 = ref(null)
 const link2 = ref(null)
 const link3 = ref(null)
+const user = usePage().props.auth.user
+
+
+const joinNowUrl = computed(() => {
+  if (user) {
+    if (usePage().props.auth.profile_incomplete) {
+      return '/register/complete';
+    }
+    return '/dashboard';
+  }
+  return '/joinnow';
+});
+
+const loginUrl = computed(() => {
+
+  if (user) {
+    if (usePage().props.auth.profile_incomplete) {
+      return '/register/complete';
+    }
+    return '/dashboard';
+  }
+  return '/login';
+});
 
 onMounted(() => {
   const pieces = [link1.value, link2.value, link3.value]

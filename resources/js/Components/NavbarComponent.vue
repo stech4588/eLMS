@@ -1,7 +1,7 @@
 <template>
   <nav class="modern-navbar">
     <div class="navbar-container">
-      <a :href="user ? '/dashboard' : '/'" class="logo">
+      <a :href="logoUrl" class="logo">
         <img src="/images/MBM_Uni.png" alt="" />
       </a>
 
@@ -17,9 +17,9 @@
         <li><a @click="scrollToSection('choice')">CHOICE</a></li>
       </ul>
 
-      <div class="action-buttons" v-if="!menuOpen">
-        <Link href="/joinnow" class="join">JOIN NOW</Link>
-        <Link href="/login" class="login">LOG IN</Link>
+      <div class="action-buttons" v-if="!menuOpen"> 
+        <Link :href="joinNowUrl" class="join">JOIN NOW</Link>
+        <Link :href="loginUrl" class="login">LOG IN</Link>
       </div>
 
       <div class="hamburger" @click="toggleMenu">
@@ -32,7 +32,7 @@
     <!-- Smooth Animated Dropdown -->
     <transition name="dropdown">
       <div v-show="menuOpen" class="custom-dropdown">
-        <Link href="/register">JOIN NOW</Link>
+        <Link :href="joinNowUrl">JOIN NOW</Link>
         <a @click="scrollToSection('access')">ACCESS</a>
         <a @click="scrollToSection('learn')">LEARN</a>
         <a @click="scrollToSection('education')">EDUCATION</a>
@@ -57,6 +57,38 @@ export default {
     return {
       menuOpen: false,
     };
+  },
+  computed: {
+    user() {
+      return this.$page.props.auth.user;
+    },
+    logoUrl() {
+        if (this.user) {
+          if (this.$page.props.auth.profile_incomplete) {
+            return '/register/complete';
+          }
+          return '/dashboard';
+        }
+        return '/';
+    },
+    joinNowUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/joinnow';
+    },
+    loginUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/login';
+    },
   },
   methods: {
     toggleMenu() {

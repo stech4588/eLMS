@@ -54,8 +54,8 @@ class RegisteredUserController extends Controller
                 'primary_learning_goal' => 'required|string',
                 'preferred_topics' => 'required|array',
                 'preferred_topics.*' => 'exists:topics,id',
-                'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-                'profile_picture' => 'nullable|image|max:2048',
+                'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
+                'profile_picture' => 'required|image|max:2048',
                 'agree_to_terms' => 'accepted',
             ]);
 

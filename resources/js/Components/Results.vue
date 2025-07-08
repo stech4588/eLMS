@@ -2,7 +2,7 @@
     <section class="mbm-featured-resources" id="result">
         <div class="mbm-header">
             <h2 class="mbm-title">FEATURED RESOURCES</h2>
-            <a href="/joinnow" class="mbm-view-all">→ VIEW ALL RESOURCES</a>
+            <a :href="joinNowUrl" class="mbm-view-all">→ VIEW ALL RESOURCES</a>
         </div>
 
         <div class="mbm-cards-wrapper">
@@ -20,7 +20,7 @@
                     <span class="mbm-badge">{{ card.type }}</span>
                     <h3 class="mbm-card-title">{{ card.title }}</h3>
                     <p class="mbm-description">{{ card.description }}</p>
-                    <a href="/joinnow" class="mbm-view-now">→ View now</a>
+                    <a :href="joinNowUrl" class="mbm-view-now">→ View now</a>
                 </div>
             </div>
         </div>
@@ -34,29 +34,40 @@ export default {
         return {
             cards: [
                 {
-                    type: 'WHITEPAPERS',
-                    title: 'Why Learning Analytics Is Your Competitive Edge',
-                    description:
-                        'Discover how top learning leaders from Partners, The Walt Disney Company, VML, and Seertech Solutions use data-driven insights to transform learning into strategic impact.',
+                    type: 'CASE STUDY',
+                    title: 'Building a 7-Figure E-Commerce Empire',
+                    description: 'Explore the strategies top entrepreneurs used to scale their online stores from zero to seven figures. Learn about product sourcing, marketing funnels, and customer retention.',
                     image: '/images/card-1.jpg'
                 },
                 {
-                    type: 'CASE STUDIES',
-                    title: 'Red Hat – Centralizing Enterprise Learning',
-                    description:
-                        'Learn how Red Hat overcame fragmented learning systems to deliver a unified, scalable eLearning solution across their global workforce.',
+                    type: 'GUIDE',
+                    title: 'Navigating the World of Crypto Investing',
+                    description: 'This guide breaks down the fundamentals of cryptocurrency investing, from understanding blockchain technology to identifying promising assets and managing risk.',
                     image: '/images/card-2.jpg'
                 },
                 {
-                    type: 'CASE STUDIES',
-                    title: 'ICU Medical – Scaling Global Training Consistency',
-                    description:
-                        'See how ICU Medical ensured consistent and compliant training delivery across regions by leveraging a robust LMS solution.',
+                    type: 'BLUEPRINT',
+                    title: 'The Ultimate Digital Marketing Blueprint',
+                    description: 'Unlock the secrets to a successful online presence. This blueprint covers SEO, social media marketing, email campaigns, and content strategy to boost your brand.',
                     image: '/images/card-3.png'
                 }
             ]
         };
-    }
+    },
+    computed: {
+    user() {
+      return this.$page.props.auth.user;
+    },
+    joinNowUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/joinnow';
+    },
+  },
 };
 </script>
 

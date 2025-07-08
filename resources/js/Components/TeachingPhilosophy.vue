@@ -4,10 +4,10 @@
     <div class="lms-lep-top">
       <div class="lms-lep-top-content">
         <div class="lms-lep-heading">
-          The Best Of LMS & LXP
+          The Best Of MBM University
         </div>
         <div class="lms-lep-desc">
-          We are the only platform that delivers your learner and organizationally driven learning outcomes via a Learning Enablement Platform (LEP) – at scale
+          We’re the only platform that delivers both learner-focused and institution-wide outcomes for MBM University through a scalable, personalized Learning Enablement Platform.
         </div>
       </div>
     </div>

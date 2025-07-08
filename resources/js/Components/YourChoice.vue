@@ -41,12 +41,12 @@
             <section class="mbm-banner">
                 <div class="mbm-banner-content">
                     <h2 class="mbm-banner-heading">
-                        Don't let your LMS <span class="mbm-nowrap">or LXP Solution</span> hold you back.
+                        Don’t let outdated systems <span class="mbm-nowrap">limit the learning potential</span> at MBM University.
                     </h2>
                     <div class="subtext">
                         <p class="mbm-banner-subtext">
                             Contact us today to see how we can help you!&nbsp;&nbsp;
-                        </p><a href="/joinnow" class="mbm-banner-button">➜ JOIN NOW</a>
+                        </p><a :href="joinNowUrl" class="mbm-banner-button">➜ JOIN NOW</a>
                     </div>
 
 
@@ -55,10 +55,22 @@
         </div>
     </div>
 </template>
-<script>
-export default {
+<script setup>
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 
-};
+const user = usePage().props.auth.user
+
+const joinNowUrl = computed(() => {
+    if (user) {
+        if (usePage().props.auth.profile_incomplete) {
+            return '/register/complete';
+        }
+        return '/dashboard';
+    }
+    return '/joinnow';
+});
+
 </script>
 
 <style>

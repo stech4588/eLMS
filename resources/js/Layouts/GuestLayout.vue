@@ -2,8 +2,18 @@
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue'
 
 const user = usePage().props.auth?.user
+const joinNowUrl = computed(() => {
+    if (user) {
+        if (usePage().props.auth.profile_incomplete) {
+            return '/register/complete';
+        }
+        return '/dashboard';
+    }
+    return '/';
+});
 </script>
 
 <template>
@@ -15,7 +25,7 @@ const user = usePage().props.auth?.user
             <!-- <img src="/images/MBM_Uni.png" alt="logo" class="" style=" width: 100px; height: 100px;">
         </div> -->
          <div style="width:100%; display: flex; justify-content: center; align-items: center;">
-    <a :href="user ? '/dashboard' : '/'">
+    <a :href="joinNowUrl">
       <img src="/images/MBM_Uni.png" alt="logo" style="width: 150px; height: 150px;">
     </a>
   </div>
