@@ -3,7 +3,8 @@ billing-cycle-switcher<template>
         <div class="trw-container">
             <div class="trw-header">
                 <!-- <div class="price-guarantee">PRICE GUARANTEE HAS EXPIRED</div> -->
-                <img src="/images/MBM_Uni.png" alt="Logo" class="trw-logo" style="width: 150px; height: 150px;">
+                 <a :href="logoUrl">
+                <img src="/images/MBM_Uni.png" alt="Logo" class="trw-logo" style="width: 150px; height: 150px;"></a>
                 <h1 class="trw-title">CHOOSE YOUR PATH TO SUCCESS</h1>
                 <p class="trw-subtitle">Join thousands crushing their competition and building enemies</p>
             </div>
@@ -204,6 +205,20 @@ export default {
     },
     async mounted() {
         this.stripe = await loadStripe(this.pk);
+    },
+    computed: {
+        user() {
+      return this.$page.props.auth.user;
+    },
+    logoUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/';
+    },
     },
     methods: {
         togglePasswordVisibility() {

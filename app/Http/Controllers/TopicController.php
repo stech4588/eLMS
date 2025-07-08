@@ -36,8 +36,18 @@ class TopicController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'is_trending' => 'required|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        Topic::create($request->all());
+
+        $data = $request->only('name', 'is_trending');
+
+        if ($request->hasFile('logo')) {
+            $logoName = time().'.'.$request->logo->extension();
+            $request->logo->move(public_path('images/topicsLogo'), $logoName);
+            $data['logo_url'] = '/images/topicsLogo/'.$logoName;
+        }
+
+        Topic::create($data);
         return redirect()->back();
     }
 
@@ -115,8 +125,18 @@ class TopicController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'is_trending' => 'required|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        $topic->update($request->all());
+
+        $data = $request->only('name', 'is_trending');
+
+        if ($request->hasFile('logo')) {
+            $logoName = time().'.'.$request->logo->extension();
+            $request->logo->move(public_path('images/topicsLogo'), $logoName);
+            $data['logo_url'] = '/images/topicsLogo/'.$logoName;
+        }
+        
+        $topic->update($data);
         return redirect()->back();
     }
 

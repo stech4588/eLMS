@@ -6,7 +6,10 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const user = usePage().props.auth.user
 
 defineProps({
   canResetPassword: Boolean,
@@ -44,6 +47,16 @@ function onBlurpass() {
 function togglePassword() {
   showPassword.value = !showPassword.value;
 }
+
+const joinNowUrl = computed(() => {
+  if (user) {
+    if (usePage().props.auth.profile_incomplete) {
+      return '/register/complete';
+    }
+    return '/dashboard';
+  }
+  return '/joinnow';
+});
 </script>
 
 <template>
@@ -132,7 +145,7 @@ function togglePassword() {
           </PrimaryButton>
 
           
-            <Link :href="route('joinnow')" class="signup-link signup-btn-wrapper">
+            <Link :href="joinNowUrl" class="signup-link signup-btn-wrapper">
               Join Now
             </Link>
          

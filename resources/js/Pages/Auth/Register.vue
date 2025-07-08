@@ -276,13 +276,14 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                         class="topic-card"
                                         :class="{ 'selected': form.preferred_topics.includes(topic.id) }"
                                         @click="toggleTopic(topic.id)">
-                                        <div class="flex flex-row">
-                                            <div class="topic-icon" :style="{ backgroundColor: getTopicColor(index) }">
-                                             <svg v-if="index % 3 === 0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                                             <svg v-if="index % 3 === 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                                             <svg v-if="index % 3 === 2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                        </div>
-                                        <span class="topic-name">{{ topic.name }}</span>
+                                        <div class="flex flex-row topic-card-content">
+                                            <div class="topic-icon">
+                                                <img v-if="topic.logo_url" :src="topic.logo_url" :alt="topic.name" class="topic-logo-image"/>
+                                                <svg v-else-if="index % 3 === 0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                                <svg v-else-if="index % 3 === 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                            </div>
+                                            <span class="topic-name">{{ topic.name }}</span>
                                         </div>
                                         
                                         <span class="topic-add-icon">{{ form.preferred_topics.includes(topic.id) ? '✓' : '+' }}</span>
@@ -767,6 +768,13 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     justify-content: center;
     align-items: center;
     display: flex;
+    background-color: transparent !important;
+}
+
+.topic-logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .topic-name {
@@ -794,9 +802,14 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     text-decoration: none;
     cursor: pointer;
 }
+.topic-card-content {
+   
+    align-items: center;
+    
+}
 
 .selected {
-    background-color: #f3f4f6;
+    background-color: #3a6fd7;
 }
 
 .profile-picture-container {

@@ -9,5 +9,5 @@ class Topic extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'is_trending'];
+    protected $fillable = ['name', 'is_trending', 'logo_url'];
 }

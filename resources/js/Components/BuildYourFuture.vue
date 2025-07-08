@@ -12,7 +12,7 @@
                 <h1>You Want</h1>
               </div>
               <div class="future-head-col-2">
-                <a :href="user ? '/dashboard' : '/'">
+                <a :href="logoUrl">
                   <img src="/images/MBM_Uni.png" alt="MBM Logo" />
                 </a>
               </div>
@@ -60,7 +60,7 @@
                 </li>
               </ul>
             </div>
-            <Link href="/joinnow"><button class="join-btn">JOIN NOW</button></Link>
+            <Link :href="joinNowUrl"><button class="join-btn">JOIN NOW</button></Link>
           </div>
         </div>
       </div>
@@ -75,6 +75,24 @@ export default {
   computed: {
     user() {
       return usePage().props.auth?.user;
+    },
+    joinNowUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/joinnow';
+    },
+    logoUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/';
     }
   },
 };

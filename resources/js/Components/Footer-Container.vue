@@ -51,7 +51,7 @@
     <footer class="mbm-footer">
       <div class="mbm-footer-container">
         <div class="mbm-footer-columns">
-          <a :href="user ? '/dashboard' : '/'" class="mbm-footer-logo">
+          <a :href="logoUrl" class="mbm-footer-logo">
             <img src="/images/MBM_Uni.png" alt="" class="mbm-footer-logo" />
           </a>
           <!-- Column 1: Logo + Quick Links -->
@@ -64,7 +64,7 @@
                 <li><a @click="scrollToSection('result')" style="cursor: pointer;">Result</a></li>
                 <li><a @click="scrollToSection('pricing')" style="cursor: pointer;">Pricing</a></li>
               </ul>
-              <a href="/joinnow" class="mbm-footer-button">JOIN NOW ➜</a>
+              <a :href="joinNowUrl" class="mbm-footer-button">JOIN NOW ➜</a>
             </div>
 
             <!-- Column 2: Asia Pacific Inquiries -->
@@ -74,7 +74,7 @@
                 59 Goulburn St Haymarket NSW 2000
                 Australia</p>
               <br>
-              <p>inquiries-apac@seertechsolutions.com</p>
+              <p>inquiries-info@mbmuniversity.com</p>
             </div>
 
             <!-- Column 3: USA Inquiries -->
@@ -129,6 +129,24 @@ export default {
   computed: {
     user() {
       return usePage().props.auth?.user;
+    },
+    joinNowUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/joinnow';
+    },
+    logoUrl() {
+      if (this.user) {
+        return '/dashboard';
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+      }
+      return '/';
     }
   },
   methods: {

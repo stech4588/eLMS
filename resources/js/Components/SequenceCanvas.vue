@@ -3,14 +3,14 @@
     <div class="container mx-auto px-4">
       <div class="relative">
         <!-- Timeline Rows -->
-        <div class="space-y-16">
+        <div class="space-y-16 sequence-canvas-section-container">
           <!-- Section 1 -->
           <div class="relative section-container">
             <div class="timeline-dot"></div>
             <div class="timeline-line"></div>
             <div class="grid grid-cols-2 gap-8 items-start section-content">
-              <div class="flex justify-center pr-8 mt-10 image-container">
-                <img src="/images/two-mobiles.webp" alt="App on Phones" class="section-image sequence-canvas-section-image" />
+              <div class="flex justify-center pr-8 mt-12 image-container">
+                <img src="/images/mobile-icon.png" alt="App on Phones" class="section-image sequence-canvas-section-image" />
               </div>
               <div class="pl-8 text-container">
                 <h3 class="section-heading">
@@ -40,7 +40,7 @@
             <div class="timeline-dot"></div>
             <div class="timeline-line"></div>
             <div class="grid grid-cols-2 gap-8 items-start section-content">
-              <div class="flex justify-center pr-8 image-container">
+              <div class="flex justify-center pr-8 mt-12 image-container">
                 <img src="/images/laptop.png" alt="App on Laptop" class="max-w-md sequence-canvas-section-image" />
               </div>
               <div class="pl-8 text-container">
@@ -71,8 +71,8 @@
             <div class="timeline-dot"></div>
             <div class="timeline-line hidden-line"></div>
             <div class="grid grid-cols-2 gap-8 items-start section-content">
-              <div class="flex justify-center pr-8 image-container ">
-                <img src="/images/trw-app-mac.png" alt="App on Tablets" class="max-w-md sequence-canvas-section-image" />
+              <div class="flex justify-center pr-8 mt-12 image-container ">
+                <img src="/images/laptop-icon.png" alt="App on Tablets" class="max-w-md sequence-canvas-section-image" />
               </div>
               <div class="pl-8 text-container">
                 <h3 class="section-heading">
@@ -101,8 +101,8 @@
 
       <!-- Join button -->
       <div class="text-center mt-20">
-        <a href="/joinnow" class="bg-gradient-to-r from-[#4ACFF8] to-[#4ACFF8] text-black font-bold py-4 px-12 rounded-lg text-lg uppercase tracking-wider sequence-canvas-join-button">
-          Join MBM
+        <a :href="joinNowUrl" class="bg-gradient-to-r from-[#4ACFF8] to-[#4ACFF8] text-black font-bold py-4 px-12 rounded-lg text-lg uppercase tracking-wider sequence-canvas-join-button">
+          Join MBM University
         </a>
       </div>
     </div>
@@ -110,6 +110,20 @@
 </template>
 
 <script setup>
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+
+const user = usePage().props.auth.user
+
+const joinNowUrl = computed(() => {
+  if (user) {
+    if (usePage().props.auth.profile_incomplete) {
+      return '/register/complete';
+    }
+    return '/dashboard';
+  }
+  return '/joinnow';
+});
 // No script is needed for this static component.
 </script>
 
@@ -160,9 +174,11 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  space-y: 1rem;
-  font-size: 24px;
+  font-size: 22px;
   text-align: left;
+  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .feature-item {
@@ -183,9 +199,9 @@
 }
 
 .section-image {
-  height: 50%;
+  height: 40%;
   width: auto;
-  max-width: 28rem; /* 448px */
+  max-width: 19rem; /* 448px */
 }
 
 /* Responsive Styles */
@@ -193,6 +209,9 @@
   .section-content {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+  .sequence-canvas-section-container {
+    padding: 0rem 0rem 0rem 0rem !important;
   }
   
   .image-container, .text-container {
@@ -209,8 +228,9 @@
 
   .feature-list {
     font-size: 18px;
-    display: inline-block;
+    /* display: inline-block; */
     text-align: left;
+    gap: 1rem;
   }
 
   .timeline-dot, .timeline-line {
@@ -253,5 +273,7 @@
   }
 }
 
-
+.sequence-canvas-section-container {
+  padding: 0rem 4rem 0rem 4rem;
+}
 </style>

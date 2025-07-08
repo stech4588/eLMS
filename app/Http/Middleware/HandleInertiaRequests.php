@@ -30,10 +30,22 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $profileIncomplete = false;
+
+        if ($user) {
+            $profileIncomplete = empty($user->phone_number) ||
+                                 empty($user->profile_picture) ||
+                                 empty($user->primary_learning_goal) ||
+                                 empty($user->preferred_topic_ids) ||
+                                 empty($user->resume_path);
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'profile_incomplete' => $profileIncomplete,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

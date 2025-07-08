@@ -36,8 +36,8 @@
         </transition>
       </div>
     </div>
-    <Link href="/joinnow" class="cta">
-      <button href="/joinnow" class="join-btn">JOIN NOW</button>
+    <Link :href="joinNowUrl" class="cta">
+      <button :href="joinNowUrl" class="join-btn">JOIN NOW</button>
     </Link>
   </section>
     </div>
@@ -97,6 +97,20 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    user() {
+      return this.$page.props.auth.user;
+    },
+    joinNowUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete) {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/joinnow';
+    },
   },
   methods: {
     toggleFAQ(index) {

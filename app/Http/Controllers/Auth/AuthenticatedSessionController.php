@@ -35,6 +35,16 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
+        $profileIncomplete = empty($user->phone_number) ||
+                             empty($user->profile_picture) ||
+                             empty($user->primary_learning_goal) ||
+                             empty($user->preferred_topic_ids) ||
+                             empty($user->resume_path);
+
+        if ($profileIncomplete) {
+            return redirect()->route('register.complete');
+        }
+
         if ($user->type === 'instructor') {
             return redirect()->intended('/addnewcourses');
         }
