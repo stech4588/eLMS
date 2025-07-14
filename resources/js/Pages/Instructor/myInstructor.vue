@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                             <div v-if="form.errors.profile_picture" class="instructor-form-error" style="color: red; font-size: 0.875em; margin-top: 0.25rem; text-align: center; margin-top: -1rem; margin-bottom: 1rem;">{{ form.errors.profile_picture }}</div>
-                            <button class="instructor-linkedin-btn">AutoFill with LinkedIn</button>
+                            <!-- <button class="instructor-linkedin-btn">AutoFill with LinkedIn</button> -->
 
                             <form @submit.prevent="submit">
                                 <div class="instructor-form-group" style="margin-top: 10px;">
@@ -271,7 +271,7 @@ export default {
     background-color: white;
     overflow: hidden;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    
+    background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;
 }
 
 .instructor-content-container {
@@ -288,6 +288,7 @@ export default {
 .instructor-left-column {
     flex: 1;
     padding-right: 2rem;
+    color: white;
 }
 
 .instructor-main-heading {
@@ -295,11 +296,12 @@ export default {
     font-weight: 600;
     margin-bottom: 1rem;
     line-height: normal;
+    
 }
 
 .instructor-text {
     margin-bottom: 2rem;
-    color: black;
+    color: white;
     line-height: normal;
 }
 
@@ -307,7 +309,7 @@ export default {
     list-style-type: disc;
     margin-left: 1.5rem;
     margin-bottom: 1.5rem;
-    color: black;
+    color: white;
         line-height: normal;
 }
 
@@ -316,6 +318,7 @@ export default {
     font-weight: bold;
     margin-top: 2rem;
     margin-bottom: 0.5rem;
+    color: white;
 }
 
 .instructor-link {
@@ -329,6 +332,7 @@ export default {
     margin-bottom: 1.5rem;
    text-align: center;
    line-height: normal;
+   color: white;
 }
 
 .instructor-quote-author {
@@ -340,15 +344,17 @@ export default {
 .instructor-right-column {
     flex: 1;
     padding-left: 1rem;
-    background-color: #BEBCBC4D;
+    border: 1px solid white;
     padding: 1.5rem;
     border-radius: 0.375rem;
+
 }
 
 .instructor-form-heading {
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
+    color: white;
 }
 
 .instructor-linkedin-btn {
@@ -375,26 +381,32 @@ export default {
 .instructor-form-label {
     display: block;
     margin-bottom: 0.25rem;
-    color: black;
+    color: white;
     font-size: 0.875rem;
 }
 
 .instructor-form-note {
-    color: black;
+    color: white;
 }
 
 .instructor-form-input {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #7E7E7E;
+    border: 1px solid white;
     background-color: #bebcbc00;
+    color: white;
+}
 
+.instructor-form-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 1; /* Firefox */
 }
 
 .instructor-form-input:focus {
   outline: none;
-  border: 1px solid #424242; /* keep dark gray on focus */
+  border: 1px solid white; /* keep dark gray on focus */
   box-shadow: none;       /* remove any glow or highlight */
+  color: white;
 }
 
 .instructor-form-select {
@@ -403,11 +415,13 @@ export default {
     border: 1px solid #7E7E7E;
     border-radius: 0.25rem;
     background-color: #bebcbc00;
+    color: white;
 }
 .instructor-form-select:focus {
   outline: none;
   border: 1px solid #424242; /* keep dark gray on focus */
   box-shadow: none;       /* remove any glow or highlight */
+  color: white;
 }
 
 .instructor-checkbox-group {
@@ -422,6 +436,7 @@ export default {
 .instructor-checkbox-label {
     color: #4D4D4D;
     font-size: 0.875rem;
+    color: white;
 }
 
 .instructor-radio-group {
@@ -456,6 +471,7 @@ export default {
 .instructor-radio-label {
     color: #4D4D4D;
     font-size: 0.875rem;
+    color: white;
 }
 
 .instructor-disabled-input {

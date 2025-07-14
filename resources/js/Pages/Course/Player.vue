@@ -10,10 +10,10 @@
                 <!-- Video Player -->
                 <div class="bg-black flex-shrink-0 relative group">
                     <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
-                        :src="currentVideo.video_url" controls autoplay @timeupdate="handleTimeUpdate"
-                        @pause="onPause" @ended="() => { handleEnded(); playNextVideo(); }"
-                        @loadedmetadata="handleLoadedMetadata" class="w-full h-[60vh] object-contain player_video"
-                        @play="onPlay">
+                        :src="currentVideo.video_url" controls controlslist="nodownload" @contextmenu.prevent
+                        autoplay @timeupdate="handleTimeUpdate" @pause="onPause"
+                        @ended="() => { handleEnded(); playNextVideo(); }" @loadedmetadata="handleLoadedMetadata"
+                        class="w-full h-[60vh] object-contain player_video" @play="onPlay">
                         <!-- <source :src="currentVideo.video_url" type="video/mp4"> -->
                         Your browser does not support the video tag.
                     </video>

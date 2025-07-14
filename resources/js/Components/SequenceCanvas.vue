@@ -41,7 +41,7 @@
             <div class="timeline-line"></div>
             <div class="grid grid-cols-2 gap-8 items-start section-content">
               <div class="flex justify-center pr-8 mt-12 image-container">
-                <img src="/images/laptop.png" alt="App on Laptop" class="max-w-md sequence-canvas-section-image" />
+                <img src="/images/communitySection.png" alt="App on Laptop" class="max-w-md sequence-canvas-section-image" />
               </div>
               <div class="pl-8 text-container">
                 <h3 class="section-heading">

@@ -24,7 +24,7 @@ export default {
         { value: '97%', label: 'Customer<br>retention rate' },
         { value: '20+', label: 'Years of<br>experience' },
         { value: '190+', label: 'Countries use<br>our LMS' },
-        { value: '$2B', label: 'Orders booked<br>per year' },
+        { value: '200K$', label: 'Orders booked<br>per year' },
         { value: '42K', label: 'Average<br>customer size' }
       ],
       countedStats: [],

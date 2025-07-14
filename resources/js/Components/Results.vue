@@ -20,7 +20,7 @@
                     <span class="mbm-badge">{{ card.type }}</span>
                     <h3 class="mbm-card-title">{{ card.title }}</h3>
                     <p class="mbm-description">{{ card.description }}</p>
-                    <a :href="joinNowUrl" class="mbm-view-now">→ View now</a>
+                    <a :href="joinNowUrl" class="mbm-view-now">→ Join Now</a>
                 </div>
             </div>
         </div>

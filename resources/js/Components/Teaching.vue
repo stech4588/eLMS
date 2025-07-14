@@ -14,7 +14,7 @@
                     <p class="lms-desc">
                         Harness AI and machine learning to grow your people faster with personalized career pathways.
                     </p>
-                    <a :href="joinNowUrl" class="lms-button">➜ Learn more</a>
+                    <a :href="joinNowUrl" class="lms-button">➜ Join Now</a>
                 </div>
 
                 <!-- Card 2 -->
@@ -24,7 +24,7 @@
                     <p class="lms-desc">
                         Expand learning to external partners and grow your revenue at global scale.
                     </p>
-                    <a :href="joinNowUrl" class="lms-button">➜ Learn more</a>
+                    <a :href="joinNowUrl" class="lms-button">➜ Join Now</a>
                 </div>
 
                 <!-- Card 3 -->
@@ -35,7 +35,7 @@
                         Accelerate workforce capabilities, manage compliance requirements, and drive operational
                         outcomes.
                     </p>
-                    <a :href="joinNowUrl" class="lms-button">➜ Learn more</a>
+                    <a :href="joinNowUrl" class="lms-button">➜ Join Now</a>
                 </div>
             </div>
         </div>
