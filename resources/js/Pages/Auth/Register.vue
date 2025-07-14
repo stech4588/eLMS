@@ -155,7 +155,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
             </div>
             <h1 class="form-title">Empower Your Learning Journey</h1>
             <p class="form-subtitle">
-                Welcome to LMS.360.pk! Please fill out the form below to start your free trial and begin learning today.
+                Welcome to MBM University. Please fill out the form below to start your journey and begin learning today.
             </p>
 
             <form @submit.prevent="submit" class="form-body" novalidate>
@@ -371,7 +371,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                         :disabled="form.processing"
                         style="    background-color: #1898e5;"
                     >
-                        {{ authUser ? 'Wellcom to MBM University' : 'Sign Up' }}
+                        {{ authUser ? 'Welcome to MBM University' : 'Sign Up' }}
                     </PrimaryButton>
                 </div>
             </form>

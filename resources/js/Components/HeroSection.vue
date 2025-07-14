@@ -10,7 +10,7 @@
                 </p>
                 <div class="hero-buttons">
                     <a :href="joinNowUrl" class="btn-primary">Browse Courses</a>
-                    <a :href="loginUrl" class="btn-secondary">Learn More</a>
+                    <a :href="loginUrl" class="btn-secondary">Login Now</a>
                 </div>
             </div>
 

@@ -219,9 +219,10 @@ export default {
 }
 
 .instructor-card {
-    background-color: white;
+    background-color: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;;
     overflow: hidden;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
     
 }
 
