@@ -1,9 +1,9 @@
 <template>
     <section class="mbm-featured-resources" id="result">
-        <!-- <div class="mbm-header">
+        <div class="mbm-header">
             <h2 class="mbm-title">FEATURED RESOURCES</h2>
-            <a :href="joinNowUrl" class="mbm-view-all">→ VIEW ALL RESOURCES</a>
-        </div> -->
+            <!-- <a :href="joinNowUrl" class="mbm-view-all">→ VIEW ALL RESOURCES</a> -->
+        </div>
 
         <div class="mbm-cards-wrapper">
             <div class="mbm-card" v-for="(card, index) in cards" :key="index">
