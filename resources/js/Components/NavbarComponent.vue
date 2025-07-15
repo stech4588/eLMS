@@ -33,6 +33,7 @@
     <transition name="dropdown">
       <div v-show="menuOpen" class="custom-dropdown">
         <Link :href="joinNowUrl">JOIN NOW</Link>
+        <Link href="/login">LOG IN</Link>
         <a @click="scrollToSection('access')">ACCESS</a>
         <a @click="scrollToSection('learn')">LEARN</a>
         <a @click="scrollToSection('education')">EDUCATION</a>
@@ -42,7 +43,7 @@
         <a @click="scrollToSection('pricing')">PRICING</a>
         <a @click="scrollToSection('faq')">FAQ</a>
         <a @click="scrollToSection('choice')">CHOICE</a>
-        <Link href="/login">LOG IN</Link>
+        
       </div>
     </transition>
   </nav>
@@ -201,12 +202,13 @@ export default {
 
 .join {
   /* background: linear-gradient(45deg, #38b6ff, #4ccaff); */
-  background: #789b4a;
-  color: #ffffff;
+  background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  color: #000000;
 }
 
 .join:hover {
-  background: #009ada !important;
+  transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 

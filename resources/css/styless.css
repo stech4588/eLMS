@@ -173,17 +173,20 @@ body {
 }
 
 .mbm-footer-button {
-  background-color: #8bc53f;
-  color: white;
+  /* background-color: #8bc53f;
+  color: white; */
   padding: 8px 16px;
   border-radius: 20px;
   border: none;
   font-size: 14px;
   cursor: pointer;
+  background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  color: #ffffff;
 }
 
 .mbm-footer-button:hover {
-  background-color: #78a837;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 /* Banner */
 
@@ -230,8 +233,8 @@ body {
 }
 
 .mbm-banner-button {
-    background-color: #8BC53F;
-    color: white;
+      /* background-color: #8BC53F;
+      color: white; */
     font-size: 14px;
     padding: 10px 20px;
     border: none;
@@ -240,10 +243,13 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
     font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+    color: #fffefe;
 }
 
 .mbm-banner-button:hover {
-    background-color: #76a838;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 .mbm-nowrap {
@@ -423,18 +429,21 @@ body {
 }
 
 .mbm-view-now {
-    background-color: #0f2b55;
-    color: white;
+    /* background-color: #0f2b55;
+    color: white; */
     border: none;
     padding: 8px 18px;
     font-size: 14px;
     border-radius: 999px;
     cursor: pointer;
     transition: background-color 0.3s;
+    background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+    color: #000000;
 }
 
 .mbm-view-now:hover {
-    background-color: #1a3970;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 @media (max-width: 768px) {
@@ -534,12 +543,15 @@ body {
     border-radius: 25px;
     padding: 10px 22px;
     font-size: 13px;
-    box-shadow: 0 4px 0 #4b7e23;
+    /* box-shadow: 0 4px 0 #4b7e23; */
     cursor: pointer;
+    background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  color: #000000;
 }
 
 .lms-button:hover {
-    background-color: #4b7e23;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 
