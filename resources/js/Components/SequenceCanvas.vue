@@ -40,7 +40,7 @@
             <div class="timeline-dot"></div>
             <div class="timeline-line"></div>
             <div class="grid grid-cols-2 gap-8 items-start section-content">
-              <div class="flex justify-center pr-8 mt-12 image-container">
+              <div class="flex justify-center pr-8 mt-12 image-container sequence-canvas-section-image-container">
                 <img src="/images/communitySection.png" alt="App on Laptop" class="max-w-md sequence-canvas-section-image" />
               </div>
               <div class="pl-8 text-container">
@@ -71,7 +71,7 @@
             <div class="timeline-dot"></div>
             <div class="timeline-line hidden-line"></div>
             <div class="grid grid-cols-2 gap-8 items-start section-content">
-              <div class="flex justify-center pr-8 mt-12 image-container ">
+              <div class="flex justify-center pr-8 mt-12 image-container sequence-canvas-section-image-container">
                 <img src="/images/laptop-icon.png" alt="App on Tablets" class="max-w-md sequence-canvas-section-image" />
               </div>
               <div class="pl-8 text-container">
@@ -100,7 +100,7 @@
       </div>
 
       <!-- Join button -->
-      <div class="text-center mt-20">
+      <div class="text-center mt-20 hero-section-join-button">
         <a :href="joinNowUrl" class="bg-gradient-to-r from-[#4ACFF8] to-[#4ACFF8] text-black font-bold py-4 px-12 rounded-lg text-lg uppercase tracking-wider sequence-canvas-join-button">
           Join MBM University
         </a>
@@ -272,8 +272,24 @@ const joinNowUrl = computed(() => {
     padding: 0.5rem 1rem;
   }
 }
+.sequence-canvas-join-button {
+  background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  color: #000000;
+}
+.sequence-canvas-join-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
+}
+.hero-section-join-button:hover {
+  transform: translateY(-2px) !important;
+}
 
 .sequence-canvas-section-container {
   padding: 0rem 4rem 0rem 4rem;
+}
+@media (max-width: 768px) {
+  .sequence-canvas-section-image-container {
+    margin-top: 0px !important;
+  }
 }
 </style>

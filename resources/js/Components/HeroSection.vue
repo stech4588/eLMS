@@ -269,14 +269,16 @@ onMounted(() => {
 }
 
 .btn-primary {
-    background: #789b4a;
-    color: white;
+    /* background: #789b4a; */
+    /* color: white; */
     padding: 12px 28px;
     border-radius: 50px;
     text-decoration: none;
     font-weight: 600;
     transition: 0.3s;
     box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+    color: #000000;
 }
 
 @media(max-width:550px) {
@@ -286,7 +288,8 @@ onMounted(() => {
 }
 
 .btn-primary:hover {
-    background: #009ada;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 .btn-secondary {
