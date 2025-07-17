@@ -942,3 +942,8 @@ body {
     border-width: 4px;
   }
 }
+
+.feature-icon-course{
+  width: 4rem !important;
+  height: 4rem !important;
+}

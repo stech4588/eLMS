@@ -1,5 +1,5 @@
 <template>
-  <section class="lms-lep-section" id="education">
+  <section class="lms-lep-section" id="educations">
     <!-- Top Gradient Section -->
     <div class="lms-lep-top">
       <div class="lms-lep-top-content">
