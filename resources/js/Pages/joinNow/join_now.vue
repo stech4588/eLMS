@@ -82,9 +82,10 @@ billing-cycle-switcher<template>
             </div>
             <p class="price-currency-note">*All Prices Are Presented In USD.</p>
 
-            <div v-if="showPaymentForm" class="payment-form">
-                <div class="form-section">
-                    <h3 class="form-section-title">CARD INFORMATION</h3>
+            <transition name="fade">
+                <div v-if="showPaymentForm" class="payment-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">CARD INFORMATION</h3>
                      <div class="form-row">
                         <div class="form-group card-number">
                             <label for="card-number">Card number</label>
@@ -159,6 +160,7 @@ billing-cycle-switcher<template>
                 <div v-if="paymentError" class="text-red-500 mt-4 text-center">{{ paymentError }}</div>
                 <p class="copyright">Copyright © 2025 MBM University</p>
             </div>
+            </transition>
         </div>
     </div>
 </template>
@@ -229,6 +231,10 @@ export default {
             this.showPaymentForm = true;
             this.$nextTick(() => {
                 this.initializeStripeElements();
+                const paymentForm = this.$el.querySelector('.payment-form');
+                if (paymentForm) {
+                    paymentForm.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         },
         getPrice(plan) {
@@ -848,6 +854,16 @@ input:checked + .slider:before {
     cursor: pointer;
     filter: invert(0.5);
     height: 20px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <section class="why-lms-section" id="features">
+    <section class="why-lms-section" id="education">
         <div class="container">
             <div class="section-header">
                 <h2>Why Choose MBM?</h2>
@@ -24,7 +24,7 @@ const features = [
     {
         title: 'AI-Powered Learning',
         desc: 'Leverage the power of Artificial Intelligence to personalize your learning.',
-        icon: `<img src="/images/topicsLogo/AI-logo.png" alt="AI-Powered Learning" class="w-20 h-20" />`
+        icon: `<img src="/images/topicsLogo/AI-logo.png" alt="AI-Powered Learning" class="feature-icon-course w-20 h-20" />`
     },
     {
         title: 'Community Support',
@@ -34,31 +34,34 @@ const features = [
     {
         title: 'Master Copywriting',
         desc: 'Learn the art of persuasive writing to create compelling content that converts.',
-        icon: `<img src="/images/topicsLogo/copywriting-logo.png" alt="Master Copywriting" class="w-20 h-20" />`
+        icon: `<img src="/images/topicsLogo/copywriting-logo.png" alt="Master Copywriting" class="feature-icon-course w-20 h-20" />`
     },
     {
         title: 'E-Commerce Mastery',
         desc: 'Build and scale your own successful online store with our expert-led courses.',
-        icon: `<img src="/images/topicsLogo/e-commerce-logo.png" alt="E-Commerce Mastery" class="w-20 h-20" />`
+        icon: `<img src="/images/topicsLogo/e-commerce-logo.png" alt="E-Commerce Mastery" class="feature-icon-course w-20 h-20" />`
     },
     {
         title: 'Lead Generation',
         desc: 'Master the strategies to attract and convert high-quality leads for your business.',
-        icon: `<img src="/images/topicsLogo/lead-logo.png" alt="Lead Generation" class="w-20 h-20" />`
+        icon: `<img src="/images/topicsLogo/lead-logo.png" alt="Lead Generation" class="feature-icon-course w-20 h-20" />`
     },
     {
         title: 'Stock Market Investing',
         desc: 'Navigate the stock market with confidence and learn strategies for long-term growth.',
-        icon: `<img src="/images/topicsLogo/stocks-logo.png" alt="Stock Market Investing" class="w-20 h-20" />`
+        icon: `<img src="/images/topicsLogo/stocks-logo.png" alt="Stock Market Investing" class="feature-icon-course w-20 h-20" />`
     }
 ]
 </script>
 
 <style scoped>
+
+
 .why-lms-section {
     background: linear-gradient(135deg, #f0f4ff, #e2e8f0);
-    padding: 80px 20px;
+    padding: 30px 20px;
     font-family: 'Segoe UI', sans-serif;
+    padding-top: 10px;
 }
 
 .container {
@@ -68,7 +71,7 @@ const features = [
 
 .section-header {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
 }
 
 .section-header h2 {
@@ -113,6 +116,8 @@ const features = [
     text-align: left;
     transition: all 0.3s ease;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding-top: 6px;
+    padding-bottom: 8px;
 }
 
 .feature-card:hover {
@@ -122,7 +127,7 @@ const features = [
 
 .icon-box {
     color: #2563eb;
-    margin-bottom: 18px;
+    margin-bottom: 6px;
 }
 
 .icon-box svg {
