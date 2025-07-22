@@ -101,8 +101,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="/images/topicsLogo/ads-logo.png" alt="ADS Mastery" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">ADS Mastery</p>
+                    <img src="/images/topicsLogo/ads-logo.png" alt="Ads Mastery" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Ads Mastery</p>
                   </div>
                 </div>
               </div>

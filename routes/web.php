@@ -34,6 +34,9 @@ use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\UserListingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\FacebookAuthController;
+use App\Http\Controllers\AppleAuthController;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -209,6 +212,8 @@ Route::post('/courses/{course}/favorite', [CourseFavoriteController::class, 'tog
     ->middleware(['auth', 'verified'])
     ->name('courses.toggleFavorite');
 
+
+
 Route::middleware('guest')->group(function () {
     Route::post('/register-from-payment', [RegisteredUserController::class, 'storeFromPayment'])->name('register.from.payment');
     Route::get('instructor/register', [InstructorRegisteredUserController::class, 'create'])
@@ -216,6 +221,18 @@ Route::middleware('guest')->group(function () {
 
     Route::post('instructor/register', [InstructorRegisteredUserController::class, 'store']);
 });
+
+// Google Auth Routes
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
+
+// Facebook Auth Routes
+Route::get('/auth/facebook/redirect', [FacebookAuthController::class, 'redirect'])->name('facebook.redirect');
+Route::get('/auth/facebook/callback', [FacebookAuthController::class, 'callback'])->name('facebook.callback');
+
+// Apple Auth Routes
+Route::get('/auth/apple/redirect', [AppleAuthController::class, 'redirect'])->name('apple.redirect');
+Route::get('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('apple.callback');
 
 Route::get('/topic/{topic:name}', [TopicController::class, 'show'])->middleware(['auth'])->name('topic.show');
 

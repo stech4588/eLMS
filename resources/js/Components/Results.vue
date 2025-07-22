@@ -20,14 +20,17 @@
                     <span class="mbm-badge">{{ card.type }}</span>
                     <h3 class="mbm-card-title">{{ card.title }}</h3>
                     <p class="mbm-description">{{ card.description }}</p>
-                    <a :href="joinNowUrl" class="mbm-view-now">→ Join Now</a>
+                    <!-- <a :href="joinNowUrl" class="mbm-view-now">→ Join Now</a> -->
                 </div>
             </div>
         </div>
+        <button @click="joinNowUrl" class="mbm-view-now">→ Join Now</button>
     </section>
 </template>
 
 <script>
+import { router } from '@inertiajs/vue3';
+
 export default {
     name: 'FeaturedResources',
     data() {
@@ -55,19 +58,23 @@ export default {
         };
     },
     computed: {
-    user() {
-      return this.$page.props.auth.user;
+        user() {
+            return this.$page.props.auth.user;
+        },
     },
-    joinNowUrl() {
-      if (this.user) {
-        if (this.$page.props.auth.profile_incomplete) {
-          return '/register/complete';
-        }
-        return '/dashboard';
-      }
-      return '/joinnow';
-    },
-  },
+    methods: {
+        joinNowUrl() {
+            if (this.user) {
+                if (this.$page.props.auth.profile_incomplete) {
+                    router.get('/register/complete');
+                } else {
+                    router.get('/dashboard');
+                }
+            } else {
+                router.get('/joinnow');
+            }
+        },
+    }
 };
 </script>
 

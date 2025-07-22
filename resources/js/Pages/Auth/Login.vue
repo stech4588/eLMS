@@ -48,6 +48,18 @@ function togglePassword() {
   showPassword.value = !showPassword.value;
 }
 
+const redirectToGoogle = () => {
+  window.location.href = route('google.redirect');
+};
+
+const redirectToFacebook = () => {
+  window.location.href = route('facebook.redirect');
+};
+
+const redirectToApple = () => {
+  window.location.href = route('apple.redirect');
+};
+
 const joinNowUrl = computed(() => {
   if (user) {
     if (usePage().props.auth.profile_incomplete) {
@@ -69,6 +81,10 @@ const joinNowUrl = computed(() => {
       </div>
 
       <div class="login-divider"></div>
+
+      <div v-if="$page.props.flash.error" class="error-message">
+        {{ $page.props.flash.error }}
+      </div>
 
       <div v-if="status" class="status-message">
         {{ status }}
@@ -126,12 +142,13 @@ const joinNowUrl = computed(() => {
         </div>
 
         <div class="forgot-password-wrapper">
+          <span class="forgot-password-text">Forgot Password? </span>
           <Link
             v-if="canResetPassword"
             :href="route('password.request')"
             class="forgot-password-link"
           >
-            Forgot Password? click here to reset your password!
+             click here to reset your password!
           </Link>
         </div>
 
@@ -158,14 +175,31 @@ const joinNowUrl = computed(() => {
         </div>
 
         <div class="or-divider">
-          <div class="line"></div>
-          <span>OR</span>
-          <div class="line"></div>
+          <!-- <div class="line"></div> -->
+          <span>or sign in with</span>
+          <!-- <div class="line"></div> -->
         </div>
 
-        <div class="google-sign">
-          <img src="/images/google_icon.svg" alt="Google" />
-          <button @click="redirectToGoogle">Sign in with Google</button>
+        <div class="social-login-container">
+          <button class="social-login-btn">
+            <img src="/images/apple_logo.svg" alt="Apple" class="social-login-apple-icon" />
+          </button>
+          <button class="social-login-btn" @click="redirectToFacebook">
+            <img src="/images/facebook_logo.svg" alt="Facebook" />
+          </button>
+          <button class="social-login-btn" @click="redirectToGoogle">
+            <img src="/images/google_icon.svg" alt="Google" />
+          </button>
+        </div>
+        <div class="forgot-password-wrapper" style="margin-top: 20px; justify-content: center; display: flex;">
+          <span class="forgot-password-text">Need to find </span>
+          <Link
+            v-if="canResetPassword"
+            :href="route('password.request')"
+            class="forgot-password-link"
+          >
+              your password?
+          </Link>
         </div>
       </form>
     </div>
@@ -213,6 +247,18 @@ const joinNowUrl = computed(() => {
   font-size: 0.875rem;
   font-weight: 500;
   color: green;
+}
+
+.error-message {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: red;
+  background-color: rgba(255, 0, 0, 0.1);
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid red;
 }
 
 .floating-group {
@@ -268,12 +314,26 @@ const joinNowUrl = computed(() => {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 0.5rem;
+  gap: 3px;
 }
 
 .forgot-password-link {
   font-size: 0.875rem;
   color: #c9c9c9;
   text-decoration: none;
+  text-decoration: underline;
+}
+.forgot-password-link:hover{
+  color: #fcfcfc;
+  
+}
+.forgot-password-text{
+  font-size: 12px;
+  color: #c9c9c9;
+  text-decoration: none;
+  align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 .login-button-wrapper {
@@ -324,6 +384,7 @@ const joinNowUrl = computed(() => {
   display: flex;
   align-items: center;
   margin: 2.5rem 0 1.5rem;
+  justify-content: center;
 }
 
 .or-divider .line {
@@ -337,41 +398,37 @@ const joinNowUrl = computed(() => {
   color: #999999;
 }
 
-.google-sign {
+.social-login-container {
   display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
-.google-sign img {
-  padding: 12px;
-  box-shadow: -4px 4px 8px #7E7E7E;
-  border: 1px solid #7E7E7E;
-  margin-top: -1.35px;
+.social-login-btn {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: 70px; /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
 }
 
-.google-sign button {
-  border: none;
-  background-color: #1898e5;
-  padding: 9px 40px;
-  margin-left: -3px;
-  font-size: 16px;
-  border: 1px solid #7E7E7E;
-  color: white;
+.social-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 375px) {
-  .google-sign button {
-    padding: 9px 20px;
-    width: 100% !important;
-  }
+.social-login-btn img {
+  height: 24px; /* Adjust icon size as needed */
+  width: 24px;  /* Adjust icon size as needed */
 }
-
-@media (max-width: 340px) {
-  .google-sign button {
-    font-size: 12px;
-  }
-  .google-sign img {
-    width: 48px;
-    margin-top: 1px;
-  }
+.social-login-apple-icon{
+  filter: invert(1);
 }
 </style>

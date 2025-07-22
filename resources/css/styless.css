@@ -543,6 +543,7 @@ body {
     border-radius: 25px;
     padding: 10px 22px;
     font-size: 13px;
+    margin-top: 20px;
     /* box-shadow: 0 4px 0 #4b7e23; */
     cursor: pointer;
     background: linear-gradient(310deg, #38B6FF, #4CCAFF);
@@ -946,4 +947,254 @@ body {
 .feature-icon-course{
   width: 4rem !important;
   height: 4rem !important;
+}
+
+/* review Section */
+
+.main-review-section {
+  padding-bottom: 30px;
+  margin-bottom: 20px;
+  margin-top: 120px;
+}
+
+.review-context p {
+  font-size: 16px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  color: var(--tech-grey);
+}
+
+.review-context {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+@media(max-width:400px) {
+  .review-context {
+      margin: 5px;
+  }
+}
+
+.review-context h2 {
+  font-weight: 100;
+  font-size: 40px;
+  color: var(--tech-grey);
+}
+
+@media(max-width: 1030px) {
+  .review-context h2 {
+      font-size: 22px;
+  }
+}
+
+.animated-2 {
+  font-size: 40px;
+  background: linear-gradient(90deg, #29DFFD 0%, #245AF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+@media(max-width:1030px) {
+  .animated-2 {
+      font-size: 22px;
+  }
+}
+
+
+.review-col-1 {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+.review-col-2 {
+  width: 50%;
+  display: flex;
+  margin-left: -24px;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.review-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.review {
+  width: 452px;
+  height: 256px;
+  background-image: url('/images/review-bg.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* @media(max-width:430px){
+  .review {
+      height: 131px;
+  }
+} */
+.reviewer-img img {
+  width: 82%;
+  height: 189px;
+  margin-left: 10px;
+  margin-top: 37px;
+  padding-bottom: 11px;
+  padding-top: 1px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+@media(max-width:1300px) {
+  .reviewer-img img {
+      width: 76%;
+      height: 164px;
+      margin-top: 50px;
+    
+  }
+}
+
+@media(max-width:830px) {
+  .reviewer-img img {
+      width: 82%;
+      height: 164px;
+      margin-left: 10px;
+      margin-top: 50px;
+      padding-bottom: 11px;
+      padding-top: 1px;
+      border-radius: 50%;
+  }
+}
+
+@media(max-width:720px) {
+  .reviewer-img img {
+      width: 82%;
+      height: 189px;
+      margin-left: 10px;
+      margin-top: 38px;
+      padding-bottom: 11px;
+      padding-top: 1px;
+      border-radius: 50%;
+  }
+}
+
+@media(max-width:440px) {
+  .reviewer-img img {
+      width: 81%;
+      height: 178px;
+      margin-left: 10px;
+      margin-top: 42px;
+      padding-bottom: 11px;
+      padding-top: 1px;
+      border-radius: 50%;
+  }
+}
+
+@media(max-width:380px) {
+  .reviewer-img img {
+      width: 77%;
+      height: 153px;
+      margin-left: 10px;
+      margin-top: 56px;
+      padding-bottom: 11px;
+      padding-top: 1px;
+      border-radius: 50%;
+  }
+}
+
+@media(max-width:341px) {
+  .reviewer-img img {
+      width: 77%;
+      height: 139px;
+      margin-left: 10px;
+      margin-top: 62px;
+      padding-bottom: 11px;
+      padding-top: 1px;
+      border-radius: 50%;
+  }
+}
+
+.review-col-2-1 {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.review-col-2-2 {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.review-col-2-1 p {
+  font-size: 10px;
+  text-align: left;
+  font-style: italic;
+  width: 193px;
+  margin-top: 15px;
+  line-height: 1.6;
+  color: var(--tech-grey);
+}
+
+@media(max-width:830px) {
+  .review-col-2-1 p {
+      font-size: 8px;
+      text-align: left;
+      font-style: italic;
+      width: 170px;
+      margin-top: 31px;
+      line-height: 1.6;
+      color: var(--tech-grey);
+  }
+}
+
+@media(max-width:440px) {
+  .review-col-2-1 p {
+      font-size: 7px;
+      text-align: left;
+      font-style: italic;
+      width: 147px;
+      margin-top: 49px;
+      line-height: 1.6;
+      color: var(--tech-grey);
+  }
+}
+
+.review-col-2-2 p {
+  font-size: 10px;
+  text-align: left;
+  color: var(--light-grey);
+}
+
+.review-col-2-2 h3 {
+  font-size: 14px;
+  text-align: left;
+  font-style: italic;
+}
+
+.swiper-slide {
+  display: flex !important;
+  justify-content: center;
+}
+
+@media(max-width:400px) {
+  .swiper-slide {
+      margin-left: 2px;
+  }
+}
+
+/* forgot password */
+
+.forgot-password-container{
+  max-width: 550px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Arial', sans-serif;
 }
