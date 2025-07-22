@@ -399,6 +399,8 @@ function handleImageError() {
     <FeatureContainer />
     <TeachingPhilosophy />
     <Teaching />
+    <!-- <Testimonials /> -->
+    <Reviews />
     <Professors />
     <Results />
     <BuildYourFuture />
@@ -424,6 +426,8 @@ function handleImageError() {
   import SequenceCanvas from '../Components/SequenceCanvas.vue'
   import ConsolidatePlatform from '../Components/ConsolidatePlatform.vue';
   import ScrollingLogos from '../Components/ScrollingLogos.vue';
+//   import Testimonials from '../Components/testimonials.vue';
+  import Reviews from '../Components/ReviewSection.vue';
 // import MainHeroSection from '@/Components/MainHeroSection.vue';
   
   export default {
@@ -440,6 +444,8 @@ function handleImageError() {
       Teaching,
       TeachingPhilosophy,
       FeatureContainer,
+    //   Testimonials,
+      Reviews,
     //   RealWorld,
       HeroSection,
       SequenceCanvas,

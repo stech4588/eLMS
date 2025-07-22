@@ -9,12 +9,12 @@
         <li><a @click="scrollToSection('access')">ACCESS</a></li>
         <li><a @click="scrollToSection('learn')">LEARN</a></li>
         <li><a @click="scrollToSection('education')">EDUCATION</a></li>
-        <!-- <li><a @click="scrollToSection('features')">FEATURES</a></li> -->
+        <li><a @click="scrollToSection('result')">FEATURED</a></li>
+        <li><a @click="scrollToSection('testimonials')">TESTIMONIALS</a></li>
         <li><a @click="scrollToSection('why-us')">WHY US</a></li>
-        <li><a @click="scrollToSection('result')">TESTIMONIALS</a></li>
         <li><a @click="scrollToSection('pricing')">PRICING</a></li>
         <li><a @click="scrollToSection('faq')">FAQ</a></li>
-        <li><a @click="scrollToSection('choice')">CHOICE</a></li>
+        <!-- <li><a @click="scrollToSection('choice')">CHOICE</a></li> -->
       </ul>
 
       <div class="action-buttons" v-if="!menuOpen"> 
@@ -37,12 +37,12 @@
         <a @click="scrollToSection('access')">ACCESS</a>
         <a @click="scrollToSection('learn')">LEARN</a>
         <a @click="scrollToSection('education')">EDUCATION</a>
-        <!-- <a @click="scrollToSection('features')">FEATURES</a> -->
+        <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
         <a @click="scrollToSection('why-us')">WHY US</a>
-        <a @click="scrollToSection('result')">TESTIMONIALS</a>
+        <a @click="scrollToSection('result')">FEATURED</a>
         <a @click="scrollToSection('pricing')">PRICING</a>
         <a @click="scrollToSection('faq')">FAQ</a>
-        <a @click="scrollToSection('choice')">CHOICE</a>
+        <!-- <a @click="scrollToSection('choice')">CHOICE</a> -->
         
       </div>
     </transition>

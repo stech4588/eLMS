@@ -14,7 +14,7 @@
                     <p class="lms-desc">
                         Harness AI and machine learning to grow your people faster with personalized career pathways.
                     </p>
-                    <a :href="joinNowUrl" class="lms-button">➜ Join Now</a>
+                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
 
                 <!-- Card 2 -->
@@ -24,7 +24,7 @@
                     <p class="lms-desc">
                         Expand learning to external partners and grow your revenue at global scale.
                     </p>
-                    <a :href="joinNowUrl" class="lms-button">➜ Join Now</a>
+                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
 
                 <!-- Card 3 -->
@@ -35,29 +35,31 @@
                         Accelerate workforce capabilities, manage compliance requirements, and drive operational
                         outcomes.
                     </p>
-                    <a :href="joinNowUrl" class="lms-button">➜ Join Now</a>
+                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
             </div>
+            <button @click="joinNowUrl" class="lms-button">➜ Join Now</button>
         </div>
     </div>
 
 </template>
 
 <script setup>
-import { usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { usePage, router } from '@inertiajs/vue3'
 
 const user = usePage().props.auth.user
 
-const joinNowUrl = computed(() => {
+const joinNowUrl = () => {
     if (user) {
         if (usePage().props.auth.profile_incomplete) {
-            return '/register/complete';
+            router.get('/register/complete');
+        } else {
+            router.get('/dashboard');
         }
-        return '/dashboard';
+    } else {
+        router.get('/joinnow');
     }
-    return '/joinnow';
-});
+};
 </script>
 <style>
 </style>

@@ -33,6 +33,9 @@ class User extends Authenticatable
         'resume_path',
         'profile_picture',
         'is_active',
+        'google_id',
+        'apple_id',
+        'facebook_id',
         // 'bio',
         // 'type',
     ];

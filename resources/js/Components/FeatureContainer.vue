@@ -22,7 +22,7 @@
 <script setup>
 const features = [
     {
-        title: 'AI-Powered Learning',
+        title: 'Content Creation & AI',
         desc: 'Leverage the power of Artificial Intelligence to personalize your learning.',
         icon: `<img src="/images/topicsLogo/AI-logo.png" alt="AI-Powered Learning" class="feature-icon-course w-20 h-20" />`
     },
@@ -32,12 +32,12 @@ const features = [
         icon: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`
     },
     {
-        title: 'Master Copywriting',
+        title: 'Copywriting',
         desc: 'Learn the art of persuasive writing to create compelling content that converts.',
         icon: `<img src="/images/topicsLogo/copywriting-logo.png" alt="Master Copywriting" class="feature-icon-course w-20 h-20" />`
     },
     {
-        title: 'E-Commerce Mastery',
+        title: 'E-Commerce',
         desc: 'Build and scale your own successful online store with our expert-led courses.',
         icon: `<img src="/images/topicsLogo/e-commerce-logo.png" alt="E-Commerce Mastery" class="feature-icon-course w-20 h-20" />`
     },
@@ -47,7 +47,7 @@ const features = [
         icon: `<img src="/images/topicsLogo/lead-logo.png" alt="Lead Generation" class="feature-icon-course w-20 h-20" />`
     },
     {
-        title: 'Stock Market Investing',
+        title: 'Stocks',
         desc: 'Navigate the stock market with confidence and learn strategies for long-term growth.',
         icon: `<img src="/images/topicsLogo/stocks-logo.png" alt="Stock Market Investing" class="feature-icon-course w-20 h-20" />`
     }
