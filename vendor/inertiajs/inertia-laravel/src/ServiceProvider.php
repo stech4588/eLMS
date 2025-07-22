@@ -2,7 +2,6 @@
 
 namespace Inertia;
 
-use Illuminate\Foundation\Testing\TestResponse as LegacyTestResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -32,6 +31,14 @@ class ServiceProvider extends BaseServiceProvider
         $this->registerRouterMacro();
         $this->registerTestingMacros();
         $this->registerMiddleware();
+
+        $this->app->bind('inertia.view-finder', function ($app) {
+            return new FileViewFinder(
+                $app['files'],
+                $app['config']->get('inertia.page_paths'),
+                $app['config']->get('inertia.page_extensions')
+            );
+        });
 
         $this->app->bind('inertia.testing.view-finder', function ($app) {
             return new FileViewFinder(
@@ -69,6 +76,7 @@ class ServiceProvider extends BaseServiceProvider
             Commands\CreateMiddleware::class,
             Commands\StartSsr::class,
             Commands\StopSsr::class,
+            Commands\CheckSsr::class,
         ]);
     }
 
@@ -95,13 +103,6 @@ class ServiceProvider extends BaseServiceProvider
     {
         if (class_exists(TestResponse::class)) {
             TestResponse::mixin(new TestResponseMacros);
-
-            return;
-        }
-
-        // Laravel <= 6.0
-        if (class_exists(LegacyTestResponse::class)) {
-            LegacyTestResponse::mixin(new TestResponseMacros);
 
             return;
         }
