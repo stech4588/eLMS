@@ -400,9 +400,10 @@ function handleImageError() {
     <TeachingPhilosophy />
     <Teaching />
     <!-- <Testimonials /> -->
-    <Reviews />
+    
     <Professors />
-    <Results />
+    <Reviews />
+    <!-- <Results /> -->
     <BuildYourFuture />
     <FrequentQuestions />
     <YourChoice />
@@ -417,7 +418,7 @@ function handleImageError() {
   import Teaching from '../Components/Teaching.vue';
   import Professors from '../Components/Professors.vue';
 //   import RealWorld from '../Components/RealWorld.vue';
-  import Results from '../Components/Results.vue';
+//   import Results from '../Components/Results.vue';
   import TeachingPhilosophy from '../Components/TeachingPhilosophy.vue';
   import BuildYourFuture from '../Components/BuildYourFuture.vue';
   import FrequentQuestions from '../Components/FrequentQuestions.vue';
@@ -439,7 +440,7 @@ function handleImageError() {
       FrequentQuestions,
       NavbarComponent,
       BuildYourFuture,
-      Results,
+    //   Results,
       Professors,
       Teaching,
       TeachingPhilosophy,
