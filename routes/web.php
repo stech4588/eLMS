@@ -38,6 +38,7 @@ use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\FacebookAuthController;
 use App\Http\Controllers\AppleAuthController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\PricingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -82,9 +83,7 @@ Route::get('/addnewcourses', [CourseController::class, 'create'])
 // Route::get('/leadershipAndManagement', function () {
 //     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
 // })->middleware(['auth', 'verified'])->name('leadershipAndManagement');
-Route::get('/joinnow', function () {
-    return Inertia::render('joinNow/join_now');
-})->name('joinnow');    
+Route::get('/joinnow', [PricingController::class, 'showJoinNowPage'])->name('join.now');
 // Route::get('/artificialIntelligence', function () {
 //     return Inertia::render('artificialIntelligence/myartificialIntelligence');
 // })->middleware(['auth', 'verified'])->name('artificialIntelligence');
@@ -179,6 +178,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
 
     Route::get('/register/complete', [RegisteredUserController::class, 'create'])->name('register.complete');
+    Route::resource('admin/pricings', \App\Http\Controllers\Admin\PricingController::class);
 });
 
 // //For Roles Routes

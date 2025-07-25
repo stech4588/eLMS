@@ -56,7 +56,7 @@
             <div >
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  /> User Listing</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/admin/instructors' }" href="/admin/instructors"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  />Instructor Listing</Link>
-                
+                <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/admin/pricings' }" :href="route('pricings.index')"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  />Pricing</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> <img class="sidebar_dark_icon" src="/images/course.svg" alt="users"  />Course Management</Link>
                 <Link v-if="showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/metatags' }" href="/metatags"> <img class="sidebar_dark_icon" src="/images/meta.svg" alt="users"  />Meta Tags</Link>
                 <Link v-if="!showUserListingLink" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon" src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
