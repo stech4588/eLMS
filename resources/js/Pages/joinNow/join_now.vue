@@ -27,11 +27,10 @@ billing-cycle-switcher<template>
                     <h2 class="plan-title">EARN</h2>
                     <div class="plan-price">${{ getPrice('earn') }}<span style="font-size: 25px; font-weight: 700;">/{{ isYearly ? 'year' : 'month' }}</span></div>
                     <ul class="plan-features">
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Choose 1 Business Model</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Daily Live Broadcasts</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Real-Time Course Updates</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 3 Connected Devices</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Community Access</li>
+                        <li v-for="feature in getFeatures('earn')" :key="feature">
+                            <img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);">
+                            {{ feature }}
+                        </li>
                     </ul>
                     <button class="join-button" :class="{ 'selected': selectedPlan === 'earn' }">
                         <img src="/images/p_box.svg" style="filter: invert(1); height:1rem" />
@@ -43,11 +42,10 @@ billing-cycle-switcher<template>
                     <h2 class="plan-title">PROSPER</h2>
                     <div class="plan-price">${{ getPrice('prosper') }}<span style="font-size: 25px; font-weight: 700;">/{{ isYearly ? 'year' : 'month' }}</span></div>
                     <ul class="plan-features">
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Everything in Earn</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 1 Extra Business Model</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Priority Support</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 5 Connected Devices</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Exclusive Workshops</li>
+                        <li v-for="feature in getFeatures('prosper')" :key="feature">
+                            <img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);">
+                            {{ feature }}
+                        </li>
                     </ul>
                     <button class="join-button" :class="{ 'selected': selectedPlan === 'prosper' }">
                         <img src="/images/p_box.svg" style="filter: invert(1); height:1rem" />
@@ -59,11 +57,10 @@ billing-cycle-switcher<template>
                     <h2 class="plan-title">CONQUER</h2>
                     <div class="plan-price">${{ getPrice('conquer') }}<span style="font-size: 25px; font-weight: 700;">/{{ isYearly ? 'year' : 'month' }}</span></div>
                     <ul class="plan-features">
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Everything in Prosper</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 9+ Extra Business Models</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> VIP Community Access</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> 7 Connected Devices</li>
-                        <li><img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);"> Early Access to New Content</li>
+                        <li v-for="feature in getFeatures('conquer')" :key="feature">
+                            <img src="/images/tick.svg" alt="tick" style="filter: invert(45%) sepia(84%) saturate(578%) hue-rotate(182deg) brightness(97%) contrast(94%);">
+                            {{ feature }}
+                        </li>
                     </ul>
                      <button class="join-button" :class="{ 'selected': selectedPlan === 'conquer' }">
                         <img src="/images/p_box.svg" style="filter: invert(1); height:1rem" />
@@ -141,12 +138,12 @@ billing-cycle-switcher<template>
 
                 <div class="total-due">
                     <p>Total Due:</p>
-                    <p class="total-price">${{getTotalDue()}}<span v-if="!isYearly">/month</span></p>
+                    <p class="total-price">${{totalDue}}<span v-if="!isYearly">/month</span></p>
                 </div>
 
                 <div class="terms-agreement">
                     <input type="checkbox" id="terms-checkbox" class="custom-checkbox" v-model="formData.terms">
-                    <label for="terms-checkbox">I accept the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>, and agree to pay ${{getTotalDue()}} USD every month until I cancel.</label>
+                    <label for="terms-checkbox">I accept the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>, and agree to pay ${{totalDue}} USD every month until I cancel.</label>
                 </div>
                 <div v-if="formErrors.terms" class="text-red-500 text-sm mb-4">{{ formErrors.terms }}</div>
 
@@ -171,6 +168,12 @@ import axios from 'axios';
 
 export default {
     name: 'JoinNowRedesigned',
+    props: {
+        plans: {
+            type: Object,
+            required: true,
+        },
+    },
     data() {
         return {
             pk: 'pk_test_51RZFkqPF8BzoPAVhNu7Lpqi40TnbQETCQGyiisJyPfztajSTaZdBOfXem930W375gIMhjyaLK9VAJOMk4mUb9NNc009zifzCDs',
@@ -198,11 +201,6 @@ export default {
                 password: '',
                 terms: '',
             },
-            plans: {
-                earn: { monthly: 49, yearly: 492 }, 
-                prosper: { monthly: 69, yearly: 699 },
-                conquer: { monthly: 99, yearly: 999 },
-            }
         };
     },
     async mounted() {
@@ -221,6 +219,30 @@ export default {
       }
       return '/';
     },
+    getPrice() {
+        return (plan) => {
+            const planData = this.plans[plan];
+            if (!planData) return 'N/A';
+            const billingType = this.isYearly ? 'yearly' : 'monthly';
+            return planData[billingType] ? Number(planData[billingType].price).toFixed(2) : 'N/A';
+        };
+    },
+    getFeatures() {
+        return (plan) => {
+            const planData = this.plans[plan];
+            if (!planData) return [];
+            const billingType = this.isYearly ? 'yearly' : 'monthly';
+            return planData[billingType] ? planData[billingType].features : [];
+        };
+    },
+    totalDue() {
+        if (!this.selectedPlan || !this.plans[this.selectedPlan]) {
+            return '0.00';
+        }
+        const billingType = this.isYearly ? 'yearly' : 'monthly';
+        let total = this.plans[this.selectedPlan][billingType].price;
+        return Number(total).toFixed(2);
+    }
     },
     methods: {
         togglePasswordVisibility() {
@@ -236,16 +258,6 @@ export default {
                     paymentForm.scrollIntoView({ behavior: 'smooth' });
                 }
             });
-        },
-        getPrice(plan) {
-            if (this.isYearly) {
-                return (this.plans[plan].yearly ).toFixed(0);
-            }
-            return this.plans[plan].monthly ;
-        },
-        getTotalDue() {
-            let total = this.isYearly ? this.plans[this.selectedPlan].yearly : this.plans[this.selectedPlan].monthly;
-            return (total ).toFixed(2);
         },
         getAmountInCents() {
             const plan = this.plans[this.selectedPlan];
@@ -343,7 +355,7 @@ export default {
                         password: this.formData.password,
                         billingAddress: this.formData.billingAddress,
                         transaction_id: paymentIntent.id,
-                        amount: this.getTotalDue(),
+                        amount: this.totalDue,
                         plan: this.selectedPlan,
                         billing_cycle: this.isYearly ? 'yearly' : 'monthly',
                         payment_method: paymentIntent.payment_method_types[0] || 'card',
