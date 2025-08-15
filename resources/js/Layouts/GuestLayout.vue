@@ -40,5 +40,7 @@ const joinNowUrl = computed(() => {
 <style>
 .main_auth_layout_container{
     background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;
+    padding-top: 0px !important;
+    margin-top: 0px !important;
 }
 </style>

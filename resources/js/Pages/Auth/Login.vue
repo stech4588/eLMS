@@ -153,15 +153,16 @@ const joinNowUrl = computed(() => {
         </div>
 
         <div class="login-button-wrapper">
-          <PrimaryButton
+          <div class="login-button-wrapper-left">
+            <PrimaryButton
             class="login-btn"
             :class="{ 'opacity-25': form.processing }"
             :disabled="form.processing"
           >
             Log in
           </PrimaryButton>
-
-          
+          </div>
+          <div class="join-now-button-wrapper">
             <Link :href="joinNowUrl" class="signup-link signup-btn-wrapper">
               Join Now
             </Link>
@@ -171,6 +172,12 @@ const joinNowUrl = computed(() => {
             <Link :href="route('Instructor')" class="signup-link-instructor signup-btn-wrapper">
               Sign Up with Instructor
             </Link>
+          </div>
+            
+         
+
+          
+           
           
         </div>
 
@@ -212,6 +219,7 @@ const joinNowUrl = computed(() => {
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Arial', sans-serif;
+  padding-top:0px;
   /* background-color: #0D1016;
   background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px; */
@@ -219,7 +227,7 @@ const joinNowUrl = computed(() => {
 
 .login-header {
   text-align: center;
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
 }
 
 .login-header h2 {
@@ -239,7 +247,8 @@ const joinNowUrl = computed(() => {
 .login-divider {
   height: 1px;
   background-color: #eee;
-  margin: 1.5rem 0;
+  margin-bottom: 16px;
+  width: 50%;;
 }
 
 .status-message {
@@ -339,12 +348,13 @@ const joinNowUrl = computed(() => {
 .login-button-wrapper {
   display: flex;
   gap: 36px;
-  margin-top: 60px;
+  margin-top: 10px;
+  justify-content: space-between;
 }
 @media (max-width: 550px) {
   .login-button-wrapper {
     flex-direction: column;
-    gap: 10px;
+    gap: 17px;
   }
 }
 
@@ -383,7 +393,7 @@ const joinNowUrl = computed(() => {
 .or-divider {
   display: flex;
   align-items: center;
-  margin: 2.5rem 0 1.5rem;
+  margin: 1rem 0 1.5rem;
   justify-content: center;
 }
 
@@ -403,6 +413,26 @@ const joinNowUrl = computed(() => {
   justify-content: center;
   gap: 1.5rem;
   margin-top: 1.5rem;
+}
+.join-now-button-wrapper{
+  display: flex;
+  gap: 20px;
+  align-items: end;
+  justify-content: end;
+}
+@media (max-width: 550px) {
+  .join-now-button-wrapper{
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media (max-width: 550px) {
+  .login-button-wrapper-left{
+    align-items: center;
+    justify-content: center !important;
+    display: flex !important;
+  }
 }
 
 .social-login-btn {
