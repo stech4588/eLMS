@@ -184,8 +184,8 @@ const joinNowUrl = computed(() => {
           <button class="social-login-btn">
             <img src="/images/apple_logo.svg" alt="Apple" class="social-login-apple-icon" />
           </button>
-          <button class="social-login-btn" @click="redirectToFacebook">
-            <img src="/images/facebook_logo.svg" alt="Facebook" />
+          <button class="social-login-btn social-login-btn-facebook" @click="redirectToFacebook">
+            <img src="/images/facebook_icon.svg" alt="Facebook" />
           </button>
           <button class="social-login-btn" @click="redirectToGoogle">
             <img src="/images/google_icon.svg" alt="Google" />
@@ -427,6 +427,10 @@ const joinNowUrl = computed(() => {
 .social-login-btn img {
   height: 24px; /* Adjust icon size as needed */
   width: 24px;  /* Adjust icon size as needed */
+}
+.social-login-btn-facebook img{
+  height: 36px; /* Adjust icon size as needed */
+  width: 36px;  /* Adjust icon size as needed */
 }
 .social-login-apple-icon{
   filter: invert(1);
