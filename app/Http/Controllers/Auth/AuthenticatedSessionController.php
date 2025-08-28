@@ -41,7 +41,7 @@ class AuthenticatedSessionController extends Controller
                              empty($user->preferred_topic_ids) ||
                              empty($user->resume_path);
 
-        if ($profileIncomplete) {
+        if ($profileIncomplete && $user->type === 'student') {
             return redirect()->route('register.complete');
         }
 
