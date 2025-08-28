@@ -14,7 +14,6 @@
                 <!-- Replies Section -->
                 <div class="mt-2">
                     <button
-                        v-if="post.replies_count > 0"
                         @click="toggleReplies"
                         class="text-blue-500 dark:text-blue-400 text-sm font-semibold flex items-center space-x-2"
                     >
@@ -92,14 +91,17 @@ const formatTimeAgo = (date) => {
 
 const replyToggleText = computed(() => {
     if (showReplies.value) {
-        return currentPage.value <= lastPage.value ? 'Hide Replies' : 'Hide Replies';
+        return 'Hide Replies';
     }
-    return `Show ${props.post.replies_count} replies`;
+    if (props.post.replies_count > 0) {
+        return `Show ${props.post.replies_count} replies`;
+    }
+    return 'Reply';
 });
 
 const toggleReplies = () => {
     showReplies.value = !showReplies.value;
-    if (showReplies.value && !loadedReplies.value) {
+    if (showReplies.value && !loadedReplies.value && props.post.replies_count > 0) {
         fetchReplies();
     }
 };
