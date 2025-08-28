@@ -36,6 +36,7 @@ class User extends Authenticatable
         'google_id',
         'apple_id',
         'facebook_id',
+        'can_view_community',
         // 'bio',
         // 'type',
     ];
@@ -70,6 +71,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'preferred_topic_ids' => 'array',
+            'can_view_community' => 'boolean',
         ];
     }
 
@@ -86,7 +88,7 @@ class User extends Authenticatable
             }
             return asset($this->profile_picture);
         }
-        return null; // Fallback will be handled by the frontend
+        return asset('images/user.svg');
     }
 
     /**

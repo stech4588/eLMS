@@ -67,7 +67,7 @@ export default {
     },
     logoUrl() {
         if (this.user) {
-          if (this.$page.props.auth.profile_incomplete) {
+          if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
             return '/register/complete';
           }
           return '/dashboard';
@@ -76,7 +76,7 @@ export default {
     },
     joinNowUrl() {
       if (this.user) {
-        if (this.$page.props.auth.profile_incomplete) {
+        if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
           return '/register/complete';
         }
         return '/dashboard';
@@ -85,7 +85,7 @@ export default {
     },
     loginUrl() {
       if (this.user) {
-        if (this.$page.props.auth.profile_incomplete) {
+        if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
           return '/register/complete';
         }
         return '/dashboard';

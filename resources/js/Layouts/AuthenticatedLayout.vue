@@ -8,6 +8,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
 import { Link, usePage, router, Head } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
 import axios from 'axios';
+import { fetchPermissions, clearPermissions } from '@/permissions.js';
 
 const user = usePage().props.auth?.user;
 const showingNavigationDropdown = ref(false)
@@ -33,6 +34,7 @@ const fetchNotifications = async () => {
 onMounted(() => {
     if (user) {
         fetchNotifications();
+        fetchPermissions();
     }
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         isDark.value = true;
@@ -57,6 +59,11 @@ const toggleDarkMode = () => {
         document.documentElement.removeAttribute('data-swal2-theme');
         localStorage.theme = 'light';
     }
+};
+
+const logout = () => {
+    clearPermissions();
+    router.post(route('logout'));
 };
 
 const toggleSidebar = () => {
@@ -153,7 +160,7 @@ onMounted(() => {
                                         class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
                                         Cart</DropdownLink>
 
-                                    <DropdownLink :href="route('logout')" method="post" as="button"
+                                    <DropdownLink @click="logout" as="button"
                                         class="text-gray-700 dark:text-white dark:text-whitehover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
                                         Log Out</DropdownLink>
                                 </template>
@@ -210,7 +217,7 @@ onMounted(() => {
                             <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i>
                             <span class="ml-2">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
                         </button>
-                        <ResponsiveNavLink :href="route('logout')" method="post" as="button"
+                        <ResponsiveNavLink @click="logout" as="button"
                             class="text-gray-700 dark:text-dark-text-secondary">Log Out</ResponsiveNavLink>
                     </div>
                 </div>

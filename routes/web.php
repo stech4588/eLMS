@@ -39,6 +39,10 @@ use App\Http\Controllers\FacebookAuthController;
 use App\Http\Controllers\AppleAuthController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\PricingController;
+use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\CommunityPostController;
+use App\Http\Controllers\Admin\CommunitySettingsController;
+use App\Http\Middleware\CheckCommunityAccess;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -57,9 +61,19 @@ Route::get('/terms-of-services', function () {
     return Inertia::render('TermsOfService');
 })->name('terms.of.services');
 
+Route::get('/community', [CommunityController::class, 'index'])
+    ->middleware(['auth', 'verified', CheckCommunityAccess::class])
+    ->name('community');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/communitysettings', [CommunitySettingsController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('communitysettings');
+
+Route::post('/users/{user}/toggle-community-access', [CommunitySettingsController::class, 'toggleAccess'])
+    ->middleware(['auth', 'verified'])->name('users.toggleCommunityAccess');
 
 Route::get('/swiper', function () {
     return Inertia::render('library/swiper');
@@ -179,6 +193,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/register/complete', [RegisteredUserController::class, 'create'])->name('register.complete');
     Route::resource('admin/pricings', \App\Http\Controllers\Admin\PricingController::class);
+
+    // Community post routes
+    Route::get('/api/community-posts', [CommunityPostController::class, 'index']);
+    Route::post('/api/community-posts', [CommunityPostController::class, 'store']);
+    Route::get('/api/community-posts/{communityPost}', [CommunityPostController::class, 'show']);
 });
 
 // //For Roles Routes

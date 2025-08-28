@@ -62,7 +62,7 @@ const redirectToApple = () => {
 
 const joinNowUrl = computed(() => {
   if (user) {
-    if (usePage().props.auth.profile_incomplete) {
+    if (usePage().props.auth.profile_incomplete && user.type === 'student') {
       return '/register/complete';
     }
     return '/dashboard';
