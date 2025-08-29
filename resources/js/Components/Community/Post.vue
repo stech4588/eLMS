@@ -11,6 +11,42 @@
                 </div>
                 <p>{{ post.content }}</p>
 
+                <!-- Attachments -->
+                <div v-if="post.attachments && post.attachments.length">
+                    <!-- Image Grid -->
+                    <div v-if="imageAttachments.length" class="mt-2 rounded-lg overflow-hidden h-72 w-[25rem] grid_chat_images">
+                        <div :class="gridClasses">
+                            <div v-for="(attachment, index) in displayedImages" :key="attachment.id" :class="imageContainerClasses(index)" class="bg-gray-200 dark:bg-gray-700">
+                                <img :src="attachment.file_url" alt="Post image" class="w-full h-full object-cover cursor-pointer" @click="openLightbox(index)">
+                                
+                                <div v-if="imageAttachments.length > 4 && index === 3" @click="openLightbox(3)" class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer hover:bg-opacity-60 transition-all">
+                                    <span class="text-white text-3xl font-bold">+{{ hiddenImagesCount }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File List -->
+                    <div v-if="fileAttachments.length" class="mt-2 space-y-1">
+                        <a v-for="attachment in fileAttachments" :key="attachment.id" :href="attachment.file_url" target="_blank" class="text-blue-500 hover:underline flex items-center p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>{{ attachment.file_name }}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Lightbox/Modal -->
+                <div v-if="lightboxOpen" @click="closeLightbox" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+                    <button @click.stop="closeLightbox" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300">&times;</button>
+                    <button @click.stop="prevImage" class="absolute left-4 text-white text-4xl hover:text-gray-300 p-2 rounded-full bg-black bg-opacity-20">&#8249;</button>
+                    
+                    <img :src="imageAttachments[currentImageIndex].file_url" class="max-h-full max-w-full object-contain">
+                    
+                    <button @click.stop="nextImage" class="absolute right-4 text-white text-4xl hover:text-gray-300 p-2 rounded-full bg-black bg-opacity-20">&#8250;</button>
+                </div>
+
                 <!-- Replies Section -->
                 <div class="mt-2">
                     <button
@@ -70,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, computed } from 'vue';
+import { ref, defineProps, computed, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -84,6 +120,75 @@ const newReplyContent = ref('');
 const currentPage = ref(1);
 const lastPage = ref(1);
 const loadedReplies = ref(false);
+
+const imageAttachments = computed(() => props.post.attachments?.filter(a => a.file_type === 'image') || []);
+const fileAttachments = computed(() => props.post.attachments?.filter(a => a.file_type !== 'image') || []);
+
+const displayedImages = computed(() => imageAttachments.value.slice(0, 4));
+const hiddenImagesCount = computed(() => imageAttachments.value.length - 4);
+
+const gridClasses = computed(() => {
+    const count = imageAttachments.value.length;
+    if (count === 1) return 'h-full';
+    
+    const base = 'grid h-full gap-1';
+    if (count === 2) return `${base} grid-cols-2`;
+    if (count >= 3) return `${base} grid-cols-2 grid-rows-2`;
+
+    return '';
+});
+
+const imageContainerClasses = (index) => {
+    const count = imageAttachments.value.length;
+    let classes = [];
+    if (count === 3) {
+        if (index === 0) classes.push('row-span-2');
+    }
+    if (imageAttachments.value.length > 4 && index === 3) {
+        classes.push('relative');
+    }
+    return classes.join(' ');
+};
+
+// Lightbox logic
+const lightboxOpen = ref(false);
+const currentImageIndex = ref(0);
+
+const openLightbox = (index) => {
+    currentImageIndex.value = index;
+    lightboxOpen.value = true;
+    document.body.style.overflow = 'hidden';
+};
+
+const closeLightbox = () => {
+    lightboxOpen.value = false;
+    document.body.style.overflow = '';
+};
+
+const nextImage = () => {
+    currentImageIndex.value = (currentImageIndex.value + 1) % imageAttachments.value.length;
+};
+
+const prevImage = () => {
+    currentImageIndex.value = (currentImageIndex.value - 1 + imageAttachments.value.length) % imageAttachments.value.length;
+};
+
+const handleKeydown = (e) => {
+    if (!lightboxOpen.value) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+};
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeydown);
+    document.body.style.overflow = '';
+});
+
 
 const formatTimeAgo = (date) => {
     return formatDistanceToNow(new Date(date), { addSuffix: true });

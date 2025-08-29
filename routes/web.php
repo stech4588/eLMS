@@ -61,7 +61,7 @@ Route::get('/terms-of-services', function () {
     return Inertia::render('TermsOfService');
 })->name('terms.of.services');
 
-Route::get('/community', [CommunityController::class, 'index'])
+Route::get('/CommunityChat', [CommunityController::class, 'index'])
     ->middleware(['auth', 'verified', CheckCommunityAccess::class])
     ->name('community');
 

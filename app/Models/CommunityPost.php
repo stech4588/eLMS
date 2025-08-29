@@ -25,4 +25,9 @@ class CommunityPost extends Model
     {
         return $this->belongsTo(CommunityPost::class, 'parent_id');
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(CommunityPostAttachment::class);
+    }
 }

@@ -1228,3 +1228,9 @@ body {
   padding: 2rem;
   font-family: 'Arial', sans-serif;
 }
+
+.grid_chat_images{
+  @media(max-width: 425px){
+    width: 100%;
+  }
+}
