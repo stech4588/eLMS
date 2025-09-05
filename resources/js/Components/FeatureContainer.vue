@@ -3,9 +3,9 @@
         <div class="container">
             <div class="section-header">
                 <h2>Why Choose MBM?</h2>
-                <p>
+                <!-- <p>
                     We’re the only platform that empowers both learner-centric and organization-driven outcomes through a scalable Learning Enablement Platform (LEP).
-                </p>
+                </p> -->
             </div>
 
             <div class="features-grid">

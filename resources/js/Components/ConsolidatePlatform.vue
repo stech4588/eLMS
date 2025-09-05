@@ -2,8 +2,8 @@
   <div class="fusion-fullwidth-container" id="access">
     <div class="fusion-fullwidth">
         <div class="large-p text-left px-4" style="font-size: 40px;">
-            <p>Empowering flexible learning at <span class="text-[#028cc8]">MBM University.</span><br>
-              Experience a smarter way to train and grow.</p>
+            <p>Leave the system that was created to keep you as a <span class="text-[#028cc8]">slave</span>, a <span class="text-[#028cc8]">servant</span>, and <span class="text-[#028cc8]">compliant</span> to
+               an endless loop giving your most priceless asset, your time for mediocre wages.</p>
         </div>
       <div class="fusion-builder-row">
         <div class="fusion-layout-column fusion_builder_column_1_2">
