@@ -5,8 +5,7 @@
             <div class="hero-text">
                 <h1>Welcome<br> <span>To MBM University</span></h1>
                 <p>
-                    Your gateway to quality education and professional development.
-                    Discover courses that will help you achieve your goals.
+                    Where ordinary people transform into global online entrepreneurs. 
                 </p>
                 <div class="hero-buttons">
                     <a :href="joinNowUrl" class="btn-primary">Browse Courses</a>
@@ -233,6 +232,12 @@ onMounted(() => {
     font-weight: 700;
     margin-bottom: 20px;
     text-align: left;
+}
+
+@media(min-width:1024px){
+    .hero-text{
+        width: 45rem;
+    }
 }
 
 @media(max-width:550px) {

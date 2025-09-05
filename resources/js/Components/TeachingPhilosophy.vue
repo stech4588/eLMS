@@ -7,7 +7,8 @@
           The Best Of MBM University
         </div>
         <div class="lms-lep-desc">
-          We’re the only platform that delivers both learner-focused and institution-wide outcomes for MBM University through a scalable, personalized Learning Enablement Platform.
+          Seize your destiny, conquer the online world, and turn every lesson into unstoppable income.
+          Here, ambition becomes action, and your laptop becomes a weapon of wealth.
         </div>
       </div>
     </div>
