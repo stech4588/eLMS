@@ -12,12 +12,19 @@ use Illuminate\Support\Facades\Auth; // Auth facade can be used, but $request->u
 use App\Models\Progress;
 use App\Models\User; // Needed for type hinting $user and its relationships
 use App\Models\Invoice;
-// Assuming App\Models\Course is already created/updated with necessary relationships
-// Assuming App\Models\Video is already created/updated with necessary relationships
 use Carbon\Carbon;
+use App\Services\ProgressService; // Import ProgressService
+use Illuminate\Support\Facades\Log; // Import Log
 
 class ContentController extends Controller
 {
+    protected ProgressService $progressService;
+
+    public function __construct(ProgressService $progressService)
+    {
+        $this->progressService = $progressService;
+    }
+
     /**
      * Display the content page.
      *
@@ -25,44 +32,44 @@ class ContentController extends Controller
      */
     public function index()
     {
-        // Fetch first 3 courses for "Skills you Follow" section on content page
-        $skillBasedCourses = Course::with(['courseType', 'videos' => function ($query) {
-            $query->orderBy('order', 'asc');
-        }, 'user'])
+        Log::debug('ContentController@index method called.'); // Added for debugging
+        $userId = Auth::id(); // Get user ID once if authenticated
+        Log::debug('ContentController@index: User ID: ' . ($userId ?? 'Guest'));
+
+        // Fetch courses for "Skills you Follow" section on content page
+        $skillBasedCourses = Course::with([
+                'courseType',
+                'videos' => function ($query) {
+                    $query->orderBy('order', 'asc');
+                },
+                'user'
+            ])
             ->latest()
-            
             ->get()
-            ->map(function ($course) {
+            ->map(function ($course) use ($userId) {
                 $firstVideo = $course->videos->first();
                 $firstVideoThumbnailUrl = null;
                 if ($firstVideo && $firstVideo->thumbnail_url) {
                     $firstVideoThumbnailUrl = asset($firstVideo->thumbnail_url);
                 }
 
-                $isPurchased = false;
+                $isPurchased = false; // Initialize per course
                 $progress = 0;
-                if (Auth::check()) {
-                    $userId = Auth::id();
-                    $isPurchased = Invoice::where('user_id', $userId)
+
+                if ($userId) { // Check if user is logged in
+                    $isPurchased = Invoice::where('user_id', $userId) // Use the outer $userId
                         ->where('payment_status', 'paid')
                         ->whereHas('details', function ($query) use ($course) {
                             $query->where('course_id', $course->id);
                         })
                         ->exists();
                     
-                    if ($firstVideo) {
-                        $videoProgress = Progress::where('user_id', $userId)
-                            ->where('video_id', $firstVideo->id)
-                            ->first();
+                    // Calculate overall course progress using the new service method
+                    $progress = $this->progressService->getOverallCourseProgress(Auth::user(), $course);
+                    Log::debug("ContentController@index: Course ID: {$course->id}, Calculated Progress: {$progress}% for User ID: {$userId}");
 
-                        if ($videoProgress && $firstVideo->duration > 0) {
-                            if ($videoProgress->completed) {
-                                $progress = 100;
-                            } else {
-                                $progress = ($videoProgress->watched_duration / $firstVideo->duration) * 100;
-                            }
-                        }
-                    }
+                } else {
+                    Log::debug("ContentController@index: User not logged in, progress and purchase status not calculated for Course ID: {$course->id}");
                 }
 
                 return [
@@ -119,14 +126,15 @@ class ContentController extends Controller
                 'video.course.user' => function($query){
                     $query->select('id', 'name'); // Author of the course
                 },
-                'video.course.courseType' => function($query){ // Eager load courseType for the course
+                'video.course.courseType' => function($query){
                     $query->select('id', 'name');
-                }
+                },
+                'video.course.videos' // Eager load course videos for overall progress calculation
             ])
             ->whereHas('video.course') // Ensures video and its course exist
             ->latest('last_watched_at')
             ->get()
-            ->map(function ($progressEntry) {
+            ->map(function ($progressEntry) use ($user) { 
                 if (!$progressEntry->video || !$progressEntry->video->course) {
                     return null; // Skip if essential data is missing
                 }
@@ -139,18 +147,21 @@ class ContentController extends Controller
                 $timeLeftFormatted = 'N/A';
                 $durationFormatted = 'N/A';
 
+                // Calculate overall course progress for the course associated with this video progress entry
+                $progressPercentage = $this->progressService->getOverallCourseProgress($user, $course); 
+                Log::debug("ContentController@mylibrary: Course ID: {$course->id}, Calculated Progress: {$progressPercentage}% for User ID: {$user->id}");
+
+
+                // If you still need specific video progress (e.g., for detail display), keep this block
                 if (isset($video->duration) && $video->duration > 0) {
                     $durationFormatted = $this->formatDuration($video->duration);
                     $watchedDuration = $progressEntry->watched_duration ?? 0;
-                    $progressPercentage = round(($watchedDuration / $video->duration) * 100);
                     $remainingSeconds = $video->duration - $watchedDuration;
                     if ($remainingSeconds < 0) $remainingSeconds = 0;
                     $timeLeftFormatted = $this->formatDuration($remainingSeconds) . ' left';
                 } elseif (isset($video->duration) && $video->duration === 0) {
-                    // E.g., for an article or a very short clip marked as having 0 duration
                     $durationFormatted = '0s';
-                    $progressPercentage = ($progressEntry->watched_duration > 0 || $progressEntry->completed) ? 100 : 0;
-                    $timeLeftFormatted = ($progressPercentage === 100) ? 'Completed' : '0s left';
+                    $timeLeftFormatted = '0s left';
                 }
 
                 return [
@@ -186,7 +197,8 @@ class ContentController extends Controller
             $thumbnail = '/images/skill_section_thumbnail.svg'; // Default
             if ($course->thumbnail) {
                 $thumbnail = asset($course->thumbnail); // Course's own thumbnail
-            } elseif ($course->videos->isNotEmpty() && $course->videos->first()->thumbnail_url) {
+            }
+            elseif ($course->videos->isNotEmpty() && $course->videos->first()->thumbnail_url) {
                 $thumbnail = asset($course->videos->first()->thumbnail_url); // First video's thumbnail
             }
 

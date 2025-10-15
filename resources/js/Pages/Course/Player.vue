@@ -3,16 +3,27 @@
     <Head :title="course ? `Playing: ${course.title}` : 'Course Player'" />
 
     <AuthenticatedLayout v-slot="{ isSidebarOpen, isPlayerPage }">
-        <div class="flex bg-gray-100" style="height: 100%">
+        <FeedbackPopup :show="showFeedbackPopup" :course="completedCourse" @close="closeFeedbackPopup" />
+        <NotesPopup :show="showNotesPopup" :video="notesForVideo" @close="handleCloseNotesPopup" />
+        <div class="flex h-screen bg-gray-100 dark:bg-gray-900 relative">
+            <!-- AI Chatbot -->
+            <AiChatbot :show="showChatbot" :course-context="course" @close="showChatbot = false" />
+
+            <!-- Floating AI Chat Button -->
+            <div class="fixed bottom-4 right-4 z-40">
+                <button @click="showChatbot = true" class="bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 transition">
+                    <svg xmlns="http://www.w.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                </button>
+            </div>
 
             <!-- Main Content Area -->
-            <div class="flex-1 flex flex-col ">
+            <div class="flex-1 flex flex-col overflow-y-auto no-scrollbar">
                 <!-- Video Player -->
                 <div class="bg-black flex-shrink-0 relative group">
                     <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
                         :src="currentVideo.video_url" controls controlslist="nodownload" @contextmenu.prevent
-                        autoplay @timeupdate="handleTimeUpdate" @pause="onPause"
-                        @ended="() => { handleEnded(); playNextVideo(); }" @loadedmetadata="handleLoadedMetadata"
+                        autoplay @pause="onPause"
+                        @ended="handleEnded" @loadedmetadata="handleLoadedMetadata"
                         class="w-full h-[60vh] object-contain player_video" @play="onPlay">
                         <!-- <source :src="currentVideo.video_url" type="video/mp4"> -->
                         Your browser does not support the video tag.
@@ -104,111 +115,193 @@
                 </div>
 
                 <!-- Video Details -->
-                <div class="p-6 -auto bg-white flex-1 dark:bg-dark-bg-secondary dark:text-white">
-
+                <div class="p-6 lg:p-8 bg-white dark:bg-dark-bg-secondary dark:text-white flex-1">
                     <div v-if="currentVideo">
-                        <h1 class="text-2xl font-bold mb-2 dark:text-white">{{ currentVideo.title }}</h1>
-                        <div>
-                            <div class="dark:text-white player_dark_text"
-                                style="font-size: 16px; font-weight: 600; color: #7E7E7E">
-                                Instructor
-                            </div>
-                            <div class="flex items-center mt-2" style="gap: 14px;">
-                                <img :src="course.user.profile_photo_url ? course.user.profile_photo_url : '/images/profile_photo.jpg'"
-                                    style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;" />
-                                <span class="ml-2 dark:text-white"
-                                    style="font-size: 13px; font-weight: 400; display: flex; flex-direction: column; gap: 8px;">{{
-                                        course.user.name }} <button class="text-[#2C15F5] text-xs"
-                                        style="font-size: 14px; font-weight: 400; border: 1px solid #2C15F5; border-radius: 20px; padding: 4px 19px;">+
-                                        Follow</button></span>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div style="font-size: 16px; font-weight: 600;" class="dark:text-white">
-                                Video Discription
-                                <p class="text-black-400 whitespace-pre-wrap dark:text-white"
-                                    style="font-size: 14px; line-height: 16px; font-weight: 100;">{{
-                                        currentVideo.description || 'No description available.' }}</p>
+                        <h1 class="text-3xl font-bold mb-3 dark:text-white">{{ currentVideo.title }}</h1>
+                        
+                        <!-- Instructor Section -->
+                        <div class="mt-6">
+                            <h2 class="text-xl font-semibold mb-3 dark:text-white">Instructor</h2>
+                            <div class="flex items-center">
+                                <img :src="course.user.profile_photo_url ? course.user.profile_photo_url : '/images/profile_photo.jpg'" class="w-16 h-16 rounded-full object-cover" />
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold dark:text-white">{{ course.user.name }}</h3>
+                                    <button class="mt-1 text-sm text-blue-600 dark:text-blue-400 border border-blue-600 dark:border-blue-400 rounded-full px-4 py-1 hover:bg-blue-50 dark:hover:bg-gray-700 transition">
+                                        + Follow
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mt-4">
-                            <div style="font-size: 16px; font-weight: 600; " class="dark:text-white">
-                                Course Details
-                                <div class="flex items-center mt-1 player_dark_text"
-                                    style="gap: 16px; color: #7E7E7E; font-weight: 100;">
-                                    <p>{{ course.type }}</p>
-                                    <p>Updated: {{ course.updated_at }}</p>
+                        <!-- Video Description -->
+                        <div class="mt-8 prose dark:prose-invert max-w-none">
+                            <h2 class="text-xl font-semibold mb-3 dark:text-white">Video Description</h2>
+                            <TruncatedText :text="currentVideo.description || 'No description available.'" />
+                        </div>
+
+                        <!-- Takeaway Notes - Conditional -->
+                        <div v-if="currentVideo.takeaway_notes && currentVideoSavedProgress?.completed" class="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div class="flex justify-between items-center mb-3">
+                                <h2 class="text-xl font-semibold dark:text-white">Takeaway Notes</h2>
+                            </div>
+                            <TruncatedText :text="currentVideo.takeaway_notes" />
+                        </div>
+
+                        <!-- Course Details -->
+                        <div class="mt-8">
+                            <h2 class="text-xl font-semibold mb-3 dark:text-white">Course Details</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-gray-600 dark:text-gray-300">
+                                <!-- <div class="flex items-center space-x-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span>{{ course.total_duration }}</span>
+                                </div> -->
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                                    <span>{{ course.type }}</span>
                                 </div>
-                                <div class="mt-2">Course Description
-                                    <p class="text-black-400 whitespace-pre-wrap mt-1"
-                                        style="font-size: 14px; font-weight: 100;">{{
-                                            course.description || 'No description available.' }}</p>
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span>Updated: {{ course.updated_at }}</span>
                                 </div>
-                                <div class="mt-2">Course Additional Description
-                                    <p class="text-black-400 whitespace-pre-wrap mt-1"
-                                        style="font-size: 14px; line-height: 16px; font-weight: 100;">{{
-                                            course.additional_description || 'No additional description available.' }}</p>
+                                <div v-if="course.reviews_count > 0" class="flex items-center space-x-2">
+                                    <span class="font-bold text-lg text-gray-800 dark:text-white">{{ course.average_rating }}</span>
+                                    <StarRating :rating="course.average_rating" />
+                                    <span>({{ course.reviews_count.toLocaleString() }} ratings)</span>
                                 </div>
-                                <div class="mt-2">Course Recommendations
-                                    <p class="text-black-400 whitespace-pre-wrap mt-1"
-                                        style="font-size: 14px; line-height: 16px; font-weight: 100;">{{
-                                            course.recommendations || 'No recommendations available.' }}</p>
+                                <p v-else class="text-sm">No ratings yet.</p>
+                            </div>
+
+                            <div class="mt-6 prose dark:prose-invert max-w-none">
+                                <h3 class="font-semibold">Course Description</h3>
+                                <TruncatedText :text="course.description || 'No description available.'" />
+                                <h3 class="font-semibold mt-4">Additional Information</h3>
+                                <TruncatedText :text="course.additional_description || 'No additional description available.'" />
+                                <h3 class="font-semibold mt-4">Recommendations</h3>
+                                <TruncatedText :text="course.recommendations || 'No recommendations available.'" />
+                            </div>
+                        </div>
+
+                        <!-- Related Courses -->
+                        <div class="mt-8">
+                            <h3 class="text-xl font-semibold mb-4 dark:text-white">Related Courses</h3>
+                            <div v-if="isLoadingRelatedCourses">
+                                <p class="text-gray-500 dark:text-gray-400">Loading related courses...</p>
+                            </div>
+                            <div v-else-if="relatedCourses.length > 0" class="space-y-4">
+                                <div v-for="relatedCourse in relatedCourses" :key="relatedCourse.id"
+                                    class="flex items-center space-x-4 border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0 last:pb-0">
+
+                                    <!-- Thumbnail -->
+                                    <Link :href="route('courses.show', { course: relatedCourse.id })"
+                                        class="flex-shrink-0 relative w-40 h-24">
+                                    <img :src="relatedCourse.thumbnail_url ? relatedCourse.thumbnail_url : '/images/default_course_thumbnail.jpg'"
+                                        alt="Course Thumbnail" class="w-full h-full object-cover rounded-lg">
+                                    <div v-if="relatedCourse.total_duration"
+                                        class="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                                        {{ relatedCourse.total_duration }}
+                                    </div>
+                                    <div v-if="relatedCourse.is_popular"
+                                        class="absolute top-1 left-1 bg-white text-gray-800 text-xs font-semibold px-2 py-1 rounded shadow">
+                                        Popular
+                                    </div>
+                                    </Link>
+
+                                    <!-- Course Info -->
+                                    <div class="flex-grow">
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Course</p>
+                                        <Link :href="route('courses.show', { course: relatedCourse.id })"
+                                            class="hover:text-blue-500 dark:hover:text-blue-400">
+                                        <h4 class="text-lg font-semibold truncate dark:text-white">{{ relatedCourse.title
+                                        }}</h4>
+                                        </Link>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{
+                                            relatedCourse.learners_count }} learners</p>
+                                    </div>
+
+                                    <!-- Bookmark Icon -->
+                                    <div class="flex-shrink-0">
+                                        <button @click.prevent="toggleFavorite(relatedCourse)" class="p-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                                                :class="relatedCourse.is_favorited ? 'text-blue-500 fill-current' : 'text-gray-400'"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
+                            </div>
+                            <div v-else>
+                                <p class="text-gray-500 dark:text-gray-400">No related courses found.</p>
                             </div>
                         </div>
 
                         <!-- Comments Section -->
                         <div class="mt-8">
-                            <h3 class="text-xl font-semibold mb-4">Comments ({{ totalCommentsCount }})</h3>
-                            <!-- Display existing comments -->
-                            <div v-if="displayedComments.length > 0" class="space-y-4 mb-6">
-                                <div v-for="comment in displayedComments" :key="comment.id"
-                                    class="p-4 bg-gray-50 border border-[#7E7E7E] dark:bg-dark-bg-secondary dark:text-white">
-                                    <div class="flex items-center mb-2 dark:bg-dark-bg-secondary">
-                                        <img :src="comment.user.profile_photo_url ? comment.user.profile_photo_url : '/images/profile_photo.jpg'"
-                                            alt="User avatar" class="w-8 h-8 rounded-full mr-3"
-                                            style="object-fit: cover;" />
-                                        <span class="dark:text-white" style="font-size: 13px; font-weight: 400; ">{{
-                                            comment.user.name }}</span>
-                                        <span class="text-xs text-gray-500 ml-auto dark:text-white"
-                                            style="font-size: 12px; font-weight: 400;">{{ new
-                                            Date(comment.created_at).toLocaleString() }}</span>
+                            <h2 class="text-2xl font-semibold mb-4 dark:text-white">Comments ({{ totalCommentsCount }})</h2>
+
+                            <!-- New comment form -->
+                            <div class="flex items-start space-x-4 mb-8">
+                                <img :src="authUser && authUser.profile_photo_url ? authUser.profile_photo_url : '/images/profile_photo.jpg'"
+                                    alt="Your avatar" class="w-10 h-10 rounded-full object-cover">
+                                <div class="flex-1 relative">
+                                    <textarea v-model="newComment" rows="1" placeholder="Add a comment..."
+                                        @focus="isCommentFocused = true"
+                                        class="w-full p-3 bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-0 transition resize-none"
+                                        style="outline: none;"></textarea>
+                                    <div v-if="isCommentFocused" class="flex justify-between items-center mt-2">
+                                        <button @click="showEmojiPicker = !showEmojiPicker" class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </button>
+                                        <div class="space-x-2">
+                                            <button @click="cancelComment"
+                                                class="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                                                Cancel
+                                            </button>
+                                            <button @click="submitComment" :disabled="!newComment.trim()"
+                                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors text-sm font-semibold">
+                                                Comment
+                                            </button>
+                                        </div>
                                     </div>
-                                    <p class="text-gray-700 text-sm dark:text-white"
-                                        style="font-size: 13px; font-weight: 400;">{{ comment.body }}</p>
+                                    <div v-if="showEmojiPicker" class="absolute z-10 mt-2">
+                                        <EmojiPicker :native="true" @select="onSelectEmoji" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Display existing comments -->
+                            <div v-if="displayedComments.length > 0" class="space-y-6">
+                                <div v-for="comment in displayedComments" :key="comment.id" class="flex items-start space-x-4">
+                                    <img :src="comment.user.profile_photo_url ? comment.user.profile_photo_url : '/images/profile_photo.jpg'"
+                                        alt="User avatar" class="w-10 h-10 rounded-full object-cover" />
+                                    <div class="flex-1">
+                                        <div class="flex items-baseline space-x-2">
+                                            <span class="font-semibold dark:text-white">@{{ comment.user.name }}</span>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ new
+                                                Date(comment.created_at).toLocaleString() }}</span>
+                                        </div>
+                                        <p class="text-gray-800 dark:text-gray-300 mt-1">{{ comment.body }}</p>
+                                    </div>
                                 </div>
                             </div>
                             <div v-else-if="course.comments && course.comments.length === 0"
-                                class="text-gray-500 mb-6 player_dark_text">
-                                No comments yet. Be the first to comment!
+                                class="text-gray-500 py-8 text-center">
+                                Be the first to comment!
                             </div>
-                            <!-- Loading/placeholder can be added here if props.course.comments is initially undefined -->
 
                             <!-- Show More / Show Less Buttons -->
-                            <div class="mt-4 mb-6 dark:bg-dark-bg-secondary"
-                                style="display: flex; justify-content: center; align-items: center; ">
+                            <div class="mt-6 text-center" v-if="totalCommentsCount > COMMENTS_TO_SHOW_INCREMENT">
                                 <button v-if="hasMoreComments" @click="showMoreComments"
-                                    class="text-sm text-[#2C15F5] hover:text-[#5f4fed]"
-                                    style="font-size: 18px; font-weight: 600; ">
+                                    class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
                                     Show More Comments
-                                    <!-- ({{ totalCommentsCount - visibleCommentsCount }} remaining) -->
                                 </button>
-                                <button
-                                    v-if="!hasMoreComments && visibleCommentsCount > COMMENTS_TO_SHOW_INCREMENT && totalCommentsCount > COMMENTS_TO_SHOW_INCREMENT"
-                                    @click="showLessComments" class="text-sm hover:text-[#5f4fed] font-semibold"
-                                    style="font-size: 18px; font-weight: 600; ">
+                                <button v-else @click="showLessComments"
+                                    class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
                                     Show Less Comments
                                 </button>
-                            </div>
-
-                            <!-- New comment form -->
-                            <div>
-                                <textarea v-model="newComment" rows="3" placeholder="Add a comment..."
-                                    class="w-full p-2 border dark:bg-dark-bg-secondary border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:text-whiet"></textarea>
-                                <button @click="submitComment"
-                                    class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm">Post
-                                    Comment</button>
                             </div>
                         </div>
 
@@ -223,18 +316,25 @@
 
             <!-- Sidebar for Videos -->
             <div v-if="isPlayerPage && (isSidebarOpen || isLargeScreen)"
-                class="w-80 bg-gray-800 text-white p-4 space-y-4 overflow-y-auto flex-shrink-0 player_sidebar">
-                <h2 class="text-xl font-semibold mb-4">{{ course.title }}</h2>
-                <ul class="space-y-2">
-                    <li v-for="video in sortedVideos" :key="video.id">
-                        <button @click="selectVideo(video)"
-                            :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors',
-                                currentVideo && currentVideo.id === video.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
-                            {{ video.title }}
-                        </button>
-                    </li>
-                </ul>
-                <div class="mt-auto pt-4">
+                class="w-80 bg-gray-800 text-white flex-shrink-0 player_sidebar flex flex-col h-screen">
+                <div class="p-4 border-b border-gray-700">
+                    <h2 class="text-xl font-semibold">{{ course.title }}</h2>
+                </div>
+
+                <div class="overflow-y-auto flex-grow">
+                    <ul class="p-4 space-y-2">
+                        <li v-for="video in sortedVideos" :key="video.id">
+                            <button @click="selectVideo(video)"
+                                :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-3',
+                                    currentVideo && currentVideo.id === video.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
+                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>{{ video.title }}</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="p-4 mt-auto border-t border-gray-700">
                     <Link :href="route('courses.show', { course: course.id })"
                         class="block w-full text-center px-3 py-2 rounded-md text-sm bg-gray-600 hover:bg-gray-500 transition-colors">
                     Back to Course Details
@@ -250,6 +350,13 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import axios from 'axios'; // Import axios
+import FeedbackPopup from '@/Components/FeedbackPopup.vue';
+import EmojiPicker from 'vue3-emoji-picker';
+import 'vue3-emoji-picker/css';
+import StarRating from '@/Components/StarRating.vue';
+import AiChatbot from '@/Components/AiChatbot.vue';
+import TruncatedText from '@/Components/TruncatedText.vue';
+import NotesPopup from '@/Components/NotesPopup.vue';
 
 const page = usePage();
 page.props.meta = { ...page.props.meta, disableLoader: true };
@@ -259,17 +366,59 @@ const props = defineProps({
     initialVideoId: [String, Number, null], // Optional ID of the video to play first
 });
 
+const showFeedbackPopup = ref(false);
+const completedCourse = ref(null);
+const showChatbot = ref(false);
+const showNotesPopup = ref(false);
+const notesForVideo = ref(null);
+
+function handleCourseCompletion() {
+    completedCourse.value = props.course;
+    showFeedbackPopup.value = true;
+}
+
+function closeFeedbackPopup() {
+    showFeedbackPopup.value = false;
+    completedCourse.value = null;
+}
+
 const currentVideo = ref(null);
 const isLargeScreen = ref(window.innerWidth > 770); // Reactive variable for screen size
 const newComment = ref(''); // For the new comment textarea
+const isCommentFocused = ref(false); // For showing comment buttons
+const showEmojiPicker = ref(false); // For emoji picker visibility
 const videoPlayer = ref(null); // Ref for the video element
 const { props: pageProps } = usePage();
-const authUser = computed(() => usePage().props.value.auth.user);
+const authUser = computed(() => page.props.auth.user);
 const currentVideoSavedProgress = ref(null); // To store fetched progress
 const initialTimeApplied = ref(false); // New ref to track if initial time has been set
 const isPlaying = ref(true); // For play/pause toggle, defaults to true due to autoplay
 let lastProgressSaveTime = 0;
 const progressSaveInterval = 5000; // Save progress every 5 seconds
+
+const downloadNotes = () => {
+  if (!currentVideo.value || !currentVideo.value.takeaway_notes) {
+    return;
+  }
+
+  const notes = currentVideo.value.takeaway_notes;
+  const title = currentVideo.value.title || 'video';
+  const filename = `${title}-notes.txt`;
+
+  const element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(notes));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+};
+
+const relatedCourses = ref([]);
+const isLoadingRelatedCourses = ref(true);
 
 const progressForm = useForm({
     user_id: null,
@@ -376,15 +525,26 @@ const submitComment = () => {
         preserveScroll: true,
         onSuccess: () => {
             newComment.value = '';
+            isCommentFocused.value = false;
+            showEmojiPicker.value = false; // Hide emoji picker on success
             // Reset visible comments count if you want to show the latest comment on top
             // or adjust based on how comments are reloaded/sorted.
             // For now, we assume comments are reloaded and sorted, so new ones appear.
-            // If not, you might need Inertia.reload or manual update of props.course.comments
         },
         onError: (errors) => {
             console.error('Error posting comment:', errors);
         }
     });
+};
+
+const cancelComment = () => {
+    newComment.value = '';
+    isCommentFocused.value = false;
+    showEmojiPicker.value = false;
+};
+
+const onSelectEmoji = (emoji) => {
+    newComment.value += emoji.i;
 };
 
 const displayedComments = computed(() => {
@@ -408,6 +568,35 @@ const showMoreComments = () => {
 
 const showLessComments = () => {
     visibleCommentsCount.value = COMMENTS_TO_SHOW_INCREMENT;
+};
+
+const toggleFavorite = (course) => {
+    // Optimistically update UI
+    course.is_favorited = !course.is_favorited;
+
+    router.post(route('courses.toggleFavorite', { course: course.id }), {}, {
+        preserveScroll: true,
+        onError: () => {
+            // Revert optimistic update on error
+            course.is_favorited = !course.is_favorited;
+            // Optionally show an error message
+        }
+    });
+};
+
+const fetchRelatedCourses = async () => {
+    if (!props.course) return;
+    isLoadingRelatedCourses.value = true;
+    try {
+        // Assuming you have a route like 'courses.related' that takes a course ID
+        const response = await axios.get(route('courses.related', { course: props.course.id }));
+        relatedCourses.value = response.data;
+    } catch (error) {
+        console.error('Error fetching related courses:', error);
+        relatedCourses.value = []; // Ensure it's an array on error
+    } finally {
+        isLoadingRelatedCourses.value = false;
+    }
 };
 
 const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) => {
@@ -456,10 +645,14 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
         console.log('Saving progress (background - axios) with data:', payload);
         axios.post(route('progress.storeUserVideoProgress'), payload, {
             headers: {
-                'Accept': 'application/json',
-            }
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
         })
             .then(response => {
+                if (response.data.course_completed) {
+                    handleCourseCompletion();
+                }
                 // console.log('Background progress saved successfully', response.data);
                 lastProgressSaveTime = Date.now(); // Still update this for throttling
             })
@@ -482,36 +675,56 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
             onError: (errors) => {
                 console.error('Error saving progress (Inertia form):', errors);
             },
-            onSuccess: () => {
+            onSuccess: async () => {
                 lastProgressSaveTime = Date.now();
+                
+                // Optimistically update completion status on successful save
+                if (payload.completed) {
+                    if (currentVideoSavedProgress.value) {
+                        currentVideoSavedProgress.value.completed = true;
+                    } else {
+                        // If no progress existed before, create a stub
+                        currentVideoSavedProgress.value = { completed: true };
+                    }
+                }
+
+                // After the final save is successful, directly ask the server if the course is complete.
+                try {
+                    const response = await axios.get(route('courses.completionStatus', { course: props.course.id }));
+                    if (response.data.is_completed) {
+                        handleCourseCompletion();
+                    }
+                } catch (error) {
+                    console.error('Error checking course completion status:', error);
+                }
             }
         });
     }
 };
 
-const handleTimeUpdate = () => {
-    if (!videoPlayer.value || !currentVideo.value) return;
-    const now = Date.now();
-    if (now - lastProgressSaveTime > progressSaveInterval) {
-        if (!videoPlayer.value.paused && videoPlayer.value.duration > 0) {
-            console.log("handleTimeUpdate: Interval reached, attempting background save.");
-            saveProgress(false, true); // Call with isBackgroundSave = true
-        }
-    }
-};
-
-const handlePause = () => {
-    if (videoPlayer.value && videoPlayer.value.readyState >= 2 && !videoPlayer.value.ended && videoPlayer.value.duration > 0) {
-        console.log("handlePause: Video paused, attempting foreground save.");
-        saveProgress(false, false); // Explicitly false, or rely on default
-    }
-};
+// const handlePause = () => {
+//     if (videoPlayer.value && videoPlayer.value.readyState >= 2 && !videoPlayer.value.ended && videoPlayer.value.duration > 0) {
+//         console.log("handlePause: Video paused, attempting foreground save.");
+//         saveProgress(false, false); // Explicitly false, or rely on default
+//     }
+// };
 
 const handleEnded = () => {
     console.log('Video ended (handleEnded triggered). Attempting foreground save as complete.');
     saveProgress(true, false); // Mark as completed, foreground save
-    // playNextVideo(); // playNextVideo is already bound to @ended on the video element directly in the template for now
-    // If we keep it here, we might remove the direct binding. For now, let playNextVideo be handled by its direct binding.
+
+    if (currentVideo.value && currentVideo.value.takeaway_notes) {
+        notesForVideo.value = currentVideo.value;
+        showNotesPopup.value = true;
+    } else {
+        playNextVideo();
+    }
+};
+
+const handleCloseNotesPopup = () => {
+    showNotesPopup.value = false;
+    notesForVideo.value = null;
+    playNextVideo();
 };
 
 const fetchVideoProgress = async (videoId) => {
@@ -615,7 +828,7 @@ const onPause = () => {
 };
 
 // Add router event listeners to prevent loader
-onMounted(() => {
+onMounted(async () => {
     router.on('start', () => {
         page.props.meta = { ...page.props.meta, disableLoader: true };
     });
@@ -627,15 +840,23 @@ onMounted(() => {
     updateScreenSize();
 
     let videoToPlayInitially = null;
-    if (props.initialVideoId && sortedVideos.value.length > 0) {
-        videoToPlayInitially = sortedVideos.value.find(v => v.id == props.initialVideoId);
-        if (!videoToPlayInitially && sortedVideos.value.length > 0) {
-            videoToPlayInitially = sortedVideos.value[0]; // Fallback to first video if initialVideoId is invalid
-        }
-    } else if (sortedVideos.value.length > 0) {
-        videoToPlayInitially = sortedVideos.value[0]; // Play the first video if no initialVideoId is provided
-    }
+    try {
+        const response = await axios.get(route('progress.getCourseProgress', { course: props.course.id }));
+        const courseProgress = response.data;
+        const completedVideoIds = new Set(courseProgress.filter(p => p.completed).map(p => p.video_id));
+        
+        // Find the first video that is not in the completed set
+        videoToPlayInitially = sortedVideos.value.find(video => !completedVideoIds.has(video.id));
 
+    } catch (error) {
+        console.error("Could not fetch course progress, defaulting to first video.", error);
+    }
+    
+    // Fallback to the first video if no uncompleted video is found or if there was an error
+    if (!videoToPlayInitially && sortedVideos.value.length > 0) {
+        videoToPlayInitially = sortedVideos.value[0];
+    }
+    
     if (videoToPlayInitially) {
         // Select video without triggering its own progress save for outgoing video (as there isn't one yet)
         currentVideo.value = videoToPlayInitially; // Directly set currentVideo
@@ -643,10 +864,17 @@ onMounted(() => {
         currentVideoSavedProgress.value = null;
         initialTimeApplied.value = false; // Reset flag for initial video
         fetchVideoProgress(videoToPlayInitially.id); // Fetch progress for the initial video
-        console.log("onMounted: Initial video selected:", videoToPlayInitially.id);
-    } else {
-        console.log("onMounted: No initial video to play.");
     }
+    fetchRelatedCourses();
+
+    // Hide Tawk.to widget on this page
+    const tawkInterval = setInterval(() => {
+        if (window.Tawk_API && typeof window.Tawk_API.hideWidget === 'function') {
+            window.Tawk_API.hideWidget();
+            clearInterval(tawkInterval);
+        }
+    }, 100);
+    setTimeout(() => clearInterval(tawkInterval), 1000); // Failsafe to stop polling
 });
 
 watch(() => props.initialVideoId, (newId) => {
@@ -664,25 +892,14 @@ watch(() => props.initialVideoId, (newId) => {
     }
 });
 
-watch(currentVideo, (newVideo, oldVideo) => {
-    if (oldVideo && videoPlayer.value) {
-        // Save progress for the old video if it was playing and had progress
-        // This is somewhat covered by selectVideo, but good for robustness if video changes externally
-        if (!videoPlayer.value.paused && videoPlayer.value.currentTime > 0) {
-            saveProgress(videoPlayer.value.currentTime >= videoPlayer.value.duration - 2);
-        }
-    }
-    if (newVideo && videoPlayer.value) {
-        // If we need to load initial progress for newVideo, this is where it would go.
-        // For now, we just reset the save timer.
-        lastProgressSaveTime = 0;
-    }
-    // Reset visible comments when video changes
-    visibleCommentsCount.value = COMMENTS_TO_SHOW_INCREMENT;
-});
-
 onUnmounted(() => {
     window.removeEventListener('resize', updateScreenSize);
+
+    // Show Tawk.to widget when leaving the page
+    if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
+        window.Tawk_API.showWidget();
+    }
+    
     console.warn('[[PLAYER UNMOUNTING]]: Attempting to save final progress (foreground save).', {
         hasPlayer: !!videoPlayer.value,
         hasCurrentVideo: !!currentVideo.value,
@@ -766,4 +983,14 @@ const updateScreenSize = () => {
 }
 
 /* Ensure video player does not exceed viewport height, adjust h-[60vh] as needed */
+
+/* Custom scrollbar hiding utility */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
 </style>

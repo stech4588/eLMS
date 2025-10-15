@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
 import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
+import PromotionPopup from '@/Components/PromotionPopup.vue';
 import { Link, usePage, router, Head } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
 import axios from 'axios';
@@ -252,6 +253,7 @@ onMounted(() => {
                 </main>
             </div>
         </div>
+        <PromotionPopup v-if="user && (user.role_id === 2 || user.role_id === 3)" />
     </div>
 </template>
 

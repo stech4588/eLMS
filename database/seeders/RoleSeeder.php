@@ -48,7 +48,7 @@ class RoleSeeder extends Seeder
         return [
             [
                 'title' => 'Super Admin',
-                'permission_id' => [1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 18, 22], // User Listing, Instructor Listing, Pricing, Course Management, Meta Tags, My Courses, Add New Courses, Community Settings
+                'permission_id' => [1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 18, 22, 23], // User Listing, Instructor Listing, Pricing, Course Management, Meta Tags, My Courses, Add New Courses, Community Settings, Marketing
             ],
             [
                 'title' => 'Admin', // Instructor

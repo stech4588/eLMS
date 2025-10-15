@@ -9,6 +9,7 @@
                 <Link v-if="hasPermission('coursemanagement')" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> <img class="sidebar_dark_icon" src="/images/course.svg" alt="users"  />Course Management</Link>
                 <Link v-if="hasPermission('metatagsUpdate')" class="sidebar_subtitles" :class="{ 'active': page.url === '/metatags' }" href="/metatags"> <img class="sidebar_dark_icon" src="/images/meta.svg" alt="users"  />Meta Tags</Link>
                 <Link v-if="hasPermission('communitySettingsView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/communitysettings' }" :href="route('communitysettings')"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> Community Settings</Link>
+                <Link v-if="hasPermission('marketingmanagement')" class="sidebar_subtitles" :class="{ 'active': page.url === '/admin/marketing' }" :href="route('admin.marketing.index')"><img class="sidebar_dark_icon" src="/images/meta.svg" alt="Quotes"  />Marketing</Link>
 
                 <!-- Student Links -->
                 <Link v-if="hasPermission('dashboardView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon" src="/images/home_icon.svg" alt="Logo"  /> Home</Link>

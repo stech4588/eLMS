@@ -166,6 +166,11 @@ class PermissionSeeder extends Seeder
                 'description' => 'This will allow to view community settings',
                 'category' => 'community',
             ],
+            [
+                'name' => 'marketingmanagement',
+                'description' => 'This will allow to view the marketing management',
+                'category' => 'marketing',
+            ],
        ];
  }
 }

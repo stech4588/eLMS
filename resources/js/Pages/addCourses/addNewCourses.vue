@@ -347,6 +347,23 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-6" style="border: 1px solid grey; border-radius: 15px; padding: 5px;">
+                                        <label for="takeaway_notes" class="block mb-2 font-medium flex add_course_dark_text" style="gap: 10px; color: #7E7E7E;">Takeaway Notes</label>
+                                        <textarea
+                                            id="takeaway_notes"
+                                            v-model="currentVideoFormPart2.takeaway_notes"
+                                            rows="5"
+                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary dark:text-white"
+                                            placeholder="Enter takeaway notes for this video"
+                                            style="outline: none !important;
+                                                box-shadow: none !important;
+                                                border: none !important;  border-radius: 15px; padding: 20px;"
+                                        ></textarea>
+                                        <div class="flex justify-end mt-1 text-sm text-gray-500">
+                                            <span v-if="currentVideoFormPart2.takeaway_notes">{{ currentVideoFormPart2.takeaway_notes.length }}/5000</span>
+                                        </div>
+                                    </div>
+
                                    <div class="relative">
                                         <label for="thumbnail" class="block mb-2 font-medium flex add_course_dark_text" style=" color: black; font-size: 16px; font-weight: 600;">Thumbnail </label>
                                         <input
@@ -608,6 +625,7 @@ const currentEditingVideoIndex = ref(-1);
 const currentVideoFormPart2 = reactive({
     title: '',
     description: '',
+    takeaway_notes: '',
     playlist: '',
     visibility: 'private', // Added visibility here as it was used in saveCurrentVideoDetails
 });
@@ -646,6 +664,7 @@ const saveCurrentVideoDetails = () => {
     if (currentEditingVideoIndex.value >= 0 && videosData.value[currentEditingVideoIndex.value]) {
         videosData.value[currentEditingVideoIndex.value].title = currentVideoFormPart2.title;
         videosData.value[currentEditingVideoIndex.value].description = currentVideoFormPart2.description;
+        videosData.value[currentEditingVideoIndex.value].takeaway_notes = currentVideoFormPart2.takeaway_notes;
         videosData.value[currentEditingVideoIndex.value].playlist = currentVideoFormPart2.playlist;
         videosData.value[currentEditingVideoIndex.value].visibility = currentVideoFormPart2.visibility;
     }
@@ -656,6 +675,7 @@ const populateVideoDetailsForm = (index) => {
         const video = videosData.value[index];
         currentVideoFormPart2.title = video.title || '';
         currentVideoFormPart2.description = video.description || '';
+        currentVideoFormPart2.takeaway_notes = video.takeaway_notes || '';
         currentVideoFormPart2.playlist = video.playlist || '';
         currentVideoFormPart2.visibility = video.visibility || 'private';
 
@@ -664,6 +684,7 @@ const populateVideoDetailsForm = (index) => {
     } else {
         currentVideoFormPart2.title = '';
         currentVideoFormPart2.description = '';
+        currentVideoFormPart2.takeaway_notes = '';
         currentVideoFormPart2.playlist = '';
         currentVideoFormPart2.visibility = 'private'; // Reset visibility
         activeVideoPreviewForRightPanel.value = null;
@@ -687,6 +708,7 @@ const addNewVideoSlot = () => {
         videoFilePreview: null,
         title: '',
         description: '',
+        takeaway_notes: '',
         thumbnailFile: null,
         thumbnailFilePreview: null,
         playlist: '',
@@ -950,6 +972,7 @@ const submitForm = async () => {
         videosData.value.forEach((video, index) => {
             formData.append(`videos[${index}][title]`, video.title || '');
             formData.append(`videos[${index}][description]`, video.description || '');
+            formData.append(`videos[${index}][takeaway_notes]`, video.takeaway_notes || '');
             if (video.videoFile instanceof File) {
                 formData.append(`videos[${index}][videoFile]`, video.videoFile);
             }

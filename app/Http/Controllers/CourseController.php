@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\File; // Import File facade for directory creatio
 use App\Models\Course;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
+use App\Events\CourseViewed; // Import the CourseViewed event
+use App\Models\Review;
+use App\Models\Progress;
 
 class CourseController extends Controller
 {
@@ -108,6 +111,7 @@ class CourseController extends Controller
             'videos' => 'present|array',
             'videos.*.title' => 'required_with:videos|string|max:255',
             'videos.*.description' => 'required_with:videos|string',
+            'videos.*.takeaway_notes' => 'nullable|string',
             'videos.*.videoFile' => 'required_with:videos|file|mimes:mp4,mov,ogg,qt|max:100000',
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.order' => 'required_with:videos|integer',
@@ -169,6 +173,7 @@ class CourseController extends Controller
                         'course_id' => $course->id,
                         'title' => $videoDataInput['title'],
                         'description' => $videoDataInput['description'],
+                        'takeaway_notes' => $videoDataInput['takeaway_notes'] ?? null,
                         'video_url' => $videoPath,
                         'thumbnail_url' => $thumbnailPath,
                         'order' => $videoDataInput['order'],
@@ -213,6 +218,7 @@ class CourseController extends Controller
         // Prepare the data for the view
         $courseData = [
             'id' => $course->id,
+            'user_id' => $course->user_id, // Add the author's ID
             'title' => $course->title,
             'price' => $course->price,
             'description' => $course->description, // Assuming you have a description field
@@ -245,6 +251,24 @@ class CourseController extends Controller
         ]);
     }
 
+    public function showFeedback(Course $course)
+    {
+        // Authorization: Ensure the logged-in user is the author of the course.
+        if (auth()->id() !== $course->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $reviews = Review::where('course_id', $course->id)
+                         ->with('user') // Eager load the user who made the review
+                         ->orderBy('id', 'desc') // Order by ID descending
+                         ->paginate(10);
+
+        return Inertia::render('Course/Feedback', [
+            'course' => $course,
+            'reviews' => $reviews,
+        ]);
+    }
+
     public function update(CourseRequest $request, int $id): RedirectResponse
     {
         $course = $this->courseService->update($id, $request->validated());
@@ -261,6 +285,11 @@ class CourseController extends Controller
 
     public function play(Request $request, Course $course, $videoId = null)
     {
+        // Dispatch the CourseViewed event
+        if (Auth::check()) {
+            event(new CourseViewed(Auth::user(), $course));
+        }
+
         $course->load([
             'videos' => function ($query) {
                 $query->orderBy('order', 'asc');
@@ -269,14 +298,34 @@ class CourseController extends Controller
                 $query->with('user')->latest(); // Eager load user for comments and order by latest
             },
             'user', // Eager load the course instructor/user
-            'courseType' // Eager load courseType if not already loaded or needed directly
+            'courseType', // Eager load courseType if not already loaded or needed directly
+            'reviews' // Eager load reviews for rating calculation
         ]);
+
+        // Calculate average rating and reviews count
+        $reviews = $course->reviews;
+        $average_rating = $reviews->isNotEmpty() ? $reviews->avg('rating') : 0;
+        $reviews_count = $reviews->count();
+
+        // Calculate total course duration
+        $totalDurationSeconds = $course->videos->sum('duration');
+        $hours = floor($totalDurationSeconds / 3600);
+        $minutes = round(($totalDurationSeconds % 3600) / 60);
+        $formattedDuration = [];
+        if ($hours > 0) {
+            $formattedDuration[] = "{$hours}h";
+        }
+        if ($minutes > 0) {
+            $formattedDuration[] = "{$minutes}m";
+        }
+        $total_duration = implode(' ', $formattedDuration);
 
         $videosData = $course->videos->map(function ($video) {
             return [
                 'id' => $video->id,
                 'title' => $video->title,
                 'description' => $video->description, // Ensure Video model has description
+                'takeaway_notes' => $video->takeaway_notes,
                 'video_url' => $video->video_url ? asset($video->video_url) : null,
                 'order' => $video->order,
                 // Add other video properties if needed
@@ -293,6 +342,9 @@ class CourseController extends Controller
             'recommendations' => $course->recomendations,
             'topic_name' => $course->topic ? $course->topic->name : 'N/A', // Get name from relationship
             'user' => $course->user, // user is already loaded via $course->load('user')
+            'average_rating' => round($average_rating, 1),
+            'reviews_count' => $reviews_count,
+            'total_duration' => $total_duration,
             // 'profile_picture' => $course->user->profile_picture, // This can be accessed via course.user.profile_picture in Vue
             'comments' => $course->comments->map(function ($comment) { // Map comments to include necessary data
                 return [
@@ -358,5 +410,61 @@ class CourseController extends Controller
         return Inertia::render('Courses/myCourses', [
             'courses' => $coursesData,
         ]);
+    }
+
+    public function related(Course $course)
+    {
+        if (!$course->topic_id) {
+            return response()->json([]);
+        }
+
+        $relatedCourses = Course::where('topic_id', $course->topic_id)
+            ->where('id', '!=', $course->id)
+            ->with(['user', 'videos'])
+            ->addSelect(['learners_count' => Progress::selectRaw('count(distinct user_id)')
+                ->join('videos', 'videos.id', '=', 'progress.video_id')
+                ->whereColumn('videos.course_id', 'courses.id')
+            ])
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $formattedCourses = $relatedCourses->map(function ($relatedCourse) {
+            $thumbnail_url = $relatedCourse->thumbnail ? asset($relatedCourse->thumbnail) : null;
+            if (!$thumbnail_url && $relatedCourse->videos->isNotEmpty() && $relatedCourse->videos->first()->thumbnail_url) {
+                $thumbnail_url = asset($relatedCourse->videos->first()->thumbnail_url);
+            }
+
+            $totalDurationSeconds = $relatedCourse->videos->sum('duration');
+            $hours = floor($totalDurationSeconds / 3600);
+            $minutes = round(($totalDurationSeconds % 3600) / 60);
+
+            if ($hours == 0 && $minutes == 0 && $totalDurationSeconds > 0) {
+                $minutes = 1;
+            }
+
+            $formattedDuration = [];
+            if ($hours > 0) {
+                $formattedDuration[] = "{$hours}h";
+            }
+            if ($minutes > 0) {
+                $formattedDuration[] = "{$minutes}m";
+            }
+
+            return [
+                'id' => $relatedCourse->id,
+                'title' => $relatedCourse->title,
+                'user' => [
+                    'name' => $relatedCourse->user->name,
+                ],
+                'thumbnail_url' => $thumbnail_url,
+                'total_duration' => implode(' ', $formattedDuration),
+                'learners_count' => number_format($relatedCourse->learners_count),
+                'is_popular' => $relatedCourse->learners_count > 2,
+                'is_favorited' => $relatedCourse->is_favorited, // Relies on the is_favorited accessor
+            ];
+        });
+
+        return response()->json($formattedCourses);
     }
 }

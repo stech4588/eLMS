@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Course extends Model
 {
@@ -89,6 +90,22 @@ class Course extends Model
     }
 
     /**
+     * Get the progress records for the course through its videos.
+     */
+    public function progresses(): HasManyThrough
+    {
+        return $this->hasManyThrough(Progress::class, Video::class);
+    }
+
+    /**
+     * Get the reviews for the course.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
      * Get the course favorites records.
      */
     public function favorites(): HasMany
@@ -115,5 +132,13 @@ class Course extends Model
             return false;
         }
         return $this->favorites()->where('user_id', Auth::id())->exists();
+    }
+
+    /**
+     * Get the progress records for the course through its videos.
+     */
+    public function progress(): HasMany
+    {
+        return $this->hasMany(Progress::class);
     }
 }

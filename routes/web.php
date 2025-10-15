@@ -43,15 +43,13 @@ use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CommunityPostController;
 use App\Http\Controllers\Admin\CommunitySettingsController;
 use App\Http\Middleware\CheckCommunityAccess;
+use App\Http\Controllers\Admin\QuoteController;
+use App\Http\Controllers\Admin\PromotionController;
+use App\Models\Review;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\AiChatController;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [WelcomeController::class, 'index']);
 
 Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
@@ -180,6 +178,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/progresses/storeUserVideoProgress', [ProgressController::class, 'storeUserVideoProgress'])
     ->name('progress.storeUserVideoProgress');
     Route::get('/video-progress/{video}', [ProgressController::class, 'getUserVideoProgress'])->name('progress.getUserVideoProgress');
+    Route::get('/course-progress/{course}', [ProgressController::class, 'getCourseProgress'])->name('progress.getCourseProgress');
+    Route::get('/course/{course}/completion-status', [ProgressController::class, 'getCompletionStatus'])->name('courses.completionStatus');
 
     Route::get('/admin/instructors', [InstructorController::class, 'index'])->name('admin.instructors.index');
     Route::get('/admin/instructors/{user}', [InstructorController::class, 'show'])->name('admin.instructors.show');
@@ -194,10 +194,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/register/complete', [RegisteredUserController::class, 'create'])->name('register.complete');
     Route::resource('admin/pricings', \App\Http\Controllers\Admin\PricingController::class);
 
+    // Marketing Management Routes (explicitly defined for clarity and to resolve issues)
+    Route::get('/admin/marketing', [App\Http\Controllers\Admin\MarketingController::class, 'showMarketingPage'])->name('admin.marketing.index');
+    
+    Route::post('/admin/marketing', [App\Http\Controllers\Admin\MarketingController::class, 'storeQuote'])->name('admin.marketing.store');
+    Route::put('/admin/marketing/{quote}', [App\Http\Controllers\Admin\MarketingController::class, 'updateQuote'])->name('admin.marketing.update');
+    Route::delete('/admin/marketing/{quote}', [App\Http\Controllers\Admin\MarketingController::class, 'destroyQuote'])->name('admin.marketing.destroy');
+    Route::put('/admin/marketing/{quote}/toggle-status', [App\Http\Controllers\Admin\MarketingController::class, 'toggleQuoteStatus'])->name('admin.marketing.toggleStatus');
+
+    // Promotion Routes (explicitly defined)
+    Route::post('/admin/promotions', [App\Http\Controllers\Admin\MarketingController::class, 'storePromotion'])->name('admin.promotions.store');
+    Route::put('/admin/promotions/{promotion}', [App\Http\Controllers\Admin\MarketingController::class, 'updatePromotion'])->name('admin.promotions.update'); // Use POST with _method for PUT
+    Route::delete('/admin/promotions/{promotion}', [App\Http\Controllers\Admin\MarketingController::class, 'destroyPromotion'])->name('admin.promotions.destroy');
+    Route::put('/admin/promotions/{promotion}/toggle-status', [App\Http\Controllers\Admin\MarketingController::class, 'togglePromotionStatus'])->name('admin.promotions.toggleStatus');
+
+    Route::get('/promotions/random-active', [App\Http\Controllers\Admin\MarketingController::class, 'getRandomActivePromotion'])->name('promotions.randomActive');
+
     // Community post routes
     Route::get('/api/community-posts', [CommunityPostController::class, 'index']);
     Route::post('/api/community-posts', [CommunityPostController::class, 'store']);
     Route::get('/api/community-posts/{communityPost}', [CommunityPostController::class, 'show']);
+
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    // AI Chatbot route
+    Route::post('/ai/chat', [AiChatController::class, 'chat'])->name('ai.chat');
 });
 
 // //For Roles Routes
@@ -221,9 +242,15 @@ Route::apiResource('certificates', CertificateController::class);
 Route::get('/courses/{course}', [CourseController::class, 'show'])
     ->middleware(['auth', 'verified'])->name('courses.show');
 
+Route::get('/courses/{course}/feedback', [CourseController::class, 'showFeedback'])
+    ->middleware(['auth', 'verified'])->name('courses.feedback');
+
 // Add this route for the course player page
 Route::get('/courses/{course}/play/{video?}', [CourseController::class, 'play'])
     ->middleware(['auth', 'verified'])->name('courses.play');
+
+Route::get('/courses/{course}/related', [CourseController::class, 'related'])->name('courses.related');
+
     Route::get('/fetch-intent/{amount}', [StripeController::class, 'fetchIntent']);
     //Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
 // Route for toggling course favorite status

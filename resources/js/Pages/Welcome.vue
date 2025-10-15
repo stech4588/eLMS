@@ -402,7 +402,7 @@ function handleImageError() {
     <!-- <Testimonials /> -->
     
     <Professors />
-    <Reviews />
+    <Reviews :reviews="reviews"/>
     <!-- <Results /> -->
     <BuildYourFuture />
     <FrequentQuestions />
@@ -433,6 +433,9 @@ function handleImageError() {
   
   export default {
     name: 'App',
+    props: {
+      reviews: Array,
+    },
     components: {
       FooterContainer,
     //   MainHeroSection,
