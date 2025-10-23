@@ -171,6 +171,16 @@ class PermissionSeeder extends Seeder
                 'description' => 'This will allow to view the marketing management',
                 'category' => 'marketing',
             ],
+            [
+                'name' => 'emailSettingsManage',
+                'description' => 'This will allow a user to manage their email notification settings.',
+                'category' => 'settings',
+            ],
+            [
+                'name' => 'jobPost',
+                'description' => 'This will allow users to post new jobs.',
+                'category' => 'jobs',
+            ],
        ];
  }
 }

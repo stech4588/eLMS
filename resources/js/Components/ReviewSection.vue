@@ -23,7 +23,7 @@
             </div>
             <div class="review-col-2">
               <div class="review-col-2-1">
-                <p>{{ review.comment }}</p>
+                <p>{{ truncateComment(review.comment) }}</p>
               </div>
               
             </div>
@@ -88,6 +88,14 @@ export default {
           } else {
               router.get('/joinnow');
           }
+      },
+      truncateComment(comment) {
+          if (!comment) return '';
+          const words = comment.split(' ');
+          if (words.length > 12) {
+              return words.slice(0, 12).join(' ') + '...';
+          }
+          return comment;
       },
   }
 };

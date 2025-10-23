@@ -36,7 +36,7 @@ class SendDailyMotivationalQuote extends Command
             return Command::SUCCESS;
         }
 
-        $users = User::where('role_id', 3)->get(); // Assuming role_id 3 is for students
+        $users = User::where('role_id', 3)->with('emailNotificationSetting')->get(); // Assuming role_id 3 is for students
 
         if ($users->isEmpty()) {
             $this->info('No student users found to send motivational quotes to.');
@@ -44,7 +44,9 @@ class SendDailyMotivationalQuote extends Command
         }
 
         foreach ($users as $user) {
-            Mail::to($user->email)->send(new MotivationalQuoteMail($quotes));
+            if ($user->emailNotificationSetting->receives_motivational_quote_emails) {
+                Mail::to($user->email)->send(new MotivationalQuoteMail($quotes));
+            }
         }
 
         $this->info('All active motivational quotes sent successfully to all student users.');

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use App\Models\Quiz;
 
 class Course extends Model
 {
@@ -140,5 +141,10 @@ class Course extends Model
     public function progress(): HasMany
     {
         return $this->hasMany(Progress::class);
+    }
+
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class);
     }
 }

@@ -80,6 +80,72 @@
                                 </div>
                             </div>
 
+                             <!-- Prompt Form Fields -->
+                            <div v-if="activeTab === 'prompts'">
+                                <div class="mt-4">
+                                    <InputLabel for="prompt_title" value="Title" />
+                                    <TextInput id="prompt_title" v-model="form.title" class="mt-1 block w-full" required />
+                                    <InputError class="mt-2" :message="form.errors.title" />
+                                </div>
+                                <div class="mt-4">
+                                    <InputLabel for="prompt_text" value="Prompt Text" />
+                                    <textarea id="prompt_text" v-model="form.prompt_text" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                                    <InputError class="mt-2" :message="form.errors.prompt_text" />
+                                </div>
+                                <div class="mt-4">
+                                    <InputLabel for="target_audience" value="Target Audience" />
+                                    <select id="target_audience" v-model="form.target_audience" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <option value="students">Students</option>
+                                        <option value="instructors">Instructors</option>
+                                        <option value="all">All</option>
+                                    </select>
+                                    <InputError class="mt-2" :message="form.errors.target_audience" />
+                                </div>
+                                <div class="mt-4">
+                                    <InputLabel for="trigger_condition" value="Trigger Condition" />
+                                    <select id="trigger_condition" v-model="form.trigger_condition" @change="resetFrequency" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                    </select>
+                                    <InputError class="mt-2" :message="form.errors.trigger_condition" />
+                                </div>
+
+                                <!-- Daily Condition Fields -->
+                                <div v-if="form.trigger_condition === 'daily'">
+                                    <div class="mt-4">
+                                        <InputLabel for="times_per_day" value="Times Per Day" />
+                                        <TextInput id="times_per_day" type="number" v-model.number="form.times_per_day" @input="updateFrequencyTimes" min="1" class="mt-1 block w-full" required />
+                                        <InputError class="mt-2" :message="form.errors.times_per_day" />
+                                    </div>
+                                    <div class="mt-4" v-for="(time, index) in form.frequency" :key="index">
+                                        <InputLabel :for="'frequency_time_' + index" :value="'Time ' + (index + 1) + ' (EST)'" />
+                                        <TextInput :id="'frequency_time_' + index" type="time" v-model="form.frequency[index]" class="mt-1 block w-full" required />
+                                    </div>
+                                    <InputError class="mt-2" :message="form.errors.frequency" />
+                                </div>
+
+                                <!-- Weekly Condition Fields -->
+                                <div v-if="form.trigger_condition === 'weekly'" class="mt-4">
+                                    <InputLabel for="frequency_day" value="Day of the Week" />
+                                    <select id="frequency_day" v-model="form.frequency" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <option value="Monday">Monday</option>
+                                        <option value="Tuesday">Tuesday</option>
+                                        <option value="Wednesday">Wednesday</option>
+                                        <option value="Thursday">Thursday</option>
+                                        <option value="Friday">Friday</option>
+                                        <option value="Saturday">Saturday</option>
+                                        <option value="Sunday">Sunday</option>
+                                    </select>
+                                    <InputError class="mt-2" :message="form.errors.frequency" />
+                                </div>
+                                <div class="mt-4">
+                                    <label for="prompt_is_active" class="flex items-center">
+                                        <input type="checkbox" id="prompt_is_active" v-model="form.is_active" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Is Active</span>
+                                    </label>
+                                </div>
+                            </div>
+
                             <div class="mt-6 flex justify-end space-x-3">
                                 <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
                                 <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">{{ editingItem ? 'Save Changes' : 'Create' }}</button>
@@ -98,6 +164,9 @@
                             </button>
                             <button @click="changeTab('promotions')" :class="{'bg-[#3b82f6] text-white': activeTab === 'promotions', 'border-transparent text-black dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'promotions'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
                                 Promotions
+                            </button>
+                             <button @click="changeTab('prompts')" :class="{'bg-[#3b82f6] text-white': activeTab === 'prompts', 'border-transparent text-black dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'prompts'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
+                                Prompts
                             </button>
                         </nav>
                     </div>
@@ -135,6 +204,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <Pagination class="mt-6" :links="quotes.links" />
                             </div>
                         </div>
 
@@ -179,6 +249,47 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <Pagination class="mt-6" :links="promotions.links" />
+                            </div>
+                        </div>
+
+                        <!-- Prompts Box -->
+                        <div v-if="activeTab === 'prompts'" class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                            <div class="p-6 text-gray-900 dark:text-gray-100">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-medium">Prompts</h3>
+                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add New Prompt</button>
+                                </div>
+                                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3">Title</th>
+                                                <th scope="col" class="px-6 py-3">Target Audience</th>
+                                                <th scope="col" class="px-6 py-3">Trigger</th>
+                                                <th scope="col" class="px-6 py-3">Frequency</th>
+                                                <th scope="col" class="px-6 py-3">Active</th>
+                                                <th scope="col" class="px-6 py-3">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="prompt in prompts.data" :key="prompt.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ prompt.title }}</td>
+                                                <td class="px-6 py-4">{{ prompt.target_audience }}</td>
+                                                <td class="px-6 py-4">{{ prompt.trigger_condition }}</td>
+                                                <td class="px-6 py-4">{{ formatFrequency(prompt) }}</td>
+                                                <td class="px-6 py-4">
+                                                    <input type="checkbox" :checked="prompt.is_active" @change="toggleStatus(prompt)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
+                                                </td>
+                                                <td class="px-6 py-4 flex items-center">
+                                                    <button @click="startEdit(prompt)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert" /></button>
+                                                    <button @click="deleteItem(prompt.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert" /></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <Pagination class="mt-6" :links="prompts.links" />
                             </div>
                         </div>
                     </div>
@@ -196,52 +307,54 @@ import InputError from '@/Components/InputError.vue';
 import Swal from 'sweetalert2';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Pagination from '@/Components/Pagination.vue';
 
 const props = defineProps({
     quotes: Object,
-    promotions: Object, // New prop for promotions data
+    promotions: Object,
+    prompts: Object, // New prop for prompts data
     errors: Object,
 });
 
 const editingItem = ref(null);
 const isCreating = ref(false);
-const activeTab = ref('quotes'); // Default to quotes tab
+const activeTab = ref('quotes');
 
 const form = useForm({
-    // Common fields for both quotes and promotions
+    // Common fields
+    title: '',
     is_active: false,
+    
     // Quote specific fields
     content: '',
     author: '',
     
     // Promotion specific fields
-    promotion_type: 'text', // Default promotion type
+    promotion_type: 'text',
     text_content: '',
     poster_image: null,
-    image_url: null, // For previewing selected image
-    till_date: null, // New field for promotion till date
-    title: '', // New field for promotion title
+    image_url: null,
+    till_date: null,
+    
+    // Prompt specific fields
+    prompt_text: '',
+    target_audience: 'students',
+    trigger_condition: 'daily',
+    frequency: [],
+    times_per_day: 1,
 });
 
 const viewTitle = computed(() => {
-    let action = '';
-    if (editingItem.value) {
-        action = 'Edit';
-    } else if (isCreating.value) {
-        action = 'Create New';
-    }
-
-    if (activeTab.value === 'quotes') {
-        return `${action} Quote`;
-    } else if (activeTab.value === 'promotions') {
-        return `${action} Promotion`;
-    }
+    let action = editingItem.value ? 'Edit' : 'Create New';
+    if (activeTab.value === 'quotes') return `${action} Quote`;
+    if (activeTab.value === 'promotions') return `${action} Promotion`;
+    if (activeTab.value === 'prompts') return `${action} Prompt`;
     return '';
 });
 
 const changeTab = (tab) => {
     activeTab.value = tab;
-    cancelAction(); // Reset form and editing state when changing tabs
+    cancelAction();
 };
 
 const startCreate = () => {
@@ -249,13 +362,18 @@ const startCreate = () => {
     editingItem.value = null;
     form.reset();
     form.clearErrors();
-    // Set default values based on active tab
     if (activeTab.value === 'promotions') {
         form.promotion_type = 'text';
         form.is_active = false;
-        form.till_date = null; // Set default for till_date when creating
+        form.till_date = null;
     } else if (activeTab.value === 'quotes') {
         form.is_active = false;
+    } else if (activeTab.value === 'prompts') {
+        form.is_active = true;
+        form.target_audience = 'students';
+        form.trigger_condition = 'daily';
+        form.times_per_day = 1;
+        form.frequency = [''];
     }
 };
 
@@ -269,12 +387,31 @@ const startEdit = (item) => {
         form.author = item.author;
         form.is_active = !!item.is_active;
     } else if (activeTab.value === 'promotions') {
+        form.title = item.title;
         form.promotion_type = item.promotion_type;
         form.text_content = item.text_content;
-        form.image_url = item.image_url; // Assuming image_url is returned for existing posters
+        form.image_url = item.image_url;
         form.is_active = !!item.is_active;
-        form.till_date = item.till_date; // Populate till_date for editing
-        form.title = item.title; // Populate title for editing
+        form.till_date = item.till_date;
+    } else if (activeTab.value === 'prompts') {
+        form.title = item.title;
+        form.prompt_text = item.prompt_text;
+        form.target_audience = item.target_audience;
+        form.trigger_condition = item.trigger_condition;
+        form.times_per_day = item.times_per_day || 1;
+        form.is_active = !!item.is_active;
+
+        if (item.trigger_condition === 'daily') {
+            try {
+                const parsedFrequency = JSON.parse(item.frequency);
+                form.frequency = Array.isArray(parsedFrequency) ? parsedFrequency : [parsedFrequency];
+            } catch (e) {
+                form.frequency = [item.frequency];
+            }
+            updateFrequencyTimes();
+        } else {
+            form.frequency = item.frequency;
+        }
     }
 };
 
@@ -283,6 +420,26 @@ const cancelAction = () => {
     editingItem.value = null;
     form.reset();
     form.clearErrors();
+};
+
+const resetFrequency = () => {
+    if (form.trigger_condition === 'daily') {
+        form.times_per_day = 1;
+        form.frequency = [''];
+    } else {
+        form.times_per_day = null;
+        form.frequency = 'Monday';
+    }
+};
+
+const updateFrequencyTimes = () => {
+    const times = form.times_per_day > 0 ? form.times_per_day : 1;
+    const currentTimes = Array.isArray(form.frequency) ? form.frequency : [];
+    const newTimes = [];
+    for (let i = 0; i < times; i++) {
+        newTimes.push(currentTimes[i] || '');
+    }
+    form.frequency = newTimes;
 };
 
 const onFileChange = (e) => {
@@ -296,21 +453,12 @@ const onFileChange = (e) => {
 const submitForm = () => {
     if (activeTab.value === 'quotes') {
         if (editingItem.value) {
-            router.post(`/admin/marketing/${editingItem.value.id}`, {
-                _method: 'put',
-                content: form.content,
-                author: form.author,
-                is_active: form.is_active,
-            }, {
+            router.put(`/admin/marketing/${editingItem.value.id}`, form, {
                 preserveScroll: true,
                 onSuccess: () => {
                     cancelAction();
                     Swal.fire('Updated!', 'The quote has been updated.', 'success');
                 },
-                onError: (errors) => {
-                    console.error("Error updating quote:", errors);
-                    Swal.fire('Error!', 'There was a problem updating the quote.', 'error');
-                }
             });
         } else if (isCreating.value) {
             form.post('/admin/marketing', {
@@ -318,70 +466,52 @@ const submitForm = () => {
                     cancelAction();
                     Swal.fire('Created!', 'The quote has been created.', 'success');
                 },
-                onError: (errors) => {
-                    console.error("Error creating quote:", errors);
-                    Swal.fire('Error!', 'There was a problem creating the quote.', 'error');
-                }
             });
         }
     } else if (activeTab.value === 'promotions') {
-        // Logic for promotions
-        const formData = new FormData();
-        formData.append('_method', editingItem.value ? 'put' : 'post');
-        formData.append('promotion_type', form.promotion_type);
-        formData.append('is_active', form.is_active ? 1 : 0);
-        if (form.till_date) {
-            formData.append('till_date', form.till_date);
-        }
-        if (form.title) {
-            formData.append('title', form.title);
-        }
-
-        if (form.promotion_type === 'text') {
-            formData.append('text_content', form.text_content);
-        } else if (form.promotion_type === 'poster' && form.poster_image) {
-            formData.append('poster_image', form.poster_image);
-        }
-
         const url = editingItem.value ? `/admin/promotions/${editingItem.value.id}` : '/admin/promotions';
-
-        router.post(url, formData, {
+        
+        router.post(url, {
+            ...form.data(),
+            _method: editingItem.value ? 'put' : 'post',
+        }, {
+            forceFormData: true, 
             preserveScroll: true,
-            forceFormData: true,
             onSuccess: () => {
                 cancelAction();
                 Swal.fire('Success!', 'Promotion saved successfully.', 'success');
             },
-            onError: (errors) => {
-                console.error("Error saving promotion:", errors);
-                Swal.fire('Error!', 'There was a problem saving the promotion.', 'error');
-            }
         });
+    } else if (activeTab.value === 'prompts') {
+        if (editingItem.value) {
+            router.put(`/admin/prompts/${editingItem.value.id}`, form, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    cancelAction();
+                    Swal.fire('Updated!', 'The prompt has been updated.', 'success');
+                },
+            });
+        } else {
+            form.post('/admin/prompts', {
+                 onSuccess: () => {
+                    cancelAction();
+                    Swal.fire('Created!', 'The prompt has been created.', 'success');
+                },
+            });
+        }
     }
 };
 
 const toggleStatus = (item) => {
-    if (activeTab.value === 'quotes') {
-        router.post(`/admin/marketing/${item.id}/toggle-status`, { _method: 'put' }, {
+    let url = '';
+    if (activeTab.value === 'quotes') url = `/admin/marketing/${item.id}/toggle-status`;
+    else if (activeTab.value === 'promotions') url = `/admin/promotions/${item.id}/toggle-status`;
+    else if (activeTab.value === 'prompts') url = `/admin/prompts/${item.id}/toggle-status`;
+
+    if (url) {
+        router.put(url, {}, {
             preserveScroll: true,
-            onSuccess: () => {
-                Swal.fire('Status Updated!', 'The quote status has been toggled.', 'success');
-            },
-            onError: (errors) => {
-                console.error("Error toggling quote status:", errors);
-                Swal.fire('Error!', 'There was a problem toggling the quote status.', 'error');
-            }
-        });
-    } else if (activeTab.value === 'promotions') {
-        router.post(`/admin/promotions/${item.id}/toggle-status`, { _method: 'put' }, {
-            preserveScroll: true,
-            onSuccess: () => {
-                Swal.fire('Status Updated!', 'The promotion status has been toggled.', 'success');
-            },
-            onError: (errors) => {
-                console.error("Error toggling promotion status:", errors);
-                Swal.fire('Error!', 'There was a problem toggling the promotion status.', 'error');
-            }
+            onSuccess: () => Swal.fire('Status Updated!', 'The status has been toggled.', 'success'),
         });
     }
 };
@@ -397,26 +527,55 @@ const deleteItem = (id) => {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            const url = activeTab.value === 'quotes' ? `/admin/marketing/${id}` : `/admin/promotions/${id}`;
-            router.delete(url, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    Swal.fire(
-                        'Deleted!',
-                        'The item has been deleted.',
-                        'success'
-                    );
-                },
-                onError: () => {
-                    Swal.fire(
-                        'Error!',
-                        'There was a problem deleting the item.',
-                        'error'
-                    );
-                }
-            });
+            let url = '';
+            if (activeTab.value === 'quotes') url = `/admin/marketing/${id}`;
+            else if (activeTab.value === 'promotions') url = `/admin/promotions/${id}`;
+            else if (activeTab.value === 'prompts') url = `/admin/prompts/${id}`;
+
+            if (url) {
+                router.delete(url, {
+                    preserveScroll: true,
+                    onSuccess: () => Swal.fire('Deleted!', 'The item has been deleted.', 'success'),
+                });
+            }
         }
     });
+};
+
+const formatFrequency = (prompt) => {
+    if (prompt.trigger_condition === 'weekly') {
+        return prompt.frequency;
+    }
+    if (prompt.trigger_condition === 'daily') {
+        try {
+            const times = JSON.parse(prompt.frequency);
+            if (Array.isArray(times)) {
+                return times.map(time => {
+                    if (!time) return '';
+                    const [hour, minute] = time.split(':');
+                    if (hour === undefined || minute === undefined) return time;
+                    let h = parseInt(hour, 10);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    h = h % 12;
+                    h = h ? h : 12;
+                    return `${h}:${minute} ${ampm}`;
+                }).join(', ');
+            }
+        } catch (e) {
+            if (typeof prompt.frequency === 'string' && prompt.frequency.includes(':')) {
+                const [hour, minute] = prompt.frequency.split(':');
+                if (hour !== undefined && minute !== undefined) {
+                    let h = parseInt(hour, 10);
+                    const ampm = h >= 12 ? 'PM' : 'AM';
+                    h = h % 12;
+                    h = h ? h : 12;
+                    return `${h}:${minute} ${ampm}`;
+                }
+            }
+            return prompt.frequency;
+        }
+    }
+    return prompt.frequency;
 };
 </script>
 

@@ -19,7 +19,6 @@
     <body class="font-sans antialiased">
         @inertia
 
-        @if($page['component'] !== 'Course/Player')
         <!--Start of Tawk.to Script-->
         <script type="text/javascript">
             var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -33,6 +32,5 @@
             })();
         </script>
         <!--End of Tawk.to Script-->
-        @endif
     </body>
 </html>

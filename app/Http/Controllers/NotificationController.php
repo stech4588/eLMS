@@ -8,7 +8,13 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        return auth()->user()->unreadNotifications;
+        return auth()->user()->unreadNotifications->map(function ($notification) {
+            return [
+                'id' => $notification->id,
+                'data' => $notification->data,
+                'created_at' => $notification->created_at,
+            ];
+        });
     }
 
     public function markAsReadAndRedirect($id)

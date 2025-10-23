@@ -16,7 +16,8 @@ export const fetchPermissions = async () => {
     const requiredPermissions = [
         'userView', 'instructorListing', 'pricingUpdate', 'coursemanagement',
         'metatagsUpdate', 'communitySettingsView', 'dashboardView', 'careerJourneyView',
-        'communityView', 'libraryView', 'contentView', 'mycourses', 'addnewcourses', 'helpView', 'marketingmanagement'
+        'communityView', 'libraryView', 'contentView', 'mycourses', 'addnewcourses', 'helpView', 'marketingmanagement',
+        'jobPost'
     ];
 
     try {

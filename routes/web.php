@@ -48,8 +48,14 @@ use App\Http\Controllers\Admin\PromotionController;
 use App\Models\Review;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\MessageController;
 
 Route::get('/', [WelcomeController::class, 'index']);
+Route::get('/invitations/accept/{token}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
 
 Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
@@ -126,6 +132,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/upload-resume', [ProfileController::class, 'uploadResume'])->name('profile.uploadResume');
     Route::post('/profile/upload-picture', [ProfileController::class, 'uploadPicture'])->name('profile.uploadPicture');
 
+    // Settings routes
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
     // User Management Routes
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -133,6 +143,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/career-goal', [UserController::class, 'updateCareerGoal'])->name('career-goal.update');
     Route::patch('/preferred-topics', [UserController::class, 'updatePreferredTopics'])->name('preferred-topics.update');
+    Route::post('/learning-goal', [UserController::class, 'storeLearningGoal'])->name('learning-goal.store');
 
     // Invoice Management Routes
      Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
@@ -208,6 +219,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/promotions/{promotion}', [App\Http\Controllers\Admin\MarketingController::class, 'destroyPromotion'])->name('admin.promotions.destroy');
     Route::put('/admin/promotions/{promotion}/toggle-status', [App\Http\Controllers\Admin\MarketingController::class, 'togglePromotionStatus'])->name('admin.promotions.toggleStatus');
 
+    // Prompt Routes
+    Route::post('/admin/prompts', [App\Http\Controllers\Admin\MarketingController::class, 'storePrompt'])->name('admin.prompts.store');
+    Route::put('/admin/prompts/{prompt}', [App\Http\Controllers\Admin\MarketingController::class, 'updatePrompt'])->name('admin.prompts.update');
+    Route::delete('/admin/prompts/{prompt}', [App\Http\Controllers\Admin\MarketingController::class, 'destroyPrompt'])->name('admin.prompts.destroy');
+    Route::put('/admin/prompts/{prompt}/toggle-status', [App\Http\Controllers\Admin\MarketingController::class, 'togglePromptStatus'])->name('admin.prompts.toggleStatus');
+
     Route::get('/promotions/random-active', [App\Http\Controllers\Admin\MarketingController::class, 'getRandomActivePromotion'])->name('promotions.randomActive');
 
     // Community post routes
@@ -219,6 +236,31 @@ Route::middleware('auth')->group(function () {
 
     // AI Chatbot route
     Route::post('/ai/chat', [AiChatController::class, 'chat'])->name('ai.chat');
+
+    // Job routes
+    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+    Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
+    Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
+
+    // Group routes
+    Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
+    Route::post('/groups/{group}/invite', [GroupController::class, 'invite'])->name('groups.invite');
+    Route::get('/groups/{group}/chat', [GroupController::class, 'chat'])->name('groups.chat');
+    Route::post('/groups/{group}/settings/notifications', [GroupController::class, 'updateNotificationSettings'])->name('groups.settings.notifications');
+
+    // Message routes (API-style)
+    Route::get('/api/groups/{group}/messages', [MessageController::class, 'index'])->name('api.groups.messages.index');
+    Route::post('/api/groups/{group}/messages', [MessageController::class, 'store'])->name('api.groups.messages.store');
+
+    // Group event routes
+    Route::post('/api/groups/{group}/events', [\App\Http\Controllers\Api\GroupEventController::class, 'store'])->name('api.groups.events.store');
+
+    // Quiz routes
+    Route::get('/quizzes/{quiz}', [QuizController::class, 'show'])->name('quiz.show');
+    Route::post('/quizzes/{quiz}/attempt', [QuizController::class, 'storeAttempt'])->name('quiz.attempt');
+    Route::get('/quizzes/result/{attempt}', [QuizController::class, 'result'])->name('quiz.result');
 });
 
 // //For Roles Routes

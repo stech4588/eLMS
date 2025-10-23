@@ -86,6 +86,21 @@ function updateTopics() {
                             <div class="profile-title">{{ user.type }}</div>
                         </div>
                         
+                        <!-- Points Card -->
+                        <div class="points-card">
+                            <div class="points-content">
+                                <div class="points-header">
+                                    <span class="points-title">My Points</span>
+                                </div>
+                                <div class="points-value">
+                                    {{ user.points }}
+                                </div>
+                            </div>
+                            <div class="points-footer">
+                                Keep learning to earn more points!
+                            </div>
+                        </div>
+
                         <!-- Career Goal Card -->
                         <div class="career-goal-card">
                             <div class="goal-content" >
@@ -238,6 +253,47 @@ function updateTopics() {
 .profile-title {
     margin-top: 5px;
     color: #666;
+}
+
+/* Points Card Styles */
+.points-card {
+    border: 1px solid gray;
+    width: 490px;
+    height: 194px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+@media (max-width: 780px) {
+    .points-card {
+        width: 100%;
+    }
+}
+
+.points-content {
+    padding: 20px;
+    padding-bottom: 0px;
+    padding-top: 10px;
+}
+
+.points-header {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.points-value {
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.points-footer {
+    background-color: #D9D9D966;
+    padding: 8px 13px 8px 13px;
+    border-top: 1px solid gray;
+    text-align: center;
 }
 
 /* Career Goal Card Styles */

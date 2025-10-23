@@ -23,6 +23,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Events\CourseViewed; // Import the CourseViewed event
 use App\Models\Review;
 use App\Models\Progress;
+use Illuminate\Support\Facades\Mail; // Import Mail Facade
+use App\Mail\NewCourseNotification; // Import the Mailable class
+use App\Models\User; // Import the User model
+use App\Models\Quiz;
 
 class CourseController extends Controller
 {
@@ -117,6 +121,17 @@ class CourseController extends Controller
             'videos.*.order' => 'required_with:videos|integer',
         ]);
 
+        $validatedQuizData = $request->validate([
+            'quiz' => 'present|array',
+            'quiz.title' => 'required_with:quiz|string|max:255',
+            'quiz.description' => 'nullable|string',
+            'quiz.questions' => 'present|array',
+            'quiz.questions.*.question_text' => 'required_with:quiz.questions|string',
+            'quiz.questions.*.answers' => 'present|array|min:2',
+            'quiz.questions.*.answers.*.answer_text' => 'required_with:quiz.questions.*.answers|string',
+            'quiz.questions.*.answers.*.is_correct' => 'boolean',
+        ]);
+
         DB::beginTransaction();
 
         try {
@@ -184,8 +199,38 @@ class CourseController extends Controller
                 }
             }
 
+            if ($request->has('quiz')) {
+                $quizData = $validatedQuizData['quiz'];
+                $quiz = $course->quizzes()->create([
+                    'title' => $quizData['title'],
+                    'description' => $quizData['description'],
+                ]);
+
+                foreach ($quizData['questions'] as $questionData) {
+                    $question = $quiz->questions()->create([
+                        'question_text' => $questionData['question_text'],
+                    ]);
+
+                    foreach ($questionData['answers'] as $answerData) {
+                        $question->answers()->create([
+                            'answer_text' => $answerData['answer_text'],
+                            'is_correct' => $answerData['is_correct'] ?? false,
+                        ]);
+                    }
+                }
+            }
+
             DB::commit();
             Log::info('Transaction committed.');
+
+            // Send email notification to all students
+            $students = User::where('type', 'student')->with('emailNotificationSetting')->get();
+            foreach ($students as $student) {
+                if ($student->emailNotificationSetting->receives_new_course_notification_emails) {
+                    Mail::to($student->email)->send(new NewCourseNotification($course));
+                }
+            }
+
             return redirect()->route('coursess')->with('success', 'Course and videos created successfully!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -299,7 +344,8 @@ class CourseController extends Controller
             },
             'user', // Eager load the course instructor/user
             'courseType', // Eager load courseType if not already loaded or needed directly
-            'reviews' // Eager load reviews for rating calculation
+            'reviews', // Eager load reviews for rating calculation
+            'quizzes.questions.answers' // Eager load quizzes with their questions and answers
         ]);
 
         // Calculate average rating and reviews count
@@ -359,6 +405,7 @@ class CourseController extends Controller
                 ];
             }),
             'videos' => $videosData,
+            'quizzes' => $course->quizzes,
             // Add other course properties if needed by the player page
         ];
 

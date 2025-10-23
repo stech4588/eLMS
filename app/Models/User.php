@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\QuizAttempt;
 
 class User extends Authenticatable
 {
@@ -38,6 +39,7 @@ class User extends Authenticatable
         'apple_id',
         'facebook_id',
         'can_view_community',
+        'daily_learning_goal',
         // 'bio',
         // 'type',
     ];
@@ -74,6 +76,18 @@ class User extends Authenticatable
             'preferred_topic_ids' => 'array',
             'can_view_community' => 'boolean',
         ];
+    }
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            $user->emailNotificationSetting()->create([]);
+        });
     }
 
     /**
@@ -124,8 +138,21 @@ class User extends Authenticatable
         return $this->hasOne(Instructor::class);
     }
 
+    /**
+     * Get the email notification settings for the user.
+     */
+    public function emailNotificationSettings(): HasMany
+    {
+        return $this->hasMany(EmailNotificationSetting::class);
+    }
+
     public function receivesBroadcastNotificationsOn(): string
     {
         return 'users.'.$this->id;
+    }
+
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
     }
 }

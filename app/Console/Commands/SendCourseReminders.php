@@ -35,7 +35,7 @@ class SendCourseReminders extends Command
         $this->info('Checking for incomplete courses and sending reminders...');
 
         // Get users who are enrolled in at least one course
-        $users = User::whereHas('progressEntries')->with('progressEntries.video.course')->get();
+        $users = User::whereHas('progressEntries')->with(['progressEntries.video.course', 'emailNotificationSetting'])->get();
         Log::debug('Users with progress entries found: ' . $users->count());
 
         foreach ($users as $user) {
@@ -95,9 +95,11 @@ class SendCourseReminders extends Command
 
             // If there are incomplete courses and the user has been inactive, send an email
             if (!empty($incompleteCourses)) {
-                $this->info("Sending reminder to {$user->email} for " . count($incompleteCourses) . " incomplete courses.");
-                Log::info("Attempting to send email to {$user->email} for incomplete courses.");
-                Mail::to($user->email)->send(new CourseReminder($user, $incompleteCourses));
+                if ($user->emailNotificationSetting->receives_course_reminder_emails) {
+                    $this->info("Sending reminder to {$user->email} for " . count($incompleteCourses) . " incomplete courses.");
+                    Log::info("Attempting to send email to {$user->email} for incomplete courses.");
+                    Mail::to($user->email)->send(new CourseReminder($user, $incompleteCourses));
+                }
             } else {
                 Log::debug("No incomplete courses found for user: {$user->id} - {$user->email} that meet reminder criteria.");
             }

@@ -15,8 +15,10 @@
                 <Link v-if="hasPermission('dashboardView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon" src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
                 <Link v-if="hasPermission('careerJourneyView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/my-career-journey' }" href="/my-career-journey"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
                 
-                <!-- Common Link -->
+                <!-- Common Link v-if="hasPermission('groupsView')" -->
                  <Link v-if="hasPermission('communityView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/community' }" :href="route('community')"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> Community</Link>
+                 <Link class="sidebar_subtitles" :class="{ 'active': page.url.startsWith('/groups') }" :href="route('groups.index')"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Groups"  /> Groups</Link>
+                 <Link class="sidebar_subtitles" :class="{ 'active': page.url.startsWith('/jobs') }" :href="route('jobs.index')"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Jobs"  /> Jobs</Link>
             </div>
         </div>
         <div>

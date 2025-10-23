@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Quote;
 use App\Models\Promotion;
+use App\Models\Prompt;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -20,9 +21,11 @@ class MarketingController extends Controller
     {
         $quotes = Quote::orderBy('created_at', 'desc')->paginate(10);
         $promotions = Promotion::orderBy('created_at', 'desc')->paginate(10);
+        $prompts = Prompt::orderBy('created_at', 'desc')->paginate(10);
         return Inertia::render('Admin/Marketing/Index', [
             'quotes' => $quotes,
             'promotions' => $promotions,
+            'prompts' => $prompts,
         ]);
     }
 
@@ -194,6 +197,74 @@ class MarketingController extends Controller
             ->inRandomOrder()
             ->first();
 
-        return response()->json($promotion);
+        return response()->json($promotion ?? []);
+    }
+
+
+    /**
+     * Store a new prompt.
+     */
+    public function storePrompt(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'prompt_text' => 'required|string',
+            'target_audience' => 'required|in:students,instructors,all',
+            'trigger_condition' => 'required|in:daily,weekly',
+            'frequency' => 'required',
+            'times_per_day' => 'nullable|integer|min:1',
+            'is_active' => 'boolean',
+        ]);
+
+        if ($validated['trigger_condition'] === 'daily' && is_array($validated['frequency'])) {
+            $validated['frequency'] = json_encode($validated['frequency']);
+        }
+
+        Prompt::create($validated);
+
+        return redirect()->route('admin.marketing.index')->with('success', 'Prompt created successfully.');
+    }
+
+    /**
+     * Update the specified prompt.
+     */
+    public function updatePrompt(Request $request, Prompt $prompt)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'prompt_text' => 'required|string',
+            'target_audience' => 'required|in:students,instructors,all',
+            'trigger_condition' => 'required|in:daily,weekly',
+            'frequency' => 'required',
+            'times_per_day' => 'nullable|integer|min:1',
+            'is_active' => 'boolean',
+        ]);
+
+        if ($validated['trigger_condition'] === 'daily' && is_array($validated['frequency'])) {
+            $validated['frequency'] = json_encode($validated['frequency']);
+        }
+
+        $prompt->update($validated);
+
+        return redirect()->route('admin.marketing.index')->with('success', 'Prompt updated successfully.');
+    }
+
+    /**
+     * Remove the specified prompt from storage.
+     */
+    public function destroyPrompt(Prompt $prompt)
+    {
+        $prompt->delete();
+        return redirect()->route('admin.marketing.index')->with('success', 'Prompt deleted successfully.');
+    }
+
+    /**
+     * Toggle the active status of the specified prompt.
+     */
+    public function togglePromptStatus(Prompt $prompt)
+    {
+        $prompt->is_active = !$prompt->is_active;
+        $prompt->save();
+        return redirect()->back()->with('success', 'Prompt status updated successfully.');
     }
 }

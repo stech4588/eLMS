@@ -5,6 +5,7 @@
     <AuthenticatedLayout v-slot="{ isSidebarOpen, isPlayerPage }">
         <FeedbackPopup :show="showFeedbackPopup" :course="completedCourse" @close="closeFeedbackPopup" />
         <NotesPopup :show="showNotesPopup" :video="notesForVideo" @close="handleCloseNotesPopup" />
+        <QuizPopup :show="showQuizPopup" :quiz="completedCourseQuiz" @close="closeQuizPopup" />
         <div class="flex h-screen bg-gray-100 dark:bg-gray-900 relative">
             <!-- AI Chatbot -->
             <AiChatbot :show="showChatbot" :course-context="course" @close="showChatbot = false" />
@@ -357,6 +358,7 @@ import StarRating from '@/Components/StarRating.vue';
 import AiChatbot from '@/Components/AiChatbot.vue';
 import TruncatedText from '@/Components/TruncatedText.vue';
 import NotesPopup from '@/Components/NotesPopup.vue';
+import QuizPopup from '@/Components/QuizPopup.vue';
 
 const page = usePage();
 page.props.meta = { ...page.props.meta, disableLoader: true };
@@ -371,15 +373,26 @@ const completedCourse = ref(null);
 const showChatbot = ref(false);
 const showNotesPopup = ref(false);
 const notesForVideo = ref(null);
+const showQuizPopup = ref(false);
+const completedCourseQuiz = ref(null);
 
 function handleCourseCompletion() {
-    completedCourse.value = props.course;
     showFeedbackPopup.value = true;
+    completedCourse.value = props.course;
 }
 
 function closeFeedbackPopup() {
     showFeedbackPopup.value = false;
     completedCourse.value = null;
+    if (props.course.quizzes && props.course.quizzes.length > 0) {
+        completedCourseQuiz.value = props.course.quizzes[0];
+        showQuizPopup.value = true;
+    }
+}
+
+function closeQuizPopup() {
+    showQuizPopup.value = false;
+    completedCourseQuiz.value = null;
 }
 
 const currentVideo = ref(null);
@@ -599,6 +612,33 @@ const fetchRelatedCourses = async () => {
     }
 };
 
+const handlePause = () => {
+    if (videoPlayer.value && videoPlayer.value.readyState >= 2 && !videoPlayer.value.ended && videoPlayer.value.duration > 0) {
+        saveProgress(false, false);
+    }
+};
+
+const handleEnded = () => {
+    saveProgress(true, false);
+};
+
+const handleCloseNotesPopup = () => {
+    showNotesPopup.value = false;
+    notesForVideo.value = null;
+    axios.get(route('courses.completionStatus', { course: props.course.id }))
+        .then(response => {
+            if (response.data.is_completed) {
+                handleCourseCompletion();
+            } else {
+                playNextVideo();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking completion status after closing notes:', error);
+            playNextVideo();
+        });
+};
+
 const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) => {
     // Get auth user at the start of the function
     const { props: pageProps } = usePage();
@@ -675,146 +715,36 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
             onError: (errors) => {
                 console.error('Error saving progress (Inertia form):', errors);
             },
-            onSuccess: async () => {
+            onSuccess: () => {
                 lastProgressSaveTime = Date.now();
-                
-                // Optimistically update completion status on successful save
                 if (payload.completed) {
                     if (currentVideoSavedProgress.value) {
                         currentVideoSavedProgress.value.completed = true;
                     } else {
-                        // If no progress existed before, create a stub
                         currentVideoSavedProgress.value = { completed: true };
                     }
-                }
 
-                // After the final save is successful, directly ask the server if the course is complete.
-                try {
-                    const response = await axios.get(route('courses.completionStatus', { course: props.course.id }));
-                    if (response.data.is_completed) {
-                        handleCourseCompletion();
+                    if (currentVideo.value && currentVideo.value.takeaway_notes) {
+                        notesForVideo.value = currentVideo.value;
+                        showNotesPopup.value = true;
+                    } else {
+                        axios.get(route('courses.completionStatus', { course: props.course.id }))
+                            .then(response => {
+                                if (response.data.is_completed) {
+                                    handleCourseCompletion();
+                                } else {
+                                    playNextVideo();
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error checking course completion status:', error);
+                                playNextVideo();
+                            });
                     }
-                } catch (error) {
-                    console.error('Error checking course completion status:', error);
                 }
             }
         });
     }
-};
-
-// const handlePause = () => {
-//     if (videoPlayer.value && videoPlayer.value.readyState >= 2 && !videoPlayer.value.ended && videoPlayer.value.duration > 0) {
-//         console.log("handlePause: Video paused, attempting foreground save.");
-//         saveProgress(false, false); // Explicitly false, or rely on default
-//     }
-// };
-
-const handleEnded = () => {
-    console.log('Video ended (handleEnded triggered). Attempting foreground save as complete.');
-    saveProgress(true, false); // Mark as completed, foreground save
-
-    if (currentVideo.value && currentVideo.value.takeaway_notes) {
-        notesForVideo.value = currentVideo.value;
-        showNotesPopup.value = true;
-    } else {
-        playNextVideo();
-    }
-};
-
-const handleCloseNotesPopup = () => {
-    showNotesPopup.value = false;
-    notesForVideo.value = null;
-    playNextVideo();
-};
-
-const fetchVideoProgress = async (videoId) => {
-    if (!videoId) return;
-    console.log(`Fetching progress for video ID: ${videoId}`);
-    try {
-        const response = await axios.get(route('progress.getUserVideoProgress', { video: videoId }));
-        if (response.data) {
-            currentVideoSavedProgress.value = response.data;
-            console.log(`Fetched progress for video ID ${videoId}:`, response.data);
-
-            // If we already have the video element, try to apply the progress immediately
-            if (videoPlayer.value && currentVideo.value?.id === videoId) {
-                applySavedProgress();
-            }
-        } else {
-            currentVideoSavedProgress.value = null;
-            console.log('No progress found for video ID:', videoId);
-        }
-    } catch (error) {
-        console.error('Error fetching video progress:', error.response ? error.response.data : error.message);
-        currentVideoSavedProgress.value = null;
-    }
-};
-
-const applySavedProgress = () => {
-    if (!videoPlayer.value || !currentVideoSavedProgress.value || initialTimeApplied.value) {
-        return;
-    }
-
-    const progress = currentVideoSavedProgress.value;
-
-    // Only apply if:
-    // 1. We have progress for this video
-    // 2. The video has some watch time saved
-    // 3. The video wasn't completed
-    if (progress.video_id === currentVideo.value.id &&
-        progress.watched_duration > 0 &&
-        !progress.completed) {
-
-        console.log(`Applying saved progress: setting currentTime to ${progress.watched_duration}`);
-
-        // Wait for video to be ready
-        const checkReady = () => {
-            if (videoPlayer.value.readyState > 0) {
-                videoPlayer.value.currentTime = progress.watched_duration;
-                initialTimeApplied.value = true;
-                console.log('Progress applied successfully');
-            } else {
-                setTimeout(checkReady, 100);
-            }
-        };
-
-        checkReady();
-    }
-};
-
-
-const handleLoadedMetadata = () => {
-
-    console.log('Video metadata loaded');
-
-    console.log(`[[LOADEDMETADATA]] Fired for video ID: ${currentVideo.value ? currentVideo.value.id : 'N/A'}. Current player time: ${videoPlayer.value?.currentTime}. Initial time applied: ${initialTimeApplied.value}`);
-    console.log(`[[LOADEDMETADATA]] currentVideoSavedProgress:`, currentVideoSavedProgress.value ? JSON.parse(JSON.stringify(currentVideoSavedProgress.value)) : null);
-
-    if (videoPlayer.value && currentVideoSavedProgress.value && !initialTimeApplied.value) { // Check initialTimeApplied
-        const progress = currentVideoSavedProgress.value;
-        console.log('[[LOADEDMETADATA]] Conditions check:');
-        console.log(`  - progress.watched_duration > 0: ${progress.watched_duration > 0} (value: ${progress.watched_duration})`);
-        console.log(`  - !progress.completed: ${!progress.completed} (value: ${progress.completed})`);
-        // We remove the videoPlayer.value.currentTime < 1 check for now, relying on initialTimeApplied flag
-
-        if (currentVideo.value && progress.video_id === currentVideo.value.id) {
-            console.log('[[LOADEDMETADATA]] Saved progress video_id matches currentVideo.value.id.');
-            if (progress.watched_duration > 0 && !progress.completed) { // Simplified condition
-                console.log(`[[LOADEDMETADATA]] Applying saved progress: setting currentTime to ${progress.watched_duration} for video ID ${currentVideo.value.id}`);
-                videoPlayer.value.currentTime = progress.watched_duration;
-                initialTimeApplied.value = true; // Mark that we've applied it
-            } else {
-                console.log('[[LOADEDMETADATA]] Conditions to apply progress not fully met or already applied.');
-            }
-        } else {
-            console.warn('[[LOADEDMETADATA]] Mismatch: currentVideoSavedProgress.video_id does not match currentVideo.value.id.',
-                { progressVideoId: progress.video_id, currentVideoId: currentVideo.value?.id });
-        }
-    } else {
-        console.log('[[LOADEDMETADATA]] No videoPlayer or no currentVideoSavedProgress.');
-    }
-    lastProgressSaveTime = Date.now(); // Reset save timer as video metadata is loaded/reloaded
-    applySavedProgress();
 };
 
 const onPlay = () => {
@@ -824,7 +754,7 @@ const onPlay = () => {
 
 const onPause = () => {
     isPlaying.value = false;
-    handlePause(); // Call original handlePause for saving progress
+    handlePause();
 };
 
 // Add router event listeners to prevent loader
@@ -858,12 +788,11 @@ onMounted(async () => {
     }
     
     if (videoToPlayInitially) {
-        // Select video without triggering its own progress save for outgoing video (as there isn't one yet)
-        currentVideo.value = videoToPlayInitially; // Directly set currentVideo
+        currentVideo.value = videoToPlayInitially;
         lastProgressSaveTime = 0;
         currentVideoSavedProgress.value = null;
-        initialTimeApplied.value = false; // Reset flag for initial video
-        fetchVideoProgress(videoToPlayInitially.id); // Fetch progress for the initial video
+        initialTimeApplied.value = false;
+        fetchVideoProgress(videoToPlayInitially.id);
     }
     fetchRelatedCourses();
 
