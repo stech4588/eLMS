@@ -466,11 +466,11 @@
                             <div v-else>
                                 <div class="mb-4">
                                     <label for="quiz_title" class="block mb-2 font-medium">Quiz Title</label>
-                                    <input type="text" id="quiz_title" v-model="quizForm.title" class="w-full p-2 border rounded-md">
+                                    <input type="text" id="quiz_title" v-model="quizForm.title" class="w-full p-2 border rounded-md" style="color:black!important">
                                 </div>
                                 <div class="mb-4">
                                     <label for="quiz_description" class="block mb-2 font-medium">Quiz Description</label>
-                                    <textarea id="quiz_description" v-model="quizForm.description" class="w-full p-2 border rounded-md"></textarea>
+                                    <textarea id="quiz_description" v-model="quizForm.description" class="w-full p-2 border rounded-md" style="color:black;"></textarea>
                                 </div>
 
                                 <h4 class="mb-4 text-lg font-semibold">Questions</h4>
@@ -479,12 +479,12 @@
                                         <label :for="'question_text_' + qIndex" class="block font-medium">Question {{ qIndex + 1 }}</label>
                                         <button @click="removeQuestion(qIndex)" class="text-red-500 hover:text-red-700">Remove</button>
                                     </div>
-                                    <input type="text" :id="'question_text_' + qIndex" v-model="question.question_text" class="w-full p-2 border rounded-md mb-2">
+                                    <input type="text" :id="'question_text_' + qIndex" v-model="question.question_text" class="w-full p-2 border rounded-md mb-2" style="color:black;">
 
                                     <h5 class="mb-2 font-semibold">Answers</h5>
                                     <div v-for="(answer, aIndex) in question.answers" :key="aIndex" class="flex items-center mb-2">
                                         <input type="radio" :name="'correct_answer_' + qIndex" :value="aIndex" @change="setCorrectAnswer(qIndex, aIndex)" class="mr-2">
-                                        <input type="text" v-model="answer.answer_text" class="w-full p-2 border rounded-md">
+                                        <input type="text" v-model="answer.answer_text" class="w-full p-2 border rounded-md" style="color:black;">
                                         <button @click="removeAnswer(qIndex, aIndex)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
                                     </div>
                                     <button @click="addAnswer(qIndex)" class="text-blue-600 hover:text-blue-800">Add Answer</button>
@@ -1199,6 +1199,18 @@ onMounted(() => {
 </script>
 
 <style >
+#quiz_title{
+    color:black!important;
+}
+#quiz_description{
+    color:black!important;
+}
+#question_text_{
+    color:black!important;
+}
+#answer_text_{
+    color:black!important;
+}
 .upload_left_icons{
     display: flex;
     gap: 10px;

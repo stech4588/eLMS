@@ -189,13 +189,24 @@ class MarketingController extends Controller
      */
     public function getRandomActivePromotion(Request $request)
     {
-        $promotion = Promotion::where('is_active', true)
+        Log::info('Attempting to fetch a random active promotion.');
+
+        $query = Promotion::where('is_active', true)
             ->where(function ($query) {
                 $query->whereNull('till_date')
                       ->orWhere('till_date', '>=', now()->toDateString());
-            })
-            ->inRandomOrder()
-            ->first();
+            });
+
+        $count = $query->count();
+        Log::info("Found {$count} active and valid promotions.");
+
+        $promotion = $query->inRandomOrder()->first();
+
+        if ($promotion) {
+            Log::info('Returning promotion.', ['promotion_id' => $promotion->id]);
+        } else {
+            Log::warning('No active promotion found.');
+        }
 
         return response()->json($promotion ?? []);
     }

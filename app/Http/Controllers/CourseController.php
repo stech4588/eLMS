@@ -139,7 +139,7 @@ class CourseController extends Controller
                 'user_id' => $request->user()->id,
                 'title' => $validatedCourseData['title'],
                 'description' => $validatedCourseData['description'],
-                'price' => $request->input('price', null),
+                'price' => $request->input('price', 0),
                 'additional_description' => $validatedCourseData['additional_description'] ?? null,
                 'recomendations' => $validatedCourseData['recomendations'] ?? null,
                 'certificate_id' => $validatedCourseData['certificates'] ?? null,
