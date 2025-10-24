@@ -9,21 +9,21 @@
       delay: 2500,
       disableOnInteraction: false,
     }" :modules="modules" :breakpoints="breakpoints" class="mySwiper">
-      <swiper-slide v-for="(review, index) in reviews" :key="index">
+      <swiper-slide v-for="review in reviews" :key="review.id">
         <div class="review">
           <div class="review-row">
             <div class="review-col-1">
               <div class="reviewer-img">
-                <img :src="review.image" alt="reviewer image">
+                <img :src="review.user.profile_photo_url ? review.user.profile_photo_url : '/images/profile_photo.jpg'" alt="reviewer image">
               </div>
               <div class="review-col-2-2">
-                <h3 class="animated-3">{{ review.name }}</h3>
-                <p>{{ review.role }}</p>
+                <h3 class="animated-3">{{ review.user.name }}</h3>
+                <StarRating :rating="review.rating" />
               </div>
             </div>
             <div class="review-col-2">
               <div class="review-col-2-1">
-                <p>{{ review.text }}</p>
+                <p>{{ truncateComment(review.comment) }}</p>
               </div>
               
             </div>
@@ -41,10 +41,19 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { router } from '@inertiajs/vue3';
+import StarRating from './StarRating.vue';
+
 export default {
   components: {
     Swiper,
     SwiperSlide,
+    StarRating,
+  },
+  props: {
+    reviews: {
+      type: Array,
+      required: true,
+    },
   },
   setup() {
       return {
@@ -53,63 +62,6 @@ export default {
     },
   data() {
     return {
-      reviews: [
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Mark Devis",
-          role: "Professional User"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Sarah Johnson",
-          role: "Business Analyst"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Emily Clarke",
-          role: "Freelancer"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Mark Devis",
-          role: "Professional User"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Sarah Johnson",
-          role: "Business Analyst"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Emily Clarke",
-          role: "Freelancer"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Mark Devis",
-          role: "Professional User"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Sarah Johnson",
-          role: "Business Analyst"
-        },
-        {
-          image: '/images/profile_photo.jpg',
-          text: " The automated organization and secure cloud storage save me a lot       of time each week, allowing me to focus more on providing strategic advice to my clients. Its a very useful tool for any bookkeeper.",
-          name: "Emily Clarke",
-          role: "Freelancer"
-        },
-        // Add more reviews as needed
-      ],
       breakpoints: {
         1036: {
           slidesPerView: 3,
@@ -136,6 +88,14 @@ export default {
           } else {
               router.get('/joinnow');
           }
+      },
+      truncateComment(comment) {
+          if (!comment) return '';
+          const words = comment.split(' ');
+          if (words.length > 12) {
+              return words.slice(0, 12).join(' ') + '...';
+          }
+          return comment;
       },
   }
 };

@@ -15,9 +15,14 @@ class ReviewController extends Controller
         return response()->json($this->reviewService->getAll());
     }
 
-    public function store(ReviewRequest $request) : JsonResponse
+    public function store(ReviewRequest $request)
     {
-        return response()->json($this->reviewService->create($request->validated()), 201);
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = auth()->id(); // Add authenticated user's ID
+
+        $this->reviewService->create($validatedData);
+
+        return redirect()->back()->with('success', 'Thank you for your feedback!');
     }
 
     public function show($id) : JsonResponse

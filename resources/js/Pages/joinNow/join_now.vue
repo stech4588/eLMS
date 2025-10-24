@@ -260,8 +260,11 @@ export default {
             });
         },
         getAmountInCents() {
-            const plan = this.plans[this.selectedPlan];
-            return this.isYearly ? Math.round(plan.yearly) : plan.monthly;
+            const planData = this.plans[this.selectedPlan];
+            if (!planData) return 0; // Return 0 or handle error if planData is not available
+            const billingType = this.isYearly ? 'yearly' : 'monthly';
+            const price = planData[billingType] ? Number(planData[billingType].price) : 0;
+            return Math.round(price * 100); // Stripe expects amount in cents
         },
         handleBillingCycleChange() {
             if(this.showPaymentForm) {

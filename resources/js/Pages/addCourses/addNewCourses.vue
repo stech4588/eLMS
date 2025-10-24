@@ -69,22 +69,16 @@
                                         'bg-black': currentStep < 3
                                     }"
                                     class="flex items-center justify-center w-6 h-6 rounded-full">
-                                    <span class="check_text text-sm">Checks</span>
+                                    <span class="check_text text-sm">Quiz</span>
                                 </div>
 
+                                <div class="w-1/2 h-1 bg-black"></div>
                                 <div
-                                    :class="{
-                                        'bg-black': currentStep >= 4,
-                                        'bg-black': currentStep < 4
-                                    }"
-                                    class="w-1/2 h-1  bg-black">
-                                </div>
-                                <div
-                                    :class="{
-                                        'border-4 border-black text-white': currentStep >= 4,
-                                        'bg-black': currentStep < 4
-                                    }"
-                                    class="flex items-center justify-center w-6 h-6 rounded-full">
+                                :class="{
+                                'border-4 border-black text-white': currentStep >= 4,
+                                'bg-black': currentStep < 4
+                                }"
+                                class="flex items-center justify-center w-6 h-6 rounded-full">
                                     <span class="check_text text-sm">Visibility</span>
                                 </div>
                             </div>
@@ -171,7 +165,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-6" style="">
+                                    <div v-if="false" class="mb-6" style="">
                                         <label for="course_price" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Price <span style="color: red;">*</span></label>
                                         <input
                                             type="number"
@@ -185,7 +179,7 @@
                                                 border: none !important; border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         />
                                         <p v-if="errors.course_price" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_price }}</p>
-                                        <!-- Optional: display character count or validation for price -->
+                                        
                                     </div>
 
 
@@ -347,6 +341,23 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-6" style="border: 1px solid grey; border-radius: 15px; padding: 5px;">
+                                        <label for="takeaway_notes" class="block mb-2 font-medium flex add_course_dark_text" style="gap: 10px; color: #7E7E7E;">Takeaway Notes</label>
+                                        <textarea
+                                            id="takeaway_notes"
+                                            v-model="currentVideoFormPart2.takeaway_notes"
+                                            rows="5"
+                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary dark:text-white"
+                                            placeholder="Enter takeaway notes for this video"
+                                            style="outline: none !important;
+                                                box-shadow: none !important;
+                                                border: none !important;  border-radius: 15px; padding: 20px;"
+                                        ></textarea>
+                                        <div class="flex justify-end mt-1 text-sm text-gray-500">
+                                            <span v-if="currentVideoFormPart2.takeaway_notes">{{ currentVideoFormPart2.takeaway_notes.length }}/5000</span>
+                                        </div>
+                                    </div>
+
                                    <div class="relative">
                                         <label for="thumbnail" class="block mb-2 font-medium flex add_course_dark_text" style=" color: black; font-size: 16px; font-weight: 600;">Thumbnail </label>
                                         <input
@@ -444,44 +455,88 @@
                             </div>
                         </div>
 
-                        <!-- Step 3: Checks -->
-                        <div v-if="currentStep === 3" class="p-6 upload_video_section" >
-                            <h3 class="mb-6 text-xl font-semibold">Video Summary & Checks</h3>
-
-                            <div v-if="!videosData || videosData.length === 0" class="text-center text-gray-500 py-10">
-                                <p class="mb-2 text-lg">No videos have been configured yet.</p>
-                                <p>Please go back to Step 2 to add video details.</p>
+                        <!-- Step 3: Quiz -->
+                        <div v-if="currentStep === 3" class="p-6">
+                            <h3 class="mb-6 text-xl font-semibold">Add a Quiz (Optional)</h3>
+                            <div v-if="!quizForm.title">
+                                <button @click="addQuiz" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                                Add Quiz
+                                </button>
                             </div>
-
                             <div v-else>
-                                <div v-for="(video, index) in videosData" :key="index" class="mb-8 p-4 border border-gray-200 rounded-lg shadow ">
-                                    <h4 class="text-lg font-semibold mb-2">
-                                        Video {{ index + 1 }}: {{ video.title || '(Untitled)' }}
-                                    </h4>
-                                    <div class="mb-3">
-                                        <p class="text-sm font-medium text-gray-700 add_course_dark_text">Description:</p>
-                                        <p class="text-sm text-gray-600 whitespace-pre-wrap add_course_dark_text">{{ video.description || '(Not provided)' }}</p>
-                                    </div>
-
+                                <div class="mb-4">
+                                    <label for="quiz_title" class="block mb-2 font-medium">Quiz Title</label>
+                                    <input type="text" id="quiz_title" v-model="quizForm.title" class="w-full p-2 border rounded-md">
                                 </div>
+                                <div class="mb-4">
+                                    <label for="quiz_description" class="block mb-2 font-medium">Quiz Description</label>
+                                    <textarea id="quiz_description" v-model="quizForm.description" class="w-full p-2 border rounded-md"></textarea>
+                                </div>
+
+                                <h4 class="mb-4 text-lg font-semibold">Questions</h4>
+                                <div v-for="(question, qIndex) in quizForm.questions" :key="qIndex" class="mb-4 p-4 border rounded-md">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label :for="'question_text_' + qIndex" class="block font-medium">Question {{ qIndex + 1 }}</label>
+                                        <button @click="removeQuestion(qIndex)" class="text-red-500 hover:text-red-700">Remove</button>
+                                    </div>
+                                    <input type="text" :id="'question_text_' + qIndex" v-model="question.question_text" class="w-full p-2 border rounded-md mb-2">
+
+                                    <h5 class="mb-2 font-semibold">Answers</h5>
+                                    <div v-for="(answer, aIndex) in question.answers" :key="aIndex" class="flex items-center mb-2">
+                                        <input type="radio" :name="'correct_answer_' + qIndex" :value="aIndex" @change="setCorrectAnswer(qIndex, aIndex)" class="mr-2">
+                                        <input type="text" v-model="answer.answer_text" class="w-full p-2 border rounded-md">
+                                        <button @click="removeAnswer(qIndex, aIndex)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
+                                    </div>
+                                    <button @click="addAnswer(qIndex)" class="text-blue-600 hover:text-blue-800">Add Answer</button>
+                                </div>
+                                <button @click="addQuestion" class="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700">Add Question</button>
                             </div>
 
                             <div class="flex justify-end mt-8 space-x-4">
-                                <button
-                                    @click="prevStep"
-                                    class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" style="  font-size: 14px; border-radius: 20px; font-weight: 600;">
-                                    Back
-                                </button>
-                                <button
-                                    @click="submitForm"
-                                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                                    style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
-                                    Publish
-                                </button>
-
-
+                                <button @click="prevStep" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Back</button>
+                                <button @click="nextStep" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Next</button>
                             </div>
                         </div>
+
+                        <!-- Step 4: Visibility (Summary) -->
+                        <div v-if="currentStep === 4" class="p-6 upload_video_section" >
+                           <h3 class="mb-6 text-xl font-semibold">Video Summary & Checks</h3>
+
+                           <div v-if="!videosData || videosData.length === 0" class="text-center text-gray-500 py-10">
+                               <p class="mb-2 text-lg">No videos have been configured yet.</p>
+                               <p>Please go back to Step 2 to add video details.</p>
+                           </div>
+
+                           <div v-else>
+                               <div v-for="(video, index) in videosData" :key="index" class="mb-8 p-4 border border-gray-200 rounded-lg shadow ">
+                                   <h4 class="text-lg font-semibold mb-2">
+                                       Video {{ index + 1 }}: {{ video.title || '(Untitled)' }}
+                                   </h4>
+                                   <div class="mb-3">
+                                       <p class="text-sm font-medium text-gray-700 add_course_dark_text">Description:</p>
+                                       <p class="text-sm text-gray-600 whitespace-pre-wrap add_course_dark_text">{{ video.description || '(Not provided)' }}</p>
+                                   </div>
+
+                               </div>
+                           </div>
+
+                           <div class="flex justify-end mt-8 space-x-4">
+                               <button
+                                   @click="prevStep"
+                                   class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" style="  font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                   Back
+                               </button>
+                               <button
+                                   @click="submitForm"
+                                   class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                   style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                   Publish
+                               </button>
+
+
+                           </div>
+                       </div>
+
 
                     </div>
                 </div>
@@ -572,6 +627,13 @@ const form = useForm({
     topic: '',
     course_type: '',
     course_price: '',
+    visibility: 'private',
+});
+
+const quizForm = reactive({
+    title: '',
+    description: '',
+    questions: [],
 });
 
 watch(() => form.course_price, (newValue) => {
@@ -608,6 +670,7 @@ const currentEditingVideoIndex = ref(-1);
 const currentVideoFormPart2 = reactive({
     title: '',
     description: '',
+    takeaway_notes: '',
     playlist: '',
     visibility: 'private', // Added visibility here as it was used in saveCurrentVideoDetails
 });
@@ -646,6 +709,7 @@ const saveCurrentVideoDetails = () => {
     if (currentEditingVideoIndex.value >= 0 && videosData.value[currentEditingVideoIndex.value]) {
         videosData.value[currentEditingVideoIndex.value].title = currentVideoFormPart2.title;
         videosData.value[currentEditingVideoIndex.value].description = currentVideoFormPart2.description;
+        videosData.value[currentEditingVideoIndex.value].takeaway_notes = currentVideoFormPart2.takeaway_notes;
         videosData.value[currentEditingVideoIndex.value].playlist = currentVideoFormPart2.playlist;
         videosData.value[currentEditingVideoIndex.value].visibility = currentVideoFormPart2.visibility;
     }
@@ -656,6 +720,7 @@ const populateVideoDetailsForm = (index) => {
         const video = videosData.value[index];
         currentVideoFormPart2.title = video.title || '';
         currentVideoFormPart2.description = video.description || '';
+        currentVideoFormPart2.takeaway_notes = video.takeaway_notes || '';
         currentVideoFormPart2.playlist = video.playlist || '';
         currentVideoFormPart2.visibility = video.visibility || 'private';
 
@@ -664,6 +729,7 @@ const populateVideoDetailsForm = (index) => {
     } else {
         currentVideoFormPart2.title = '';
         currentVideoFormPart2.description = '';
+        currentVideoFormPart2.takeaway_notes = '';
         currentVideoFormPart2.playlist = '';
         currentVideoFormPart2.visibility = 'private'; // Reset visibility
         activeVideoPreviewForRightPanel.value = null;
@@ -687,6 +753,7 @@ const addNewVideoSlot = () => {
         videoFilePreview: null,
         title: '',
         description: '',
+        takeaway_notes: '',
         thumbnailFile: null,
         thumbnailFilePreview: null,
         playlist: '',
@@ -774,7 +841,7 @@ const nextStep = () => {
             course_description: 'Description',
             additional_description: 'Additional Description',
             recomendations: 'Recomendations',
-            course_price: 'Course Price',
+            // course_price: 'Course Price',
             certificates: 'Certificates',
             industry: 'Industry',
             topic: 'Topic',
@@ -784,11 +851,9 @@ const nextStep = () => {
         Object.entries(requiredFields).forEach(([field, name]) => {
             const value = form[field];
             let isMissing = false;
-            if (field === 'course_price') {
-                isMissing = value === '' || value === null;
-            } else {
-                isMissing = !value || (typeof value === 'string' && value.trim() === '');
-            }
+            
+            isMissing = !value || (typeof value === 'string' && value.trim() === '');
+            
             if (isMissing) {
                 errors.value[field] = `${name} is required.`;
             }
@@ -937,7 +1002,7 @@ const submitForm = async () => {
     // Append course details
     formData.append('title', form.course_title);
     formData.append('description', form.course_description);
-    formData.append('price', form.course_price);
+    // formData.append('price', form.course_price);
     // Add other course fields from the 'form' object as necessary
     formData.append('additional_description', form.additional_description);
     formData.append('recomendations', form.recomendations);
@@ -945,11 +1010,13 @@ const submitForm = async () => {
     formData.append('industry', form.industry);
     formData.append('course_type', form.course_type);
     formData.append('topic', form.topic);
+
     // Append videos data
     if (videosData.value && videosData.value.length > 0) {
         videosData.value.forEach((video, index) => {
             formData.append(`videos[${index}][title]`, video.title || '');
             formData.append(`videos[${index}][description]`, video.description || '');
+            formData.append(`videos[${index}][takeaway_notes]`, video.takeaway_notes || '');
             if (video.videoFile instanceof File) {
                 formData.append(`videos[${index}][videoFile]`, video.videoFile);
             }
@@ -968,6 +1035,18 @@ const submitForm = async () => {
         // depending on backend validation (e.g., 'videos' => 'present|array').
         // Sending an empty array indicator if backend expects 'videos' key even if empty.
         formData.append('videos', JSON.stringify([]));
+    }
+
+    if (quizForm.title) {
+        formData.append('quiz[title]', quizForm.title);
+        formData.append('quiz[description]', quizForm.description);
+        quizForm.questions.forEach((question, qIndex) => {
+            formData.append(`quiz[questions][${qIndex}][question_text]`, question.question_text);
+            question.answers.forEach((answer, aIndex) => {
+                formData.append(`quiz[questions][${qIndex}][answers][${aIndex}][answer_text]`, answer.answer_text);
+                formData.append(`quiz[questions][${qIndex}][answers][${aIndex}][is_correct]`, answer.is_correct ? 1 : 0);
+            });
+        });
     }
 
     try {
@@ -1064,6 +1143,41 @@ const removeVideo = (index) => {
                 currentEditingVideoIndex.value--;
             }
         }
+    });
+};
+
+const addQuiz = () => {
+    quizForm.title = 'New Quiz';
+    quizForm.description = '';
+    quizForm.questions = [];
+    currentStep.value = 3; // Move to the quiz step
+};
+
+const addQuestion = () => {
+    quizForm.questions.push({
+        question_text: '',
+        answers: [
+            { answer_text: '', is_correct: false },
+            { answer_text: '', is_correct: false },
+        ],
+    });
+};
+
+const removeQuestion = (qIndex) => {
+    quizForm.questions.splice(qIndex, 1);
+};
+
+const addAnswer = (qIndex) => {
+    quizForm.questions[qIndex].answers.push({ answer_text: '', is_correct: false });
+};
+
+const removeAnswer = (qIndex, aIndex) => {
+    quizForm.questions[qIndex].answers.splice(aIndex, 1);
+};
+
+const setCorrectAnswer = (qIndex, aIndex) => {
+    quizForm.questions[qIndex].answers.forEach((answer, index) => {
+        answer.is_correct = index === aIndex;
     });
 };
 

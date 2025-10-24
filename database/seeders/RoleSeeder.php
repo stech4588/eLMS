@@ -48,15 +48,15 @@ class RoleSeeder extends Seeder
         return [
             [
                 'title' => 'Super Admin',
-                'permission_id' => [1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 18, 22], // User Listing, Instructor Listing, Pricing, Course Management, Meta Tags, My Courses, Add New Courses, Community Settings
+                'permission_id' => [1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 18, 22, 23, 25], // User Listing, Instructor Listing, Pricing, Course Management, Meta Tags, My Courses, Add New Courses, Community Settings, Marketing, Job Post
             ],
             [
                 'title' => 'Admin', // Instructor
-                'permission_id' => [14, 15, 18, 21], // My Courses, Add New Courses, Community, Help
+                'permission_id' => [14, 15, 18, 21, 25], // My Courses, Add New Courses, Community, Help, Job Post
             ],
             [
                 'title' => 'User', // Student
-                'permission_id' => [16, 17, 18, 19, 20, 21], // Dashboard, My Career Journey, Community, My Library, Content, Help
+                'permission_id' => [16, 17, 18, 19, 20, 21, 24, 25], // Dashboard, My Career Journey, Community, My Library, Content, Help, Email Settings, Job Post
             ]
         ];
     }

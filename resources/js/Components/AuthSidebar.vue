@@ -3,31 +3,66 @@
         <div style="">
             <div>
                 <!-- Super Admin Links -->
-                <Link v-if="hasPermission('userView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/users' }" href="/users"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  /> User Listing</Link>
-                <Link v-if="hasPermission('instructorListing')" class="sidebar_subtitles" :class="{ 'active': page.url === '/admin/instructors' }" href="/admin/instructors"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  />Instructor Listing</Link>
-                <Link v-if="hasPermission('pricingUpdate')" class="sidebar_subtitles" :class="{ 'active': page.url === '/admin/pricings' }" :href="route('pricings.index')"><img class="sidebar_dark_icon" src="/images/user.svg" alt="users"  />Pricing</Link>
-                <Link v-if="hasPermission('coursemanagement')" class="sidebar_subtitles" :class="{ 'active': page.url === '/course-management' }" href="/course-management"> <img class="sidebar_dark_icon" src="/images/course.svg" alt="users"  />Course Management</Link>
-                <Link v-if="hasPermission('metatagsUpdate')" class="sidebar_subtitles" :class="{ 'active': page.url === '/metatags' }" href="/metatags"> <img class="sidebar_dark_icon" src="/images/meta.svg" alt="users"  />Meta Tags</Link>
-                <Link v-if="hasPermission('communitySettingsView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/communitysettings' }" :href="route('communitysettings')"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> Community Settings</Link>
+                <Link v-if="hasPermission('userView')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/users' }" href="/users"><img class="sidebar_dark_icon"
+                    src="/images/user.svg" alt="users" /> User Listing</Link>
+                <Link v-if="hasPermission('instructorListing')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/admin/instructors' }" href="/admin/instructors"><img
+                    class="sidebar_dark_icon" src="/images/user.svg" alt="users" />Instructor Listing</Link>
+                <Link v-if="hasPermission('pricingUpdate')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/admin/pricings' }" :href="route('pricings.index')"><img
+                    class="sidebar_dark_icon" src="/images/user.svg" alt="users" />Pricing</Link>
+                <Link v-if="hasPermission('coursemanagement')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/course-management' }" href="/course-management"> <img
+                    class="sidebar_dark_icon" src="/images/course.svg" alt="users" />Course Management</Link>
+                <Link v-if="hasPermission('metatagsUpdate')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/metatags' }" href="/metatags"> <img class="sidebar_dark_icon"
+                    src="/images/meta.svg" alt="users" />Meta Tags</Link>
+                <Link v-if="hasPermission('communitySettingsView')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/communitysettings' }" :href="route('communitysettings')"><img
+                    class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career" /> Community Settings</Link>
+                <Link v-if="hasPermission('marketingmanagement')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/admin/marketing' }" :href="route('admin.marketing.index')"><img
+                    class="sidebar_dark_icon" src="/images/meta.svg" alt="Quotes" />Marketing</Link>
 
                 <!-- Student Links -->
-                <Link v-if="hasPermission('dashboardView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon" src="/images/home_icon.svg" alt="Logo"  /> Home</Link>
-                <Link v-if="hasPermission('careerJourneyView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/my-career-journey' }" href="/my-career-journey"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> My Career Journey</Link>
-                
-                <!-- Common Link -->
-                 <Link v-if="hasPermission('communityView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/community' }" :href="route('community')"><img class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career"  /> Community</Link>
+                <Link v-if="hasPermission('dashboardView')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/dashboard' }" href="/dashboard"><img class="sidebar_dark_icon"
+                    src="/images/home_icon.svg" alt="Logo" /> Home</Link>
+                <Link v-if="hasPermission('careerJourneyView')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/my-career-journey' }" href="/my-career-journey"><img
+                    class="sidebar_dark_icon" src="/images/career_icon.svg" alt="Career" /> My Career Journey</Link>
+
+                <!-- Common Link v-if="hasPermission('groupsView')" -->
+                <Link v-if="hasPermission('communityView')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/community' }" :href="route('community')"><img
+                    class="sidebar_dark_icon" src="/images/community_icon.svg" alt="Career" /> Community</Link>
+                <Link class="sidebar_subtitles" :class="{ 'active': page.url.startsWith('/groups') }"
+                    :href="route('groups.index')"><img class="sidebar_dark_icon" src="/images/groups_icon.svg"
+                    alt="Groups" /> Groups</Link>
+                <Link class="sidebar_subtitles" :class="{ 'active': page.url.startsWith('/jobs') }"
+                    :href="route('jobs.index')"><img class="sidebar_dark_icon" src="/images/jobs_icon.svg" alt="Jobs" />
+                Jobs</Link>
             </div>
         </div>
         <div>
             <div>
                 <div class="sidebar_titles">Learn</div>
                 <!-- Student Links -->
-                <Link v-if="hasPermission('libraryView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/library' }" href="/library"><img class="sidebar_dark_icon" src="/images/library_icon.svg" alt="Library"  /> My Library</Link>
-                <Link v-if="hasPermission('contentView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/content' }" href="/content"><img class="sidebar_dark_icon" src="/images/content_icon.svg" alt="Content"  /> Content</Link>
-                
+                <Link v-if="hasPermission('libraryView')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/library' }" href="/library"><img class="sidebar_dark_icon"
+                    src="/images/library_icon.svg" alt="Library" /> My Library</Link>
+                <Link v-if="hasPermission('contentView')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/content' }" href="/content"><img class="sidebar_dark_icon"
+                    src="/images/content_icon.svg" alt="Content" /> Content</Link>
+
                 <!-- Instructor/Admin Links -->
-                <Link v-if="hasPermission('mycourses')" class="sidebar_subtitles" :class="{ 'active': page.url === '/coursess' }" href="/coursess"> <img class="sidebar_dark_icon" src="/images/courses_icon.svg" alt="Courses"  /> My Courses</Link>
-                <Link v-if="hasPermission('addnewcourses')" class="sidebar_subtitles" :class="{ 'active': page.url === '/addnewcourses' }" href="/addnewcourses"> <img class="sidebar_dark_icon" src="/images/add_icon.svg" alt="Add"  />Add New Courses</Link>
+                <Link v-if="hasPermission('mycourses')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/coursess' }" href="/coursess"> <img class="sidebar_dark_icon"
+                    src="/images/courses_icon.svg" alt="Courses" /> My Courses</Link>
+                <Link v-if="hasPermission('addnewcourses')" class="sidebar_subtitles"
+                    :class="{ 'active': page.url === '/addnewcourses' }" href="/addnewcourses"> <img
+                    class="sidebar_dark_icon" src="/images/add_icon.svg" alt="Add" />Add New Courses</Link>
             </div>
         </div>
         <div>
@@ -39,7 +74,8 @@
                 </Link>
             </div>
             <!-- Common link -->
-            <Link v-if="hasPermission('helpView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }" href="/help">Help <img class="sidebar_dark_icon" src="/images/help_icon.svg" alt="Help"  /></Link>
+            <Link v-if="hasPermission('helpView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }"
+                href="/help">Help <img class="sidebar_dark_icon" src="/images/help_icon.svg" alt="Help" /></Link>
         </div>
     </aside>
 </template>
@@ -95,13 +131,16 @@ onMounted(fetchTrendingTopics);
 .dark .sidebar_subtitles {
     color: white;
 }
-.dark .sidebar_dark_icon{
+
+.dark .sidebar_dark_icon {
     filter: invert(1);
     width: 23px;
 }
- .sidebar_dark_icon{
+
+.sidebar_dark_icon {
     width: 23px;
 }
+
 .active {
     background-color: #97d5ff;
     border-radius: 4px;
