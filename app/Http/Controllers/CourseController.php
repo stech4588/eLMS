@@ -102,7 +102,7 @@ class CourseController extends Controller
         $validatedCourseData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'nullable|numeric',
+            // 'price' => 'nullable|numeric',
             'additional_description' => 'nullable|string',
             'recomendations' => 'nullable|string',
             'certificates' => 'nullable|exists:course_certificates,id',
@@ -139,7 +139,7 @@ class CourseController extends Controller
                 'user_id' => $request->user()->id,
                 'title' => $validatedCourseData['title'],
                 'description' => $validatedCourseData['description'],
-                'price' => $validatedCourseData['price'] ?? null,
+                'price' => $request->input('price', null),
                 'additional_description' => $validatedCourseData['additional_description'] ?? null,
                 'recomendations' => $validatedCourseData['recomendations'] ?? null,
                 'certificate_id' => $validatedCourseData['certificates'] ?? null,

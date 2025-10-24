@@ -165,7 +165,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-6" style="">
+                                    <div v-if="false" class="mb-6" style="">
                                         <label for="course_price" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Price <span style="color: red;">*</span></label>
                                         <input
                                             type="number"
@@ -179,7 +179,7 @@
                                                 border: none !important; border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         />
                                         <p v-if="errors.course_price" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_price }}</p>
-                                        <!-- Optional: display character count or validation for price -->
+                                        
                                     </div>
 
 
@@ -841,7 +841,7 @@ const nextStep = () => {
             course_description: 'Description',
             additional_description: 'Additional Description',
             recomendations: 'Recomendations',
-            course_price: 'Course Price',
+            // course_price: 'Course Price',
             certificates: 'Certificates',
             industry: 'Industry',
             topic: 'Topic',
@@ -851,11 +851,9 @@ const nextStep = () => {
         Object.entries(requiredFields).forEach(([field, name]) => {
             const value = form[field];
             let isMissing = false;
-            if (field === 'course_price') {
-                isMissing = value === '' || value === null;
-            } else {
-                isMissing = !value || (typeof value === 'string' && value.trim() === '');
-            }
+            
+            isMissing = !value || (typeof value === 'string' && value.trim() === '');
+            
             if (isMissing) {
                 errors.value[field] = `${name} is required.`;
             }
@@ -1004,7 +1002,7 @@ const submitForm = async () => {
     // Append course details
     formData.append('title', form.course_title);
     formData.append('description', form.course_description);
-    formData.append('price', form.course_price);
+    // formData.append('price', form.course_price);
     // Add other course fields from the 'form' object as necessary
     formData.append('additional_description', form.additional_description);
     formData.append('recomendations', form.recomendations);
