@@ -63,6 +63,7 @@ class GroupController extends Controller
     public function invite(Request $request, Group $group)
     {
         Log::info('Invite function started.');
+        Log::info('Current mail driver: ' . config('mail.default'));
         $request->validate(['email' => 'required|email']);
         Log::info('Validation passed.');
 
