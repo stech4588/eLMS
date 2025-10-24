@@ -1,6 +1,6 @@
 <template>
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="$emit('close')">
-        <div class="relative w-full max-w-2xl p-8 mx-4 bg-white rounded-lg shadow-xl dark:bg-gray-900">
+        <div class="relative w-full max-w-2xl p-8 mx-4 bg-white rounded-lg shadow-xl dark:bg-gray-900 max-h-[95vh] overflow-y-auto">
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ quiz.title }}</h3>

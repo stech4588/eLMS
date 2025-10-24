@@ -2,8 +2,8 @@
     <Head title="Quiz Result" />
 
     <AuthenticatedLayout>
-        <div class="py-12 bg-gray-100 dark:bg-gray-800 min-h-screen">
-            <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="h-full overflow-y-auto bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 lg:p-8">
+            <div class="max-w-4xl mx-auto">
                 <!-- Result Summary Card -->
                 <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-xl sm:rounded-lg mb-8">
                     <div class="p-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
@@ -35,7 +35,7 @@
                              class="mb-6 border rounded-xl p-5"
                              :class="wasQuestionAnsweredCorrectly(question) ? 'border-green-300 bg-green-50 dark:border-green-600 dark:bg-green-900/20' : 'border-red-300 bg-red-50 dark:border-red-600 dark:bg-red-900/20'">
                             
-                            <p class="font-semibold text-lg text-gray-900 dark:text-gray-200 mb-4">{{ qIndex + 1 }}. {{ question.question_text }}</p>
+                            <p class="font-semibold text-lg text-gray-900 dark:text-gray-200 mb-4 break-words">{{ qIndex + 1 }}. {{ question.question_text }}</p>
                             
                             <ul class="space-y-3">
                                 <li v-for="answer in question.answers" :key="answer.id" class="flex items-center p-3 rounded-lg transition-colors duration-200"
@@ -100,12 +100,12 @@ const scorePercentage = computed(() => {
 
 const getUserAnswerForQuestion = (questionId) => {
     if (!props.attempt.answers) return null;
-    return props.attempt.answers.find(a => a.question_id === questionId);
+    return props.attempt.answers.find(a => a.question_id == questionId);
 };
 
 const isUserAnswer = (questionId, answerId) => {
     const userAnswer = getUserAnswerForQuestion(questionId);
-    return userAnswer && userAnswer.answer_id === answerId;
+    return userAnswer && userAnswer.answer_id == answerId;
 };
 
 const wasQuestionAnsweredCorrectly = (question) => {
