@@ -40,18 +40,18 @@
                             <ul class="space-y-3">
                                 <li v-for="answer in question.answers" :key="answer.id" class="flex items-center p-3 rounded-lg transition-colors duration-200"
                                     :class="{
-                                        'bg-green-200 dark:bg-green-500/30 text-green-900 dark:text-green-200 font-semibold': answer.is_correct,
-                                        'bg-red-200 dark:bg-red-500/30 text-red-900 dark:text-red-200': isUserAnswer(question.id, answer.id) && !answer.is_correct,
-                                        'bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-300': !isUserAnswer(question.id, answer.id) && !answer.is_correct,
+                                        'bg-green-200 dark:bg-green-500/30 text-green-900 dark:text-green-200 font-semibold': answer.is_correct == 1,
+                                        'bg-red-200 dark:bg-red-500/30 text-red-900 dark:text-red-200': isUserAnswer(question.id, answer.id) && answer.is_correct != 1,
+                                        'bg-gray-100 dark:bg-gray-700/30 text-gray-800 dark:text-gray-300': !isUserAnswer(question.id, answer.id) && answer.is_correct != 1,
                                     }">
                                     
                                     <div class="w-6 h-6 mr-4 flex-shrink-0">
                                         <!-- Correct Answer Icon -->
-                                        <svg v-if="answer.is_correct" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <svg v-if="answer.is_correct == 1" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         <!-- User's Incorrect Answer Icon -->
-                                        <svg v-else-if="isUserAnswer(question.id, answer.id) && !answer.is_correct" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-700 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <svg v-else-if="isUserAnswer(question.id, answer.id) && answer.is_correct != 1" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-700 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         <!-- Other Options Icon -->
@@ -60,7 +60,7 @@
                                         </svg>
                                     </div>
 
-                                    <span :class="{'line-through': isUserAnswer(question.id, answer.id) && !answer.is_correct}">
+                                    <span :class="{'line-through': isUserAnswer(question.id, answer.id) && answer.is_correct != 1}">
                                         {{ answer.answer_text }}
                                     </span>
                                 </li>
@@ -113,7 +113,7 @@ const wasQuestionAnsweredCorrectly = (question) => {
     if (!userAnswer) {
         return false; // Question was not answered
     }
-    const correctAnswer = question.answers.find(answer => answer.is_correct);
+    const correctAnswer = question.answers.find(answer => answer.is_correct == 1);
     return correctAnswer && userAnswer.answer_id === correctAnswer.id;
 };
 </script>

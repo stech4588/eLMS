@@ -291,7 +291,7 @@ onMounted(() => {
                 </main>
             </div>
         </div>
-        <PromotionPopup v-if="user && (user.role_id === 2 || user.role_id === 3)" />
+        <PromotionPopup v-if="user && (user.type === 'student' || user.type === 'instructor')" />
         <LearningGoalPopup v-if="user && user.type === 'student'" />
     </div>
 </template>
