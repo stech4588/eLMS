@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('email_notification_settings', function (Blueprint $table) {
+        Schema::create('email_notification_settings', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('key');
             $table->boolean('value')->default(true);
+            $table->timestamps();
 
             $table->unique(['user_id', 'key']);
         });
@@ -24,9 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('email_notification_settings', function (Blueprint $table) {
-            $table->dropUnique(['user_id', 'key']);
-            $table->dropColumn(['key', 'value']);
-        });
+        Schema::dropIfExists('email_notification_settings');
     }
 };
