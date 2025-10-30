@@ -37,7 +37,7 @@
 #box1 {
     width: 50px;
     height: 50px;
-    background: #2b2899;
+    background: #4CCAFF;
     animation: animate .5s linear infinite;
     position: absolute;
     top: 0;

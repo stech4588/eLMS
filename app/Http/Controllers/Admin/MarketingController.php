@@ -22,11 +22,18 @@ class MarketingController extends Controller
         $quotes = Quote::orderBy('created_at', 'desc')->paginate(10);
         $promotions = Promotion::orderBy('created_at', 'desc')->paginate(10);
         $prompts = Prompt::orderBy('created_at', 'desc')->paginate(10);
-        return Inertia::render('Admin/Marketing/Index', [
+        
+        $response = Inertia::render('Admin/Marketing/Index', [
             'quotes' => $quotes,
             'promotions' => $promotions,
             'prompts' => $prompts,
         ]);
+
+        // $response->toResponse(request())->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        // $response->toResponse(request())->header('Pragma', 'no-cache');
+        // $response->toResponse(request())->header('Expires', '0');
+
+        return $response;
     }
 
     /**
@@ -56,12 +63,13 @@ class MarketingController extends Controller
         $request->validate([
             'content' => 'required|string|max:255',
             'author' => 'required|string|max:255',
+            'is_active' => 'sometimes|boolean',
         ]);
 
         $quote->update([
             'content' => $request->content,
             'author' => $request->author,
-            'is_active' => $request->is_active ?? $quote->is_active,
+            'is_active' => $request->boolean('is_active'),
         ]);
 
         return redirect()->route('admin.marketing.index')->with('success', 'Quote updated successfully.');
@@ -83,6 +91,7 @@ class MarketingController extends Controller
     {
         $quote->is_active = !$quote->is_active;
         $quote->save();
+        
         return redirect()->back()->with('success', 'Quote status updated successfully.');
     }
 
@@ -130,7 +139,7 @@ class MarketingController extends Controller
             'promotion_type' => 'required|in:text,poster',
             'text_content' => 'nullable|string|max:1000',
             'poster_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'is_active' => 'boolean',
+            'is_active' => 'sometimes|boolean',
             'till_date' => 'nullable|date',
         ]);
 
@@ -155,7 +164,7 @@ class MarketingController extends Controller
             'promotion_type' => $validated['promotion_type'],
             'text_content' => $validated['text_content'] ?? null,
             'image_path' => $imagePath,
-            'is_active' => $validated['is_active'] ?? $promotion->is_active,
+            'is_active' => $request->boolean('is_active'),
             'till_date' => $validated['till_date'] ?? $promotion->till_date,
         ]);
 
@@ -181,6 +190,7 @@ class MarketingController extends Controller
     {
         $promotion->is_active = !$promotion->is_active;
         $promotion->save();
+
         return redirect()->back()->with('success', 'Promotion status updated successfully.');
     }
 
@@ -248,14 +258,17 @@ class MarketingController extends Controller
             'trigger_condition' => 'required|in:daily,weekly',
             'frequency' => 'required',
             'times_per_day' => 'nullable|integer|min:1',
-            'is_active' => 'boolean',
+            'is_active' => 'sometimes|boolean',
         ]);
 
         if ($validated['trigger_condition'] === 'daily' && is_array($validated['frequency'])) {
             $validated['frequency'] = json_encode($validated['frequency']);
         }
+        
+        $updateData = $validated;
+        $updateData['is_active'] = $request->boolean('is_active');
 
-        $prompt->update($validated);
+        $prompt->update($updateData);
 
         return redirect()->route('admin.marketing.index')->with('success', 'Prompt updated successfully.');
     }
@@ -276,6 +289,7 @@ class MarketingController extends Controller
     {
         $prompt->is_active = !$prompt->is_active;
         $prompt->save();
+        
         return redirect()->back()->with('success', 'Prompt status updated successfully.');
     }
 }
