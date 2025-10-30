@@ -57,10 +57,17 @@ onMounted(() => {
         document.documentElement.removeAttribute('data-swal2-theme');
         localStorage.theme = 'light';
     }
+
+    // Expose global loader controls
+    window.showPageLoader = () => { isLoading.value = true; };
+    window.hidePageLoader = () => { isLoading.value = false; };
 });
 
 onUnmounted(() => {
     window.removeEventListener('new-notification', fetchNotifications);
+    // Clean up globals (optional)
+    delete window.showPageLoader;
+    delete window.hidePageLoader;
 });
 
 // Toggle dark mode
@@ -353,12 +360,12 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #97D5FF;
+    background-color: #fbfbfbba;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    border-radius: 8px;
+    /* border-radius: 8px; */
 }
 
 .dark .page-transition-loader {
@@ -384,7 +391,7 @@ main {
 #box3 {
     width: 50px;
     height: 50px;
-    background: #2b2899;
+    background: #4CCAFF;
     animation: animate .4s linear infinite;
     border-radius: 3px;
 }

@@ -509,9 +509,28 @@ const toggleStatus = (item) => {
     else if (activeTab.value === 'prompts') url = `/admin/prompts/${item.id}/toggle-status`;
 
     if (url) {
-        router.put(url, {}, {
+        if (typeof window !== 'undefined' && typeof window.showPageLoader === 'function') {
+            window.showPageLoader();
+        }
+        router.post(url, {}, {
             preserveScroll: true,
-            onSuccess: () => Swal.fire('Status Updated!', 'The status has been toggled.', 'success'),
+            onSuccess: () => {
+                if (typeof window !== 'undefined' && typeof window.hidePageLoader === 'function') {
+                    window.hidePageLoader();
+                }
+                Swal.fire('Status Updated!', 'The status has been toggled.', 'success');
+            },
+            onError: () => {
+                if (typeof window !== 'undefined' && typeof window.hidePageLoader === 'function') {
+                    window.hidePageLoader();
+                }
+                Swal.fire('Error', 'Failed to toggle status. Please try again.', 'error');
+            },
+            onFinish: () => {
+                if (typeof window !== 'undefined' && typeof window.hidePageLoader === 'function') {
+                    window.hidePageLoader();
+                }
+            }
         });
     }
 };

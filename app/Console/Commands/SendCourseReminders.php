@@ -95,7 +95,7 @@ class SendCourseReminders extends Command
 
             // If there are incomplete courses and the user has been inactive, send an email
             if (!empty($incompleteCourses)) {
-                if ($user->emailNotificationSetting->receives_course_reminder_emails) {
+                if ($user->canReceiveEmail('receivess_course_reminder_emails')) {
                     $this->info("Sending reminder to {$user->email} for " . count($incompleteCourses) . " incomplete courses.");
                     Log::info("Attempting to send email to {$user->email} for incomplete courses.");
                     Mail::to($user->email)->send(new CourseReminder($user, $incompleteCourses));

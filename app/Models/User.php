@@ -86,8 +86,32 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::created(function ($user) {
-            $user->emailNotificationSetting()->create([]);
+            $defaultSettings = [
+                ['key' => 'receives_new_course_notification_emails', 'value' => true],
+                ['key' => 'receives_course_completion_emails', 'value' => true],
+                ['key' => 'receives_course_reminder_emails', 'value' => true],
+                ['key' => 'receives_new_message_emails', 'value' => true],
+                ['key' => 'receives_promotional_emails', 'value' => false],
+                ['key' => 'receives_wellness_checkin_emails', 'value' => true],
+                ['key' => 'receives_motivational_quote_emails', 'value' => true],
+            ];
+
+            foreach ($defaultSettings as $setting) {
+                $user->emailNotificationSettings()->create($setting);
+            }
         });
+    }
+
+    /**
+     * Check if the user can receive a specific email notification.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function canReceiveEmail(string $key): bool
+    {
+        $setting = $this->emailNotificationSettings()->where('key', $key)->first();
+        return $setting ? $setting->value : false;
     }
 
     /**

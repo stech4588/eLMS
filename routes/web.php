@@ -53,6 +53,8 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\HelpController;
+use App\Http\Controllers\Admin\MarketingController;
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('/invitations/accept/{token}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
@@ -111,9 +113,7 @@ Route::get('/joinnow', [PricingController::class, 'showJoinNowPage'])->name('joi
 Route::get('/Instructor', function () {
     return Inertia::render('Instructor/myInstructor');
 })->name('Instructor');
-Route::get('/help', function () {
-    return Inertia::render('help/help');
-})->middleware(['auth', 'verified'])->name('help');
+Route::get('/help', [HelpController::class, 'index'])->middleware(['auth', 'verified'])->name('help');
 
 // Route::get('/cart', function () {
 //     return Inertia::render('cart/cart');
@@ -206,26 +206,26 @@ Route::middleware('auth')->group(function () {
     Route::resource('admin/pricings', \App\Http\Controllers\Admin\PricingController::class);
 
     // Marketing Management Routes (explicitly defined for clarity and to resolve issues)
-    Route::get('/admin/marketing', [App\Http\Controllers\Admin\MarketingController::class, 'showMarketingPage'])->name('admin.marketing.index');
+    Route::get('/admin/marketing', [MarketingController::class, 'showMarketingPage'])->name('admin.marketing.index');
     
-    Route::post('/admin/marketing', [App\Http\Controllers\Admin\MarketingController::class, 'storeQuote'])->name('admin.marketing.store');
-    Route::put('/admin/marketing/{quote}', [App\Http\Controllers\Admin\MarketingController::class, 'updateQuote'])->name('admin.marketing.update');
-    Route::delete('/admin/marketing/{quote}', [App\Http\Controllers\Admin\MarketingController::class, 'destroyQuote'])->name('admin.marketing.destroy');
-    Route::put('/admin/marketing/{quote}/toggle-status', [App\Http\Controllers\Admin\MarketingController::class, 'toggleQuoteStatus'])->name('admin.marketing.toggleStatus');
+    Route::post('/admin/marketing', [MarketingController::class, 'storeQuote'])->name('admin.marketing.store');
+    Route::put('/admin/marketing/{quote}', [MarketingController::class, 'updateQuote'])->name('admin.marketing.update');
+    Route::delete('/admin/marketing/{quote}', [MarketingController::class, 'destroyQuote'])->name('admin.marketing.destroy');
+    Route::post('/admin/marketing/{quote}/toggle-status', [MarketingController::class, 'toggleQuoteStatus'])->name('admin.marketing.toggleStatus');
 
     // Promotion Routes (explicitly defined)
-    Route::post('/admin/promotions', [App\Http\Controllers\Admin\MarketingController::class, 'storePromotion'])->name('admin.promotions.store');
-    Route::put('/admin/promotions/{promotion}', [App\Http\Controllers\Admin\MarketingController::class, 'updatePromotion'])->name('admin.promotions.update'); // Use POST with _method for PUT
-    Route::delete('/admin/promotions/{promotion}', [App\Http\Controllers\Admin\MarketingController::class, 'destroyPromotion'])->name('admin.promotions.destroy');
-    Route::put('/admin/promotions/{promotion}/toggle-status', [App\Http\Controllers\Admin\MarketingController::class, 'togglePromotionStatus'])->name('admin.promotions.toggleStatus');
+    Route::post('/admin/promotions', [MarketingController::class, 'storePromotion'])->name('admin.promotions.store');
+    Route::put('/admin/promotions/{promotion}', [MarketingController::class, 'updatePromotion'])->name('admin.promotions.update'); // Use POST with _method for PUT
+    Route::delete('/admin/promotions/{promotion}', [MarketingController::class, 'destroyPromotion'])->name('admin.promotions.destroy');
+    Route::post('/admin/promotions/{promotion}/toggle-status', [MarketingController::class, 'togglePromotionStatus'])->name('admin.promotions.toggleStatus');
 
     // Prompt Routes
-    Route::post('/admin/prompts', [App\Http\Controllers\Admin\MarketingController::class, 'storePrompt'])->name('admin.prompts.store');
-    Route::put('/admin/prompts/{prompt}', [App\Http\Controllers\Admin\MarketingController::class, 'updatePrompt'])->name('admin.prompts.update');
-    Route::delete('/admin/prompts/{prompt}', [App\Http\Controllers\Admin\MarketingController::class, 'destroyPrompt'])->name('admin.prompts.destroy');
-    Route::put('/admin/prompts/{prompt}/toggle-status', [App\Http\Controllers\Admin\MarketingController::class, 'togglePromptStatus'])->name('admin.prompts.toggleStatus');
+    Route::post('/admin/prompts', [MarketingController::class, 'storePrompt'])->name('admin.prompts.store');
+    Route::put('/admin/prompts/{prompt}', [MarketingController::class, 'updatePrompt'])->name('admin.prompts.update');
+    Route::delete('/admin/prompts/{prompt}', [MarketingController::class, 'destroyPrompt'])->name('admin.prompts.destroy');
+    Route::post('/admin/prompts/{prompt}/toggle-status', [MarketingController::class, 'togglePromptStatus'])->name('admin.prompts.toggleStatus');
 
-    Route::get('/promotions/random-active', [App\Http\Controllers\Admin\MarketingController::class, 'getRandomActivePromotion'])->name('promotions.randomActive');
+    Route::get('/promotions/random-active', [MarketingController::class, 'getRandomActivePromotion'])->name('promotions.randomActive');
 
     // Community post routes
     Route::get('/api/community-posts', [CommunityPostController::class, 'index']);

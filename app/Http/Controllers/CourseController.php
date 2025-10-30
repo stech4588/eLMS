@@ -224,9 +224,9 @@ class CourseController extends Controller
             Log::info('Transaction committed.');
 
             // Send email notification to all students
-            $students = User::where('type', 'student')->with('emailNotificationSetting')->get();
+            $students = User::where('type', 'student')->get();
             foreach ($students as $student) {
-                if ($student->emailNotificationSetting->receives_new_course_notification_emails) {
+                if ($student->canReceiveEmail('receives_new_course_notification_emails')) {
                     Mail::to($student->email)->send(new NewCourseNotification($course));
                 }
             }

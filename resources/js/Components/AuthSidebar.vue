@@ -74,7 +74,7 @@
                 </Link>
             </div>
             <!-- Common link -->
-            <Link v-if="hasPermission('helpView')" class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }"
+            <Link class="sidebar_subtitles" :class="{ 'active': page.url === '/help' }"
                 href="/help">Help <img class="sidebar_dark_icon" src="/images/help_icon.svg" alt="Help" /></Link>
         </div>
     </aside>
