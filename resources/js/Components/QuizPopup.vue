@@ -17,8 +17,8 @@
                     <span class="text-base font-medium text-indigo-700 dark:text-white">Progress</span>
                     <span class="text-sm font-medium text-indigo-700 dark:text-white">{{ answeredQuestionsCount }} of {{ quiz.questions.length }} answered</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                    <div class="bg-indigo-600 h-2.5 rounded-full" :style="{ width: progressPercentage + '%' }"></div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 overflow-hidden">
+                    <div class="bg-indigo-600 h-2.5 rounded-full" :style="{ width: clampedProgress + '%' }"></div>
                 </div>
             </div>
 
@@ -33,7 +33,7 @@
                                        'bg-indigo-100 dark:bg-indigo-900/50 border-indigo-500 dark:border-indigo-400': form.answers[question.id] === answer.id,
                                        'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700': form.answers[question.id] !== answer.id
                                    }">
-                                <input type="radio" :name="'question_' + question.id" :value="answer.id" v-model="form.answers[question.id]" class="hidden">
+                                <input type="radio" :name="'question_' + question.id" :value="answer.id" v-model="form.answers[question.id]" class="sr-only">
                                 <span class="w-5 h-5 mr-4 border-2 rounded-full flex-shrink-0"
                                       :class="{
                                           'bg-indigo-600 border-indigo-600': form.answers[question.id] === answer.id,
@@ -61,23 +61,24 @@
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, reactive, watch } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
     show: Boolean,
     quiz: Object,
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'completed']);
 
-const form = useForm({
+const form = reactive({
+    processing: false,
     answers: {},
 });
 
 const answeredQuestionsCount = computed(() => {
     if (!props.quiz || !props.quiz.questions) return 0;
-    return Object.values(form.answers).filter(val => val !== null && val !== undefined).length;
+    return props.quiz.questions.reduce((acc, q) => acc + (form.answers[q.id] !== undefined && form.answers[q.id] !== null ? 1 : 0), 0);
 });
 
 const progressPercentage = computed(() => {
@@ -87,13 +88,35 @@ const progressPercentage = computed(() => {
     return (answeredQuestionsCount.value / props.quiz.questions.length) * 100;
 });
 
-const submitQuiz = () => {
-    if (props.quiz) {
-        form.post(route('quiz.attempt', { quiz: props.quiz.id }), {
-            onSuccess: () => {
-                emit('close');
-            }
+const clampedProgress = computed(() => Math.max(0, Math.min(100, progressPercentage.value)));
+
+// Reset answers whenever popup opens or quiz changes
+watch(() => props.show, (isOpen) => {
+    if (isOpen) {
+        form.answers = {};
+    }
+});
+watch(() => props.quiz && props.quiz.id, () => {
+    form.answers = {};
+});
+
+const submitQuiz = async () => {
+    if (!props.quiz) return;
+    try {
+        form.processing = true;
+        const response = await axios.post(route('quiz.attempt', { quiz: props.quiz.id }), {
+            answers: form.answers,
+            return_json: true,
+        }, {
+            headers: { 'Accept': 'application/json' }
         });
+        emit('completed', response.data);
+        emit('close');
+    } catch (e) {
+        // Optionally handle/emit error
+        console.error('Quiz submit failed', e?.response?.data || e?.message);
+    } finally {
+        form.processing = false;
     }
 };
 </script>

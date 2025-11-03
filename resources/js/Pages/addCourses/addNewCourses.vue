@@ -358,6 +358,26 @@
                                         </div>
                                     </div>
 
+                                <!-- Per-Video Quiz -->
+                                <div class="mb-6 rounded-xl border border-gray-300 dark:border-gray-600 p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <label class="block mb-1 font-semibold add_course_dark_text">Per‑Video Quiz</label>
+                                            <p class="text-sm text-gray-600 add_course_dark_text" v-if="videosData[currentEditingVideoIndex]?.quiz">
+                                                {{ videosData[currentEditingVideoIndex].quiz.questions?.length || 0 }} questions configured
+                                            </p>
+                                            <p class="text-sm text-gray-500 add_course_dark_text" v-else>
+                                                Optional: Add a short quiz to show after this video.
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center" style="gap: 8px;">
+                                            <button v-if="videosData[currentEditingVideoIndex]?.quiz" @click="openVideoQuizModal(true)" class="px-3 py-1.5 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Edit Quiz</button>
+                                            <button v-if="videosData[currentEditingVideoIndex]?.quiz" @click="removeVideoQuiz()" class="px-3 py-1.5 text-white bg-red-600 rounded-lg hover:bg-red-700">Remove</button>
+                                            <button v-else @click="openVideoQuizModal(false)" class="px-3 py-1.5 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Add Quiz</button>
+                                        </div>
+                                    </div>
+                                </div>
+
                                    <div class="relative">
                                         <label for="thumbnail" class="block mb-2 font-medium flex add_course_dark_text" style=" color: black; font-size: 16px; font-weight: 600;">Thumbnail </label>
                                         <input
@@ -455,48 +475,7 @@
                             </div>
                         </div>
 
-                        <!-- Step 3: Quiz -->
-                        <div v-if="currentStep === 3" class="p-6">
-                            <h3 class="mb-6 text-xl font-semibold">Add a Quiz (Optional)</h3>
-                            <div v-if="!quizForm.title">
-                                <button @click="addQuiz" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                                Add Quiz
-                                </button>
-                            </div>
-                            <div v-else>
-                                <div class="mb-4">
-                                    <label for="quiz_title" class="block mb-2 font-medium">Quiz Title</label>
-                                    <input type="text" id="quiz_title" v-model="quizForm.title" class="w-full p-2 border rounded-md" style="color:black!important">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="quiz_description" class="block mb-2 font-medium">Quiz Description</label>
-                                    <textarea id="quiz_description" v-model="quizForm.description" class="w-full p-2 border rounded-md" style="color:black;"></textarea>
-                                </div>
-
-                                <h4 class="mb-4 text-lg font-semibold">Questions</h4>
-                                <div v-for="(question, qIndex) in quizForm.questions" :key="qIndex" class="mb-4 p-4 border rounded-md">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <label :for="'question_text_' + qIndex" class="block font-medium">Question {{ qIndex + 1 }}</label>
-                                        <button @click="removeQuestion(qIndex)" class="text-red-500 hover:text-red-700">Remove</button>
-                                    </div>
-                                    <input type="text" :id="'question_text_' + qIndex" v-model="question.question_text" class="w-full p-2 border rounded-md mb-2" style="color:black;">
-
-                                    <h5 class="mb-2 font-semibold">Answers</h5>
-                                    <div v-for="(answer, aIndex) in question.answers" :key="aIndex" class="flex items-center mb-2">
-                                        <input type="radio" :name="'correct_answer_' + qIndex" :value="aIndex" @change="setCorrectAnswer(qIndex, aIndex)" class="mr-2">
-                                        <input type="text" v-model="answer.answer_text" class="w-full p-2 border rounded-md" style="color:black;">
-                                        <button @click="removeAnswer(qIndex, aIndex)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
-                                    </div>
-                                    <button @click="addAnswer(qIndex)" class="text-blue-600 hover:text-blue-800">Add Answer</button>
-                                </div>
-                                <button @click="addQuestion" class="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700">Add Question</button>
-                            </div>
-
-                            <div class="flex justify-end mt-8 space-x-4">
-                                <button @click="prevStep" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Back</button>
-                                <button @click="nextStep" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Next</button>
-                            </div>
-                        </div>
+                        <!-- Step 3 intentionally skipped (per-video quiz handled in Step 2) -->
 
                         <!-- Step 4: Visibility (Summary) -->
                         <div v-if="currentStep === 4" class="p-6 upload_video_section" >
@@ -558,6 +537,44 @@
                 <div class="flex justify-end space-x-2">
                     <button @click="showCertificatePopup = false" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
                     <button @click="submitNewCertificate" class="px-4 py-2 text-white bg-[#148ad9] rounded-md hover:bg-[#148ad9]">Add Certificate</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Quiz Builder Modal -->
+        <div v-if="showVideoQuizModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="closeVideoQuizModal">
+            <div class="p-6 bg-white rounded-lg shadow-xl w-full" style="max-width: 800px; max-height: 85vh;">
+                <h3 class="mb-4 text-xl font-semibold">{{ isEditingVideoQuiz ? 'Edit' : 'Add' }} Quiz for Video {{ currentEditingVideoIndex + 1 }}</h3>
+                <div class="max-h-[65vh] overflow-y-auto pr-1">
+                <div class="mb-4">
+                    <label class="block mb-2 font-medium">Quiz Title</label>
+                    <input type="text" v-model="videoQuizForm.title" class="w-full p-2 border rounded-md" style="color:black;">
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 font-medium">Quiz Description</label>
+                    <textarea v-model="videoQuizForm.description" class="w-full p-2 border rounded-md" style="color:black;"></textarea>
+                </div>
+                <h4 class="mb-3 text-lg font-semibold">Questions</h4>
+                <div v-for="(question, qIndex) in videoQuizForm.questions" :key="qIndex" class="mb-4 p-4 border rounded-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block font-medium">Question {{ qIndex + 1 }}</label>
+                        <button @click="removeVideoQuizQuestion(qIndex)" class="text-red-500 hover:text-red-700">Remove</button>
+                    </div>
+                    <input type="text" v-model="question.question_text" class="w-full p-2 border rounded-md mb-2" style="color:black;" placeholder="Enter question text">
+                    <h5 class="mb-2 font-semibold">Answers</h5>
+                    <div v-for="(answer, aIndex) in question.answers" :key="aIndex" class="flex items-center mb-2">
+                        <input type="radio" :name="'video_quiz_correct_' + qIndex" :value="aIndex" @change="setVideoQuizCorrectAnswer(qIndex, aIndex)" class="mr-2">
+                        <input type="text" v-model="answer.answer_text" class="w-full p-2 border rounded-md" style="color:black;" placeholder="Answer text">
+                        <button @click="removeVideoQuizAnswer(qIndex, aIndex)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
+                    </div>
+                    <button @click="addVideoQuizAnswer(qIndex)" class="text-blue-600 hover:text-blue-800">Add Answer</button>
+                </div>
+                <button @click="addVideoQuizQuestion" class="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700">Add Question</button>
+                </div>
+
+                <div class="flex justify-end mt-6 space-x-2">
+                    <button @click="closeVideoQuizModal" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
+                    <button @click="saveVideoQuiz" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Save Quiz</button>
                 </div>
             </div>
         </div>
@@ -631,6 +648,15 @@ const form = useForm({
 });
 
 const quizForm = reactive({
+    title: '',
+    description: '',
+    questions: [],
+});
+
+// Per-video quiz builder state
+const showVideoQuizModal = ref(false);
+const isEditingVideoQuiz = ref(false);
+const videoQuizForm = reactive({
     title: '',
     description: '',
     questions: [],
@@ -914,15 +940,24 @@ const nextStep = () => {
     if (currentStep.value === 1 && videosData.value.length === 0) {
         addNewVideoSlot();
     }
-
-    currentStep.value++;
+    // Skip legacy Step 3 (quiz handled per video in Step 2)
+    if (currentStep.value === 2) {
+        currentStep.value = 4;
+    } else {
+        currentStep.value++;
+    }
 };
 
 const prevStep = () => {
     if (currentStep.value >=2 && currentEditingVideoIndex.value !== -1) {
          saveCurrentVideoDetails();
     }
-    currentStep.value--;
+    // Skip legacy step 3 when going back
+    if (currentStep.value === 4) {
+        currentStep.value = 2;
+    } else {
+        currentStep.value--;
+    }
 };
 
 const triggerVideoUploadFromRightPanel = () => {
@@ -1028,6 +1063,19 @@ const submitForm = async () => {
             // Example for appending a thumbnail if it exists
             if (video.thumbnailFile instanceof File) {
                 formData.append(`videos[${index}][thumbnailFile]`, video.thumbnailFile);
+            }
+
+            // Append per-video quiz if present
+            if (video.quiz) {
+                formData.append(`videos[${index}][quiz][title]`, video.quiz.title || '');
+                formData.append(`videos[${index}][quiz][description]`, video.quiz.description || '');
+                (video.quiz.questions || []).forEach((q, qIndex) => {
+                    formData.append(`videos[${index}][quiz][questions][${qIndex}][question_text]`, q.question_text || '');
+                    (q.answers || []).forEach((a, aIndex) => {
+                        formData.append(`videos[${index}][quiz][questions][${qIndex}][answers][${aIndex}][answer_text]`, a.answer_text || '');
+                        formData.append(`videos[${index}][quiz][questions][${qIndex}][answers][${aIndex}][is_correct]`, a.is_correct ? 1 : 0);
+                    });
+                });
             }
         });
     } else {
@@ -1179,6 +1227,94 @@ const setCorrectAnswer = (qIndex, aIndex) => {
     quizForm.questions[qIndex].answers.forEach((answer, index) => {
         answer.is_correct = index === aIndex;
     });
+};
+
+// Per-video quiz helpers
+const openVideoQuizModal = (edit = false) => {
+    if (currentEditingVideoIndex.value < 0 || !videosData.value[currentEditingVideoIndex.value]) {
+        Swal.fire({ icon: 'error', title: 'No video selected', text: 'Please select a video first.' });
+        return;
+    }
+    isEditingVideoQuiz.value = !!edit;
+    const existing = videosData.value[currentEditingVideoIndex.value].quiz;
+    if (existing) {
+        videoQuizForm.title = existing.title || '';
+        videoQuizForm.description = existing.description || '';
+        videoQuizForm.questions = (existing.questions || []).map(q => ({
+            question_text: q.question_text || '',
+            answers: (q.answers || []).map(a => ({ answer_text: a.answer_text || '', is_correct: !!a.is_correct }))
+        }));
+    } else {
+        videoQuizForm.title = '';
+        videoQuizForm.description = '';
+        videoQuizForm.questions = [];
+    }
+    showVideoQuizModal.value = true;
+};
+
+const closeVideoQuizModal = () => {
+    showVideoQuizModal.value = false;
+};
+
+const addVideoQuizQuestion = () => {
+    videoQuizForm.questions.push({ question_text: '', answers: [ { answer_text: '', is_correct: false }, { answer_text: '', is_correct: false } ] });
+};
+
+const removeVideoQuizQuestion = (qIndex) => {
+    videoQuizForm.questions.splice(qIndex, 1);
+};
+
+const addVideoQuizAnswer = (qIndex) => {
+    videoQuizForm.questions[qIndex].answers.push({ answer_text: '', is_correct: false });
+};
+
+const removeVideoQuizAnswer = (qIndex, aIndex) => {
+    videoQuizForm.questions[qIndex].answers.splice(aIndex, 1);
+};
+
+const setVideoQuizCorrectAnswer = (qIndex, aIndex) => {
+    videoQuizForm.questions[qIndex].answers.forEach((a, idx) => { a.is_correct = idx === aIndex; });
+};
+
+const saveVideoQuiz = () => {
+    // Basic validation
+    if (!videoQuizForm.title || videoQuizForm.title.trim() === '') {
+        Swal.fire({ icon: 'error', title: 'Quiz title is required' });
+        return;
+    }
+    // Ensure every question has at least 2 answers and one correct
+    for (const q of videoQuizForm.questions) {
+        if (!q.question_text || q.question_text.trim() === '') {
+            Swal.fire({ icon: 'error', title: 'Each question must have text' });
+            return;
+        }
+        if (!q.answers || q.answers.length < 2) {
+            Swal.fire({ icon: 'error', title: 'Each question needs at least 2 answers' });
+            return;
+        }
+        if (!q.answers.some(a => a.is_correct)) {
+            Swal.fire({ icon: 'error', title: 'Select a correct answer for each question' });
+            return;
+        }
+    }
+
+    const quizPayload = {
+        title: videoQuizForm.title,
+        description: videoQuizForm.description,
+        questions: videoQuizForm.questions.map(q => ({
+            question_text: q.question_text,
+            answers: q.answers.map(a => ({ answer_text: a.answer_text, is_correct: !!a.is_correct }))
+        }))
+    };
+    videosData.value[currentEditingVideoIndex.value].quiz = quizPayload;
+    showVideoQuizModal.value = false;
+    Swal.fire({ icon: 'success', title: 'Quiz saved for this video' });
+};
+
+const removeVideoQuiz = () => {
+    if (currentEditingVideoIndex.value < 0) return;
+    delete videosData.value[currentEditingVideoIndex.value].quiz;
+    Swal.fire({ icon: 'success', title: 'Quiz removed from this video' });
 };
 
 onMounted(() => {
