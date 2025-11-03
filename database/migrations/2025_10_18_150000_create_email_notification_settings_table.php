@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('email_notification_settings')) {
+            return; // Table already exists; make migration idempotent
+        }
         Schema::create('email_notification_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

@@ -13,6 +13,7 @@ class Quiz extends Model
 
     protected $fillable = [
         'course_id',
+        'video_id',
         'title',
         'description',
     ];
@@ -30,5 +31,10 @@ class Quiz extends Model
     public function attempts(): HasMany
     {
         return $this->hasMany(QuizAttempt::class);
+    }
+
+    public function video(): BelongsTo
+    {
+        return $this->belongsTo(Video::class);
     }
 }

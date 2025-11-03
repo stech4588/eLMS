@@ -158,6 +158,7 @@ Route::middleware('auth')->group(function () {
     // Course routes
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
+    Route::post('/videos/{video}/organize-notes', [CourseController::class, 'organizeVideoNotes'])->name('videos.organizeNotes');
 
 
     // permission routes

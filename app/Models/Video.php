@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Video extends Model
 {
@@ -36,5 +37,13 @@ class Video extends Model
     public function progressEntries(): HasMany
     {
         return $this->hasMany(Progress::class);
+    }
+
+    /**
+     * Get the quiz associated with this video.
+     */
+    public function quiz(): HasOne
+    {
+        return $this->hasOne(Quiz::class);
     }
 }

@@ -5,7 +5,8 @@
     <AuthenticatedLayout v-slot="{ isSidebarOpen, isPlayerPage }">
         <FeedbackPopup :show="showFeedbackPopup" :course="completedCourse" @close="closeFeedbackPopup" />
         <NotesPopup :show="showNotesPopup" :video="notesForVideo" @close="handleCloseNotesPopup" />
-        <QuizPopup :show="showQuizPopup" :quiz="completedCourseQuiz" @close="closeQuizPopup" />
+        <QuizPopup :show="showQuizPopup" :quiz="activeQuiz" @close="closeQuizPopup" @completed="onQuizCompleted" />
+        <QuizResultPopup :show="showQuizResultPopup" :attempt="quizAttemptResult" @close="onQuizResultClosed" />
         <div class="flex h-screen bg-gray-100 dark:bg-gray-900 relative">
             <!-- AI Chatbot -->
             <AiChatbot :show="showChatbot" :course-context="course" @close="showChatbot = false" />
@@ -359,6 +360,7 @@ import AiChatbot from '@/Components/AiChatbot.vue';
 import TruncatedText from '@/Components/TruncatedText.vue';
 import NotesPopup from '@/Components/NotesPopup.vue';
 import QuizPopup from '@/Components/QuizPopup.vue';
+import QuizResultPopup from '@/Components/QuizResultPopup.vue';
 
 const page = usePage();
 page.props.meta = { ...page.props.meta, disableLoader: true };
@@ -374,7 +376,9 @@ const showChatbot = ref(false);
 const showNotesPopup = ref(false);
 const notesForVideo = ref(null);
 const showQuizPopup = ref(false);
-const completedCourseQuiz = ref(null);
+const activeQuiz = ref(null);
+const showQuizResultPopup = ref(false);
+const quizAttemptResult = ref(null);
 
 function handleCourseCompletion() {
     showFeedbackPopup.value = true;
@@ -385,14 +389,14 @@ function closeFeedbackPopup() {
     showFeedbackPopup.value = false;
     completedCourse.value = null;
     if (props.course.quizzes && props.course.quizzes.length > 0) {
-        completedCourseQuiz.value = props.course.quizzes[0];
+        activeQuiz.value = props.course.quizzes[0];
         showQuizPopup.value = true;
     }
 }
 
 function closeQuizPopup() {
     showQuizPopup.value = false;
-    completedCourseQuiz.value = null;
+    activeQuiz.value = null;
 }
 
 const currentVideo = ref(null);
@@ -622,6 +626,15 @@ const handleEnded = () => {
     saveProgress(true, false);
 };
 
+function maybeShowVideoQuizFlow() {
+    if (currentVideo.value && currentVideo.value.quiz) {
+        activeQuiz.value = currentVideo.value.quiz;
+        showQuizPopup.value = true;
+        return true;
+    }
+    return false;
+}
+
 const handleCloseNotesPopup = () => {
     showNotesPopup.value = false;
     notesForVideo.value = null;
@@ -724,28 +737,73 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
                         currentVideoSavedProgress.value = { completed: true };
                     }
 
+                    // Show per-video quiz first if present
+                    if (maybeShowVideoQuizFlow()) {
+                        return;
+                    }
+
+                    // Otherwise, show notes if present
                     if (currentVideo.value && currentVideo.value.takeaway_notes) {
                         notesForVideo.value = currentVideo.value;
                         showNotesPopup.value = true;
-                    } else {
-                        axios.get(route('courses.completionStatus', { course: props.course.id }))
-                            .then(response => {
-                                if (response.data.is_completed) {
-                                    handleCourseCompletion();
-                                } else {
-                                    playNextVideo();
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error checking course completion status:', error);
-                                playNextVideo();
-                            });
+                        return;
                     }
+
+                    // Otherwise, check course completion or go next
+                    axios.get(route('courses.completionStatus', { course: props.course.id }))
+                        .then(response => {
+                            if (response.data.is_completed) {
+                                handleCourseCompletion();
+                            } else {
+                                playNextVideo();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking course completion status:', error);
+                            playNextVideo();
+                        });
                 }
             }
         });
     }
 };
+
+function onQuizCompleted(result) {
+    // result contains attempt and summary
+    quizAttemptResult.value = result.attempt || null;
+    if (quizAttemptResult.value) {
+        showQuizResultPopup.value = true;
+    } else {
+        // Fallback to next step if no attempt returned
+        afterResultFlow();
+    }
+}
+
+function onQuizResultClosed() {
+    showQuizResultPopup.value = false;
+    quizAttemptResult.value = null;
+    afterResultFlow();
+}
+
+function afterResultFlow() {
+    if (currentVideo.value && currentVideo.value.takeaway_notes) {
+        notesForVideo.value = currentVideo.value;
+        showNotesPopup.value = true;
+        return;
+    }
+    axios.get(route('courses.completionStatus', { course: props.course.id }))
+        .then(response => {
+            if (response.data.is_completed) {
+                handleCourseCompletion();
+            } else {
+                playNextVideo();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking completion status after result close:', error);
+            playNextVideo();
+        });
+}
 
 const onPlay = () => {
     isPlaying.value = true;
