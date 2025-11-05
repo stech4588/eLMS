@@ -1,10 +1,59 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage, useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 const page = usePage();
-const user = computed(() => page.props.auth.user);
+const user = computed(() => {
+    const authUser = page.props.auth.user;
+    return {
+        ...authUser,
+        badges: [
+            { name: 'Top Learner', icon_url: '/images/badge1.svg' },
+            { name: 'Fast Learner', icon_url: '/images/badge2.svg' },
+            { name: 'Subject Master', icon_url: '/images/badge3.svg' },
+            { name: 'Rising Star', icon_url: '/images/badge4.svg' },
+        ]
+    };
+});
+
+const leaderboard = ref([]);
+
+onMounted(() => {
+    fetchLeaderboard();
+});
+
+async function fetchLeaderboard() {
+    try {
+        const response = await fetch(route('api.leaderboard'));
+        const data = await response.json();
+        leaderboard.value = data;
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
+}
+
+const rankedLeaderboard = computed(() => {
+    // Filter out the current user from the fetched leaderboard to avoid duplicates
+    const otherUsers = leaderboard.value.filter(u => u.id !== user.value.id);
+
+    const allUsers = [
+        ...otherUsers,
+        {
+            id: user.value.id,
+            name: user.value.name,
+            points: user.value.points,
+            badges: user.value.badges,
+        },
+    ];
+
+    const sortedUsers = allUsers.sort((a, b) => b.points - a.points);
+    
+    return sortedUsers.map((user, index) => ({
+        ...user,
+        rank: index + 1,
+    }));
+});
 
 const props = defineProps({
     preferredTopics: Array,
@@ -77,6 +126,16 @@ function updateTopics() {
             <div class="career-journey-wrapper">
                 <div class="career-journey-content dark:bg-dark-bg-secondary dark:text-white">
                     <div class="career-journey-title">My Career Journey</div>
+
+                    <div class="journey-badges-section">
+                        <h3 class="journey-badges-title">My Badges</h3>
+                        <div class="journey-badges-list">
+                            <div v-for="(badge, index) in user.badges" :key="index" class="journey-badge-item">
+                                <img :src="badge.icon_url" :alt="badge.name" class="journey-badge-icon" />
+                                <span class="journey-badge-name">{{ badge.name }}</span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="profile-sections-container">
                         <!-- Profile Card -->
@@ -89,15 +148,17 @@ function updateTopics() {
                         <!-- Points Card -->
                         <div class="points-card">
                             <div class="points-content">
+                                <div class="points-section">
                                 <div class="points-header">
                                     <span class="points-title">My Points</span>
                                 </div>
                                 <div class="points-value">
                                     {{ user.points }}
+                                    </div>
                                 </div>
                             </div>
                             <div class="points-footer">
-                                Keep learning to earn more points!
+                                Keep learning to earn more points and badges!
                             </div>
                         </div>
 
@@ -164,6 +225,35 @@ function updateTopics() {
                     </div>
                 </div>
             </div>
+             <!-- Leaderboard Section -->
+            <div class="leaderboard-section dark:bg-dark-bg-secondary dark:text-white">
+                <h2 class="leaderboard-title">Leaderboard</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Points</th>
+                            <th>Badges</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="person in rankedLeaderboard" :key="person.id" :class="{ 'current-user-highlight': person.id === user.id }">
+                            <td>{{ person.rank }}</td>
+                            <td class="user-info">
+                                <img :src="person.profile_photo_url || '/images/profile.svg'" alt="Profile" class="leaderboard-profile-image" />
+                                <span>{{ person.name }}</span>
+                            </td>
+                            <td>{{ person.points }}</td>
+                            <td>
+                                <div class="leaderboard-badges">
+                                    <img v-for="(badge, index) in person.badges" :key="index" :src="badge.icon_url" class="leaderboard-badge-icon" />
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white" style="display: flex; justify-content: space-between; padding: 20px; align-items: baseline; margin-top: 30px;">
             <div>
@@ -211,6 +301,41 @@ function updateTopics() {
     font-weight: 600;
 }
 
+.journey-badges-section {
+    margin-top: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #e0e0e0;
+}
+.dark .journey-badges-section {
+    border-bottom-color: #5a5a5a;
+}
+.journey-badges-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.journey-badges-list {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.journey-badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100px;
+}
+.journey-badge-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px;
+}
+.journey-badge-name {
+    font-size: 14px;
+}
+
 /* Profile Sections Container */
 .profile-sections-container {
     display: flex;
@@ -231,7 +356,6 @@ function updateTopics() {
 .profile-card {
     border: 1px solid gray;
     width: 490px;
-    height: 194px;
     border-radius: 8px;
     padding: 20px;
 }
@@ -239,10 +363,6 @@ function updateTopics() {
     .profile-card {
         width: 100%;
     }
-}
-
-.profile-image {
-    /* Add any specific image styles here */
 }
 
 .profile-name {
@@ -259,7 +379,6 @@ function updateTopics() {
 .points-card {
     border: 1px solid gray;
     width: 490px;
-    height: 194px;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -275,6 +394,17 @@ function updateTopics() {
     padding: 20px;
     padding-bottom: 0px;
     padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.points-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
 }
 
 .points-header {
@@ -300,7 +430,6 @@ function updateTopics() {
 .career-goal-card {
     border: 1px solid gray;
     width: 490px;
-    height: 194px;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -340,9 +469,6 @@ function updateTopics() {
     background-color: #D9D9D966;
     padding: 8px 13px 8px 13px;
     border-top: 1px solid gray;
-}
-.home_page_style {
-    padding: 0;
 }
 
 .learning-plan-section{
@@ -523,5 +649,70 @@ font-weight: 600;
 }
 .dark .dark_career_focus_option{
     filter: invert(1);
+}
+.leaderboard-section {
+    background: white;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.leaderboard-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th, .leaderboard-table td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.leaderboard-table th {
+    background-color: #f4f6f8;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.dark .leaderboard-table th {
+    background-color: #4a4a4a;
+    color: #fff;
+}
+.dark .leaderboard-table td {
+    border-color: #5a5a5a;
+}
+.leaderboard-badges {
+    display: flex;
+    gap: 5px;
+}
+
+.leaderboard-badge-icon {
+    width: 24px;
+    height: 24px;
+}
+.current-user-highlight {
+    background-color: #e0efff;
+    font-weight: bold;
+}
+.dark .current-user-highlight {
+    background-color: #3a5a8a;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.leaderboard-profile-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
 </style>

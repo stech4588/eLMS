@@ -55,6 +55,8 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\Admin\MarketingController;
+use App\Http\Controllers\LeaderboardController;
+
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('/invitations/accept/{token}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
@@ -262,6 +264,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/quizzes/{quiz}', [QuizController::class, 'show'])->name('quiz.show');
     Route::post('/quizzes/{quiz}/attempt', [QuizController::class, 'storeAttempt'])->name('quiz.attempt');
     Route::get('/quizzes/result/{attempt}', [QuizController::class, 'result'])->name('quiz.result');
+    Route::get('/api/leaderboard', [LeaderboardController::class, 'getTopUsers'])->name('api.leaderboard');
 });
 
 // //For Roles Routes
