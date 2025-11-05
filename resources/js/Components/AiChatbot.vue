@@ -54,7 +54,7 @@
                             @keyup.enter="sendMessageOnEnter"
                             ref="inputBox"
                             rows="1"
-                            placeholder="Ask me anything about this course..."
+                            :placeholder="placeholder"
                             class="w-full px-4 py-3 pr-16 text-gray-800 bg-gray-100 border-2 border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none"
                         ></textarea>
                         <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()" class="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full transition-transform duration-200 transform hover:scale-110 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:scale-100">
@@ -103,21 +103,33 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    courseContext: {
+    chatContext: {
         type: Object,
         required: true
+    },
+    welcomeMessage: {
+        type: String,
+        default: "Hello! How can I help you today?"
+    },
+    placeholder: {
+        type: String,
+        default: "Ask me anything..."
     }
 });
 
 const emit = defineEmits(['close']);
 
-const messages = ref([
-    { text: "Hello! How can I help you with this course?", isUser: false }
-]);
+const messages = ref([]);
 const newMessage = ref('');
 const isLoading = ref(false);
 const messagesContainer = ref(null);
 const inputBox = ref(null);
+
+watch(() => props.show, (newValue) => {
+    if (newValue) {
+        messages.value = [{ text: props.welcomeMessage, isUser: false }];
+    }
+});
 
 watch(messages, async () => {
     await nextTick();
@@ -150,8 +162,8 @@ const sendMessage = async () => {
     try {
         const response = await axios.post(route('ai.chat'), {
             message: userMessage,
-            course_title: props.courseContext.title,
-            course_description: props.courseContext.description
+            context_title: props.chatContext.title,
+            context_description: props.chatContext.description
         });
         
         const formattedHtml = marked(response.data.reply);

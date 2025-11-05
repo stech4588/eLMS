@@ -96,11 +96,12 @@ const toggleSidebar = () => {
 const isPlayerPage = computed(() => page.component === 'Course/Player');
 const isCartPage = computed(() => page.component === 'cart/cart');
 const isGroupChatPage = computed(() => page.component === 'Groups/Chat');
+const isHelpPage = computed(() => page.component === 'help/help');
 
 const manageTawkToWidget = () => {
     // Use optional chaining for safety, as Tawk_API might not be loaded yet.
     if (window.Tawk_API?.hideWidget) {
-        if (isPlayerPage.value || isGroupChatPage.value) {
+        if (isPlayerPage.value || isGroupChatPage.value || isHelpPage.value) {
             window.Tawk_API.hideWidget();
         } else {
             window.Tawk_API.showWidget();
@@ -110,6 +111,7 @@ const manageTawkToWidget = () => {
 
 watch(isPlayerPage, manageTawkToWidget);
 watch(isGroupChatPage, manageTawkToWidget);
+watch(isHelpPage, manageTawkToWidget);
 
 onMounted(() => {
     router.on('start', () => {

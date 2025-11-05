@@ -9,7 +9,13 @@
         <QuizResultPopup :show="showQuizResultPopup" :attempt="quizAttemptResult" @close="onQuizResultClosed" />
         <div class="flex h-screen bg-gray-100 dark:bg-gray-900 relative">
             <!-- AI Chatbot -->
-            <AiChatbot :show="showChatbot" :course-context="course" @close="showChatbot = false" />
+            <AiChatbot 
+                :show="showChatbot" 
+                :chat-context="chatbotContext" 
+                :welcome-message="chatbotWelcomeMessage"
+                :placeholder="chatbotPlaceholder"
+                @close="showChatbot = false" 
+            />
 
             <!-- Floating AI Chat Button -->
             <div class="fixed bottom-4 right-4 z-40">
@@ -379,6 +385,31 @@ const showQuizPopup = ref(false);
 const activeQuiz = ref(null);
 const showQuizResultPopup = ref(false);
 const quizAttemptResult = ref(null);
+
+const chatbotContext = computed(() => {
+    if (currentVideo.value) {
+        return {
+            title: `Course: ${props.course.title} | Video: ${currentVideo.value.title}`,
+            description: `The user is watching a video titled "${currentVideo.value.title}" within the course "${props.course.title}".\n\nVideo Description: ${currentVideo.value.description || 'No description available.'}\n\nCourse Description: ${props.course.description}`
+        };
+    }
+    return {
+        title: `Course: ${props.course.title}`,
+        description: `The user is viewing the course "${props.course.title}".\n\nCourse Description: ${props.course.description}`
+    };
+});
+
+const chatbotWelcomeMessage = computed(() => {
+    return currentVideo.value 
+        ? "Hello! How can I help you with this video?"
+        : "Hello! How can I help you with this course?";
+});
+
+const chatbotPlaceholder = computed(() => {
+    return currentVideo.value
+        ? "Ask me anything about this video..."
+        : "Ask me anything about this course...";
+});
 
 function handleCourseCompletion() {
     showFeedbackPopup.value = true;
