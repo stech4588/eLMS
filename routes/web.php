@@ -56,7 +56,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\Admin\MarketingController;
 use App\Http\Controllers\LeaderboardController;
-
+use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/', [WelcomeController::class, 'index']);
 Route::get('/invitations/accept/{token}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
@@ -244,6 +244,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
     Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
     Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
+    Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
+    // Route::patch('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
+    Route::delete('/jobs/{job}', [JobController::class, 'destroy'])->name('jobs.destroy');
 
     // Group routes
     Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');

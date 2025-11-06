@@ -27,10 +27,10 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        Log::debug('DashboardController@index method called.'); // Added for debugging
+        
         $userId = Auth::id();
         $user = Auth::user(); // Get the full user object for ProgressService
-        Log::debug('DashboardController@index: User ID: ' . ($userId ?? 'Guest'));
+        
 
         // Fetch first 3 courses for "Skills you Follow"
         $coursesQuery = Course::with([
@@ -89,13 +89,12 @@ class DashboardController extends Controller
                 // Use the ProgressService to get overall course progress
                 if ($user) {
                     $progress = $this->progressService->getOverallCourseProgress($user, $course);
-                    Log::debug("DashboardController@index: Course ID: {$course->id}, Calculated Progress: {$progress}% for User ID: {$userId}");
                 } else {
-                    Log::debug("DashboardController@index: User not authenticated for progress calculation for Course ID: {$course->id}");
+                    
                 }
 
             } else {
-                Log::debug("DashboardController@index: User not logged in, progress and purchase status not calculated for Course ID: {$course->id}");
+                
             }
 
             return [
@@ -135,9 +134,8 @@ class DashboardController extends Controller
                 $progress = 0;
                 if ($userId && $user) {
                     $progress = $this->progressService->getOverallCourseProgress($user, $course);
-                    Log::debug("DashboardController@index (New Releases): Course ID: {$course->id}, Calculated Progress: {$progress}% for User ID: {$userId}");
                 } else {
-                    Log::debug("DashboardController@index (New Releases): User not logged in for progress calculation for Course ID: {$course->id}");
+                    
                 }
                 return [
                     'id' => $course->id,

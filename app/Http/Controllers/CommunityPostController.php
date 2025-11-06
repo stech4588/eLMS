@@ -7,6 +7,7 @@ use App\Models\CommunityPostAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Events\CommunityPostCreated;
 
 class CommunityPostController extends Controller
 {
@@ -83,7 +84,10 @@ class CommunityPostController extends Controller
         }
 
         $post->load(['user:id,name,type,profile_picture', 'attachments']);
-        
+
+        // Broadcast new post to other community members
+        broadcast(new CommunityPostCreated($post))->toOthers();
+
         return $post;
     }
 }

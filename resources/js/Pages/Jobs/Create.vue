@@ -10,6 +10,7 @@ const form = useForm({
     title: '',
     skills: '',
     description: '',
+    apply_url: '',
     contact_phone: '',
     contact_email: '',
 });
@@ -49,6 +50,12 @@ const submit = () => {
                                     <InputLabel for="description" value="Job Description" />
                                     <textarea id="description" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" v-model="form.description" required></textarea>
                                     <InputError class="mt-2" :message="form.errors.description" />
+                                </div>
+
+                                <div>
+                                    <InputLabel for="apply_url" value="Job URL (Apply Link)" />
+                                    <TextInput id="apply_url" type="url" class="mt-1 block w-full" v-model="form.apply_url" required placeholder="https://company.com/jobs/123" />
+                                    <InputError class="mt-2" :message="form.errors.apply_url" />
                                 </div>
 
                                 <div>

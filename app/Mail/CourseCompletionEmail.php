@@ -10,6 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Support\Str;
 
 class CourseCompletionEmail extends Mailable
 {
@@ -42,11 +43,16 @@ class CourseCompletionEmail extends Mailable
      */
     public function content(): Content
     {
+        // Generate a simple referral code from user id (base36) so no DB changes needed
+        $referralCode = strtoupper(base_convert($this->user->id, 10, 36));
+        $referralUrl = route('register.complete', ['ref' => $referralCode]);
+
         return new Content(
             view: 'emails.course-completion',
             with: [
                 'userName' => $this->user->name,
                 'courseTitle' => $this->course->title,
+                'referralUrl' => $referralUrl,
             ],
         );
     }

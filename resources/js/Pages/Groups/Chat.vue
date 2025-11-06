@@ -289,9 +289,25 @@ const scrollToBottom = () => {
 onMounted(() => {
     fetchMessages();
     document.addEventListener('mousedown', handleClickOutside);
+    // Realtime subscription: private groups.{groupId}
+    if (window.Echo) {
+        window.Echo.private(`groups.${props.group.id}`)
+            .listen('.MessageSent', (payload) => {
+                if (!payload || payload.group_id !== props.group.id) return;
+                messages.value.push(payload);
+                scrollToBottom();
+            });
+    } else {
+        console.warn('Echo is not initialized');
+    }
 });
 
 onUnmounted(() => {
     document.removeEventListener('mousedown', handleClickOutside);
+    try {
+        if (window.Echo) {
+            window.Echo.leave(`private-groups.${props.group.id}`);
+        }
+    } catch (e) {}
 });
 </script>
