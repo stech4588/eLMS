@@ -17,6 +17,7 @@ class Job extends Model
         'title',
         'skills',
         'description',
+        'apply_url',
         'contact_phone',
         'contact_email',
     ];

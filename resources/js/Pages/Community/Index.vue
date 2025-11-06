@@ -157,10 +157,23 @@ const handleScroll = () => {
 onMounted(() => {
     fetchPosts();
     window.addEventListener("scroll", handleScroll)
+    // Realtime new posts
+    if (window.Echo) {
+        window.Echo.private('community')
+            .listen('.CommunityPostCreated', (payload) => {
+                if (!payload) return;
+                addNewPost(payload);
+            });
+    }
 });
 
 onUnmounted(() => {
     window.removeEventListener("scroll", handleScroll)
+    try {
+        if (window.Echo) {
+            window.Echo.leave('private-community');
+        }
+    } catch (e) {}
 })
 
 </script>

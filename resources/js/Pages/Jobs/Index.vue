@@ -10,6 +10,7 @@ const props = defineProps({
     jobs: Object,
     filters: Object,
     skills: Array,
+    authUserId: Number,
 });
 
 const search = ref(props.filters.search);
@@ -100,6 +101,14 @@ watch([search, skill, date], debounce(() => {
                                     <h5 class="font-semibold text-gray-900 dark:text-gray-100">Skills:</h5>
                                     <p class="text-gray-600 dark:text-gray-400 truncate">{{ job.skills }}</p>
                                 </div>
+                                <div class="mt-4 flex justify-end">
+                                    <a :href="job.apply_url" target="_blank" rel="noopener noreferrer" @click.stop class="inline-flex items-center px-3 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                                        Apply
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7m0 0v7m0-7L10 14" />
+                                        </svg>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div v-else>
@@ -115,6 +124,6 @@ watch([search, skill, date], debounce(() => {
             </div>
         </div>
         
-        <JobDetailsModal :show="isModalVisible" :job="selectedJob" @close="closeModal" />
+        <JobDetailsModal :show="isModalVisible" :job="selectedJob" :auth-user-id="props.authUserId" @close="closeModal" />
     </AuthenticatedLayout>
 </template>

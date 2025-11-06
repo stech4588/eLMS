@@ -61,6 +61,8 @@ class ProgressService
 
                 if (!$alreadyReviewed) {
                     $courseCompleted = true;
+                    // Fire completion event
+                    event(new CourseCompleted($user, $course));
                 }
             }
         }

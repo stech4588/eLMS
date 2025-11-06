@@ -16,14 +16,19 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        // Capture referral code if present and store for later use
+        if ($request->filled('ref')) {
+            Session::put('referral_code', $request->query('ref'));
+        }
         $topics = Topic::all();
         $user = Auth::user();
 
@@ -84,6 +89,24 @@ class RegisteredUserController extends Controller
                 'resume_path' => $resumePath,
                 'profile_picture' => $profilePicturePath,
             ]);
+
+            // Apply referral rewards once at profile completion
+            if (Session::has('referral_code')) {
+                $code = Session::get('referral_code');
+                // Decode base36 code back to user id
+                $referrerId = intval(base_convert($code, 36, 10));
+                if ($referrerId > 0 && $referrerId !== $user->id) {
+                    $referrer = User::find($referrerId);
+                    if ($referrer) {
+                        // Award points to referrer; adjust amount as desired
+                        $referrer->increment('points', 100);
+                        // Optionally, give a smaller bonus to the referred user
+                        $user->increment('points', 25);
+                    }
+                }
+                // Ensure we only process once
+                Session::forget('referral_code');
+            }
 
             return redirect(route('dashboard', absolute: false));
         }

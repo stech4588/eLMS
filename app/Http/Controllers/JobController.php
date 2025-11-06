@@ -35,7 +35,8 @@ class JobController extends Controller
         return Inertia::render('Jobs/Index', [
             'jobs' => $jobs,
             'filters' => $request->only(['search', 'skill', 'date']),
-            'skills' => $skills
+            'skills' => $skills,
+            'authUserId' => Auth::id(),
         ]);
     }
 
@@ -52,6 +53,7 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'skills' => 'required|string',
             'description' => 'required|string',
+            'apply_url' => 'required|url|max:2048',
             'contact_phone' => 'nullable|string|max:255',
             'contact_email' => 'nullable|email|max:255',
         ];
@@ -71,10 +73,44 @@ class JobController extends Controller
             'title' => $validatedData['title'],
             'skills' => $validatedData['skills'],
             'description' => $validatedData['description'],
+            'apply_url' => $validatedData['apply_url'],
             'contact_phone' => $validatedData['contact_phone'] ?? $user->phone_number,
             'contact_email' => $validatedData['contact_email'] ?? $user->email,
         ]);
 
         return redirect()->route('jobs.index')->with('success', 'Job posted successfully.');
+    }
+
+    public function update(Request $request, Job $job)
+    {
+        $user = Auth::user();
+        if ($job->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'skills' => 'required|string',
+            'description' => 'required|string',
+            'apply_url' => 'required|url|max:2048',
+            'contact_phone' => 'nullable|string|max:255',
+            'contact_email' => 'nullable|email|max:255',
+        ]);
+
+        $job->update($validated);
+
+        return redirect()->route('jobs.index')->with('success', 'Job updated successfully.');
+    }
+
+    public function destroy(Job $job)
+    {
+        $user = Auth::user();
+        if ($job->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $job->delete();
+
+        return redirect()->route('jobs.index')->with('success', 'Job deleted successfully.');
     }
 }

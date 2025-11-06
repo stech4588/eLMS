@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Events\MessageSent;
 
 class MessageController extends Controller
 {
@@ -83,6 +84,9 @@ class MessageController extends Controller
         ]);
 
         $message->load('user:id,name,profile_picture');
+
+		// Broadcast the message to other group members (avoid echoing to sender)
+		broadcast(new MessageSent($message))->toOthers();
 
         return [
             'id' => $message->id,
