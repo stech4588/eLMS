@@ -15,9 +15,18 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
+const pusherKey =
+    import.meta.env.VITE_PUSHER_APP_KEY ||
+    document.head?.querySelector('meta[name="pusher-key"]')?.content ||
+    '';
+
+if (!pusherKey) {
+    console.error('Pusher app key is missing. Set VITE_PUSHER_APP_KEY before build or add <meta name="pusher-key" content="..."> to your layout.');
+}
+
 window.Echo = new Echo({
     broadcaster: 'pusher',
-    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    key: pusherKey,
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
     wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1'}.pusher.com`,
     wsPort: import.meta.env.VITE_PUSHER_PORT ? Number(import.meta.env.VITE_PUSHER_PORT) : 80,
