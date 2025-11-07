@@ -164,7 +164,7 @@ Route::middleware('auth')->group(function () {
 
 
     // permission routes
-     Route::post('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
+     Route::get('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
     // Route::post('/check-permissions', function (Request $request) {
     //     $permissions = $request->input('permissions', []);
     //     $results = [];
