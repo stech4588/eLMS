@@ -21,8 +21,8 @@ export const fetchPermissions = async () => {
     ];
 
     try {
-        const response = await axios.post('/check-permissions', {
-            permissions: requiredPermissions
+        const response = await axios.get('/check-permissions', {
+            params: { permissions: requiredPermissions }
         });
         permissions.value = response.data.permissions;
         hasFetched = true;
