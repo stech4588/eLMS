@@ -391,6 +391,12 @@ function handleImageError() {
         <NavbarComponent/>
         <HeroSection />
     </div>
+    <!-- <MainHeroSection /> -->
+    <ConsolidatePlatform />
+    <!-- <ScrollingLogos /> -->
+    <SequenceCanvas />
+    <!-- <RealWorld /> -->
+    <FeatureContainer />
     <div id="access">
       <ConsolidatePlatform />
     </div>
@@ -400,10 +406,11 @@ function handleImageError() {
     </div>
     <TeachingPhilosophy />
     <Teaching />
+    <!-- <Testimonials /> -->
+    
     <Professors />
-    <div id="result">
-      <Results />
-    </div>
+    <Reviews :reviews="reviews"/>
+    <!-- <Results /> -->
     <BuildYourFuture />
     <FrequentQuestions />
     <div id="choice">
@@ -420,7 +427,7 @@ function handleImageError() {
   import Teaching from '../Components/Teaching.vue';
   import Professors from '../Components/Professors.vue';
 //   import RealWorld from '../Components/RealWorld.vue';
-  import Results from '../Components/Results.vue';
+//   import Results from '../Components/Results.vue';
   import TeachingPhilosophy from '../Components/TeachingPhilosophy.vue';
   import BuildYourFuture from '../Components/BuildYourFuture.vue';
   import FrequentQuestions from '../Components/FrequentQuestions.vue';
@@ -429,10 +436,15 @@ function handleImageError() {
   import SequenceCanvas from '../Components/SequenceCanvas.vue'
   import ConsolidatePlatform from '../Components/ConsolidatePlatform.vue';
   import ScrollingLogos from '../Components/ScrollingLogos.vue';
+//   import Testimonials from '../Components/testimonials.vue';
+  import Reviews from '../Components/ReviewSection.vue';
 // import MainHeroSection from '@/Components/MainHeroSection.vue';
   
   export default {
     name: 'App',
+    props: {
+      reviews: Array,
+    },
     components: {
       FooterContainer,
     //   MainHeroSection,
@@ -440,11 +452,13 @@ function handleImageError() {
       FrequentQuestions,
       NavbarComponent,
       BuildYourFuture,
-      Results,
+    //   Results,
       Professors,
       Teaching,
       TeachingPhilosophy,
       FeatureContainer,
+    //   Testimonials,
+      Reviews,
     //   RealWorld,
       HeroSection,
       SequenceCanvas,

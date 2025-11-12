@@ -33,16 +33,33 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\UserListingController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\FacebookAuthController;
+use App\Http\Controllers\AppleAuthController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\PricingController;
+use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\CommunityPostController;
+use App\Http\Controllers\Admin\CommunitySettingsController;
+use App\Http\Middleware\CheckCommunityAccess;
+use App\Http\Controllers\Admin\QuoteController;
+use App\Http\Controllers\Admin\PromotionController;
+use App\Models\Review;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\HelpController;
+use App\Http\Controllers\Admin\MarketingController;
+use App\Http\Controllers\LeaderboardController;
+use Illuminate\Support\Facades\Broadcast;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [WelcomeController::class, 'index']);
+Route::get('/invitations/accept/{token}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
 
 Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
@@ -52,9 +69,19 @@ Route::get('/terms-of-services', function () {
     return Inertia::render('TermsOfService');
 })->name('terms.of.services');
 
+Route::get('/CommunityChat', [CommunityController::class, 'index'])
+    ->middleware(['auth', 'verified', CheckCommunityAccess::class])
+    ->name('community');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/communitysettings', [CommunitySettingsController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('communitysettings');
+
+Route::post('/users/{user}/toggle-community-access', [CommunitySettingsController::class, 'toggleAccess'])
+    ->middleware(['auth', 'verified'])->name('users.toggleCommunityAccess');
 
 Route::get('/swiper', function () {
     return Inertia::render('library/swiper');
@@ -78,9 +105,7 @@ Route::get('/addnewcourses', [CourseController::class, 'create'])
 // Route::get('/leadershipAndManagement', function () {
 //     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
 // })->middleware(['auth', 'verified'])->name('leadershipAndManagement');
-Route::get('/joinnow', function () {
-    return Inertia::render('joinNow/join_now');
-})->name('joinnow');    
+Route::get('/joinnow', [PricingController::class, 'showJoinNowPage'])->name('join.now');
 // Route::get('/artificialIntelligence', function () {
 //     return Inertia::render('artificialIntelligence/myartificialIntelligence');
 // })->middleware(['auth', 'verified'])->name('artificialIntelligence');
@@ -90,9 +115,7 @@ Route::get('/joinnow', function () {
 Route::get('/Instructor', function () {
     return Inertia::render('Instructor/myInstructor');
 })->name('Instructor');
-Route::get('/help', function () {
-    return Inertia::render('help/help');
-})->middleware(['auth', 'verified'])->name('help');
+Route::get('/help', [HelpController::class, 'index'])->middleware(['auth', 'verified'])->name('help');
 
 // Route::get('/cart', function () {
 //     return Inertia::render('cart/cart');
@@ -111,6 +134,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/upload-resume', [ProfileController::class, 'uploadResume'])->name('profile.uploadResume');
     Route::post('/profile/upload-picture', [ProfileController::class, 'uploadPicture'])->name('profile.uploadPicture');
 
+    // Settings routes
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
     // User Management Routes
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -118,6 +145,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/career-goal', [UserController::class, 'updateCareerGoal'])->name('career-goal.update');
     Route::patch('/preferred-topics', [UserController::class, 'updatePreferredTopics'])->name('preferred-topics.update');
+    Route::post('/learning-goal', [UserController::class, 'storeLearningGoal'])->name('learning-goal.store');
 
     // Invoice Management Routes
      Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
@@ -132,10 +160,11 @@ Route::middleware('auth')->group(function () {
     // Course routes
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
+    Route::post('/videos/{video}/organize-notes', [CourseController::class, 'organizeVideoNotes'])->name('videos.organizeNotes');
 
 
     // permission routes
-     Route::post('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
+     Route::get('/check-permissions', [RoleController::class, 'checkPermissions'])->middleware('auth');
     // Route::post('/check-permissions', function (Request $request) {
     //     $permissions = $request->input('permissions', []);
     //     $results = [];
@@ -163,6 +192,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/progresses/storeUserVideoProgress', [ProgressController::class, 'storeUserVideoProgress'])
     ->name('progress.storeUserVideoProgress');
     Route::get('/video-progress/{video}', [ProgressController::class, 'getUserVideoProgress'])->name('progress.getUserVideoProgress');
+    Route::get('/course-progress/{course}', [ProgressController::class, 'getCourseProgress'])->name('progress.getCourseProgress');
+    Route::get('/course/{course}/completion-status', [ProgressController::class, 'getCompletionStatus'])->name('courses.completionStatus');
 
     Route::get('/admin/instructors', [InstructorController::class, 'index'])->name('admin.instructors.index');
     Route::get('/admin/instructors/{user}', [InstructorController::class, 'show'])->name('admin.instructors.show');
@@ -173,6 +204,70 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
+
+    Route::get('/register/complete', [RegisteredUserController::class, 'create'])->name('register.complete');
+    Route::resource('admin/pricings', \App\Http\Controllers\Admin\PricingController::class);
+
+    // Marketing Management Routes (explicitly defined for clarity and to resolve issues)
+    Route::get('/admin/marketing', [MarketingController::class, 'showMarketingPage'])->name('admin.marketing.index');
+    
+    Route::post('/admin/marketing', [MarketingController::class, 'storeQuote'])->name('admin.marketing.store');
+    Route::put('/admin/marketing/{quote}', [MarketingController::class, 'updateQuote'])->name('admin.marketing.update');
+    Route::delete('/admin/marketing/{quote}', [MarketingController::class, 'destroyQuote'])->name('admin.marketing.destroy');
+    Route::post('/admin/marketing/{quote}/toggle-status', [MarketingController::class, 'toggleQuoteStatus'])->name('admin.marketing.toggleStatus');
+
+    // Promotion Routes (explicitly defined)
+    Route::post('/admin/promotions', [MarketingController::class, 'storePromotion'])->name('admin.promotions.store');
+    Route::put('/admin/promotions/{promotion}', [MarketingController::class, 'updatePromotion'])->name('admin.promotions.update'); // Use POST with _method for PUT
+    Route::delete('/admin/promotions/{promotion}', [MarketingController::class, 'destroyPromotion'])->name('admin.promotions.destroy');
+    Route::post('/admin/promotions/{promotion}/toggle-status', [MarketingController::class, 'togglePromotionStatus'])->name('admin.promotions.toggleStatus');
+
+    // Prompt Routes
+    Route::post('/admin/prompts', [MarketingController::class, 'storePrompt'])->name('admin.prompts.store');
+    Route::put('/admin/prompts/{prompt}', [MarketingController::class, 'updatePrompt'])->name('admin.prompts.update');
+    Route::delete('/admin/prompts/{prompt}', [MarketingController::class, 'destroyPrompt'])->name('admin.prompts.destroy');
+    Route::post('/admin/prompts/{prompt}/toggle-status', [MarketingController::class, 'togglePromptStatus'])->name('admin.prompts.toggleStatus');
+
+    Route::get('/promotions/random-active', [MarketingController::class, 'getRandomActivePromotion'])->name('promotions.randomActive');
+
+    // Community post routes
+    Route::get('/api/community-posts', [CommunityPostController::class, 'index']);
+    Route::post('/api/community-posts', [CommunityPostController::class, 'store']);
+    Route::get('/api/community-posts/{communityPost}', [CommunityPostController::class, 'show']);
+
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    // AI Chatbot route
+    Route::post('/ai/chat', [AiChatController::class, 'chat'])->name('ai.chat');
+
+    // Job routes
+    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+    Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
+    Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
+    Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
+    // Route::patch('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
+    Route::delete('/jobs/{job}', [JobController::class, 'destroy'])->name('jobs.destroy');
+
+    // Group routes
+    Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
+    Route::post('/groups/{group}/invite', [GroupController::class, 'invite'])->name('groups.invite');
+    Route::get('/groups/{group}/chat', [GroupController::class, 'chat'])->name('groups.chat');
+    Route::post('/groups/{group}/settings/notifications', [GroupController::class, 'updateNotificationSettings'])->name('groups.settings.notifications');
+
+    // Message routes (API-style)
+    Route::get('/api/groups/{group}/messages', [MessageController::class, 'index'])->name('api.groups.messages.index');
+    Route::post('/api/groups/{group}/messages', [MessageController::class, 'store'])->name('api.groups.messages.store');
+
+    // Group event routes
+    Route::post('/api/groups/{group}/events', [\App\Http\Controllers\Api\GroupEventController::class, 'store'])->name('api.groups.events.store');
+
+    // Quiz routes
+    Route::get('/quizzes/{quiz}', [QuizController::class, 'show'])->name('quiz.show');
+    Route::post('/quizzes/{quiz}/attempt', [QuizController::class, 'storeAttempt'])->name('quiz.attempt');
+    Route::get('/quizzes/result/{attempt}', [QuizController::class, 'result'])->name('quiz.result');
+    Route::get('/api/leaderboard', [LeaderboardController::class, 'getTopUsers'])->name('api.leaderboard');
 });
 
 // //For Roles Routes
@@ -196,9 +291,15 @@ Route::apiResource('certificates', CertificateController::class);
 Route::get('/courses/{course}', [CourseController::class, 'show'])
     ->middleware(['auth', 'verified'])->name('courses.show');
 
+Route::get('/courses/{course}/feedback', [CourseController::class, 'showFeedback'])
+    ->middleware(['auth', 'verified'])->name('courses.feedback');
+
 // Add this route for the course player page
 Route::get('/courses/{course}/play/{video?}', [CourseController::class, 'play'])
     ->middleware(['auth', 'verified'])->name('courses.play');
+
+Route::get('/courses/{course}/related', [CourseController::class, 'related'])->name('courses.related');
+
     Route::get('/fetch-intent/{amount}', [StripeController::class, 'fetchIntent']);
     //Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
 // Route for toggling course favorite status
@@ -206,12 +307,27 @@ Route::post('/courses/{course}/favorite', [CourseFavoriteController::class, 'tog
     ->middleware(['auth', 'verified'])
     ->name('courses.toggleFavorite');
 
+
+
 Route::middleware('guest')->group(function () {
+    Route::post('/register-from-payment', [RegisteredUserController::class, 'storeFromPayment'])->name('register.from.payment');
     Route::get('instructor/register', [InstructorRegisteredUserController::class, 'create'])
         ->name('instructor.register');
 
     Route::post('instructor/register', [InstructorRegisteredUserController::class, 'store']);
 });
+
+// Google Auth Routes
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
+
+// Facebook Auth Routes
+Route::get('/auth/facebook/redirect', [FacebookAuthController::class, 'redirect'])->name('facebook.redirect');
+Route::get('/auth/facebook/callback', [FacebookAuthController::class, 'callback'])->name('facebook.callback');
+
+// Apple Auth Routes
+Route::get('/auth/apple/redirect', [AppleAuthController::class, 'redirect'])->name('apple.redirect');
+Route::get('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('apple.callback');
 
 Route::get('/topic/{topic:name}', [TopicController::class, 'show'])->middleware(['auth'])->name('topic.show');
 

@@ -13,13 +13,22 @@ use App\Models\CourseType;
 use App\Models\CourseTopic; // Added CourseTopic model
 use Inertia\Response as InertiaResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; // Import Str facade
 use Illuminate\Support\Facades\File; // Import File facade for directory creation
 use App\Models\Course;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
+use App\Events\CourseViewed; // Import the CourseViewed event
+use App\Models\Review;
+use App\Models\Progress;
+use Illuminate\Support\Facades\Mail; // Import Mail Facade
+use App\Mail\NewCourseNotification; // Import the Mailable class
+use App\Models\User; // Import the User model
+use App\Models\Quiz;
+use Illuminate\Support\Facades\Http;
+use App\Models\Video;
+use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
 {
@@ -90,12 +99,11 @@ class CourseController extends Controller
 
     public function storeWithVideos(Request $request): RedirectResponse
     {
-        Log::info('storeWithVideos request data:', $request->all());
 
         $validatedCourseData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'nullable|numeric',
+            // 'price' => 'nullable|numeric',
             'additional_description' => 'nullable|string',
             'recomendations' => 'nullable|string',
             'certificates' => 'nullable|exists:course_certificates,id',
@@ -108,9 +116,21 @@ class CourseController extends Controller
             'videos' => 'present|array',
             'videos.*.title' => 'required_with:videos|string|max:255',
             'videos.*.description' => 'required_with:videos|string',
-            'videos.*.videoFile' => 'required_with:videos|file|mimes:mp4,mov,ogg,qt|max:100000',
+            'videos.*.takeaway_notes' => 'nullable|string',
+            'videos.*.videoFile' => 'required_with:videos|file|mimes:mp4,mov,ogg,qt|max:512000',
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.order' => 'required_with:videos|integer',
+        ]);
+
+        $validatedQuizData = $request->validate([
+            'quiz' => 'sometimes|array',
+            'quiz.title' => 'required_with:quiz|string|max:255',
+            'quiz.description' => 'nullable|string',
+            'quiz.questions' => 'required_with:quiz|array|min:1',
+            'quiz.questions.*.question_text' => 'required_with:quiz.questions|string',
+            'quiz.questions.*.answers' => 'required_with:quiz.questions|array|min:2',
+            'quiz.questions.*.answers.*.answer_text' => 'required_with:quiz.questions.*.answers|string',
+            'quiz.questions.*.answers.*.is_correct' => 'boolean',
         ]);
 
         DB::beginTransaction();
@@ -120,7 +140,7 @@ class CourseController extends Controller
                 'user_id' => $request->user()->id,
                 'title' => $validatedCourseData['title'],
                 'description' => $validatedCourseData['description'],
-                'price' => $validatedCourseData['price'] ?? null,
+                'price' => $request->input('price', 0),
                 'additional_description' => $validatedCourseData['additional_description'] ?? null,
                 'recomendations' => $validatedCourseData['recomendations'] ?? null,
                 'certificate_id' => $validatedCourseData['certificates'] ?? null,
@@ -130,7 +150,6 @@ class CourseController extends Controller
             ];
 
             $course = $this->courseService->create($courseDataToCreate);
-            Log::info('Course created:', $course->toArray());
 
             $createdVideos = [];
             if ($request->has('videos') && is_array($request->input('videos'))) {
@@ -146,9 +165,12 @@ class CourseController extends Controller
                             File::makeDirectory(public_path($videoTargetDirectory), 0755, true, true);
                         }
                         $videoFileName = time() . '_' . Str::slug(pathinfo($videoFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $videoFile->getClientOriginalExtension();
-                        $videoFile->move(public_path($videoTargetDirectory), $videoFileName);
+                        try {
+                            $videoFile->move(public_path($videoTargetDirectory), $videoFileName);
+                        } catch (\Throwable $e) {
+                            throw $e;
+                        }
                         $videoPath = $videoTargetDirectory . '/' . $videoFileName;
-                        Log::info("Video file stored at: {$videoPath} (public path) for course ID: {$course->id}", ['originalName' => $videoFile->getClientOriginalName()]);
                     }
 
                     if ($request->hasFile("videos.{$index}.thumbnailFile")) {
@@ -159,9 +181,12 @@ class CourseController extends Controller
                             File::makeDirectory(public_path($thumbTargetDirectory), 0755, true, true);
                         }
                         $thumbFileName = time() . '_' . Str::slug(pathinfo($thumbnailFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $thumbnailFile->getClientOriginalExtension();
-                        $thumbnailFile->move(public_path($thumbTargetDirectory), $thumbFileName);
+                        try {
+                            $thumbnailFile->move(public_path($thumbTargetDirectory), $thumbFileName);
+                        } catch (\Throwable $e) {
+                            throw $e;
+                        }
                         $thumbnailPath = $thumbTargetDirectory . '/' . $thumbFileName;
-                        Log::info("Thumbnail file stored at: {$thumbnailPath} (public path) for video: {$videoDataInput['title']}", ['originalName' => $thumbnailFile->getClientOriginalName()]);
                     }
 
                     $videoModel = resolve(\App\Services\VideoService::class);
@@ -169,27 +194,92 @@ class CourseController extends Controller
                         'course_id' => $course->id,
                         'title' => $videoDataInput['title'],
                         'description' => $videoDataInput['description'],
+                        'takeaway_notes' => $videoDataInput['takeaway_notes'] ?? null,
                         'video_url' => $videoPath,
                         'thumbnail_url' => $thumbnailPath,
                         'order' => $videoDataInput['order'],
                         'duration' => $videoDataInput['duration_in_seconds'] ?? null,
                     ]);
                     $createdVideos[] = $newVideo;
-                    Log::info('Video created:', $newVideo->toArray());
+
+                    // Optional per-video quiz creation
+                    if (isset($videoDataInput['quiz']) && is_array($videoDataInput['quiz'])) {
+                        $quizInput = ['quiz' => $videoDataInput['quiz']];
+                        $quizValidator = Validator::make($quizInput, [
+                            'quiz.title' => 'required|string|max:255',
+                            'quiz.description' => 'nullable|string',
+                            'quiz.questions' => 'present|array|min:1',
+                            'quiz.questions.*.question_text' => 'required|string',
+                            'quiz.questions.*.answers' => 'present|array|min:2',
+                            'quiz.questions.*.answers.*.answer_text' => 'required|string',
+                            'quiz.questions.*.answers.*.is_correct' => 'boolean',
+                        ]);
+                        $quizData = $quizValidator->validate()['quiz'];
+
+                        $quiz = $newVideo->quiz()->create([
+                            'course_id' => $course->id,
+                            'title' => $quizData['title'],
+                            'description' => $quizData['description'] ?? null,
+                        ]);
+                        
+
+                        foreach ($quizData['questions'] as $questionData) {
+                            $question = $quiz->questions()->create([
+                                'question_text' => $questionData['question_text'],
+                            ]);
+                            
+
+                            foreach ($questionData['answers'] as $answerData) {
+                                $question->answers()->create([
+                                    'answer_text' => $answerData['answer_text'],
+                                    'is_correct' => $answerData['is_correct'] ?? false,
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($request->has('quiz')) {
+                $quizData = $validatedQuizData['quiz'];
+                $quiz = $course->quizzes()->create([
+                    'title' => $quizData['title'],
+                    'description' => $quizData['description'],
+                ]);
+                
+
+                foreach ($quizData['questions'] as $questionData) {
+                    $question = $quiz->questions()->create([
+                        'question_text' => $questionData['question_text'],
+                    ]);
+                    
+
+                    foreach ($questionData['answers'] as $answerData) {
+                        $question->answers()->create([
+                            'answer_text' => $answerData['answer_text'],
+                            'is_correct' => $answerData['is_correct'] ?? false,
+                        ]);
+                    }
                 }
             }
 
             DB::commit();
-            Log::info('Transaction committed.');
+
+            // Send email notification to all students
+            $students = User::where('type', 'student')->get();
+            foreach ($students as $student) {
+                if ($student->canReceiveEmail('receives_new_course_notification_emails')) {
+                    Mail::to($student->email)->send(new NewCourseNotification($course));
+                }
+            }
+
             return redirect()->route('coursess')->with('success', 'Course and videos created successfully!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
-            Log::error('Validation error during storeWithVideos:', ['errors' => $e->errors()]);
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error during storeWithVideos:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return redirect()->back()->with('error', 'Failed to create course and videos: ' . $e->getMessage());
         }
     }
@@ -213,6 +303,7 @@ class CourseController extends Controller
         // Prepare the data for the view
         $courseData = [
             'id' => $course->id,
+            'user_id' => $course->user_id, // Add the author's ID
             'title' => $course->title,
             'price' => $course->price,
             'description' => $course->description, // Assuming you have a description field
@@ -245,6 +336,24 @@ class CourseController extends Controller
         ]);
     }
 
+    public function showFeedback(Course $course)
+    {
+        // Authorization: Ensure the logged-in user is the author of the course.
+        if (auth()->id() !== $course->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $reviews = Review::where('course_id', $course->id)
+                         ->with('user') // Eager load the user who made the review
+                         ->orderBy('id', 'desc') // Order by ID descending
+                         ->paginate(10);
+
+        return Inertia::render('Course/Feedback', [
+            'course' => $course,
+            'reviews' => $reviews,
+        ]);
+    }
+
     public function update(CourseRequest $request, int $id): RedirectResponse
     {
         $course = $this->courseService->update($id, $request->validated());
@@ -261,24 +370,67 @@ class CourseController extends Controller
 
     public function play(Request $request, Course $course, $videoId = null)
     {
+        // Dispatch the CourseViewed event
+        if (Auth::check()) {
+            event(new CourseViewed(Auth::user(), $course));
+        }
+
         $course->load([
             'videos' => function ($query) {
                 $query->orderBy('order', 'asc');
             },
+            'videos.quiz.questions.answers',
             'comments' => function ($query) {
                 $query->with('user')->latest(); // Eager load user for comments and order by latest
             },
             'user', // Eager load the course instructor/user
-            'courseType' // Eager load courseType if not already loaded or needed directly
+            'courseType', // Eager load courseType if not already loaded or needed directly
+            'reviews', // Eager load reviews for rating calculation
         ]);
+
+        // Calculate average rating and reviews count
+        $reviews = $course->reviews;
+        $average_rating = $reviews->isNotEmpty() ? $reviews->avg('rating') : 0;
+        $reviews_count = $reviews->count();
+
+        // Calculate total course duration
+        $totalDurationSeconds = $course->videos->sum('duration');
+        $hours = floor($totalDurationSeconds / 3600);
+        $minutes = round(($totalDurationSeconds % 3600) / 60);
+        $formattedDuration = [];
+        if ($hours > 0) {
+            $formattedDuration[] = "{$hours}h";
+        }
+        if ($minutes > 0) {
+            $formattedDuration[] = "{$minutes}m";
+        }
+        $total_duration = implode(' ', $formattedDuration);
 
         $videosData = $course->videos->map(function ($video) {
             return [
                 'id' => $video->id,
                 'title' => $video->title,
                 'description' => $video->description, // Ensure Video model has description
+                'takeaway_notes' => $video->takeaway_notes,
                 'video_url' => $video->video_url ? asset($video->video_url) : null,
                 'order' => $video->order,
+                'quiz' => $video->quiz ? [
+                    'id' => $video->quiz->id,
+                    'title' => $video->quiz->title,
+                    'description' => $video->quiz->description,
+                    'questions' => $video->quiz->questions->map(function ($q) {
+                        return [
+                            'id' => $q->id,
+                            'question_text' => $q->question_text,
+                            'answers' => $q->answers->map(function ($a) {
+                                return [
+                                    'id' => $a->id,
+                                    'answer_text' => $a->answer_text,
+                                ];
+                            }),
+                        ];
+                    }),
+                ] : null,
                 // Add other video properties if needed
             ];
         });
@@ -293,6 +445,9 @@ class CourseController extends Controller
             'recommendations' => $course->recomendations,
             'topic_name' => $course->topic ? $course->topic->name : 'N/A', // Get name from relationship
             'user' => $course->user, // user is already loaded via $course->load('user')
+            'average_rating' => round($average_rating, 1),
+            'reviews_count' => $reviews_count,
+            'total_duration' => $total_duration,
             // 'profile_picture' => $course->user->profile_picture, // This can be accessed via course.user.profile_picture in Vue
             'comments' => $course->comments->map(function ($comment) { // Map comments to include necessary data
                 return [
@@ -358,5 +513,110 @@ class CourseController extends Controller
         return Inertia::render('Courses/myCourses', [
             'courses' => $coursesData,
         ]);
+    }
+
+    public function related(Course $course)
+    {
+        if (!$course->topic_id) {
+            return response()->json([]);
+        }
+
+        $relatedCourses = Course::where('topic_id', $course->topic_id)
+            ->where('id', '!=', $course->id)
+            ->with(['user', 'videos'])
+            ->addSelect(['learners_count' => Progress::selectRaw('count(distinct user_id)')
+                ->join('videos', 'videos.id', '=', 'progress.video_id')
+                ->whereColumn('videos.course_id', 'courses.id')
+            ])
+            ->latest()
+            ->take(4)
+            ->get();
+
+        $formattedCourses = $relatedCourses->map(function ($relatedCourse) {
+            $thumbnail_url = $relatedCourse->thumbnail ? asset($relatedCourse->thumbnail) : null;
+            if (!$thumbnail_url && $relatedCourse->videos->isNotEmpty() && $relatedCourse->videos->first()->thumbnail_url) {
+                $thumbnail_url = asset($relatedCourse->videos->first()->thumbnail_url);
+            }
+
+            $totalDurationSeconds = $relatedCourse->videos->sum('duration');
+            $hours = floor($totalDurationSeconds / 3600);
+            $minutes = round(($totalDurationSeconds % 3600) / 60);
+
+            if ($hours == 0 && $minutes == 0 && $totalDurationSeconds > 0) {
+                $minutes = 1;
+            }
+
+            $formattedDuration = [];
+            if ($hours > 0) {
+                $formattedDuration[] = "{$hours}h";
+            }
+            if ($minutes > 0) {
+                $formattedDuration[] = "{$minutes}m";
+            }
+
+            return [
+                'id' => $relatedCourse->id,
+                'title' => $relatedCourse->title,
+                'user' => [
+                    'name' => $relatedCourse->user->name,
+                ],
+                'thumbnail_url' => $thumbnail_url,
+                'total_duration' => implode(' ', $formattedDuration),
+                'learners_count' => number_format($relatedCourse->learners_count),
+                'is_popular' => $relatedCourse->learners_count > 2,
+                'is_favorited' => $relatedCourse->is_favorited, // Relies on the is_favorited accessor
+            ];
+        });
+
+        return response()->json($formattedCourses);
+    }
+
+    public function organizeVideoNotes(Request $request, int $videoId): JsonResponse
+    {
+        $video = Video::findOrFail($videoId);
+        $rawNotes = $request->input('notes', $video->takeaway_notes);
+
+        if (!$rawNotes || trim($rawNotes) === '') {
+            return response()->json(['message' => 'No notes provided for organization.'], 422);
+        }
+
+        try {
+            $response = Http::withToken(env('OPENAI_API_KEY'))
+                ->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-4o-mini',
+                    'messages' => [
+                        [
+                            'role' => 'system',
+                            'content' => 'You are an expert technical writer. Clean, clarify, and slightly expand course video takeaway notes. Output strictly in Markdown as: numbered H2 section headings (## 1. Heading), followed by * bullet lists with short, actionable points and occasional sub-bullets. Briefly define key terms. Remove redundancy, fix grammar, keep friendly/professional tone. No code fences. No HTML. Max ~4000 characters.'
+                        ],
+                        [
+                            'role' => 'user',
+                            'content' => "Please clean up, expand slightly, and organize the following notes using numbered Markdown headings and * bullet points. Keep it concise and actionable.\n\n" . $rawNotes,
+                        ],
+                    ],
+                    'temperature' => 0.2,
+                ]);
+
+            if (!$response->ok()) {
+                return response()->json(['message' => 'Failed to organize notes.'], 500);
+            }
+
+            $data = $response->json();
+            $organized = data_get($data, 'choices.0.message.content');
+
+            if (!$organized) {
+                return response()->json(['message' => 'Failed to parse organized notes.'], 500);
+            }
+
+            $video->takeaway_notes = $organized;
+            $video->save();
+
+            return response()->json([
+                'video_id' => $video->id,
+                'takeaway_notes' => $video->takeaway_notes,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Unexpected error while organizing notes.'], 500);
+        }
     }
 }

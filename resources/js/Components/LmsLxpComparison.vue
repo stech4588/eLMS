@@ -4,7 +4,7 @@
     <div class="lms-lxp-top">
       <div class="lms-lxp-top-content">
         <div class="lms-lxp-heading">
-          The best of LMS & LXP
+          The Best Of LMS & LXP
         </div>
         <div class="lms-lxp-desc">
           We are the only platform that delivers your learner and organizationally driven learning outcomes via a Learning Enablement Platform (LEP) – at scale

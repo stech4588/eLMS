@@ -1,61 +1,121 @@
 <template>
-    <section class="mbm-featured-resources">
+    <section class="mbm-featured-resources" id="result">
         <div class="mbm-header">
             <h2 class="mbm-title">FEATURED RESOURCES</h2>
-            <button class="mbm-view-all">→ VIEW ALL RESOURCES</button>
+            <!-- <a :href="joinNowUrl" class="mbm-view-all">→ VIEW ALL RESOURCES</a> -->
         </div>
 
-        <div class="mbm-cards-wrapper">
-            <div class="mbm-card" v-for="(card, index) in cards" :key="index">
-                <div class="mbm-card-image">
-                    <img :src="card.image" alt="card image" />
-                    <div class="mbm-arrow-container">
-                        <div class="mbm-curve-bg"></div>
-                        <div class="mbm-arrow-circle">
-                            <span class="mbm-arrow">↗</span>
+        <swiper :slides-per-view="1" :space-between="10" :loop="true" :autoplay="{
+            delay: 2500,
+            disableOnInteraction: false,
+        }" :modules="modules" :breakpoints="breakpoints" class="mySwiper">
+            <swiper-slide v-for="(card, index) in cards" :key="index">
+                <div class="mbm-card">
+                    <div class="mbm-card-image">
+                        <img :src="card.image" alt="card image" />
+                        <div class="mbm-arrow-container">
+                            <div class="mbm-curve-bg"></div>
+                            <div class="mbm-arrow-circle">
+                                <span class="mbm-arrow">↗</span>
+                            </div>
                         </div>
                     </div>
+                    <div class="mbm-card-content">
+                        <span class="mbm-badge">{{ card.type }}</span>
+                        <h3 class="mbm-card-title">{{ card.title }}</h3>
+                        <p class="mbm-description">{{ card.description }}</p>
+                        <!-- <a :href="joinNowUrl" class="mbm-view-now">→ Join Now</a> -->
+                    </div>
                 </div>
-                <div class="mbm-card-content">
-                    <span class="mbm-badge">{{ card.type }}</span>
-                    <h3 class="mbm-card-title">{{ card.title }}</h3>
-                    <p class="mbm-description">{{ card.description }}</p>
-                    <button class="mbm-view-now">→ View now</button>
-                </div>
-            </div>
-        </div>
+            </swiper-slide>
+        </swiper>
+        <button @click="joinNowUrl" class="mbm-view-now">→ Join Now</button>
     </section>
 </template>
 
 <script>
+import { router } from '@inertiajs/vue3';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import 'swiper/css';
+import { Autoplay } from 'swiper/modules';
 export default {
     name: 'FeaturedResources',
+    components: {
+        Swiper,
+        SwiperSlide,
+    },
+    setup() {
+        return {
+            modules: [Autoplay],
+        };
+    },
     data() {
         return {
             cards: [
                 {
-                    type: 'WHITEPAPERS',
-                    title: 'Why Learning Analytics is Your Weapon',
-                    description:
-                        'Featuring insights from learning leaders at Partners, A Walt Disney Company, VML, and Seertech Solutions As...',
+                    type: 'CASE STUDY',
+                    title: 'Building a 7-Figure E-Commerce Empire',
+                    description: 'Explore the strategies top entrepreneurs used to scale their online stores from zero to seven figures. Learn about product sourcing, marketing funnels, and customer retention.',
                     image: '/images/card-1.jpg'
                 },
                 {
-                    type: 'CASE STUDIES',
-                    title: 'Red Hat Case Study',
-                    description:
-                        'Red Hat, a global leader in enterprise open-source software, struggled with fragmented learning technology that hindere...',
+                    type: 'GUIDE',
+                    title: 'Navigating the World of Crypto Investing',
+                    description: 'This guide breaks down the fundamentals of cryptocurrency investing, from understanding blockchain technology to identifying promising assets and managing risk.',
                     image: '/images/card-2.jpg'
                 },
                 {
-                    type: 'CASE STUDIES',
-                    title: 'ICU Medical Case Study',
-                    description:
-                        'ICU Medical, a global leader in medical device manufacturing, faced challenges in delivering consistent training across its...',
+                    type: 'BLUEPRINT',
+                    title: 'The Ultimate Digital Marketing Blueprint',
+                    description: 'Unlock the secrets to a successful online presence. This blueprint covers SEO, social media marketing, email campaigns, and content strategy to boost your brand.',
                     image: '/images/card-3.png'
-                }
-            ]
+                },
+                {
+                    type: 'CASE STUDY',
+                    title: 'Building a 7-Figure E-Commerce Empire',
+                    description: 'Explore the strategies top entrepreneurs used to scale their online stores from zero to seven figures. Learn about product sourcing, marketing funnels, and customer retention.',
+                    image: '/images/Student-eLearning-Outcomes.jpg'
+                },
+                {
+                    type: 'GUIDE',
+                    title: 'Navigating the World of Crypto Investing',
+                    description: 'This guide breaks down the fundamentals of cryptocurrency investing, from understanding blockchain technology to identifying promising assets and managing risk.',
+                    image: '/images/student-engagement.jpg'
+                },
+                {
+                    type: 'GUIDE',
+                    title: 'Navigating the World of Crypto Investing',
+                    description: 'This guide breaks down the fundamentals of cryptocurrency investing, from understanding blockchain technology to identifying promising assets and managing risk.',
+                    image: '/images/WhatisElearning.jpg'
+                },
+            ],
+            breakpoints: {
+                1036: {
+                    slidesPerView: 3,
+                },
+                720: {
+                    slidesPerView: 2,
+                },
+            },
         };
+    },
+    computed: {
+        user() {
+            return this.$page.props.auth.user;
+        },
+    },
+    methods: {
+        joinNowUrl() {
+            if (this.user) {
+                if (this.$page.props.auth.profile_incomplete) {
+                    router.get('/register/complete');
+                } else {
+                    router.get('/dashboard');
+                }
+            } else {
+                router.get('/joinnow');
+            }
+        },
     }
 };
 </script>

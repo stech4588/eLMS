@@ -4,11 +4,11 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
-// import * as pdfjsLib from 'pdfjs-dist';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref, computed, onMounted } from 'vue';
 
-// pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString();
+const page = usePage();
+const authUser = computed(() => page.props.auth.user);
 
 const step = ref(1);
 
@@ -56,9 +56,7 @@ const onResumeChange = (e) => {
 
 const form = useForm({
     name: '',
-    // company_name: '',
     email: '',
-    // num_employees: '',
     password: '',
     phone_country_code: 'PK',
     phone_number: '',
@@ -69,9 +67,20 @@ const form = useForm({
     agree_to_terms: false,
 });
 
+onMounted(() => {
+    if (authUser.value) {
+        form.name = authUser.value.name;
+        form.email = authUser.value.email;
+    }
+});
+
 const submit = () => {
     form.post(route('register'), {
-        onFinish: () => form.reset('password'),
+        onFinish: () => {
+            if (!authUser.value) {
+                form.reset('password');
+            }
+        },
     });
 };
 
@@ -124,10 +133,6 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     <GuestLayout>
         <Head title="Register" />
 
-        
-            
-        
-
         <div class="form-container">
             <div class="form-row" style="justify-content: center; margin-bottom: 1rem;">
                 <div class="relative">
@@ -150,12 +155,12 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
             </div>
             <h1 class="form-title">Empower Your Learning Journey</h1>
             <p class="form-subtitle">
-                Welcome to LMS.360.pk! Please fill out the form below to start your free trial and begin learning today.
+                Welcome to MBM University. Please fill out the form below to start your journey and begin learning today.
             </p>
 
             <form @submit.prevent="submit" class="form-body" novalidate>
                 <div v-if="step === 1">
-                    <!-- Row 1: Name and Company Name -->
+                    <!-- Row 1: Name and Email for new users -->
                     <div class="form-row">
                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.name }">
                             <InputLabel for="name" value="Name" class="form-label" />
@@ -167,25 +172,10 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                 
                                 autofocus
                                 autocomplete="name"
+                                :disabled="!!authUser"
                             />
                             <InputError class="form-error" :message="form.errors.name" />
                         </div>
-                        <!-- <div class="form-group input_box_signup">
-                            <InputLabel for="company_name" value="Company Name" class="form-label" />
-                            <TextInput
-                                id="company_name"
-                                type="text"
-                                class="form-input input_box_outline"
-                                v-model="form.company_name"
-                                required
-                                autocomplete="organization"
-                            />
-                            <InputError class="form-error" :message="form.errors.company_name" />
-                        </div> -->
-                    </div>
-
-                    <!-- Row 2: Email and Number of Employees -->
-                    <div class="form-row">
                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.email }">
                             <InputLabel for="email" value="Email" class="form-label" />
                             <TextInput
@@ -195,46 +185,13 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                 v-model="form.email"
                                 
                                 autocomplete="username"
+                                :disabled="!!authUser"
                             />
                             <InputError class="form-error" :message="form.errors.email" />
                         </div>
-                        <!-- <div class="form-group input_box_signup">
-                            <InputLabel for="num_employees" value="Number of Employee's" class="form-label" />
-                            <select
-                                id="num_employees"
-                                class="form-input form-select input_box_outline"
-                                v-model="form.num_employees"
-                                
-                            >
-                                <option value="" disabled>Select an option</option>
-                                <option value="1-10">1-10</option>
-                                <option value="11-50">11-50</option>
-                                <option value="51-200">51-200</option>
-                                <option value="201-500">201-500</option>
-                                <option value="500+">500+</option>
-                            </select>
-                            <InputError class="form-error" :message="form.errors.num_employees" />
-                        </div> -->
                     </div>
-
-                    <!-- Row 3: Password and Phone Number -->
                     <div class="form-row">
-                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.password }">
-                            <InputLabel for="password" value="Password" class="form-label" />
-                            <div style="position: relative;">
-                                <TextInput
-                                    id="password"
-                                    :type="passwordFieldType"
-                                    class="form-input input_box_outline"
-                                    v-model="form.password"
-                                    
-                                    autocomplete="new-password"
-                                />
-                                <span class="password-eye-icon" @click="togglePasswordVisibility"><img src="/images/view_icon.svg"/></span>
-                            </div>
-                            <InputError class="form-error" :message="form.errors.password" />
-                        </div>
-                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.phone_number }">
+                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.phone_number }">
                             <InputLabel for="phone_number" value="Phone Number" class="form-label" style="margin-bottom: 0px; margin-top: 0px;"/>
                             <div class="phone-input-group">
                                 <select v-model="form.phone_country_code" class="form-input country-code-select">
@@ -246,7 +203,6 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                     <option value="NZ">NZ</option>
                                     <option value="ZA">ZA</option>
                                     <option value="IN">IN</option>
-                                    <!-- Add other countries as needed -->
                                 </select>
                                 <TextInput
                                     id="phone_number"
@@ -262,16 +218,30 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                             <InputError class="form-error" :message="form.errors.phone_number" />
                         </div>
                     </div>
-                     <!-- <div class="password-rules">
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                                <span><span class="rule-cross">✗</span> At least one uppercase letter</span>
-                            </div> -->
+
+                    <!-- Row 3: Password for new users -->
+                    <div v-if="!authUser" class="form-row">
+                        <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.password }">
+                            <InputLabel for="password" value="Password" class="form-label" />
+                            <div style="position: relative;">
+                                <TextInput
+                                    id="password"
+                                    :type="passwordFieldType"
+                                    class="form-input input_box_outline"
+                                    v-model="form.password"
+                                    
+                                    autocomplete="new-password"
+                                />
+                                <span class="password-eye-icon" @click="togglePasswordVisibility"><img src="/images/view_icon.svg"/></span>
+                            </div>
+                            <InputError class="form-error" :message="form.errors.password" />
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Step 2: Learning Goals and Topics -->
                 <div v-if="step === 2">
+                     
                     <!-- Row 4: Primary Learning Goal -->
                     <div class="form-row">
                         <div class="form-group input_box_signup" :class="{ 'form-group-error': form.errors.primary_learning_goal }">
@@ -291,7 +261,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                     <!-- Row 6: Preferred Topics -->
                     <div class="form-row">
                         <div class="form-group" :class="{ 'form-group-error': form.errors.preferred_topics }">
-                            <InputLabel value="Preferred Topics" class="form-label" style="margin-bottom: 10px; margin-left: 0;" />
+                            <InputLabel value="Preferred Topics" class="form-label" style="margin-bottom: 10px; margin-left: 0; background-color: none !important; background: none !important; color: #ffffff;" />
                             <div class="topics-container">
                                 <div class="topics-search-container">
                                     <svg aria-hidden="true" class="search-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -306,13 +276,14 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                                         class="topic-card"
                                         :class="{ 'selected': form.preferred_topics.includes(topic.id) }"
                                         @click="toggleTopic(topic.id)">
-                                        <div class="flex flex-row">
-                                            <div class="topic-icon" :style="{ backgroundColor: getTopicColor(index) }">
-                                             <svg v-if="index % 3 === 0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                                             <svg v-if="index % 3 === 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                                             <svg v-if="index % 3 === 2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                        </div>
-                                        <span class="topic-name">{{ topic.name }}</span>
+                                        <div class="flex flex-row topic-card-content">
+                                            <div class="topic-icon">
+                                                <img v-if="topic.logo_url" :src="topic.logo_url" :alt="topic.name" class="topic-logo-image"/>
+                                                <svg v-else-if="index % 3 === 0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                                <svg v-else-if="index % 3 === 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                            </div>
+                                            <span class="topic-name">{{ topic.name }}</span>
                                         </div>
                                         
                                         <span class="topic-add-icon">{{ form.preferred_topics.includes(topic.id) ? '✓' : '+' }}</span>
@@ -333,7 +304,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                     <!-- Row 7: Upload Resume and Profile Picture -->
                     <div class="form-row">
                         <div class="form-group" :class="{ 'form-group-error': form.errors.resume }">
-                            <InputLabel value="Upload Resume" class="form-label" />
+                            <InputLabel value="Upload Resume" class="form-label" style="background-color: none !important; background: none !important; color: #ffffff;" />
                             <input
                                 type="file"
                                 id="resume"
@@ -382,9 +353,9 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                     >
                         Back
                     </button>
-                    <Link v-if="step === 1" :href="route('login')" class="login-button-link">
+                    <!-- <Link v-if="step === 1" :href="route('login')" class="login-button-link">
                         Log In
-                    </Link>
+                    </Link> -->
                     <PrimaryButton
                         v-if="step < 3"
                         @click.prevent="nextStep"
@@ -400,9 +371,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                         :disabled="form.processing"
                         style="    background-color: #1898e5;"
                     >
-                        Sign Up
+                        {{ authUser ? 'Welcome to MBM University' : 'Sign Up' }}
                     </PrimaryButton>
-                   
                 </div>
             </form>
         </div>
@@ -416,8 +386,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     align-items: center;
     padding: 20px 40px; /* Added more horizontal padding */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; /* Modern sans-serif font stack */
-    background-color: #fff;
-    max-width: 900px; /* Increased max-width */
+    background-color: transparent;
+    max-width: 950px; /* Increased max-width */
     margin: 2rem auto; /* Centering and margin */
     margin-top: 0px;
 }
@@ -425,7 +395,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 .form-title {
     font-size: 28px; /* Adjusted as per image */
     font-weight: 600; /* Semi-bold */
-    color: #000000; /* Darker gray */
+    color: #ffffff; /* Darker gray */
     margin-bottom: 8px; /* Adjusted margin */
     text-align: left;
     width: 100%;
@@ -433,7 +403,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 
 .form-subtitle {
     font-size: 14px;
-    color: #6B7280; /* Medium gray */
+    color: #c9c9c9; /* Medium gray */
     margin-bottom: 30px;
     text-align: left;
     width: 100%;
@@ -460,7 +430,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     border-left: 4px solid #9CA3AF;
     border-radius: 6px;
     justify-content: center;
-    
+    background-color: #ffffff;
     display: flex;
 }
 
@@ -470,8 +440,9 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     margin-top: 1px;
     font-size: 14px;
     font-weight: 500;
-    color: #555555; /* Slightly lighter than title */
+    color: #000000; /* Slightly lighter than title */
     margin-left: 12px;
+    background-color: #ffffff;
 }
 
 .form-input,
@@ -481,8 +452,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     /* border: 1px solid #D1D5DB; Light gray border */
     /* border-radius: 6px; */
     font-size: 14px;
-    color: #111827;
-    background-color: #fff;
+    color: #000000;
+    background-color: #ffffff !important;
     line-height: 1.5;
     /* border-left: 4px solid #9CA3AF; Prominent left border as in image */
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -576,6 +547,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     border-radius: 4px;
     border: 1px solid #D1D5DB;
     accent-color: #000000; /* Indigo for checkbox */
+    padding: 10px;
 
 }
 .form-checkbox:checked {
@@ -593,8 +565,9 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 
 .terms-label {
     font-size: 14px;
-    color: #374151;
+    color: #ffffff;
     font-weight: normal; /* Normal weight for terms label */
+    margin-bottom: 0px;
 }
 
 .form-link {
@@ -734,12 +707,14 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     border: 1px solid #D1D5DB;
     border-radius: 4px;
     border-left: 4px solid #9CA3AF;
+    background-color: #ffffff;
 }
 
 .search-icon {
     width: 16px;
     height: 16px;
     margin-right: 8px;
+    color: #000000;
 }
 
 .topics-search-input {
@@ -750,6 +725,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     font-size: 14px;
     min-width: 120px;
     max-width: 100%;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 .topics-search-input:focus {
@@ -791,12 +768,19 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     justify-content: center;
     align-items: center;
     display: flex;
+    background-color: transparent !important;
+}
+
+.topic-logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .topic-name {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 500;
-    color: #111827;
+    color: #ffffff;
     margin-left: 10px;
     justify-content: center;
     align-items: center;
@@ -806,7 +790,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
 .topic-add-icon {
     font-size: 12px;
     font-weight: 500;
-    color: #4B5563;
+    color: #ffffff;
 }
 
 .view-more-roles {
@@ -818,9 +802,14 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     text-decoration: none;
     cursor: pointer;
 }
+.topic-card-content {
+   
+    align-items: center;
+    
+}
 
 .selected {
-    background-color: #f3f4f6;
+    background-color: #3a6fd7;
 }
 
 .profile-picture-container {

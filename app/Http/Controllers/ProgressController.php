@@ -7,6 +7,7 @@ use App\Services\ProgressService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Models\Course;
 
 class ProgressController extends Controller
 {
@@ -47,16 +48,15 @@ class ProgressController extends Controller
     public function storeUserVideoProgress(ProgressRequest $request)
     {
         try {
-            $progress = $this->progressService->updateOrCreateProgress($request->validated());
+            $result = $this->progressService->updateOrCreateProgress($request->validated());
 
             if ($request->wantsJson() && !$request->header('X-Inertia')) {
                 // For non-Inertia (axios) requests that want JSON
-                return response()->json($progress, 201);
+                return response()->json($result, 201);
             }
 
-            // For Inertia requests, redirect back. Inertia will handle this.
-            // You might want to add a flash message if needed, e.g., ->with('success', 'Progress saved!');
-            return redirect()->back()->with('inertia_handled_post', true); // 302 redirect, or 303 with ->withInput()
+            // For Inertia requests, redirect back with the completion status in the session flash.
+            return back()->with('course_completed', $result['course_completed']);
 
         } catch (\Exception $e) {
             Log::error('Progress save error in storeUserVideoProgress: ' . $e->getMessage() . ' Trace: ' . $e->getTraceAsString());
@@ -101,5 +101,26 @@ class ProgressController extends Controller
         } else {
             return response()->json(null, 200); // Return null or an empty object if no progress, with 200 OK
         }
+    }
+
+    public function getCourseProgress(Request $request, Course $course): JsonResponse
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated.'], 401);
+        }
+        $progress = $this->progressService->getProgressForUserAndCourse($user, $course);
+        return response()->json($progress);
+    }
+
+    public function getCompletionStatus(Request $request, Course $course): JsonResponse
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['is_completed' => false, 'message' => 'User not authenticated.'], 401);
+        }
+
+        $isCompleted = $this->progressService->isCourseCompletedAndUnreviewed($user, $course);
+        return response()->json(['is_completed' => $isCompleted]);
     }
 }

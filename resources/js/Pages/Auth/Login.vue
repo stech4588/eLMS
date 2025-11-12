@@ -6,7 +6,10 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const user = usePage().props.auth.user
 
 defineProps({
   canResetPassword: Boolean,
@@ -44,6 +47,28 @@ function onBlurpass() {
 function togglePassword() {
   showPassword.value = !showPassword.value;
 }
+
+const redirectToGoogle = () => {
+  window.location.href = route('google.redirect');
+};
+
+const redirectToFacebook = () => {
+  window.location.href = route('facebook.redirect');
+};
+
+const redirectToApple = () => {
+  window.location.href = route('apple.redirect');
+};
+
+const joinNowUrl = computed(() => {
+  if (user) {
+    if (usePage().props.auth.profile_incomplete && user.type === 'student') {
+      return '/register/complete';
+    }
+    return '/dashboard';
+  }
+  return '/joinnow';
+});
 </script>
 
 <template>
@@ -56,6 +81,10 @@ function togglePassword() {
       </div>
 
       <div class="login-divider"></div>
+
+      <div v-if="$page.props.flash.error" class="error-message">
+        {{ $page.props.flash.error }}
+      </div>
 
       <div v-if="status" class="status-message">
         {{ status }}
@@ -113,27 +142,29 @@ function togglePassword() {
         </div>
 
         <div class="forgot-password-wrapper">
+          <span class="forgot-password-text">Forgot Password? </span>
           <Link
             v-if="canResetPassword"
             :href="route('password.request')"
             class="forgot-password-link"
           >
-            Forgot Password? click here to reset your password!
+             click here to reset your password!
           </Link>
         </div>
 
         <div class="login-button-wrapper">
-          <PrimaryButton
+          <div class="login-button-wrapper-left">
+            <PrimaryButton
             class="login-btn"
             :class="{ 'opacity-25': form.processing }"
             :disabled="form.processing"
           >
             Log in
           </PrimaryButton>
-
-          
-            <Link :href="route('register')" class="signup-link signup-btn-wrapper">
-              Sign Up with Student
+          </div>
+          <div class="join-now-button-wrapper">
+            <Link :href="joinNowUrl" class="signup-link signup-btn-wrapper">
+              Join Now
             </Link>
          
 
@@ -141,18 +172,41 @@ function togglePassword() {
             <Link :href="route('Instructor')" class="signup-link-instructor signup-btn-wrapper">
               Sign Up with Instructor
             </Link>
+          </div>
+            
+         
+
+          
+           
           
         </div>
 
         <div class="or-divider">
-          <div class="line"></div>
-          <span>OR</span>
-          <div class="line"></div>
+          <!-- <div class="line"></div> -->
+          <span>or sign in with</span>
+          <!-- <div class="line"></div> -->
         </div>
 
-        <div class="google-sign">
-          <img src="/images/google_icon.svg" alt="Google" />
-          <button @click="redirectToGoogle">Sign in with Google</button>
+        <div class="social-login-container">
+          <button class="social-login-btn">
+            <img src="/images/apple_logo.svg" alt="Apple" class="social-login-apple-icon" />
+          </button>
+          <button class="social-login-btn social-login-btn-facebook" @click="redirectToFacebook">
+            <img src="/images/facebook_icon.svg" alt="Facebook" />
+          </button>
+          <button class="social-login-btn" @click="redirectToGoogle">
+            <img src="/images/google_icon.svg" alt="Google" />
+          </button>
+        </div>
+        <div class="forgot-password-wrapper" style="margin-top: 20px; justify-content: center; display: flex;">
+          <span class="forgot-password-text">Need to find </span>
+          <Link
+            v-if="canResetPassword"
+            :href="route('password.request')"
+            class="forgot-password-link"
+          >
+              your password?
+          </Link>
         </div>
       </form>
     </div>
@@ -165,31 +219,36 @@ function togglePassword() {
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Arial', sans-serif;
+  padding-top:0px;
+  /* background-color: #0D1016;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px; */
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
 }
 
 .login-header h2 {
   font-weight: 600;
   font-size: 30px;
-  color: black;
+  color: rgb(255, 255, 255);
   margin-top: 0.5rem;
 }
 
 .login-header p {
   font-size: 12px;
   text-align: justify;
-  color: #777;
+  color: #cccccc;
   margin-top: 1.5rem;
 }
 
 .login-divider {
   height: 1px;
   background-color: #eee;
-  margin: 1.5rem 0;
+  margin-bottom: 16px;
+  width: 50%;;
 }
 
 .status-message {
@@ -197,6 +256,18 @@ function togglePassword() {
   font-size: 0.875rem;
   font-weight: 500;
   color: green;
+}
+
+.error-message {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: red;
+  background-color: rgba(255, 0, 0, 0.1);
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid red;
 }
 
 .floating-group {
@@ -209,10 +280,15 @@ function togglePassword() {
   padding: 0.75rem;
   border-radius: 4px;
   border: 1px solid #ddd;
-  color: black;
+  color: #000000;
   font-size: 1rem;
-  background-color: white;
-  border-left: 5px solid #7E7E7E;
+  background-color: #ffffff !important;
+  border-left: 5px solid #c9c9c9;
+
+}
+.floating-input:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .floating-label {
@@ -222,8 +298,8 @@ function togglePassword() {
   transform: translateY(-50%);
   font-size: 16px;
   font-weight: 500;
-  color: #666;
-  background: white;
+  color: #000000;
+  background: #ffffff !important;
   padding: 0 5px;
   transition: all 0.3s ease;
   pointer-events: none;
@@ -232,7 +308,7 @@ function togglePassword() {
 .floating-label.active {
   top: 5px;
   font-size: 14px;
-  color: #2b2899;
+  color: #000000;
 }
 
 .view-icon {
@@ -247,23 +323,38 @@ function togglePassword() {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 0.5rem;
+  gap: 3px;
 }
 
 .forgot-password-link {
   font-size: 0.875rem;
-  color: #666;
+  color: #c9c9c9;
   text-decoration: none;
+  text-decoration: underline;
+}
+.forgot-password-link:hover{
+  color: #fcfcfc;
+  
+}
+.forgot-password-text{
+  font-size: 12px;
+  color: #c9c9c9;
+  text-decoration: none;
+  align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 .login-button-wrapper {
   display: flex;
   gap: 36px;
-  margin-top: 60px;
+  margin-top: 10px;
+  justify-content: space-between;
 }
 @media (max-width: 550px) {
   .login-button-wrapper {
     flex-direction: column;
-    gap: 10px;
+    gap: 17px;
   }
 }
 
@@ -291,18 +382,19 @@ function togglePassword() {
 .signup-link {
   text-decoration: none;
   font-size: 12px;
-  color: #7E7E7E;
+  color: #c9c9c9;
 }
 
 .signup-link-instructor {
   text-decoration: none;
   font-size: 12px;
-  color: #7E7E7E;
+  color: #c9c9c9;
 }
 .or-divider {
   display: flex;
   align-items: center;
-  margin: 2.5rem 0 1.5rem;
+  margin: 1rem 0 1.5rem;
+  justify-content: center;
 }
 
 .or-divider .line {
@@ -316,41 +408,61 @@ function togglePassword() {
   color: #999999;
 }
 
-.google-sign {
+.social-login-container {
   display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
-
-.google-sign img {
-  padding: 12px;
-  box-shadow: -4px 4px 8px #7E7E7E;
-  border: 1px solid #7E7E7E;
-  margin-top: -1.35px;
+.join-now-button-wrapper{
+  display: flex;
+  gap: 20px;
+  align-items: end;
+  justify-content: end;
 }
-
-.google-sign button {
-  border: none;
-  background-color: #1898e5;
-  padding: 9px 40px;
-  margin-left: -3px;
-  font-size: 16px;
-  border: 1px solid #7E7E7E;
-  color: white;
+@media (max-width: 550px) {
+  .join-now-button-wrapper{
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+  }
 }
-
-@media (max-width: 375px) {
-  .google-sign button {
-    padding: 9px 20px;
-    width: 100% !important;
+@media (max-width: 550px) {
+  .login-button-wrapper-left{
+    align-items: center;
+    justify-content: center !important;
+    display: flex !important;
   }
 }
 
-@media (max-width: 340px) {
-  .google-sign button {
-    font-size: 12px;
-  }
-  .google-sign img {
-    width: 48px;
-    margin-top: 1px;
-  }
+.social-login-btn {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: 70px; /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
+}
+
+.social-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.social-login-btn img {
+  height: 24px; /* Adjust icon size as needed */
+  width: 24px;  /* Adjust icon size as needed */
+}
+.social-login-btn-facebook img{
+  height: 36px; /* Adjust icon size as needed */
+  width: 36px;  /* Adjust icon size as needed */
+}
+.social-login-apple-icon{
+  filter: invert(1);
 }
 </style>

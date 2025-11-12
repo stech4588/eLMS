@@ -1,9 +1,9 @@
 <template>
-  <div class="fusion-fullwidth-container">
+  <div class="fusion-fullwidth-container" id="access">
     <div class="fusion-fullwidth">
         <div class="large-p text-left px-4" style="font-size: 40px;">
-            <p>Less frustration. <span class="text-[#028cc8]">More flexibility.</span><br>
-                Finally, learning that works for you.</p>
+            <p>Leave the system that was created to keep you as a <span class="text-[#028cc8]">slave</span>, a <span class="text-[#028cc8]">servant</span>, and <span class="text-[#028cc8]">compliant</span> to
+               an endless loop giving your most priceless asset, your time for mediocre wages.</p>
         </div>
       <div class="fusion-builder-row">
         <div class="fusion-layout-column fusion_builder_column_1_2">
@@ -21,16 +21,16 @@
         <div class="fusion-layout-column fusion_builder_column_1_2">
           <div class="fusion-column-wrapper">
             <div class="large-p" style="font-size: 20px; text-align: left; margin-bottom: 20px;">
-              <p>Consolidate your disconnected systems<br>
-              into a single platform:</p>
+              <p>MBM University's complete learning environment<br>
+                everything you need, all in one place:</p>
             </div>
             <div class="fusion-builder-row-inner">
               
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1.svg" alt="Ecommerce Systems" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Ecommerce Systems</p>
+                    <img src="/images/topicsLogo/e-commerce-logo.png" alt="E-Commerce" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">E-Commerce</p>
                   </div>
                 </div>
               </div>
@@ -38,8 +38,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-1.svg" alt="Learning Experience Platform (LXP)" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Learning Experience Platform (LXP)</p>
+                    <img src="/images/topicsLogo/copywriting-logo.png" alt="Copywriting" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Copywriting</p>
                   </div>
                 </div>
               </div>
@@ -47,8 +47,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                     <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-2.svg" alt="Reporting &amp; Analytics Systems" class="img-responsive">
-                     <p class="awb-imageframe-caption-text">Reporting &amp; Analytics Systems</p>
+                     <img src="/images/topicsLogo/stocks-logo.png" alt="Stocks" class="img-responsive">
+                     <p class="awb-imageframe-caption-text">Stocks</p>
                   </div>
                 </div>
               </div>
@@ -56,8 +56,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-3.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">On the Job Training (OJT) Systems</p>
+                    <img src="/images/topicsLogo/crypto-logo.png" alt="Crypto Investing" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Crypto Investing</p>
                   </div>
                 </div>
               </div>
@@ -65,8 +65,8 @@
                <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-4.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Content Management &amp; Delivery Systems</p>
+                    <img src="/images/topicsLogo/finance-logo.png" alt="Business & Finance" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Business & Finance</p>
                   </div>
                 </div>
               </div>
@@ -74,8 +74,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-5.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Assessment Certification &amp; Survey Platforms</p>
+                    <img src="/images/topicsLogo/trading-logo.png" alt="Crypto Trading" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Crypto Trading</p>
                   </div>
                 </div>
               </div>
@@ -83,8 +83,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-6.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Personal Development Planning Systems</p>
+                    <img src="/images/topicsLogo/AI-logo.png" alt="Content Creation & Al" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Content Creation & Al</p>
                   </div>
                 </div>
               </div>
@@ -92,8 +92,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-7.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Competency Management Systems</p>
+                    <img src="/images/topicsLogo/client-logo.png" alt="Client Acquisition & Social Media" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Client Acquisition & Social Media</p>
                   </div>
                 </div>
               </div>
@@ -101,8 +101,8 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-8.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Induction / Onboarding Systems</p>
+                    <img src="/images/topicsLogo/ads-logo.png" alt="Ads Mastery" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Ads Mastery</p>
                   </div>
                 </div>
               </div>
@@ -110,8 +110,88 @@
               <div class="box">
                 <div class="fusion-column-wrapper-inner">
                   <div class="fusion-image-element">
-                    <img src="https://www.seertechsolutions.com/wp-content/uploads/2024/11/check-out-1-9.svg" class="img-responsive">
-                    <p class="awb-imageframe-caption-text">Compliance Systems</p>
+                    <img src="/images/topicsLogo/defi-logo.png" alt="DeFi" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">DeFi</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/sdvertising-logo.png" alt="Digital Advertising" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Digital Advertising</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/sales-logo.png" alt="Sales" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Sales</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/airbnb-logo.png" alt="Airbnb" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Airbnb</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/network-logo.png" alt="Influencer Network Management" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Influencer Network Management</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/marketing-logo.png" alt="Digital Marketing" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Digital Marketing</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/lead-logo.png" alt="Generation Lead" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Generation Lead</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/credit-logo.png" alt="Credit Repair" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Credit Repair</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/drop-logo.png" alt="Drop Shipping" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Drop Shipping</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/social-logo.png" alt="Social Media Automation" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">Social Media Automation</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="fusion-column-wrapper-inner">
+                  <div class="fusion-image-element">
+                    <img src="/images/topicsLogo/seo-logo.png" alt="SEO Consulting" class="img-responsive">
+                    <p class="awb-imageframe-caption-text">SEO Consulting</p>
                   </div>
                 </div>
               </div>

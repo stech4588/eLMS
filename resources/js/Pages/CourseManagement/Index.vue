@@ -29,6 +29,14 @@
                                 </select>
                                 <p v-if="form.errors.is_trending" class="text-red-500 dark:text-red-400 text-xs italic mt-1">{{ form.errors.is_trending }}</p>
                             </div>
+                            <div class="mt-4" v-if="activeTab === 'topic'">
+                                <label for="logo" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Topic Logo</label>
+                                <input type="file" @change="onFileChange" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
+                                <div v-if="form.logo_url" class="mt-2">
+                                    <img :src="form.logo_url" alt="Logo Preview" class="h-20 w-20 object-cover rounded-md">
+                                </div>
+                                <p v-if="form.errors.logo" class="text-red-500 dark:text-red-400 text-xs italic mt-1">{{ form.errors.logo }}</p>
+                            </div>
                             <div class="mt-6 flex justify-end space-x-3">
                                 <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                     Cancel
@@ -222,6 +230,8 @@ const form = useForm({
     name: '',
     description: '',
     is_trending: 0,
+    logo: null,
+    logo_url: null,
 });
 
 const viewTitle = computed(() => {
@@ -258,6 +268,7 @@ const startEdit = (item) => {
     form.name = item.name;
     form.description = item.description;
     form.is_trending = item.is_trending === undefined ? 0 : item.is_trending;
+    form.logo_url = item.logo_url || null;
     form.clearErrors();
 };
 
@@ -267,6 +278,14 @@ const cancelAction = () => {
     currentItemId.value = null;
     form.reset();
     form.clearErrors();
+};
+
+const onFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        form.logo = file;
+        form.logo_url = URL.createObjectURL(file);
+    }
 };
 
 const submitForm = () => {
@@ -279,7 +298,13 @@ const submitForm = () => {
     const baseUrl = urlMap[currentItemType.value];
 
     if (editingItem.value && currentItemId.value) {
-        form.put(`${baseUrl}/${currentItemId.value}`, {
+        router.post(`${baseUrl}/${currentItemId.value}`, {
+            _method: 'put',
+            name: form.name,
+            description: form.description,
+            is_trending: form.is_trending,
+            logo: form.logo,
+        }, {
             preserveScroll: true,
             onSuccess: () => {
                 cancelAction();

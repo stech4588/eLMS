@@ -1,15 +1,15 @@
 <template>
-  <section class="mbm-lms-solution" ref="solutionSection">
+  <section class="mbm-lms-solution" ref="solutionSection" id="why-us">
     <div class="mbm-lms-container">
-      <h2 class="mbm-lms-title">Why 6 million users choose our LMS Solution</h2>
+      <h2 class="mbm-lms-title">Why MBM University chooses smart technology for smarter learning.</h2>
       <div class="mbm-lms-grid">
         <div class="mbm-lms-stat" v-for="(stat, index) in countedStats" :key="index">
           <div class="mbm-lms-value">{{ stat.displayValue }}</div>
           <div class="mbm-lms-label" v-html="stat.label"></div>
         </div>
-        <div class="mbm-lms-award">
+        <!-- <div class="mbm-lms-award">
           <img src="/images/icon1.svg" alt="Award Badge" />
-        </div>
+        </div> -->
       </div>
     </div>
   </section>
@@ -24,7 +24,7 @@ export default {
         { value: '97%', label: 'Customer<br>retention rate' },
         { value: '20+', label: 'Years of<br>experience' },
         { value: '190+', label: 'Countries use<br>our LMS' },
-        { value: '$2B', label: 'Orders booked<br>per year' },
+        { value: '200K$', label: 'Orders booked<br>per year' },
         { value: '42K', label: 'Average<br>customer size' }
       ],
       countedStats: [],

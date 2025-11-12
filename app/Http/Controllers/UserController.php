@@ -76,8 +76,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-
-        return redirect()->route('users.index')->with('message', 'User deleted successfully.');
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 
     public function updateCareerGoal(Request $request)
@@ -105,5 +104,18 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->back()->with('message', 'Preferred topics updated successfully.');
+    }
+
+    public function storeLearningGoal(Request $request)
+    {
+        $request->validate([
+            'daily_learning_goal' => 'required|integer|min:1|max:4',
+        ]);
+
+        $request->user()->update([
+            'daily_learning_goal' => $request->daily_learning_goal,
+        ]);
+
+        return redirect()->back()->with('success', 'Your learning goal has been saved!');
     }
 } 

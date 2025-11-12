@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Sanctum\HasApiTokens;
+use App\Models\QuizAttempt;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -33,6 +35,11 @@ class User extends Authenticatable
         'resume_path',
         'profile_picture',
         'is_active',
+        'google_id',
+        'apple_id',
+        'facebook_id',
+        'can_view_community',
+        'daily_learning_goal',
         // 'bio',
         // 'type',
     ];
@@ -57,6 +64,57 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'preferred_topic_ids' => 'array',
+            'can_view_community' => 'boolean',
+        ];
+    }
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            $defaultSettings = [
+                ['key' => 'receives_new_course_notification_emails', 'value' => true],
+                ['key' => 'receives_course_completion_emails', 'value' => true],
+                ['key' => 'receives_course_reminder_emails', 'value' => true],
+                ['key' => 'receives_new_message_emails', 'value' => true],
+                ['key' => 'receives_promotional_emails', 'value' => false],
+                ['key' => 'receives_wellness_checkin_emails', 'value' => true],
+                ['key' => 'receives_motivational_quote_emails', 'value' => true],
+            ];
+
+            foreach ($defaultSettings as $setting) {
+                $user->emailNotificationSettings()->create($setting);
+            }
+        });
+    }
+
+    /**
+     * Check if the user can receive a specific email notification.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function canReceiveEmail(string $key): bool
+    {
+        $setting = $this->emailNotificationSettings()->where('key', $key)->first();
+        return $setting ? $setting->value : false;
+    }
+
+    /**
      * Get the URL to the user's profile photo.
      *
      * @return string|null
@@ -69,21 +127,7 @@ class User extends Authenticatable
             }
             return asset($this->profile_picture);
         }
-        return null; // Fallback will be handled by the frontend
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'preferred_topic_ids' => 'array',
-        ];
+        return asset('images/user.svg');
     }
 
     /**
@@ -116,5 +160,23 @@ class User extends Authenticatable
     public function instructor(): HasOne
     {
         return $this->hasOne(Instructor::class);
+    }
+
+    /**
+     * Get the email notification settings for the user.
+     */
+    public function emailNotificationSettings(): HasMany
+    {
+        return $this->hasMany(EmailNotificationSetting::class);
+    }
+
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'users.'.$this->id;
+    }
+
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
     }
 }

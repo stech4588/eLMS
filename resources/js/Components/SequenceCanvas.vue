@@ -1,105 +1,295 @@
 <template>
-  <div
-    class="fusion-layout-column fusion_builder_column fusion-builder-column-6 fusion-flex-column fusion-flex-align-self-center light"
-    :style="columnStyle"
-  >
-    <div class="fusion-column-wrapper fusion-column-has-shadow fusion-flex-justify-content-center fusion-content-layout-column">
-      <canvas
-        id="sequenceCanvas"
-        width="870"
-        height="780"
-        class="animate-display"
-        ref="canvas"
-      ></canvas>
+  <div class="bg-[#0b1120] text-white py-20 font-sans" id="learn">
+    <div class="container mx-auto px-4">
+      <div class="relative">
+        <!-- Timeline Rows -->
+        <div class="space-y-16 sequence-canvas-section-container">
+          <!-- Section 1 -->
+          <div class="relative section-container">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+            <div class="grid grid-cols-2 gap-8 items-start section-content">
+              <div class="flex justify-center pr-8 mt-12 image-container">
+                <img src="/images/mobile-icon.png" alt="App on Phones" class="section-image sequence-canvas-section-image" />
+              </div>
+              <div class="pl-8 text-container">
+                <h3 class="section-heading">
+                  <img src="/images/degree-icon.webp" class="w-20 h-20 sequence-canvas-section-icon" alt="" />
+                  <span style="text-align: start;">Learn Essential <strong class="font-bold">Life Skills</strong></span>
+                </h3>
+                <ul class="feature-list">
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Turn Knowledge <span class="text-[#4ACFF8] font-semibold">into Income</span></span>
+                  </li>
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Go from  <span class="text-[#4ACFF8] font-semibold">beginner to earning $10k/month</span> fast</span>
+                  </li>
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Gain practical skills that directly <span class="text-[#4ACFF8] font-semibold">impact your earning power.</span></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-      <div
-        class="fusion-image-element"
-        style="text-align: center; --awb-max-width: 95px;"
-      >
-        <span
-          class="fusion-imageframe imageframe-none imageframe-5 hover-type-none loader-gif"
-          v-show="isLoading"
-        >
-          <img
-            width="150"
-            height="150"
-            title="loading"
-            src="https://www.seertechsolutions.com/wp-content/uploads/2025/02/loading-1.gif"
-            alt="loading"
-            class="img-responsive wp-image-4233"
-          />
-        </span>
+          <!-- Section 2 -->
+          <div class="relative section-container">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line"></div>
+            <div class="grid grid-cols-2 gap-8 items-start section-content">
+              <div class="flex justify-center pr-8 mt-12 image-container sequence-canvas-section-image-container">
+                <img src="/images/communitySection.png" alt="App on Laptop" class="max-w-md sequence-canvas-section-image" />
+              </div>
+              <div class="pl-8 text-container">
+                <h3 class="section-heading">
+                  <img src="/images/group-icon.webp" class="w-20 h-20 sequence-canvas-section-icon" alt="" />
+                  <span style="text-align: start;">Join an Exclusive <strong class="font-bold">Community</strong></span>
+                </h3>
+                <ul class="feature-list">
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Grow with a Private Network</span>
+                  </li>
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Share <span class="text-[#4ACFF8] font-semibold">progress, celebrate wins,</span> and get inspired.</span>
+                  </li>
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Network with over <span class="text-[#4ACFF8] font-semibold">113,000+ like-minded learners.</span></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3 -->
+          <div class="relative section-container">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line hidden-line"></div>
+            <div class="grid grid-cols-2 gap-8 items-start section-content">
+              <div class="flex justify-center pr-8 mt-12 image-container sequence-canvas-section-image-container">
+                <img src="/images/laptop-icon.png" alt="App on Tablets" class="max-w-md sequence-canvas-section-image" />
+              </div>
+              <div class="pl-8 text-container">
+                <h3 class="section-heading">
+                  <img src="/images/multi-icon.png" class="w-20 h-20 sequence-canvas-section-icon" alt="" />
+                  <span style="text-align: start;">Mentorship  <strong class="font-bold">from High-Level Experts</strong></span>
+                </h3>
+                <ul class="feature-list">
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Access <span class="text-[#4ACFF8] font-semibold">Industry</span> Leaders</span>
+                  </li>
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text">Get <span class="text-[#4ACFF8] font-semibold">step-by-step mentoring</span> from multimillionaires and proven experts.</span>
+                  </li>
+                  <li class="feature-item">
+                    <svg class="feature-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    <span class="feature-text"><span class="text-[#4ACFF8] font-semibold">Receive personal advice tailored</span> to your journey.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Join button -->
+      <div class="text-center mt-20 hero-section-join-button">
+        <a :href="joinNowUrl" class="bg-gradient-to-r from-[#4ACFF8] to-[#4ACFF8] text-black font-bold py-4 px-12 rounded-lg text-lg uppercase tracking-wider sequence-canvas-join-button">
+          Join MBM University
+        </a>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 
-const canvas = ref(null);
-const isLoading = ref(true);
+const user = usePage().props.auth.user
 
-const columnStyle = `
-  --awb-bg-size: cover;
-  --awb-width-large: 45%;
-  --awb-margin-top-large: 0px;
-  --awb-spacing-right-large: 4.2667%;
-  --awb-margin-bottom-large: 20px;
-  --awb-spacing-left-large: 4.2667%;
-  --awb-width-medium: 100%;
-  --awb-order-medium: 0;
-  --awb-spacing-right-medium: 1.92%;
-  --awb-spacing-left-medium: 1.92%;
-  --awb-width-small: 100%;
-  --awb-order-small: 0;
-  --awb-spacing-right-small: 1.92%;
-  --awb-spacing-left-small: 1.92%;
-`;
-
-onMounted(() => {
-  const ctx = canvas.value.getContext("2d");
-
-  // Sample canvas animation (replace with your own)
-  let x = 0;
-  function draw() {
-    ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-    ctx.fillStyle = "orange";
-    ctx.beginPath();
-    ctx.arc(x, 100, 50, 0, 2 * Math.PI);
-    ctx.fill();
-    x += 1;
-    if (x > canvas.value.width) x = 0;
-    requestAnimationFrame(draw);
+const joinNowUrl = computed(() => {
+  if (user) {
+    if (usePage().props.auth.profile_incomplete) {
+      return '/register/complete';
+    }
+    return '/dashboard';
   }
-
-  draw();
-
-  // Hide loader after animation starts (simulate delay)
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 1500);
+  return '/joinnow';
 });
+// No script is needed for this static component.
 </script>
 
 <style scoped>
-.animate-display {
-  background: #ffffff;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap');
+
+.font-sans {
+    font-family: 'Roboto', sans-serif;
 }
 
-.fusion-imageframe img {
-  animation: pulse 1.5s infinite;
+.timeline-dot {
+  position: absolute;
+  left: 50%;
+  top: 3rem; /* 48px */
+  width: 1rem; /* 16px */
+  height: 1rem; /* 16px */
+  background-color: white;
+  border-radius: 9999px;
+  transform: translateX(-50%) translateY(-50%);
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  top: 3rem; /* 48px */
+  height: 100%;
+  width: 2px;
+  background-color: #4b4b4b;
+  margin-top: 1.875rem; /* 30px */
+  transform: translateX(-50%);
+}
+.section-container:last-child .timeline-line {
+  display: none;
+}
+
+.section-heading {
+  font-size: 25px;
+  font-weight: 100;
+  margin-bottom: 1.5rem; /* 24px */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* 16px */
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 22px;
+  text-align: left;
+  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+}
+
+.feature-icon {
+  width: 2.5rem; /* 40px */
+  height: 2.5rem; /* 40px */
+  color: #4ACFF8; /* text-[#4ACFF8]-500 */
+  margin-right: 0.75rem; /* 12px */
+  flex-shrink: 0;
+}
+
+.feature-text {
+  line-height: 1.5;
+}
+
+.section-image {
+  height: 40%;
+  width: auto;
+  max-width: 19rem; /* 448px */
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .section-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  50% {
-    transform: scale(1.05);
+  .sequence-canvas-section-container {
+    padding: 0rem 0rem 0rem 0rem !important;
   }
-  100% {
-    transform: scale(1);
+  
+  .image-container, .text-container {
+    padding: 0;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .section-heading {
+    justify-content: center;
+    font-size: 22px;
+    text-align: start;
+  }
+
+  .feature-list {
+    font-size: 18px;
+    /* display: inline-block; */
+    text-align: left;
+    gap: 1rem;
+  }
+
+  .timeline-dot, .timeline-line {
+    left: 1rem;
+  }
+
+  .section-content {
+    padding-left: 3rem;
+  }
+}
+
+@media (max-width: 530px) {
+  .sequence-canvas-section-image {
+    height: 50%;
+    width: auto;
+    max-width: 15rem; /* 448px */
+  }
+}
+@media (max-width: 400px) {
+  .sequence-canvas-section-image {
+    height: 30%;
+    width: auto;
+    max-width: 10rem; /* 448px */
+  }
+  .section-heading {
+    font-size: 18px;
+  }
+  .feature-list {
+    font-size: 14px;
+  }
+  .sequence-canvas-section-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+@media (max-width: 350px) {
+  .sequence-canvas-join-button {
+    font-size: 12px;
+    padding: 0.5rem 1rem;
+  }
+}
+.sequence-canvas-join-button {
+  background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  color: #000000;
+}
+.sequence-canvas-join-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
+}
+.hero-section-join-button:hover {
+  transform: translateY(-2px) !important;
+}
+
+.sequence-canvas-section-container {
+  padding: 0rem 4rem 0rem 4rem;
+}
+@media (max-width: 768px) {
+  .sequence-canvas-section-image-container {
+    margin-top: 0px !important;
   }
 }
 </style>

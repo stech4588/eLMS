@@ -3,14 +3,13 @@
         <div class="hero-overlay"></div>
         <div class="hero-container">
             <div class="hero-text">
-                <h1>Welcome<br> <span>to MBM University</span></h1>
+                <h1>Welcome<br> <span>To MBM University</span></h1>
                 <p>
-                    Your gateway to quality education and professional development.
-                    Discover courses that will help you achieve your goals.
+                    Where ordinary people transform into global online entrepreneurs. 
                 </p>
                 <div class="hero-buttons">
-                    <a href="/courses" class="btn-primary">Browse Courses</a>
-                    <a href="/about" class="btn-secondary">Learn More</a>
+                    <a :href="joinNowUrl" class="btn-primary">Browse Courses</a>
+                    <a :href="loginUrl" class="btn-secondary">Login Now</a>
                 </div>
             </div>
 
@@ -25,12 +24,36 @@
     </section>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref,computed } from 'vue'
 import { gsap } from 'gsap'
+import { usePage } from '@inertiajs/vue3'
 
 const link1 = ref(null)
 const link2 = ref(null)
 const link3 = ref(null)
+const user = usePage().props.auth.user
+
+
+const joinNowUrl = computed(() => {
+  if (user) {
+    if (usePage().props.auth.profile_incomplete) {
+      return '/register/complete';
+    }
+    return '/dashboard';
+  }
+  return '/joinnow';
+});
+
+const loginUrl = computed(() => {
+
+  if (user) {
+    if (usePage().props.auth.profile_incomplete) {
+      return '/register/complete';
+    }
+    return '/dashboard';
+  }
+  return '/login';
+});
 
 onMounted(() => {
   const pieces = [link1.value, link2.value, link3.value]
@@ -211,6 +234,12 @@ onMounted(() => {
     text-align: left;
 }
 
+@media(min-width:1024px){
+    .hero-text{
+        width: 45rem;
+    }
+}
+
 @media(max-width:550px) {
     .hero-text h1 {
         font-size: 2rem;
@@ -245,14 +274,16 @@ onMounted(() => {
 }
 
 .btn-primary {
-    background: #789b4a;
-    color: white;
+    /* background: #789b4a; */
+    /* color: white; */
     padding: 12px 28px;
     border-radius: 50px;
     text-decoration: none;
     font-weight: 600;
     transition: 0.3s;
     box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+    color: #000000;
 }
 
 @media(max-width:550px) {
@@ -262,7 +293,8 @@ onMounted(() => {
 }
 
 .btn-primary:hover {
-    background: #009ada;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 .btn-secondary {

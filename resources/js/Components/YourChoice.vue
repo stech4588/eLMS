@@ -9,7 +9,7 @@
                     <strong>modern-day limitations</strong> and succeed.
                 </p>
                 <p>
-                    We’ve spent years developing our fully independent and modern-day educational platform and we
+                    We've spent years developing our fully independent and modern-day educational platform and we
                     continue to
                     <strong>innovate and improve daily.</strong>
                 </p>
@@ -36,17 +36,17 @@
     </div>
 </template> -->
 <template>
-    <div class="main-nbm-banner">
+    <div class="main-nbm-banner" id="choice">
         <div class="nbm-banner-row">
             <section class="mbm-banner">
                 <div class="mbm-banner-content">
                     <h2 class="mbm-banner-heading">
-                        Don’t let your LMS <span class="mbm-nowrap">or LXP Solution</span> hold you back.
+                        The Old World Teaches Servival, MBM University Teaches Modern Wealth Creation.
                     </h2>
                     <div class="subtext">
                         <p class="mbm-banner-subtext">
                             Contact us today to see how we can help you!&nbsp;&nbsp;
-                        </p><button class="mbm-banner-button">➜ JOIN NOW</button>
+                        </p><a :href="joinNowUrl" class="mbm-banner-button">➜ JOIN NOW</a>
                     </div>
 
 
@@ -55,10 +55,22 @@
         </div>
     </div>
 </template>
-<script>
-export default {
+<script setup>
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 
-};
+const user = usePage().props.auth.user
+
+const joinNowUrl = computed(() => {
+    if (user) {
+        if (usePage().props.auth.profile_incomplete) {
+            return '/register/complete';
+        }
+        return '/dashboard';
+    }
+    return '/joinnow';
+});
+
 </script>
 
 <style>

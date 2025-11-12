@@ -88,6 +88,99 @@ class PermissionSeeder extends Seeder
                 'category' => 'role',
 
             ],
+            [
+                'name' => 'communityUpdate',
+                'description' => 'This will allow to add the community post',
+                'category' => 'community',
+
+            ],
+            [
+                'name' => 'metatagsUpdate',
+                'description' => 'This will allow to update the metatags',
+                'category' => 'metatags',
+
+            ],
+            [
+                'name' => 'pricingUpdate',
+                'description' => 'This will allow to update the pricing',
+                'category' => 'pricing',
+
+            ],
+            [
+                'name' => 'instructorListing',
+                'description' => 'This will allow to view the instructor listing',
+                'category' => 'instructor',
+
+            ],
+            [
+                'name' => 'coursemanagement',
+                'description' => 'This will allow to manage the course',
+                'category' => 'course',
+
+            ],
+            [
+                'name' => 'mycourses',
+                'description' => 'This will allow to view the my courses',
+                'category' => 'mycourses',
+
+            ],
+            [
+                'name' => 'addnewcourses',
+                'description' => 'This will allow to add the new courses',
+                'category' => 'addnewcourses',
+
+            ],
+            // Student and general navigation permissions
+            [
+                'name' => 'dashboardView',
+                'description' => 'This will allow to view the dashboard',
+                'category' => 'dashboard',
+            ],
+            [
+                'name' => 'careerJourneyView',
+                'description' => 'This will allow to view the career journey page',
+                'category' => 'career',
+            ],
+            [
+                'name' => 'communityView',
+                'description' => 'This will allow to view the community page',
+                'category' => 'community',
+            ],
+            [
+                'name' => 'libraryView',
+                'description' => 'This will allow to view the library',
+                'category' => 'library',
+            ],
+            [
+                'name' => 'contentView',
+                'description' => 'This will allow to view the content page',
+                'category' => 'content',
+            ],
+            [
+                'name' => 'helpView',
+                'description' => 'This will allow to view the help page',
+                'category' => 'help',
+            ],
+            [
+                'name' => 'communitySettingsView',
+                'description' => 'This will allow to view community settings',
+                'category' => 'community',
+            ],
+            [
+                'name' => 'marketingmanagement',
+                'description' => 'This will allow to view the marketing management',
+                'category' => 'marketing',
+            ],
+            [
+                'name' => 'emailSettingsManage',
+                'description' => 'This will allow a user to manage their email notification settings.',
+                'category' => 'settings',
+            ],
+            [
+                'name' => 'jobPost',
+                'description' => 'This will allow users to post new jobs.',
+                'category' => 'jobs',
+            ],
        ];
  }
 }

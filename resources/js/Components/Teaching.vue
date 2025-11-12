@@ -1,9 +1,9 @@
 <template>
-    <div class="lms-mart">
+    <div class="lms-mart" id="learn">
         <div class="lms-wrapper">
             <h2 class="lms-heading">
-                The most <span class="lms-highlight">configurable and personalized</span><br />
-                LMS solution on the market
+                The most <span class="lms-highlight">Configurable and Personalized</span><br />
+                Built for the future of MBM University
             </h2>
 
             <div class="lms-box">
@@ -14,7 +14,7 @@
                     <p class="lms-desc">
                         Harness AI and machine learning to grow your people faster with personalized career pathways.
                     </p>
-                    <button class="lms-button">➜ Learn more</button>
+                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
 
                 <!-- Card 2 -->
@@ -24,7 +24,7 @@
                     <p class="lms-desc">
                         Expand learning to external partners and grow your revenue at global scale.
                     </p>
-                    <button class="lms-button">➜ Learn more</button>
+                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
 
                 <!-- Card 3 -->
@@ -35,13 +35,31 @@
                         Accelerate workforce capabilities, manage compliance requirements, and drive operational
                         outcomes.
                     </p>
-                    <button class="lms-button">➜ Learn more</button>
+                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
             </div>
+            <button @click="joinNowUrl" class="lms-button">➜ Join Now</button>
         </div>
     </div>
 
 </template>
 
+<script setup>
+import { usePage, router } from '@inertiajs/vue3'
+
+const user = usePage().props.auth.user
+
+const joinNowUrl = () => {
+    if (user) {
+        if (usePage().props.auth.profile_incomplete) {
+            router.get('/register/complete');
+        } else {
+            router.get('/dashboard');
+        }
+    } else {
+        router.get('/joinnow');
+    }
+};
+</script>
 <style>
 </style>

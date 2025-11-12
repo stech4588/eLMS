@@ -1,13 +1,17 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
 import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
+import PromotionPopup from '@/Components/PromotionPopup.vue';
+import LearningGoalPopup from '@/Components/LearningGoalPopup.vue';
 import { Link, usePage, router, Head } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
 import axios from 'axios';
+import { fetchPermissions, clearPermissions, hasPermission } from '@/permissions.js';
+import { formatDistanceToNow } from 'date-fns';
 
 const user = usePage().props.auth?.user;
 const showingNavigationDropdown = ref(false)
@@ -19,7 +23,7 @@ const meta = computed(() => page.props.meta || {});
 const notifications = ref([]);
 
 const fetchNotifications = async () => {
-    if (user?.type === 'admin') {
+    if (user) {
         try {
             const response = await axios.get(route('notifications.index'));
             notifications.value = response.data;
@@ -31,8 +35,17 @@ const fetchNotifications = async () => {
 
 // Check for saved theme preference or system preference
 onMounted(() => {
+    // Tawk.to widget management
+    window.Tawk_API = window.Tawk_API || {};
+    // When the widget loads, check if it should be shown
+    window.Tawk_API.onLoad = manageTawkToWidget;
+    // Also run the check on mount in case the widget is already loaded
+    manageTawkToWidget();
+
     if (user) {
         fetchNotifications();
+        fetchPermissions();
+        window.addEventListener('new-notification', fetchNotifications);
     }
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         isDark.value = true;
@@ -42,7 +55,19 @@ onMounted(() => {
         isDark.value = false;
         document.documentElement.classList.remove('dark');
         document.documentElement.removeAttribute('data-swal2-theme');
+        localStorage.theme = 'light';
     }
+
+    // Expose global loader controls
+    window.showPageLoader = () => { isLoading.value = true; };
+    window.hidePageLoader = () => { isLoading.value = false; };
+});
+
+onUnmounted(() => {
+    window.removeEventListener('new-notification', fetchNotifications);
+    // Clean up globals (optional)
+    delete window.showPageLoader;
+    delete window.hidePageLoader;
 });
 
 // Toggle dark mode
@@ -59,12 +84,34 @@ const toggleDarkMode = () => {
     }
 };
 
+const logout = () => {
+    clearPermissions();
+    router.post(route('logout'));
+};
+
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value
 }
 
 const isPlayerPage = computed(() => page.component === 'Course/Player');
 const isCartPage = computed(() => page.component === 'cart/cart');
+const isGroupChatPage = computed(() => page.component === 'Groups/Chat');
+const isHelpPage = computed(() => page.component === 'help/help');
+
+const manageTawkToWidget = () => {
+    // Use optional chaining for safety, as Tawk_API might not be loaded yet.
+    if (window.Tawk_API?.hideWidget) {
+        if (isPlayerPage.value || isGroupChatPage.value || isHelpPage.value) {
+            window.Tawk_API.hideWidget();
+        } else {
+            window.Tawk_API.showWidget();
+        }
+    }
+};
+
+watch(isPlayerPage, manageTawkToWidget);
+watch(isGroupChatPage, manageTawkToWidget);
+watch(isHelpPage, manageTawkToWidget);
 
 onMounted(() => {
     router.on('start', () => {
@@ -114,13 +161,21 @@ onMounted(() => {
                                         </button>
                                     </template>
                                     <template #content>
-                                        <div v-if="notifications.length > 0">
-                                            <DropdownLink v-for="notification in notifications" :key="notification.id" :href="route('notifications.read', notification.id)" class="text-gray-700 bg-gray-100 dark:text-dark-text-secondary hover:bg-[#97d5ff] dark:hover:bg-dark-bg-tertiary">
-                                                {{ notification.data.message }}
-                                            </DropdownLink>
+                                        <div class="p-2 font-semibold text-center text-gray-800 bg-gray-50 border-b border-gray-200 dark:bg-dark-bg-tertiary dark:text-white dark:border-gray-600">
+                                            Notifications
                                         </div>
-                                        <div v-else class="px-4 py-2 text-sm text-gray-700 dark:text-dark-text-secondary">
-                                            No new notifications
+                                        <div v-if="notifications.length > 0" class="max-h-96 overflow-y-auto">
+                                            <Link v-for="notification in notifications" :key="notification.id" :href="route('notifications.read', notification.id)" class="flex items-start px-4 py-3 text-sm transition duration-150 ease-in-out border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                                <div class="w-full">
+                                                    <p class="text-gray-700 dark:text-gray-300">{{ notification.data.message }}</p>
+                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                        {{ formatDistanceToNow(new Date(notification.created_at), { addSuffix: true }) }}
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        </div>
+                                        <div v-else class="px-4 py-10 text-sm text-center text-gray-500 dark:text-dark-text-secondary">
+                                            You have no new notifications
                                         </div>
                                     </template>
                                 </Dropdown>
@@ -149,11 +204,11 @@ onMounted(() => {
                                     <DropdownLink :href="route('profile.edit')"
                                         class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
                                         Profile</DropdownLink>
-                                    <DropdownLink :href="route('cart')"
+                                    <DropdownLink v-if="hasPermission('emailSettingsManage')" :href="route('settings.index')"
                                         class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
-                                        Cart</DropdownLink>
+                                        Settings</DropdownLink>
 
-                                    <DropdownLink :href="route('logout')" method="post" as="button"
+                                    <DropdownLink @click="logout" as="button"
                                         class="text-gray-700 dark:text-white dark:text-whitehover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
                                         Log Out</DropdownLink>
                                 </template>
@@ -210,7 +265,7 @@ onMounted(() => {
                             <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i>
                             <span class="ml-2">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
                         </button>
-                        <ResponsiveNavLink :href="route('logout')" method="post" as="button"
+                        <ResponsiveNavLink @click="logout" as="button"
                             class="text-gray-700 dark:text-dark-text-secondary">Log Out</ResponsiveNavLink>
                     </div>
                 </div>
@@ -245,6 +300,8 @@ onMounted(() => {
                 </main>
             </div>
         </div>
+        <PromotionPopup v-if="user && (user.type === 'student' || user.type === 'instructor')" />
+        <LearningGoalPopup v-if="user && user.type === 'student'" />
     </div>
 </template>
 
@@ -305,12 +362,12 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #97D5FF;
+    background-color: #fbfbfbba;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    border-radius: 8px;
+    /* border-radius: 8px; */
 }
 
 .dark .page-transition-loader {
@@ -336,7 +393,7 @@ main {
 #box3 {
     width: 50px;
     height: 50px;
-    background: #2b2899;
+    background: #4CCAFF;
     animation: animate .4s linear infinite;
     border-radius: 3px;
 }

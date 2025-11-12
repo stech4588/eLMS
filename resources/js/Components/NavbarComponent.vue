@@ -1,20 +1,26 @@
 <template>
   <nav class="modern-navbar">
     <div class="navbar-container">
-      <div class="logo">
+      <a :href="logoUrl" class="logo">
         <img src="/images/MBM_Uni.png" alt="" />
-      </div>
+      </a>
 
       <ul class="nav-links" v-if="!menuOpen">
         <li><a @click="scrollToSection('access')">ACCESS</a></li>
+        <li><a @click="scrollToSection('learn')">LEARN</a></li>
         <li><a @click="scrollToSection('education')">EDUCATION</a></li>
-        <li><a @click="scrollToSection('result')">RESULTS</a></li>
-        <li><a @click="scrollToSection('choice')">CHOICE</a></li>
+        <!-- <li><a @click="scrollToSection('result')">FEATURED</a></li> -->
+        <li><a @click="scrollToSection('why-us')">WHY US</a></li>
+        <li><a @click="scrollToSection('testimonials')">TESTIMONIALS</a></li>
+        
+        <li><a @click="scrollToSection('pricing')">PRICING</a></li>
+        <li><a @click="scrollToSection('faq')">FAQ</a></li>
+        <!-- <li><a @click="scrollToSection('choice')">CHOICE</a></li> -->
       </ul>
 
-      <div class="action-buttons" v-if="!menuOpen">
-        <Link href="/register" class="join">JOIN NOW</Link>
-        <Link href="/login" class="login">LOG IN</Link>
+      <div class="action-buttons" v-if="!menuOpen"> 
+        <Link :href="joinNowUrl" class="join">JOIN NOW</Link>
+        <Link :href="loginUrl" class="login">LOG IN</Link>
       </div>
 
       <div class="hamburger" @click="toggleMenu">
@@ -27,12 +33,19 @@
     <!-- Smooth Animated Dropdown -->
     <transition name="dropdown">
       <div v-show="menuOpen" class="custom-dropdown">
-        <Link href="/register">JOIN NOW</Link>
-        <a @click="scrollToSection('access')">ACCESS</a>
-        <a @click="scrollToSection('education')">EDUCATION</a>
-        <a @click="scrollToSection('result')">RESULTS</a>
-        <a @click="scrollToSection('choice')">CHOICE</a>
+        <Link :href="joinNowUrl">JOIN NOW</Link>
         <Link href="/login">LOG IN</Link>
+        <a @click="scrollToSection('access')">ACCESS</a>
+        <a @click="scrollToSection('learn')">LEARN</a>
+        <a @click="scrollToSection('education')">EDUCATION</a>
+        <a @click="scrollToSection('why-us')">WHY US</a>
+        <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
+        
+        <!-- <a @click="scrollToSection('result')">FEATURED</a> -->
+        <a @click="scrollToSection('pricing')">PRICING</a>
+        <a @click="scrollToSection('faq')">FAQ</a>
+        <!-- <a @click="scrollToSection('choice')">CHOICE</a> -->
+        
       </div>
     </transition>
   </nav>
@@ -47,6 +60,38 @@ export default {
     return {
       menuOpen: false,
     };
+  },
+  computed: {
+    user() {
+      return this.$page.props.auth.user;
+    },
+    logoUrl() {
+        if (this.user) {
+          if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
+            return '/register/complete';
+          }
+          return '/dashboard';
+        }
+        return '/';
+    },
+    joinNowUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/joinnow';
+    },
+    loginUrl() {
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
+          return '/register/complete';
+        }
+        return '/dashboard';
+      }
+      return '/login';
+    },
   },
   methods: {
     toggleMenu() {
@@ -88,7 +133,13 @@ export default {
 }
 
 .logo {
-  width: 90px;
+  width: 140px;
+}
+@media (max-width: 768px) {
+  .logo {
+    width: 140px;
+    height: 80px;
+  }
 }
 
 .nav-links {
@@ -153,12 +204,13 @@ export default {
 
 .join {
   /* background: linear-gradient(45deg, #38b6ff, #4ccaff); */
-  background: #789b4a;
-  color: #ffffff;
+  background: linear-gradient(310deg, #38B6FF, #4CCAFF);
+  color: #000000;
 }
 
 .join:hover {
-  background: #009ada !important;
+  transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 
@@ -249,7 +301,7 @@ export default {
 }
 
 /* Responsive */
-@media (max-width: 895px) {
+@media (max-width: 1320px) {
   .nav-links,
   .action-buttons {
     display: none;

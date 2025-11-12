@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CourseIndustrySeeder::class);
         $this->call(CourseTypeSeeder::class);
         $this->call(PageSeeder::class);
+        $this->call(PricingSeeder::class);
        
         User::updateOrCreate(
             [
@@ -33,6 +34,12 @@ class DatabaseSeeder extends Seeder
                 'role_id' => 1, // Assuming role_id 1 is for 'Super Admin'
                 'type' => 'admin',
                 'is_active' => 1,
+                'phone_number' => '1234567890',
+                'profile_picture' => 'https://via.placeholder.com/150',
+                'primary_learning_goal' => 'AI',
+                'preferred_topic_ids' => ["1","5","9"],
+                'resume_path' => 'https://via.placeholder.com/150',
+                
             ]
         );
     }
