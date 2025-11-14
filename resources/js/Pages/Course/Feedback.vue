@@ -21,7 +21,7 @@
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800">
+                                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-[#293E4C]">
                                         <tr v-for="review in reviews.data" :key="review.id">
                                             <td class="px-6 py-4 whitespace-nowrap">{{ review.user.name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap">{{ review.rating }} / 5</td>

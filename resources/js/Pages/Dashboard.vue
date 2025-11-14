@@ -8,23 +8,21 @@
 
 
 
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10 bg-white dark:bg-dark-bg-secondary p-6"
-                style="margin: 0px; width: 100%; max-width:1730px; border-radius: 16px; text-align: start;">
-                <div class="main_filter_container bg-white dark:bg-dark-bg-secondary" style="display: flex; justify-content: space-between; padding: 10px; border-radius: 16px; padding-top: 25px;">
-                    <div style=" display: flex; align-items: start; ">
-                        <img src="/images/search_icon.svg" alt="Search" class="search_icon" style="position: absolute; margin-left: 10px;  padding: 15px 0px;"/>
-                        <input class="search_input dark:bg-gray-700 dark:text-white dark:border-gray-600" type="text" placeholder="Search Courses..." v-model="searchQuery"
-                            style="border-radius: 10px; border: 1px solid #7E7E7E; padding: 10px; padding-left: 30px; " />
+            <div class="dashboard-surface mx-auto space-y-10">
+                <div class="main_filter_container filter-panel">
+                    <div class="filter-search">
+                        <img src="/images/search_icon.svg" alt="Search" class="search_icon filter-search__icon" />
+                        <input class="search_input filter-search__input dark:text-white" type="text" placeholder="Search Courses..." v-model="searchQuery" />
                     </div>
                     <div class="filter-container">
-                        <div class="filter_select_container" style="display: flex; gap: 10px; flex-wrap: wrap;justify-content: end;">
+                        <div class="filter_select_container filter-select-group">
                             <!-- Topics Dropdown -->
-                            <div class="dropdown_dashboard" ref="topicDropdownRef" style="position: relative; ">
-                                <button @click="toggleTopicDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedTopicText || 'Topics' }}</span>
+                            <div class="dropdown_dashboard filter-select" ref="topicDropdownRef">
+                                <button @click="toggleTopicDropdown" class="filter-select__trigger" type="button">
+                                    <span class="filter-select__label">{{ selectedTopicText || 'Topics' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute; top: 100%;background-color: #dedede; overflow-y: auto; max-height: 200px; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box; border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
+                                <ul v-if="isTopicDropdownOpen" class="dropdown-menu show dark_home_dropdown">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect({ value: '', text: 'Topics' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Topics (All)</a></li>
                                     <li v-for="option in topicOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleTopicSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -34,12 +32,12 @@
                                 </ul>
                             </div>
                             <!-- Course Type Dropdown -->
-                            <div class="dropdown_dashboard" ref="courseTypeDropdownRef" style="position: relative; ">
-                                <button @click="toggleCourseTypeDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseTypeText || 'Course Type' }}</span>
+                            <div class="dropdown_dashboard filter-select" ref="courseTypeDropdownRef">
+                                <button @click="toggleCourseTypeDropdown" class="filter-select__trigger" type="button">
+                                    <span class="filter-select__label">{{ selectedCourseTypeText || 'Course Type' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute;overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box;border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
+                                <ul v-if="isCourseTypeDropdownOpen" class="dropdown-menu show dark_home_dropdown">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect({ value: '', text: 'Course Type' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Type (All)</a></li>
                                     <li v-for="option in courseTypeOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseTypeSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -49,12 +47,12 @@
                                 </ul>
                             </div>
                             <!-- Certificate Dropdown -->
-                            <div class="dropdown_dashboard" ref="certificateDropdownRef" style="position: relative; ;">
-                                <button @click="toggleCertificateDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCertificateText || 'Certificate' }}</span>
+                            <div class="dropdown_dashboard filter-select" ref="certificateDropdownRef">
+                                <button @click="toggleCertificateDropdown" class="filter-select__trigger" type="button">
+                                    <span class="filter-select__label">{{ selectedCertificateText || 'Certificate' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute; overflow: hidden; top: 100%; background-color: #dedede; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box;border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
+                                <ul v-if="isCertificateDropdownOpen" class="dropdown-menu show dark_home_dropdown">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect({ value: '', text: 'Certificate' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Certificate (All)</a></li>
                                     <li v-for="option in certificateOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCertificateSelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -64,12 +62,12 @@
                                 </ul>
                             </div>
                             <!-- Course Industry Dropdown -->
-                            <div class="dropdown_dashboard" ref="courseIndustryDropdownRef" style="position: relative; ">
-                                <button @click="toggleCourseIndustryDropdown" class="btn btn-outline-secondary dropdown-toggle dark:bg-gray-700 dark:text-white dark:border-gray-600" type="button" style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; border: 1px solid #7E7E7E; padding: 0.375rem 0.75rem;">
-                                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ selectedCourseIndustryText || 'Course Industry' }}</span>
+                            <div class="dropdown_dashboard filter-select" ref="courseIndustryDropdownRef">
+                                <button @click="toggleCourseIndustryDropdown" class="filter-select__trigger" type="button">
+                                    <span class="filter-select__label">{{ selectedCourseIndustryText || 'Course Industry' }}</span>
                                     <img src="/images/dropdown_arrow.svg" alt="Dropdown Arrow" class="dropdown_arrow" />
                                 </button>
-                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show dark:bg-gray-800 dark:text-white dark_home_dropdown" style="position: absolute; overflow: hidden; background-color: #dedede; top: 100%; left: 0; width: 100%; z-index: 1000; min-width: auto; padding: 0.5rem 0; margin: 0.125rem 0 0; font-size: 1rem; color: #212529; text-align: left; list-style: none; background-clip: padding-box;border: 1px solid rgba(0,0,0,.15); border-radius: 0.25rem; scrollbar-width: none;">
+                                <ul v-if="isCourseIndustryDropdownOpen" class="dropdown-menu show dark_home_dropdown">
                                     <li><a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect({ value: '', text: 'Course Industry' })" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; background-color: transparent; border: 0;">Course Industry (All)</a></li>
                                     <li v-for="option in courseIndustryOptions" :key="option.value">
                                         <a class="dropdown-item dark:text-white" href="#" @click.prevent="handleCourseIndustrySelect(option)" style="display: block; width: 100%; padding: 0.25rem 1.5rem; clear: both; font-weight: 400; text-align: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background-color: transparent; border: 0;">
@@ -84,7 +82,7 @@
 
                 </div>
                 <!-- Skills Section -->
-                <div class="section_box dark:bg-dark-bg-secondary dark:text-white">
+                <div class="section_box dark:bg-[#0F212E] dark:text-white">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-xl font-bold section-title">Because of Skills you Follow</h3>
                     </div>
@@ -115,8 +113,8 @@
                     </div>
                 </div>
 
-                <div class="dark:bg-dark-bg-secondary dark:text-white f-direction" style="display:flex; justify-content:space-around; gap:15px;">
-                    <div class="course-card dark:bg-gray-800 dark:text-white">
+                <div class=" dark:text-white f-direction" style="display:flex; justify-content:space-around; gap:15px;">
+                    <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Leadership & Management
                             <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
@@ -125,7 +123,7 @@
                             class="course-card-image" />
                     </div>
 
-                    <div class="course-card dark:bg-gray-800 dark:text-white">
+                    <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Diversity & Equity
                             <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
@@ -133,7 +131,7 @@
                         <img src="/images/diversity_image.svg" alt="Diversity & Equity" class="course-card-image" />
                     </div>
 
-                    <div class="course-card dark:bg-gray-800 dark:text-white">
+                    <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Productivity
                             <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
@@ -504,11 +502,188 @@ const toggleFavorite = async (course) => {
 </script>
 
 <style>
+.dashboard-surface {
+    width: 100%;
+    max-width: 1730px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 32px;
+    text-align: start;
+    box-shadow: 0 24px 54px rgba(28, 46, 58, 0.12);
+    transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    border: 1px solid rgba(12, 39, 53, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-surface::after {
+    content: '';
+    position: absolute;
+    inset: -35% 55% 35% -15%;
+    background: radial-gradient(55% 55% at 50% 50%, rgba(76, 202, 255, 0.25) 0%, rgba(76, 202, 255, 0) 100%);
+    opacity: 0.4;
+    filter: blur(0px);
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+.dark .dashboard-surface {
+    background: radial-gradient(circle at top right, rgba(30, 64, 82, 0.65), rgba(15, 33, 46, 0.92));
+    border: 1px solid rgba(135, 199, 255, 0.08);
+    box-shadow: 0 32px 80px rgba(6, 14, 23, 0.55);
+}
+
+.dark .dashboard-surface::after {
+    opacity: 0.9;
+    background: radial-gradient(60% 65% at 40% 40%, rgba(76, 202, 255, 0.18) 0%, rgba(26, 44, 56, 0) 100%);
+}
+
+.filter-panel {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px 28px;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 18px 45px rgba(22, 37, 48, 0.06);
+    border: 1px solid rgba(12, 39, 53, 0.04);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .filter-panel {
+    background: linear-gradient(145deg, rgba(26, 44, 56, 0.94), rgba(26, 44, 56, 0.78));
+    border: 1px solid rgba(109, 173, 231, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(148, 199, 255, 0.05), 0 18px 40px rgba(6, 14, 23, 0.45);
+}
+
+.filter-search {
+    position: relative;
+    flex: 1;
+    max-width: 360px;
+    display: flex;
+    align-items: center;
+}
+
+.filter-search__icon {
+    position: absolute;
+    left: 16px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.75;
+    pointer-events: none;
+}
+
+.filter-search__input {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 51, 68, 0.24);
+    padding: 12px 16px 12px 44px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2d3a;
+    transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.filter-search__input:focus {
+    outline: none;
+    border-color: rgba(76, 202, 255, 0.6);
+    box-shadow: 0 0 0 4px rgba(76, 202, 255, 0.16);
+}
+
+.dark .filter-search__input {
+    background: rgba(17, 36, 49, 0.88);
+    border: 1px solid rgba(120, 184, 240, 0.18);
+    color: #e5f2ff;
+}
+
+.filter-select-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-end;
+}
+
+.filter-select {
+    position: relative;
+    min-width: 180px;
+    z-index: 10;
+}
+
+.filter-select__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 51, 68, 0.24);
+    background: rgba(255, 255, 255, 0.92);
+    padding: 10px 14px;
+    color: #1f2d3a;
+    transition: border 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filter-select__trigger:hover {
+    border-color: rgba(76, 202, 255, 0.35);
+}
+
+.filter-select__label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.dark .filter-select__trigger {
+    background: rgba(19, 38, 52, 0.85);
+    border: 1px solid rgba(109, 173, 231, 0.22);
+    color: #e5f2ff;
+    box-shadow: inset 0 0 0 1px rgba(110, 184, 240, 0.04);
+}
+
+.dark .filter-select__trigger:hover {
+    border-color: rgba(148, 199, 255, 0.4);
+}
+
+.filter-select .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 51, 68, 0.24);
+    margin-top: 6px;
+    padding: 6px 0;
+    background: #ffffff;
+    box-shadow: 0 18px 40px rgba(17, 43, 60, 0.18);
+    scrollbar-width: thin;
+    z-index: 30;
+}
+
+.dark .filter-select .dropdown-menu {
+    background: rgba(21, 41, 56, 0.96);
+    border: 1px solid rgba(109, 173, 231, 0.18);
+    box-shadow: 0 20px 48px rgba(6, 14, 23, 0.6);
+}
+
+.dark .dropdown-menu .dropdown-item:hover {
+    background-color: rgba(76, 202, 255, 0.18) !important;
+    color: #f3fbff !important;
+}
+
 .section_box {
     background-color: white;
     padding: 20px;
     border-radius: 16px;
     text-align: start;
+}
+
+.dark .section_box {
+    background: linear-gradient(145deg, rgba(26, 44, 56, 0.95), rgba(26, 44, 56, 0.82));
+    border: 1px solid rgba(109, 173, 231, 0.15);
+    box-shadow: 0 22px 55px rgba(6, 14, 23, 0.45);
+    backdrop-filter: blur(6px);
 }
 
 .home_page_style {
@@ -612,15 +787,18 @@ const toggleFavorite = async (course) => {
     height: 249px;
 }
 
-@media(max-width:1435px){
-    .course-card{
-        flex-direction: column;
-        max-width: 100%;
-        align-items: center;
-        text-align: center;
-        height: 300px;
-    }
+.dark .course-card {
+    border: 1px solid rgba(109, 173, 231, 0.16);
+    background: linear-gradient(160deg, rgba(26, 44, 56, 0.92), rgba(26, 44, 56, 0.78));
+    box-shadow: 0 18px 40px rgba(6, 14, 23, 0.45);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.dark .course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 26px 60px rgba(6, 14, 23, 0.58);
+}
+
 .course-card-text {
     display: flex;
     flex-direction: column;
@@ -645,11 +823,16 @@ const toggleFavorite = async (course) => {
     cursor: pointer;
     width: 90px;
 }
-.dark .course-card-button:hover {
-    border: 1px solid #fff;
-    transform: scale(1.05);
-    transition: all 0.3s ease;
 
+.dark .course-card-button {
+    border: 1px solid rgba(109, 173, 231, 0.35);
+    background: rgba(76, 202, 255, 0.16);
+    color: #dff5ff;
+}
+
+.dark .course-card-button:hover {
+    border-color: rgba(148, 199, 255, 0.6);
+    background: rgba(76, 202, 255, 0.28);
 }
 
 .course-card-image {
@@ -751,6 +934,12 @@ const toggleFavorite = async (course) => {
     max-width: 200px;
 }
 
+.dark .selected-filter-tag {
+    background-color: rgba(76, 202, 255, 0.14);
+    color: #dff5ff;
+    border: 1px solid rgba(148, 199, 255, 0.16);
+}
+
 .filter-text {
     white-space: nowrap;
     overflow: hidden;
@@ -784,6 +973,12 @@ const toggleFavorite = async (course) => {
     outline: none !important;
 }
 
+.dark .filter-container select option:hover,
+.dark .filter-container select option:focus {
+    background-color: rgba(76, 202, 255, 0.28) !important;
+    color: #f3fbff !important;
+}
+
 /* Style for the currently selected option in the dropdown list (though support is very limited) */
 .filter-container select option:checked {
     background-color: #97d5ff !important;
@@ -800,6 +995,15 @@ const toggleFavorite = async (course) => {
 
 .dropdown_dashboard{
     width: 200px;
+}
+
+.dark .dropdown_home_dropdown {
+    background-color: rgba(21, 41, 56, 0.96) !important;
+}
+
+.dark .dark_home_dropdown{
+    background-color: rgba(21, 41, 56, 0.96) !important;
+    border: 1px solid rgba(109, 173, 231, 0.18) !important;
 }
 
 .section-title {
@@ -867,7 +1071,7 @@ const toggleFavorite = async (course) => {
     filter: invert(1);
 }
 .dark .dark_home_dropdown{
-    background-color: #2d2d2d !important;
+    background-color: rgba(21, 41, 56, 0.96) !important;
 }
 
 .course-card-container {

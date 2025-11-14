@@ -183,7 +183,7 @@ const emitToggleFavorite = () => {
 }
 
 .dark .linkedin-card {
-    background-color: #2d2d2d;
+    background-color: #0F212D;
     border-color: #444;
 }
 .dark .linkedin-card-type, .dark .linkedin-card-author {

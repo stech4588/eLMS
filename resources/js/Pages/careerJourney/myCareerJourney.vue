@@ -140,7 +140,7 @@ function updateTopics() {
                     <div class="profile-sections-container">
                         <!-- Profile Card -->
                         <div class="profile-card">
-                            <img :src="user.profile_photo_url || '/images/profile.svg'" alt="myCareerJourney" class="profile-image" style="width: 85px;border-radius: 50%;"/>
+                            <img :src="user.profile_photo_url || '/images/profile.svg'" alt="myCareerJourney" class="profile-image" />
                             <div class="profile-name">{{ user.name }}</div>
                             <div class="profile-title">{{ user.type }}</div>
                         </div>
@@ -174,8 +174,8 @@ function updateTopics() {
                                 </div>
                                 <div v-else>
                                     <form @submit.prevent="saveCareerGoal">
-                                         <input type="text" v-model="goalForm.primary_learning_goal" class="add-skill-input dark:bg-dark-bg-secondary" style="width: 100%; padding-left: 10px;height: 40px;"  />
-                                         <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+                                         <input type="text" v-model="goalForm.primary_learning_goal" class="add-skill-input dark:bg-dark-bg-secondary w-full" />
+                                         <div class="goal-action-buttons">
                                               <button type="submit" class="save-btn">Save</button>
                                           <button type="button" @click="cancelEditing" class="cancel-btn">Cancel</button>
                                          </div>
@@ -208,8 +208,7 @@ function updateTopics() {
                                     type="text" 
                                     v-model="searchTerm"
                                     placeholder="I want to..." 
-                                    class="add-skill-input dark:bg-dark-bg-secondary" 
-                                    style="border: none;"
+                                    class="add-skill-input topic-search-input dark:bg-dark-bg-secondary" 
                                 />
                             </div>
                             <button type="submit" class="submit-topics-btn">
@@ -224,35 +223,36 @@ function updateTopics() {
                         </div>
                     </div>
                 </div>
-            </div>
-             <!-- Leaderboard Section -->
-            <div class="leaderboard-section dark:bg-dark-bg-secondary dark:text-white">
-                <h2 class="leaderboard-title">Leaderboard</h2>
-                <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Name</th>
-                            <th>Points</th>
-                            <th>Badges</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="person in rankedLeaderboard" :key="person.id" :class="{ 'current-user-highlight': person.id === user.id }">
-                            <td>{{ person.rank }}</td>
-                            <td class="user-info">
-                                <img :src="person.profile_photo_url || '/images/profile.svg'" alt="Profile" class="leaderboard-profile-image" />
-                                <span>{{ person.name }}</span>
-                            </td>
-                            <td>{{ person.points }}</td>
-                            <td>
-                                <div class="leaderboard-badges">
-                                    <img v-for="(badge, index) in person.badges" :key="index" :src="badge.icon_url" class="leaderboard-badge-icon" />
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="leaderboard-section dark:bg-dark-bg-secondary dark:text-white">
+                    <h2 class="leaderboard-title">Leaderboard</h2>
+                    <div class="leaderboard-table-wrapper">
+                        <table class="leaderboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Name</th>
+                                    <th>Points</th>
+                                    <th>Badges</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="person in rankedLeaderboard" :key="person.id" :class="{ 'current-user-highlight': person.id === user.id }">
+                                    <td>{{ person.rank }}</td>
+                                    <td class="user-info">
+                                        <img :src="person.profile_photo_url || '/images/profile.svg'" alt="Profile" class="leaderboard-profile-image" />
+                                        <span>{{ person.name }}</span>
+                                    </td>
+                                    <td>{{ person.points }}</td>
+                                    <td>
+                                        <div class="leaderboard-badges">
+                                            <img v-for="(badge, index) in person.badges" :key="index" :src="badge.icon_url" class="leaderboard-badge-icon" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
         <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white" style="display: flex; justify-content: space-between; padding: 20px; align-items: baseline; margin-top: 30px;">
@@ -282,23 +282,49 @@ function updateTopics() {
 <style >
 /* Container Styles */
 .career-journey-container {
-    padding: 0;
+    padding: 0 16px 40px;
 }
 
 .career-journey-wrapper {
     margin: 0 auto;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 1024px) {
+    .career-journey-wrapper {
+        grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+        align-items: flex-start;
+    }
 }
 
 .career-journey-content {
     background: white;
     padding: 30px;
     margin-bottom: 30px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(15, 32, 45, 0.08);
+}
+
+@media (min-width: 1024px) {
+    .career-journey-content {
+        margin-bottom: 0;
+    }
 }
 
 /* Title Styles */
 .career-journey-title {
     font-size: 36px;
     font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .career-journey-title {
+        font-size: 28px;
+        text-align: center;
+    }
 }
 
 .journey-badges-section {
@@ -343,26 +369,26 @@ function updateTopics() {
     margin-top: 40px;
     margin-bottom: 20px;
     gap: 20px;
+    flex-wrap: wrap;
 }
 @media (max-width: 1080px) {
     .profile-sections-container {
         flex-direction: column;
         align-items: center;
-                gap: 20px;
+        gap: 20px;
     }
 }
 
 /* Profile Card Styles */
 .profile-card {
     border: 1px solid gray;
-    width: 490px;
-    border-radius: 8px;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 16px;
     padding: 20px;
-}
-@media (max-width: 1080px) {
-    .profile-card {
-        width: 100%;
-    }
+    flex: 1 1 0;
+    box-shadow: 0 8px 24px rgba(15, 32, 45, 0.05);
+    margin: 0 auto;
 }
 
 .profile-name {
@@ -378,11 +404,15 @@ function updateTopics() {
 /* Points Card Styles */
 .points-card {
     border: 1px solid gray;
-    width: 490px;
-    border-radius: 8px;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex: 1 1 0;
+    box-shadow: 0 8px 24px rgba(15, 32, 45, 0.05);
+    margin: 0 auto;
 }
 @media (max-width: 780px) {
     .points-card {
@@ -429,16 +459,40 @@ function updateTopics() {
 /* Career Goal Card Styles */
 .career-goal-card {
     border: 1px solid gray;
-    width: 490px;
-    border-radius: 8px;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex: 1 1 0;
+    box-shadow: 0 8px 24px rgba(15, 32, 45, 0.05);
+    margin: 0 auto;
 }
 @media (max-width: 780px) {
     .career-goal-card {
         width: 100%;
     }
+}
+
+.dark .profile-card,
+.dark .points-card,
+.dark .career-goal-card {
+    background-color: #142233;
+    border-color: #1f2d40;
+    box-shadow: none;
+}
+
+.dark .points-footer,
+.dark .goal-footer {
+    background-color: rgba(20, 34, 51, 0.6);
+    border-top-color: #1f2d40;
+}
+
+.dark .career-journey-content,
+.dark .learning-plan-section,
+.dark .leaderboard-section {
+    box-shadow: none;
 }
 
 .goal-content {
@@ -471,6 +525,27 @@ function updateTopics() {
     border-top: 1px solid gray;
 }
 
+.profile-image {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+}
+
+.goal-action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.goal-action-buttons button {
+    min-width: 80px;
+    text-align: center;
+}
+
 .learning-plan-section{
     padding: 20px;
     background: white;
@@ -478,6 +553,9 @@ function updateTopics() {
     display: flex;
     flex-direction: column;
     padding-bottom: 50px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(15, 32, 45, 0.08);
+    flex: 1;
 }
 .learning-plan-title
 {
@@ -488,6 +566,21 @@ font-weight: 600;
 .learning-plan-subtitle{
     font-size: 24px;
  color: #4D4D4D;
+}
+
+@media (max-width: 640px) {
+    .learning-plan-title,
+    .learning-plan-subtitle {
+        text-align: center;
+    }
+
+    .learning-plan-title {
+        font-size: 20px;
+    }
+
+    .learning-plan-subtitle {
+        font-size: 16px;
+    }
 }
 .add-skill-input{
     
@@ -521,6 +614,7 @@ font-weight: 600;
     gap: 15px;
     cursor: pointer;
     overflow: hidden;
+    flex: 1 1 calc(50% - 10px);
 }
 .focus-option span {
     white-space: nowrap;
@@ -537,12 +631,18 @@ font-weight: 600;
         padding-right: 20px;
     }
 }
+@media (max-width: 640px) {
+    .focus-option {
+        flex: 1 1 100%;
+    }
+}
 .focus-options-container{
     display: flex;
     gap: 10px;
     justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
+    width: 100%;
 }
 .footer_upload_video {
     background-color: white;
@@ -564,6 +664,16 @@ font-weight: 600;
     gap: 10px;
     align-items: center;
     width: 100%;
+}
+@media (max-width: 640px) {
+    .topics-input-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .submit-topics-btn {
+        align-self: flex-end;
+    }
 }
 .selected-topics-container {
     display: flex;
@@ -625,6 +735,16 @@ font-weight: 600;
     color: #fff;
 }
 
+.topic-search-input {
+    border: none;
+    flex: 1;
+    min-width: 140px;
+}
+
+.topic-search-input:focus {
+    outline: none;
+}
+
 .submit-topics-btn {
     background: none;
     border: none;
@@ -654,6 +774,21 @@ font-weight: 600;
     background: white;
     padding: 30px;
     margin-top: 30px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(15, 32, 45, 0.08);
+    width: 100%;
+    align-self: flex-start;
+}
+
+@media (min-width: 1024px) {
+    .leaderboard-section {
+        margin-top: 0;
+    }
+}
+
+.dark .leaderboard-section {
+    background-color: #142233;
+    border: 1px solid #1f2d40;
 }
 
 .leaderboard-title {
@@ -662,8 +797,13 @@ font-weight: 600;
     margin-bottom: 20px;
 }
 
+.leaderboard-table-wrapper {
+    overflow-x: auto;
+}
+
 .leaderboard-table {
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
 }
 
@@ -688,6 +828,9 @@ font-weight: 600;
 }
 .dark .leaderboard-table td {
     border-color: #5a5a5a;
+}
+.dark .leaderboard-table {
+    background-color: #293E4C;
 }
 .leaderboard-badges {
     display: flex;

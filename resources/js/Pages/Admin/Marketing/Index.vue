@@ -6,28 +6,28 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!-- Form View (Edit or Create) -->
-                <div v-if="editingItem || isCreating" class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                    <div class="p-6 text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
+                <div v-if="editingItem || isCreating" class="bg-white dark:bg-[#1A2C38] overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                    <div class="p-6 text-gray-900 dark:text-white border-b border-gray-200 dark:border-[#2f4455]">
                         <h3 class="text-xl font-semibold mb-6">{{ viewTitle }}</h3>
                         <form @submit.prevent="submitForm">
                             <!-- Quote Form Fields -->
                             <div v-if="activeTab === 'quotes'">
                                 <div class="mb-4">
-                                    <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Content</label>
-                                    <textarea id="content" v-model="form.content" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                                    <label for="content" class="block text-sm font-medium text-gray-700 dark:text-[#e5f2ff]">Content</label>
+                                    <textarea id="content" v-model="form.content" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-[#293E4C] dark:border-[#3b5161] dark:text-white"></textarea>
                                     <InputError :message="form.errors.content" class="mt-2" />
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="author" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Author</label>
-                                    <input type="text" id="author" v-model="form.author" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                    <label for="author" class="block text-sm font-medium text-gray-700 dark:text-[#e5f2ff]">Author</label>
+                                    <input type="text" id="author" v-model="form.author" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-[#293E4C] dark:border-[#3b5161] dark:text-white" />
                                     <InputError :message="form.errors.author" class="mt-2" />
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="is_active_quote" class="flex items-center">
-                                        <input type="checkbox" id="is_active_quote" v-model="form.is_active" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
-                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Is Active</span>
+                                        <input type="checkbox" id="is_active_quote" v-model="form.is_active" class="rounded dark:bg-[#0F212E] border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-[#0F212E]" />
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-[#b8d4e5]">Is Active</span>
                                     </label>
                                 </div>
                             </div>
@@ -43,8 +43,8 @@
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="promotion_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Promotion Type</label>
-                                    <select id="promotion_type" v-model="form.promotion_type" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label for="promotion_type" class="block text-sm font-medium text-gray-700 dark:text-[#e5f2ff]">Promotion Type</label>
+                                    <select id="promotion_type" v-model="form.promotion_type" class="mt-1 block w-full border-gray-300 dark:border-[#3b5161] dark:bg-[#293E4C] dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="text">Text Promotion</option>
                                         <option value="poster">Poster Promotion</option>
                                     </select>
@@ -52,14 +52,14 @@
                                 </div>
 
                                 <div class="mb-4" v-if="form.promotion_type === 'text'">
-                                    <label for="promotion_text" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Promotion Text</label>
-                                    <textarea id="promotion_text" v-model="form.text_content" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                                    <label for="promotion_text" class="block text-sm font-medium text-gray-700 dark:text-[#e5f2ff]">Promotion Text</label>
+                                    <textarea id="promotion_text" v-model="form.text_content" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-[#293E4C] dark:border-[#3b5161] dark:text-white"></textarea>
                                     <InputError :message="form.errors.text_content" class="mt-2" />
                                 </div>
 
                                 <div class="mb-4" v-if="form.promotion_type === 'poster'">
-                                    <label for="poster_image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Poster Image</label>
-                                    <input type="file" @change="onFileChange" id="poster_image" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
+                                    <label for="poster_image" class="block text-sm font-medium text-gray-700 dark:text-[#e5f2ff]">Poster Image</label>
+                                    <input type="file" @change="onFileChange" id="poster_image" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-[#c8dcee] focus:outline-none dark:bg-[#293E4C] dark:border-[#3b5161] dark:placeholder-[#9db8ca]" />
                                     <div v-if="form.image_url" class="mt-2">
                                         <img :src="form.image_url" alt="Poster Preview" class="h-20 w-20 object-cover rounded-md">
                                     </div>
@@ -68,14 +68,14 @@
 
                                 <div class="mb-4">
                                     <label for="promotion_is_active" class="flex items-center">
-                                        <input type="checkbox" id="promotion_is_active" v-model="form.is_active" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
-                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Is Active</span>
+                                        <input type="checkbox" id="promotion_is_active" v-model="form.is_active" class="rounded dark:bg-[#0F212E] border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-[#0F212E]" />
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-[#b8d4e5]">Is Active</span>
                                     </label>
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="till_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Till Date</label>
-                                    <input type="date" id="till_date" v-model="form.till_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                    <label for="till_date" class="block text-sm font-medium text-gray-700 dark:text-[#e5f2ff]">Till Date</label>
+                                    <input type="date" id="till_date" v-model="form.till_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-[#293E4C] dark:border-[#3b5161] dark:text-white" />
                                     <InputError :message="form.errors.till_date" class="mt-2" />
                                 </div>
                             </div>
@@ -89,12 +89,12 @@
                                 </div>
                                 <div class="mt-4">
                                     <InputLabel for="prompt_text" value="Prompt Text" />
-                                    <textarea id="prompt_text" v-model="form.prompt_text" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                                    <textarea id="prompt_text" v-model="form.prompt_text" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-[#293E4C] dark:border-[#3b5161] dark:text-white"></textarea>
                                     <InputError class="mt-2" :message="form.errors.prompt_text" />
                                 </div>
                                 <div class="mt-4">
                                     <InputLabel for="target_audience" value="Target Audience" />
-                                    <select id="target_audience" v-model="form.target_audience" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="target_audience" v-model="form.target_audience" class="mt-1 block w-full border-gray-300 dark:border-[#3b5161] dark:bg-[#293E4C] dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="students">Students</option>
                                         <option value="instructors">Instructors</option>
                                         <option value="all">All</option>
@@ -103,7 +103,7 @@
                                 </div>
                                 <div class="mt-4">
                                     <InputLabel for="trigger_condition" value="Trigger Condition" />
-                                    <select id="trigger_condition" v-model="form.trigger_condition" @change="resetFrequency" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="trigger_condition" v-model="form.trigger_condition" @change="resetFrequency" class="mt-1 block w-full border-gray-300 dark:border-[#3b5161] dark:bg-[#293E4C] dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option value="daily">Daily</option>
                                         <option value="weekly">Weekly</option>
                                     </select>
@@ -140,14 +140,14 @@
                                 </div>
                                 <div class="mt-4">
                                     <label for="prompt_is_active" class="flex items-center">
-                                        <input type="checkbox" id="prompt_is_active" v-model="form.is_active" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
-                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Is Active</span>
+                                        <input type="checkbox" id="prompt_is_active" v-model="form.is_active" class="rounded dark:bg-[#0F212E] border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-[#0F212E]" />
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-[#b8d4e5]">Is Active</span>
                                     </label>
                                 </div>
                             </div>
 
                             <div class="mt-6 flex justify-end space-x-3">
-                                <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
+                                <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-[#3b5161] rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-[#e5f2ff] hover:bg-gray-50 dark:hover:bg-[#253a49] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
                                 <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">{{ editingItem ? 'Save Changes' : 'Create' }}</button>
                             </div>
                         </form>
@@ -159,13 +159,13 @@
                     <!-- Tab Navigation -->
                     <div class="mb-6">
                         <nav class="flex space-x-4 tabs_marketing_management">
-                            <button @click="changeTab('quotes')" :class="{' bg-[#3b82f6] text-white ': activeTab === 'quotes', ' text-black dark:text-gray-300 bg-white dark:bg-dark-bg-secondary ': activeTab !== 'quotes'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2">
+                            <button @click="changeTab('quotes')" :class="{' bg-[#3b82f6] text-white ': activeTab === 'quotes', ' text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38] ': activeTab !== 'quotes'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2">
                                 Quotes
                             </button>
-                            <button @click="changeTab('promotions')" :class="{'bg-[#3b82f6] text-white': activeTab === 'promotions', 'border-transparent text-black dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'promotions'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
+                            <button @click="changeTab('promotions')" :class="{'bg-[#3b82f6] text-white': activeTab === 'promotions', 'border-transparent text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38]': activeTab !== 'promotions'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
                                 Promotions
                             </button>
-                             <button @click="changeTab('prompts')" :class="{'bg-[#3b82f6] text-white': activeTab === 'prompts', 'border-transparent text-black dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'prompts'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
+                             <button @click="changeTab('prompts')" :class="{'bg-[#3b82f6] text-white': activeTab === 'prompts', 'border-transparent text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38]': activeTab !== 'prompts'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
                                 Prompts
                             </button>
                         </nav>
@@ -173,15 +173,15 @@
 
                     <div class="grid grid-cols-1 gap-6">
                         <!-- Quotes Box -->
-                        <div v-if="activeTab === 'quotes'" class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <div v-if="activeTab === 'quotes'" class="bg-white dark:bg-[#1A2C38] overflow-hidden shadow-sm sm:rounded-lg">
+                            <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Quotes</h3>
                                     <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add New Quote</button>
                                 </div>
                                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#0F212E] dark:text-gray-200">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3">Content</th>
                                                 <th scope="col" class="px-6 py-3">Author</th>
@@ -190,15 +190,15 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="quote in quotes.data" :key="quote.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <tr v-for="quote in quotes.data" :key="quote.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
                                                 <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ quote.content.split(' ').slice(0, 10).join(' ') + (quote.content.split(' ').length > 10 ? '...' : '') }}</td>
                                                 <td class="px-6 py-4">{{ quote.author }}</td>
                                                 <td class="px-6 py-4">
                                                     <input type="checkbox" :checked="quote.is_active" @change="toggleStatus(quote)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
                                                 </td>
                                                 <td class="px-6 py-4 flex items-center">
-                                                    <button @click="startEdit(quote)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert" /></button>
-                                                    <button @click="deleteItem(quote.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert" /></button>
+                                                    <button @click="startEdit(quote)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                    <button @click="deleteItem(quote.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -209,15 +209,15 @@
                         </div>
 
                         <!-- Promotions Box -->
-                        <div v-if="activeTab === 'promotions'" class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <div v-if="activeTab === 'promotions'" class="bg-white dark:bg-[#1A2C38] overflow-hidden shadow-sm sm:rounded-lg">
+                            <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Promotions</h3>
                                     <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add New Promotion</button>
                                 </div>
                                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#0F212E] dark:text-gray-200">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3">ID</th>
                                                 <th scope="col" class="px-6 py-3">Title</th>
@@ -229,7 +229,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="promotion in promotions.data" :key="promotion.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <tr v-for="promotion in promotions.data" :key="promotion.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
                                                 <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ promotion.id }}</td>
                                                 <td class="px-6 py-4">{{ promotion.title }}</td>
                                                 <td class="px-6 py-4">{{ promotion.promotion_type }}</td>
@@ -242,8 +242,8 @@
                                                 </td>
                                                 <td class="px-6 py-4">{{ promotion.till_date }}</td>
                                                 <td class="px-6 py-4 flex items-center">
-                                                    <button @click="startEdit(promotion)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert" /></button>
-                                                    <button @click="deleteItem(promotion.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert" /></button>
+                                                    <button @click="startEdit(promotion)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                    <button @click="deleteItem(promotion.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -254,15 +254,15 @@
                         </div>
 
                         <!-- Prompts Box -->
-                        <div v-if="activeTab === 'prompts'" class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                            <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <div v-if="activeTab === 'prompts'" class="bg-white dark:bg-[#1A2C38] overflow-hidden shadow-sm sm:rounded-lg">
+                            <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Prompts</h3>
                                     <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add New Prompt</button>
                                 </div>
                                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-[#0F212E] dark:text-gray-200">
                                             <tr>
                                                 <th scope="col" class="px-6 py-3">Title</th>
                                                 <th scope="col" class="px-6 py-3">Target Audience</th>
@@ -273,7 +273,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="prompt in prompts.data" :key="prompt.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <tr v-for="prompt in prompts.data" :key="prompt.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
                                                 <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ prompt.title }}</td>
                                                 <td class="px-6 py-4">{{ prompt.target_audience }}</td>
                                                 <td class="px-6 py-4">{{ prompt.trigger_condition }}</td>
@@ -282,8 +282,8 @@
                                                     <input type="checkbox" :checked="prompt.is_active" @change="toggleStatus(prompt)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
                                                 </td>
                                                 <td class="px-6 py-4 flex items-center">
-                                                    <button @click="startEdit(prompt)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert" /></button>
-                                                    <button @click="deleteItem(prompt.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert" /></button>
+                                                    <button @click="startEdit(prompt)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                    <button @click="deleteItem(prompt.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
                                                 </td>
                                             </tr>
                                         </tbody>

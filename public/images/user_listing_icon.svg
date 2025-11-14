@@ -1,0 +1,20 @@
+<svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="userListingIconRing" x1="12" y1="12" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4C8DFF"/>
+      <stop offset="1" stop-color="#1E3A8A"/>
+    </linearGradient>
+    <linearGradient id="userListingIconCap" x1="32" y1="18" x2="32" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F8FAFF"/>
+      <stop offset="1" stop-color="#D9E5FF"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="28" fill="#0F1E35"/>
+  <circle cx="32" cy="32" r="24" fill="url(#userListingIconRing)" opacity=".35"/>
+  <path d="M18 27L32.1 21.5c.6-.25 1.3-.25 1.9 0L48 27l-14 5.8c-.63.26-1.34.26-1.97 0L18 27Z" fill="url(#userListingIconCap)"/>
+  <path d="M20 29.5v10.4c0 4.2 5.3 7.6 12 7.6s12-3.4 12-7.6V29.5L33.1 34c-.69.29-1.51.29-2.2 0L20 29.5Z" fill="#E3EBFF"/>
+  <path d="M50 34c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4Z" fill="#4C8DFF"/>
+  <path d="M28 38.5c0 2.2 1.8 4 4 4s4-1.8 4-4h-8Z" fill="#9DB7FF"/>
+  <path d="M22 42c0 2.8 4.5 6 10 6s10-3.2 10-6v-2.2c-2.7 1.55-6.1 2.45-10 2.45s-7.3-.9-10-2.45V42Z" fill="#28416B" opacity=".55"/>
+</svg>
+

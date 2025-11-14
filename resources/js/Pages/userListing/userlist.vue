@@ -69,7 +69,7 @@ const deleteUser = (userId) => {
                 <div
                     class="overflow-hidden bg-white dark:bg-dark-bg-secondary shadow-sm sm:rounded-lg"
                 >
-                    <div class="p-6 text-gray-900 dark:text-white" style="overflow-x: auto;">
+                    <div class="text-gray-900 dark:text-white" style="overflow-x: auto;">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
@@ -79,7 +79,7 @@ const deleteUser = (userId) => {
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-dark-bg-secondary">
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-[#293E4C]">
                                 <tr v-if="users && users.length === 0">
                                     <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">No users found.</td>
                                 </tr>
@@ -88,8 +88,8 @@ const deleteUser = (userId) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ user.email }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="display: flex; align-items: center;">
-                                        <Link :href="route('users.edit', user.id)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 user_listing_dark_icons"></Link>
-                                        <button @click="deleteUser(user.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"><img src="/images/delete_icon.svg" alt="Edit" class="w-4 h-4 user_listing_dark_icons"></button>
+                                        <Link :href="route('users.edit', user.id)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 user_listing_dark_icons action-icon"></Link>
+                                        <button @click="deleteUser(user.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"><img src="/images/delete_icon.svg" alt="Edit" class="w-4 h-4 user_listing_dark_icons action-icon"></button>
                                     </td>
                                 </tr>
                             </tbody>

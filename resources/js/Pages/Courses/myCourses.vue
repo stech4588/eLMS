@@ -98,7 +98,7 @@ const toggleFavorite = async (course) => {
                 </div>
 
                 <div class=" overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6  border-b border-gray-200 dark:bg-dark-bg-secondary">
+                <div class="p-6  border-b border-gray-200 dark:bg-[#1A2C38]">
                         <div v-if="paginatedMyCourses && paginatedMyCourses.length > 0"
                             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div v-for="course in paginatedMyCourses" :key="course.id">
