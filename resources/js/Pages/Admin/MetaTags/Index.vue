@@ -74,7 +74,7 @@ const deletePage = (id) => {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200 dark:bg-dark-bg-secondary">
+                            <tbody class="bg-white divide-y divide-gray-200 dark:bg-[#293E4C]">
                                 <tr v-for="page in pages" :key="page.id" class="dark_meta_tags_table_row">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900 dark:text-white">{{ page.metatag.id }}</div>
@@ -86,8 +86,8 @@ const deletePage = (id) => {
                                         <div class="text-sm text-gray-900 dark:text-white">{{ page.name }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end">
-                                        <Link :href="route('metatags.edit', page.id)" class="text-indigo-600 hover:text-indigo-900 mr-4"><img src="/images/pen_icon.svg" alt="Edit" class="dark_meta_tags_icons"/></Link>
-                                        <button @click="deletePage(page.id)" class="text-red-600 hover:text-red-900"><img class="w-4 h-4 dark_meta_tags_icons" src="/images/delete_icon.svg" alt="Delete" /></button>
+                                        <Link :href="route('metatags.edit', page.id)" class="text-indigo-600 hover:text-indigo-900 mr-4"><img src="/images/pen_icon.svg" alt="Edit" class="dark_meta_tags_icons action-icon"/></Link>
+                                        <button @click="deletePage(page.id)" class="text-red-600 hover:text-red-900"><img class="w-4 h-4 dark_meta_tags_icons action-icon" src="/images/delete_icon.svg" alt="Delete" /></button>
                                     </td>
                                 </tr>
                             </tbody>

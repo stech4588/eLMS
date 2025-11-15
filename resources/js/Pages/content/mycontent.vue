@@ -112,7 +112,7 @@ const toggleFavorite = async (course) => {
         <div class="p-4">
             <div class="mx-auto max-w-7xl ">
                 <div class="overflow-hidden sm:rounded-lg">
-                    <div class="course-card-wrapper dark:bg-dark-bg-secondary">
+                    <div class="course-card-wrapper dark:bg-[#1A2C38]">
                         <div class="course-card dark:bg-gray-800">
                             <div class="course-card-text dark:text-white">
                                 Leadership & Management
@@ -140,7 +140,7 @@ const toggleFavorite = async (course) => {
                     </div>
 
                     <!-- Skills Section -->
-                <div class="section_box dark:bg-dark-bg-secondary">
+                <div class="section_box dark:bg-[#1A2C38]">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-xl font-bold dark:text-white">Because of Skills you Follow</h3>
                     </div>
@@ -220,7 +220,7 @@ const toggleFavorite = async (course) => {
             <!-- Topics Section -->
 
 
-  <div class="section_box flex justify-start dark:bg-dark-bg-secondary">
+  <div class="section_box flex justify-start dark:bg-[#1A2C38]">
     <div class="w-full max-w-6xl">
       <h3 class="text-xl font-bold mb-4 text-start dark:text-white">Topics</h3>
 

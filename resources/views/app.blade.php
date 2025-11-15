@@ -6,7 +6,10 @@
         <meta name="pusher-key" content="{{ config('broadcasting.connections.pusher.key') }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <title inertia>{{ config('app.name', 'MBM University') }}</title>
+
+        <link rel="icon" type="image/svg+xml" href="{{ asset('/images/MBM_Uni.png') }}">
+        <link rel="alternate icon" type="image/png" href="{{ asset('images/MBM_Uni.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

@@ -86,13 +86,13 @@
                                                 <th scope="col" class=" py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style="justify-content: flex-end; display: flex; font-weight: 600; font-size: 14px">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="bg-white dark:bg-dark-bg-secondary divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tbody class="bg-white dark:bg-[#293E4C] divide-y divide-gray-200 dark:divide-gray-700">
                                             <tr v-for="courseType in courseTypes.data" :key="courseType.id">
                                                 <td class="py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ courseType.id }}</td>
                                                 <td class=" py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ courseType.name }}</td>
                                                 <td class="py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
-                                                    <button @click="startEdit(courseType)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
-                                                    <button @click="deleteItem(courseType.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
+                                                    <button @click="startEdit(courseType)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons action-icon"/></button>
+                                                    <button @click="deleteItem(courseType.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons action-icon"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -118,14 +118,14 @@
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style="justify-content: flex-end; display: flex; font-weight: 600; font-size: 14px">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="bg-white dark:bg-dark-bg-secondary divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tbody class="bg-white dark:bg-[#293E4C] divide-y divide-gray-200 dark:divide-gray-700">
                                             <tr v-for="topic in topics.data" :key="topic.id">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ topic.id }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ topic.name }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ topic.is_trending ? 'Yes' : 'No' }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex; width:118px;">
-                                                    <button @click="startEdit(topic)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
-                                                    <button @click="deleteItem(topic.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
+                                                    <button @click="startEdit(topic)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons action-icon"/></button>
+                                                    <button @click="deleteItem(topic.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons action-icon"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -151,14 +151,14 @@
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style="justify-content: flex-end; display: flex; font-weight: 600; font-size: 14px">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="bg-white dark:bg-dark-bg-secondary divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tbody class="bg-white dark:bg-[#293E4C] divide-y divide-gray-200 dark:divide-gray-700">
                                             <tr v-for="certificate in courseCertificates.data" :key="certificate.id">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ certificate.id }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ certificate.name }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ certificate.description }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
-                                                    <button @click="startEdit(certificate)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
-                                                    <button @click="deleteItem(certificate.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
+                                                    <button @click="startEdit(certificate)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons action-icon"/></button>
+                                                    <button @click="deleteItem(certificate.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons action-icon"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -183,13 +183,13 @@
                                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style="justify-content: flex-end; display: flex; font-weight: 600; font-size: 14px">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="bg-white dark:bg-dark-bg-secondary divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tbody class="bg-white dark:bg-[#293E4C] divide-y divide-gray-200 dark:divide-gray-700">
                                             <tr v-for="industry in courseIndustries.data" :key="industry.id">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ industry.id }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ industry.name }}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="justify-content: flex-end; display: flex;">
-                                                    <button @click="startEdit(industry)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons"/></button>
-                                                    <button @click="deleteItem(industry.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons"/></button>
+                                                    <button @click="startEdit(industry)" class="px-2 py-1 text-white rounded mr-2"><img src="/images/pen_icon.svg" alt="Edit" class="course_management_dark_icons action-icon"/></button>
+                                                    <button @click="deleteItem(industry.id)" class="px-2 py-1"><img src="/images/delete_icon.svg" alt="delete" class="w-4 h-4 course_management_dark_icons action-icon"/></button>
                                                 </td>
                                             </tr>
                                         </tbody>

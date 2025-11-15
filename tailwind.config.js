@@ -19,9 +19,9 @@ export default {
             },
             colors: {
                 dark: {
-                    'bg-primary': '#1a1a1a',
-                    'bg-secondary': '#2d2d2d',
-                    'bg-tertiary': '#3d3d3d',
+                    'bg-primary': '#0F212E',
+                    'bg-secondary': '#1A2C38',
+                    'bg-tertiary': '#293E4C',
                     'text-primary': '#ffffff',
                     'text-secondary': '#e0e0e0',
                     'text-tertiary': '#a0a0a0',

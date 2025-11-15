@@ -31,7 +31,7 @@
              </div>
             <div class=" max-w-7xl sm:px-1 lg:px-8" style="width: 100%;">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div class="bg-white border-b border-gray-200 dark:bg-dark-bg-secondary dark:border-dark-border-secondary dark:text-white">
+                    <div class="bg-white border-b border-gray-200 dark:bg-[#1A2C38] dark:border-dark-border-secondary dark:text-white">
 
                         <div v-if="currentStep >= 2" class="mb-1 p-6 ">
                             <h2 class="vedio_title font-semibold leading-tight text-black-600">
@@ -86,21 +86,21 @@
 
                         <!-- Step 1: Upload Video -->
                         <div v-if="currentStep === 1" class="text-center">
-                            <div class="upload_header dark:bg-dark-bg-secondary dark:text-white">
+                            <div class="upload_header dark:bg-[#1A2C38] dark:text-white">
                                 <div class="Upload_text">Upload Course</div>
                                 <!-- <div class="upload_left_icons">
                                     <img src="/images/guide_icon.svg" />
                                     <img src="/images/cross_icon.svg" />
                                 </div> -->
                             </div>
-                            <div class="md:col-span-2 upload_video_section dark:bg-dark-bg-secondary dark:text-white" style="width: 100%;">
+                            <div class="md:col-span-2 upload_video_section dark:bg-[#1A2C38] dark:text-white" style="width: 100%;">
                                     <div class="mb-6" style="">
                                         <label for="title" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Title<span style="color: red;">*</span></label>
                                         <input
                                             type="text"
                                             id="title"
                                             v-model="form.course_title"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary dark:text-white"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38] dark:text-white"
                                             placeholder="UI/UX Designing Course"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -117,7 +117,7 @@
                                             id="description"
                                             v-model="form.course_description"
                                             rows="5"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38]"
                                             placeholder="Enter Course Description..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -135,7 +135,7 @@
                                             id="additional_description"
                                             v-model="form.additional_description"
                                             rows="5"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38]"
                                             placeholder="Enter Additional Description..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -153,7 +153,7 @@
                                             type="text"
                                             id="recomendations"
                                             v-model="form.recomendations"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary dark:text-white"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38] dark:text-white"
                                             placeholder="Enter Recomendations..."
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -172,7 +172,7 @@
                                             id="course_price"
                                             v-model="form.course_price"
                                             min="0"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38]"
                                             placeholder="Enter Course Price"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -187,10 +187,10 @@
                                     <div class="mb-6" style="">
                                         <label for="certificates" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Certificates <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('certificates')" :class="{ 'active': activeDropdown === 'certificates' }">
-                                            <div class="selected-option dark:bg-dark-bg-secondary"style="border-top-left-radius: 12px;
+                                            <div class="selected-option dark:bg-[#1A2C38]"style="border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('certificates') || 'Select Certificate' }}</span>
-                                                <div class="dropdown-arrow dark:bg-dark-bg-secondary dark:text-white">
+                                                <div class="dropdown-arrow dark:bg-[#1A2C38] dark:text-white">
                                                     <img src="/images/dropdown_arrow.svg" alt="dropdown" class="dark_dropdown_arrow" />
                                                 </div>
                                             </div>
@@ -211,7 +211,7 @@
                                     <div class="mb-6" style="">
                                         <label for="topic" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Topic <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('topic')" :class="{ 'active': activeDropdown === 'topic' }">
-                                            <div class="selected-option dark:bg-dark-bg-secondary" style="border-top-left-radius: 12px;
+                                            <div class="selected-option dark:bg-[#1A2C38]" style="border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('topic') || 'Select Topic' }}</span>
                                                 <div class="dropdown-arrow">
@@ -237,7 +237,7 @@
                                     <div class="mb-6" style="">
                                         <label for="industry" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Industry <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('industry')" :class="{ 'active': activeDropdown === 'industry' }">
-                                            <div class="selected-option dark:bg-dark-bg-secondary"style="border-top-left-radius: 12px;
+                                            <div class="selected-option dark:bg-[#1A2C38]"style="border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('industry') || 'Select Industry' }}</span>
                                                 <div class="dropdown-arrow">
@@ -261,7 +261,7 @@
                                     <div class="mb-6" style="">
                                         <label for="course_type" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course type <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('course_type')" :class="{ 'active': activeDropdown === 'course_type' }">
-                                            <div class="selected-option dark:bg-dark-bg-secondary" style="border-top-left-radius: 12px;
+                                            <div class="selected-option dark:bg-[#1A2C38]" style="border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;">
                                                 <span>{{ getSelectedText('course_type') || 'Select Course Type' }}</span>
                                                 <div class="dropdown-arrow">
@@ -290,7 +290,7 @@
                                         </button> -->
                                         <button
                                             @click="nextStep"
-                                            class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                            class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600; margin-top: 37px;">
                                             Next
                                         </button>
                                     </div>
@@ -312,7 +312,7 @@
                                             type="text"
                                             id="video_title_step2"
                                             v-model="currentVideoFormPart2.title"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary dark:text-white"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38] dark:text-white"
                                             placeholder="Enter title for this video"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -329,7 +329,7 @@
                                             id="video_description_step2"
                                             v-model="currentVideoFormPart2.description"
                                             rows="5"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary dark:text-white"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38] dark:text-white"
                                             placeholder="Enter description for this video"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -347,7 +347,7 @@
                                             id="takeaway_notes"
                                             v-model="currentVideoFormPart2.takeaway_notes"
                                             rows="5"
-                                            class="w-full p-2 border-none dark:bg-dark-bg-secondary dark:text-white"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38] dark:text-white"
                                             placeholder="Enter takeaway notes for this video"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
@@ -579,7 +579,7 @@
             </div>
         </div>
 
-        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white" style=" display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
+        <footer class="footer_upload_video dark:bg-[#1A2C38] dark:text-white" style=" display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
             <div>
                 Language(Eng)
             </div>
@@ -748,8 +748,7 @@ const populateVideoDetailsForm = (index) => {
         currentVideoFormPart2.description = video.description || '';
         currentVideoFormPart2.takeaway_notes = video.takeaway_notes || '';
         currentVideoFormPart2.playlist = video.playlist || '';
-        currentVideoFormPart2.visibility = video.visibility || 'private';
-
+        currentVideoFormPart2.visibility = video.visibility || 'private'; // Reset visibility
         activeVideoPreviewForRightPanel.value = video.videoFilePreview || null;
         activeThumbnailPreviewForRightPanel.value = video.thumbnailFilePreview || null;
     } else {
@@ -1614,7 +1613,7 @@ onMounted(() => {
 }
 
 .custom-dropdown.active .dropdown-options {
-    max-height: 200px;
+    max-height: 150px;
     opacity: 1;
     visibility: visible;
     overflow-y: auto;

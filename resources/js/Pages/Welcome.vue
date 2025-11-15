@@ -397,6 +397,13 @@ function handleImageError() {
     <SequenceCanvas />
     <!-- <RealWorld /> -->
     <FeatureContainer />
+    <div id="access">
+      <ConsolidatePlatform />
+    </div>
+    <ScrollingLogos />
+    <div id="education">
+      <FeatureContainer />
+    </div>
     <TeachingPhilosophy />
     <Teaching />
     <!-- <Testimonials /> -->
@@ -406,7 +413,9 @@ function handleImageError() {
     <!-- <Results /> -->
     <BuildYourFuture />
     <FrequentQuestions />
-    <YourChoice />
+    <div id="choice">
+      <YourChoice />
+    </div>
     <FooterContainer />
     
   </template>

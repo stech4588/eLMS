@@ -1,5 +1,61 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+
+const triggerRef = ref(null);
+const menuRef = ref(null);
+const menuStyles = ref({});
+
+const open = ref(false);
+
+const updatePosition = () => {
+    if (!triggerRef.value || !menuRef.value) return;
+
+    const triggerRect = triggerRef.value.getBoundingClientRect();
+    const menuRect = menuRef.value.getBoundingClientRect();
+
+    let left = triggerRect.left;
+
+    if (props.align === 'right') {
+        left = triggerRect.right - menuRect.width;
+    } else if (props.align === 'center') {
+        left = triggerRect.left + triggerRect.width / 2 - menuRect.width / 2;
+    }
+
+    const viewportWidth = window.innerWidth;
+    const maxLeft = viewportWidth - menuRect.width - 12;
+    left = Math.min(Math.max(12, left), maxLeft);
+
+    // Use fixed positioning relative to the viewport (no scroll offset).
+    // Ensure the dropdown appears above fixed headers by using a high z-index.
+    menuStyles.value = {
+        position: 'fixed',
+        top: `${triggerRect.bottom}px`,
+        left: `${left}px`,
+        minWidth: `${triggerRect.width}px`,
+        zIndex: 2000,
+    };
+};
+
+const bindListeners = () => {
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+};
+
+const unbindListeners = () => {
+    window.removeEventListener('resize', updatePosition);
+    window.removeEventListener('scroll', updatePosition, true);
+};
+
+watch(() => open.value, async (isOpen) => {
+    if (isOpen) {
+        await nextTick();
+        await nextTick();
+        updatePosition();
+        bindListeners();
+    } else {
+        unbindListeners();
+    }
+});
 
 const props = defineProps({
     align: {
@@ -23,7 +79,9 @@ const closeOnEscape = (e) => {
 };
 
 onMounted(() => document.addEventListener('keydown', closeOnEscape));
-onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
+onUnmounted(() => {
+    unbindListeners();
+});
 
 const widthClass = computed(() => {
     return {
@@ -40,45 +98,47 @@ const alignmentClasses = computed(() => {
         return 'origin-top';
     }
 });
-
-const open = ref(false);
 </script>
 
 <template>
     <div class="relative">
-        <div @click="open = !open">
+        <div ref="triggerRef" @click="open = !open">
             <slot name="trigger" />
         </div>
 
         <!-- Full Screen Dropdown Overlay -->
         <div
             v-show="open"
-            class="fixed inset-0 z-40"
+            class="fixed inset-0"
+            :style="{ zIndex: 1999 }"
             @click="open = false"
         ></div>
 
-        <Transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="opacity-100 scale-100"
-            leave-to-class="opacity-0 scale-95"
-        >
-            <div
-                v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg"
-                :class="[widthClass, alignmentClasses]"
-                style="display: none"
-                @click="open = false"
+        <Teleport to="body">
+            <Transition
+                enter-active-class="transition ease-out duration-200"
+                enter-from-class="opacity-0 scale-95"
+                enter-to-class="opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="opacity-100 scale-100"
+                leave-to-class="opacity-0 scale-95"
             >
                 <div
-                    class="rounded-md ring-1 dark:bg-dark-bg-secondary ring-black ring-opacity-5"
-                    :class="contentClasses"
+                    v-show="open"
+                    ref="menuRef"
+                    class="rounded-md shadow-lg"
+                    :class="[widthClass, alignmentClasses]"
+                    :style="menuStyles"
+                    @click="open = false"
                 >
-                    <slot name="content" />
+                    <div
+                        class="rounded-md ring-1 dark:bg-dark-bg-secondary ring-black ring-opacity-5"
+                        :class="contentClasses"
+                    >
+                        <slot name="content" />
+                    </div>
                 </div>
-            </div>
-        </Transition>
+            </Transition>
+        </Teleport>
     </div>
 </template>

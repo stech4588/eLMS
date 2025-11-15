@@ -87,7 +87,7 @@ const deleteInvoice = (invoiceId) => {
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-dark-bg-secondary">
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-[#293E4C]">
                                 <tr v-if="invoices && invoices.length === 0">
                                     <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">No invoices found.</td>
                                 </tr>
@@ -101,10 +101,10 @@ const deleteInvoice = (invoiceId) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 invoice_list_dark_text">{{ invoice.transaction_id }}</td>
                                     <td class="py-4 px-6 whitespace-nowrap text-sm font-medium flex space-x-2">
                                         <Link :href="route('invoices.show', invoice.id)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
-                                            <img src="/images/view_icon.svg" alt="View" class="invoice_list_dark_icons" style="max-width: 20px; max-height: 20px;">
+                                            <img src="/images/view_icon.svg" alt="View" class="invoice_list_dark_icons action-icon" style="max-width: 20px; max-height: 20px;">
                                         </Link>
                                         <button @click="deleteInvoice(invoice.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
-                                            <img src="/images/delete_icon.svg" alt="Delete" class="invoice_list_dark_icons" style="max-width: 20px; max-height: 20px;">
+                                            <img src="/images/delete_icon.svg" alt="Delete" class="invoice_list_dark_icons action-icon" style="max-width: 20px; max-height: 20px;">
                                         </button>
                                     </td>
                                 </tr>

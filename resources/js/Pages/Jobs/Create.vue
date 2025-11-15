@@ -30,49 +30,50 @@ const submit = () => {
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <div class="bg-white dark:bg-[#0b1624] border border-gray-200 dark:border-[#1f2d40] overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 sm:p-8 bg-white dark:bg-[#1A2C38] border-b border-gray-200 dark:border-[#1f2d40] transition-colors duration-200">
                         <form @submit.prevent="submit">
-                            <div class="space-y-4">
-                                <div>
+                            <div class="space-y-5">
+                                <div class="space-y-2">
                                     <InputLabel for="title" value="Job Title" />
-                                    <TextInput id="title" type="text" class="mt-1 block w-full" v-model="form.title" required autofocus />
+                                    <TextInput id="title" type="text" class="mt-1 block w-full dark:border-[#1f2d40] dark:bg-[#142233] dark:text-gray-100 focus:border-indigo-500 dark:focus:border-blue-500 focus:ring-indigo-500 dark:focus:ring-blue-500 transition-colors" v-model="form.title" required autofocus />
                                     <InputError class="mt-2" :message="form.errors.title" />
                                 </div>
 
-                                <div>
+                                <div class="space-y-2">
                                     <InputLabel for="skills" value="Skills (comma-separated)" />
-                                    <TextInput id="skills" type="text" class="mt-1 block w-full" v-model="form.skills" required />
+                                    <TextInput id="skills" type="text" class="mt-1 block w-full dark:border-[#1f2d40] dark:bg-[#142233] dark:text-gray-100 focus:border-indigo-500 dark:focus:border-blue-500 focus:ring-indigo-500 dark:focus:ring-blue-500 transition-colors" v-model="form.skills" required />
                                     <InputError class="mt-2" :message="form.errors.skills" />
                                 </div>
 
                                 <div>
                                     <InputLabel for="description" value="Job Description" />
-                                    <textarea id="description" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" v-model="form.description" required></textarea>
+                                    <textarea id="description" class="mt-1 block w-full border-gray-300 dark:border-[#1f2d40] dark:bg-[#142233] dark:text-gray-100 focus:border-indigo-500 dark:focus:border-blue-500 focus:ring-indigo-500 dark:focus:ring-blue-500 rounded-md shadow-sm transition-colors" v-model="form.description" required></textarea>
                                     <InputError class="mt-2" :message="form.errors.description" />
                                 </div>
 
-                                <div>
+                                <div class="space-y-2">
                                     <InputLabel for="apply_url" value="Job URL (Apply Link)" />
-                                    <TextInput id="apply_url" type="url" class="mt-1 block w-full" v-model="form.apply_url" required placeholder="https://company.com/jobs/123" />
+                                    <TextInput id="apply_url" type="url" class="mt-1 block w-full dark:border-[#1f2d40] dark:bg-[#142233] dark:text-gray-100 focus:border-indigo-500 dark:focus:border-blue-500 focus:ring-indigo-500 dark:focus:ring-blue-500 transition-colors" v-model="form.apply_url" required placeholder="https://company.com/jobs/123" />
                                     <InputError class="mt-2" :message="form.errors.apply_url" />
                                 </div>
 
-                                <div>
+                                <div class="space-y-2">
                                     <InputLabel for="contact_phone" value="Contact Phone (Optional)" />
-                                    <TextInput id="contact_phone" type="text" class="mt-1 block w-full" v-model="form.contact_phone" />
+                                    <TextInput id="contact_phone" type="text" class="mt-1 block w-full dark:border-[#1f2d40] dark:bg-[#142233] dark:text-gray-100 focus:border-indigo-500 dark:focus:border-blue-500 focus:ring-indigo-500 dark:focus:ring-blue-500 transition-colors" v-model="form.contact_phone" />
                                     <InputError class="mt-2" :message="form.errors.contact_phone" />
                                 </div>
                                 
-                                <div>
+                                <div class="space-y-2">
                                     <InputLabel for="contact_email" value="Contact Email (Optional)" />
-                                    <TextInput id="contact_email" type="email" class="mt-1 block w-full" v-model="form.contact_email" />
+                                    <TextInput id="contact_email" type="email" class="mt-1 block w-full dark:border-[#1f2d40] dark:bg-[#142233] dark:text-gray-100 focus:border-indigo-500 dark:focus:border-blue-500 focus:ring-indigo-500 dark:focus:ring-blue-500 transition-colors" v-model="form.contact_email" />
                                     <InputError class="mt-2" :message="form.errors.contact_email" />
                                 </div>
                             </div>
 
-                            <div class="mt-6">
-                                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                            <div class="mt-6 flex items-center justify-end space-x-3">
+                                <a :href="route('jobs.index')" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-[#24364a] dark:hover:bg-[#2f4460] dark:text-gray-100 transition-colors">Cancel</a>
+                                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="bg-[#1897e4] hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 transition-colors">
                                     Post Job
                                 </PrimaryButton>
                             </div>

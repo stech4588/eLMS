@@ -16,6 +16,7 @@ import { formatDistanceToNow } from 'date-fns';
 const user = usePage().props.auth?.user;
 const showingNavigationDropdown = ref(false)
 const isSidebarOpen = ref(false)
+const isSidebarCollapsed = ref(false);
 const page = usePage();
 const isLoading = ref(false);
 const isDark = ref(false);
@@ -47,15 +48,20 @@ onMounted(() => {
         fetchPermissions();
         window.addEventListener('new-notification', fetchNotifications);
     }
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        isDark.value = true;
-        document.documentElement.classList.add('dark');
-        document.documentElement.setAttribute('data-swal2-theme', 'dark');
-    } else {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        // Respect explicit light choice; otherwise default to dark
         isDark.value = false;
         document.documentElement.classList.remove('dark');
         document.documentElement.removeAttribute('data-swal2-theme');
-        localStorage.theme = 'light';
+        localStorage.setItem('theme', 'light');
+    } else {
+        isDark.value = true;
+        document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-swal2-theme', 'dark');
+        if (!savedTheme) {
+            localStorage.setItem('theme', 'dark');
+        }
     }
 
     // Expose global loader controls
@@ -92,6 +98,10 @@ const logout = () => {
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value
 }
+
+const toggleSidebarCollapse = () => {
+    isSidebarCollapsed.value = !isSidebarCollapsed.value;
+};
 
 const isPlayerPage = computed(() => page.component === 'Course/Player');
 const isCartPage = computed(() => page.component === 'cart/cart');
@@ -133,19 +143,27 @@ onMounted(() => {
     </Head>
     <div :class="{ 'dark': isDark }" class="flex min-h-screen bg-[#97d5ff] dark:bg-dark-bg-primary mobile_view_style"
         style="flex-direction: column;">
-        <nav class="border-b border-gray-100 dark:border-dark-border-primary bg-white dark:bg-dark-bg-secondary">
+        <nav class="border-b border-gray-100 dark:border-dark-border-primary bg-white dark:bg-[#1A2C38] nav-gradient">
             <div class="mx-auto px-4 sm:px-6 lg:px-8" style="border-bottom: 1px solid rgb(225 225 225)">
                 <div class="flex h-16 justify-between">
-                    <div class="sidebar_button_nav">
+                  
+
+                    <div class="flex items-center">
+                        <div class="sidebar_button_nav">
                         <button class="sidebar_openbutton" @click="toggleSidebar">
                             <img src="/images/sidebar_icon.svg">
                         </button>
                     </div>
+                        <button class="sidebar_openbutton hidden min-[1025px]:block" @click="toggleSidebarCollapse">
+                            <img src="/images/sidebar_icon.svg" class="dark:invert" style="height: 40px;">
+                        </button>
 
-                    <a :href="user ? (user.type === 'instructor' ? '/coursess' : '/dashboard') : '/'">
-                        <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav"
-                            style="width: 80px; height: 80px;">
-                    </a>
+                        <a :href="user ? (user.type === 'instructor' ? '/coursess' : '/dashboard') : '/'">
+                            <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav"
+                                style="width: 80px; height: 80px;">
+                        </a>
+                    </div>
+
 
                     <!-- User Dropdown -->
                     <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -154,7 +172,7 @@ onMounted(() => {
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <button class="flex items-center justify-center relative">
-                                            <img src="/images/notification_icon.svg" alt="notification" class="w-6 h-6 dark:invert">
+                                            <img src="/images/notification_icon.svg" alt="notification" class="w-6 h-6 dark:invert notification-bell">
                                             <span v-if="notifications.length > 0" class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-xs text-white bg-red-500 rounded-full w-4 h-4 flex items-center justify-center">
                                                 {{ notifications.length }}
                                             </span>
@@ -188,7 +206,7 @@ onMounted(() => {
                                 <template #trigger>
                                     <span class="inline-flex rounded-md">
                                         <button type="button"
-                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-dark-bg-secondary text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none" style="padding:5px !important;">
+                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-[#1A2C38] text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none" style="padding:5px !important;">
                                             {{ $page.props.auth.user.name }}
                                             <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor">
@@ -200,7 +218,7 @@ onMounted(() => {
                                     </span>
                                 </template>
 
-                                <template #content class="dark:bg-dark-bg-secondary">
+                                <template #content class="dark:bg-[#1A2C38]">
                                     <DropdownLink :href="route('profile.edit')"
                                         class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
                                         Profile</DropdownLink>
@@ -219,7 +237,7 @@ onMounted(() => {
                     <!-- Mobile Hamburger -->
                     <div class="-me-2 flex items-center sm:hidden">
                         <button @click="showingNavigationDropdown = !showingNavigationDropdown"
-                            class="inline-flex items-center justify-center rounded-md p-2 dark:bg-dark-bg-secondarytext-gray-400 dark:text-white transition hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary hover:text-gray-500 dark:hover:text-dark-text-primary focus:outline-none">
+                            class="inline-flex items-center justify-center rounded-md p-2 dark:bg-[#1A2C38]text-gray-400 dark:text-white transition hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary hover:text-gray-500 dark:hover:text-dark-text-primary focus:outline-none">
                             <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                 <path
                                     :class="{ hidden: showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }"
@@ -273,12 +291,12 @@ onMounted(() => {
         </nav>
 
         <div style="display: flex; flex-direction: row;">
-            <AuthSidebar v-if="!isPlayerPage && !isCartPage" :class="{ 'sidebar-closed': !isSidebarOpen }" />
+            <AuthSidebar v-if="!isPlayerPage && !isCartPage" :class="{ 'sidebar-closed': !isSidebarOpen }" :is-collapsed="isSidebarCollapsed"/>
 
             <!-- Main Content Area -->
-            <div class="flex flex-col flex-1" :style="{ width: isCartPage ? '100% !important' : '56% !important' }">
+            <div class="flex flex-col flex-1 main-content" :class="{ 'content-expanded': !isSidebarCollapsed, 'content-collapsed': isSidebarCollapsed, 'no-sidebar': isPlayerPage || isCartPage }">
                 <!-- Optional Page Heading -->
-                <header class="bg-white dark:bg-dark-bg-secondary shadow dark:shadow-dark" v-if="$slots.header">
+                <header class="bg-white dark:bg-[#1A2C38] shadow dark:shadow-dark" v-if="$slots.header">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         <slot name="header" />
                     </div>
@@ -286,7 +304,7 @@ onMounted(() => {
 
                 <!-- Page Content -->
                 <main class="flex-1 home_page_style flex-box relative">
-                    <div v-if="isLoading && !meta.disableLoader" class="page-transition-loader dark:bg-dark">
+                    <div v-if="isLoading && !meta.disableLoader" class="page-transition-loader">
                         <div id="loader">
                             <div id="box1"></div>
                             <div id="box2"></div>
@@ -312,7 +330,7 @@ onMounted(() => {
     justify-content: space-between;
 }
 
-@media (max-width: 770px) {
+@media (max-width: 1024px) {
     .mobile_view_style {
         display: flex;
     }
@@ -322,7 +340,12 @@ onMounted(() => {
     display: none;
 }
 
-@media (max-width: 770px) {
+.sidebar_openbutton {
+    position: relative;
+    z-index: 70;
+}
+
+@media (max-width: 1024px) {
     .sidebar_button_nav {
         display: flex;
     }
@@ -333,7 +356,20 @@ onMounted(() => {
     cursor: pointer;
 }
 
-@media (max-width: 770px) {
+.nav-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 120;
+    width: 100%;
+}
+
+.mobile_view_style {
+    padding-top: 5rem; /* match navbar height */
+}
+
+@media (max-width: 1024px) {
     .logo_image_nav {
         /*   */
     }
@@ -345,7 +381,39 @@ onMounted(() => {
 }
 
 .dark .home_page_style {
-    background-color: #1a1a1a;
+    background-color: #0F202D;
+}
+
+.notification-bell {
+    animation: bellPulse 5s ease-in-out infinite;
+    transform-origin: top center;
+}
+
+@keyframes bellPulse {
+    0% {
+        transform: rotate(0deg);
+    }
+    4% {
+        transform: rotate(-14deg);
+    }
+    8% {
+        transform: rotate(12deg);
+    }
+    12% {
+        transform: rotate(-8deg);
+    }
+    16% {
+        transform: rotate(6deg);
+    }
+    20% {
+        transform: rotate(-3deg);
+    }
+    24% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
 }
 
 .h-16 {
@@ -362,7 +430,7 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #fbfbfbba;
+    background-color: #fbfbfb;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -371,7 +439,7 @@ onMounted(() => {
 }
 
 .dark .page-transition-loader {
-    background-color: #1a1a1a !important;
+    background-color: #1A2C38 !important;
 }
 
 main {
@@ -479,5 +547,29 @@ main {
 
 .dark svg g {
     @apply fill-white;
+}
+
+.main-content {
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.content-expanded {
+    margin-left: 300px;
+}
+
+.content-collapsed {
+    margin-left: 92px;
+}
+
+.no-sidebar {
+    margin-left: 0 !important;
+}
+
+@media (max-width: 1024px) {
+    .main-content,
+    .content-expanded,
+    .content-collapsed {
+        margin-left: 0 !important;
+    }
 }
 </style>
