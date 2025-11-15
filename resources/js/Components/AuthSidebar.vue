@@ -180,11 +180,10 @@ onMounted(fetchTrendingTopics);
     border: 1px solid rgba(15, 33, 46, 0.08);
     box-shadow: 0 12px 32px rgba(15, 33, 46, 0.12);
     transition: width 0.3s ease, padding 0.3s ease, border-radius 0.3s ease;
-    overflow: hidden;
+    overflow: hidden; /* hide parent scrollbar; inner handles scrolling */
     flex-shrink: 0;
     color: #22354a;
     padding-bottom: 0px;
-    overflow-y: auto;
 }
 
 .dark .main_sidebar {
@@ -200,17 +199,14 @@ onMounted(fetchTrendingTopics);
     flex-direction: column;
     gap: 28px;
     padding: 0 14px 24px;
-    overflow-y: auto;
-    scrollbar-width: thin;
+    overflow-y: auto; /* scroll content but hide scrollbar visuals */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 
 .sidebar-inner::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar-inner::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 999px;
+    width: 0;
+    height: 0;
 }
 
 .sidebar-group {
@@ -237,6 +233,7 @@ onMounted(fetchTrendingTopics);
     border-radius: 9px;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 16px;
     position: relative;
     transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
@@ -297,6 +294,7 @@ onMounted(fetchTrendingTopics);
 .sidebar_subtitles span {
     flex: 1;
     min-width: 0;
+    text-align: left;
 }
 
 .sidebar_dark_icon {
