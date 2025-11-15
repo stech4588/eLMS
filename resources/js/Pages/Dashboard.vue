@@ -10,9 +10,12 @@
 
             <div class="dashboard-surface mx-auto space-y-10">
                 <div class="main_filter_container filter-panel">
-                    <div class="filter-search">
+                    <!-- Search row as separate block -->
+                    <div class="filter-search-row">
+                        <div class="filter-search">
                         <img src="/images/search_icon.svg" alt="Search" class="search_icon filter-search__icon" />
                         <input class="search_input filter-search__input dark:text-white" type="text" placeholder="Search Courses..." v-model="searchQuery" />
+                        </div>
                     </div>
                     <div class="filter-container">
                         <div class="filter_select_container filter-select-group">
@@ -110,6 +113,18 @@
                         <div v-for="(course, index) in displayedCourses" :key="`skill-${index}-${course.id}`" class="course-card-container">
                             <CourseCard :course="course" @toggle-favorite="toggleFavorite" />
                         </div>
+                    </div>
+                    <!-- Pagination -->
+                    <div v-if="skillPager && skillPager.links" class="pagination mt-6">
+                        <Link
+                            v-for="(link, idx) in skillPager.links"
+                            :key="`p-${idx}-${link.label}`"
+                            :href="link.url || '#'"
+                            preserve-scroll
+                            preserve-state
+                            :class="['page-link', { 'is-active': link.active, 'is-disabled': !link.url }]"
+                            v-html="link.label"
+                        />
                     </div>
                 </div>
 
@@ -434,8 +449,9 @@ onUnmounted(() => {
 });
 
 // Computed property that no longer applies filters, just returns the prop
+const skillPager = computed(() => props.skillBasedCourses || null);
 const displayedCourses = computed(() => {
-    return props.skillBasedCourses || [];
+    return (skillPager.value && skillPager.value.data) ? skillPager.value.data : (props.skillBasedCourses || []);
 });
 
 const debounce = (fn, delay) => {
@@ -457,6 +473,7 @@ watch(
                 course_types: selectedCourseTypes.value,
                 certificates: selectedCertificates.value,
                 course_industries: selectedCourseIndustries.value,
+                page: 1,
             },
             {
                 preserveState: true,
@@ -539,15 +556,19 @@ const toggleFavorite = async (course) => {
 }
 
 .filter-panel {
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
     padding: 24px 28px;
     border-radius: 20px;
     background: #ffffff;
     box-shadow: 0 18px 45px rgba(22, 37, 48, 0.06);
     border: 1px solid rgba(12, 39, 53, 0.04);
     transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filter-search-row {
+    width: 100%;
 }
 
 .dark .filter-panel {
@@ -559,7 +580,7 @@ const toggleFavorite = async (course) => {
 .filter-search {
     position: relative;
     flex: 1;
-    max-width: 360px;
+    max-width: 100%;
     display: flex;
     align-items: center;
 }
@@ -599,7 +620,7 @@ const toggleFavorite = async (course) => {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
 .filter-select {
@@ -670,6 +691,40 @@ const toggleFavorite = async (course) => {
 .dark .dropdown-menu .dropdown-item:hover {
     background-color: rgba(76, 202, 255, 0.18) !important;
     color: #f3fbff !important;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.page-link {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(17, 51, 68, 0.24);
+    background: #ffffff;
+    color: #1f2d3a;
+    text-decoration: none;
+    font-size: 14px;
+}
+.page-link.is-active {
+    background: rgba(76, 202, 255, 0.18);
+    border-color: rgba(76, 202, 255, 0.35);
+    color: #0b2440;
+}
+.page-link.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.dark .page-link {
+    background: rgba(19, 38, 52, 0.85);
+    border: 1px solid rgba(109, 173, 231, 0.22);
+    color: #e5f2ff;
+}
+.dark .page-link.is-active {
+    background: rgba(104, 198, 255, 0.22);
+    border-color: rgba(104, 198, 255, 0.35);
+    color: #ffffff;
 }
 
 .section_box {

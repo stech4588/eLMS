@@ -6,7 +6,7 @@
                     <!-- Super Admin Links -->
                     <Link v-if="hasPermission('userView')" class="sidebar_subtitles"
                         :class="{ 'active': page.url === '/users' }" href="/users" :title="isCollapsed ? 'User Listing' : null">
-                        <img class="sidebar_dark_icon" src="/images/user_listing_icon.svg" alt="users" />
+                        <img class="sidebar_dark_icon" src="/images/user_listing.svg" alt="users" />
                         <span v-if="!isCollapsed">User Listing</span>
                     </Link>
                     <Link v-if="hasPermission('instructorListing')" class="sidebar_subtitles"
@@ -170,7 +170,11 @@ onMounted(fetchTrendingTopics);
 <style scoped>
 .main_sidebar {
     width: 300px;
-    height: 100vh;
+    position: fixed;
+    top: 5rem;
+    left: 0;
+    height: calc(100vh - 5rem);
+    z-index: 100;
     padding: 28px 0;
     background: linear-gradient(180deg, #f9fbff 0%, #e9f1ff 100%);
     border: 1px solid rgba(15, 33, 46, 0.08);
@@ -179,6 +183,8 @@ onMounted(fetchTrendingTopics);
     overflow: hidden;
     flex-shrink: 0;
     color: #22354a;
+    padding-bottom: 0px;
+    overflow-y: auto;
 }
 
 .dark .main_sidebar {
@@ -389,18 +395,19 @@ onMounted(fetchTrendingTopics);
     margin: 0;
 }
 
-@media (max-width: 770px) {
+@media (max-width: 1024px) {
     .main_sidebar {
         position: fixed;
-        top: 0;
+        /* top: 0; */
         left: 0;
-        height: 100vh;
+        /* height: 100vh; */
+        height: calc(100vh - 5rem);
         z-index: 1000;
         border-radius: 0 24px 24px 0;
     }
 }
 
-@media (max-width: 770px) {
+@media (max-width: 1024px) {
     .main_sidebar.sidebar-closed {
         left: -100%;
         opacity: 0;

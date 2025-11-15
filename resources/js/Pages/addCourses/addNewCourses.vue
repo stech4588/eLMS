@@ -290,7 +290,7 @@
                                         </button> -->
                                         <button
                                             @click="nextStep"
-                                            class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                            class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600; margin-top: 37px;">
                                             Next
                                         </button>
                                     </div>
@@ -1613,7 +1613,7 @@ onMounted(() => {
 }
 
 .custom-dropdown.active .dropdown-options {
-    max-height: 200px;
+    max-height: 150px;
     opacity: 1;
     visibility: visible;
     overflow-y: auto;

@@ -25,12 +25,14 @@ const updatePosition = () => {
     const maxLeft = viewportWidth - menuRect.width - 12;
     left = Math.min(Math.max(12, left), maxLeft);
 
+    // Use fixed positioning relative to the viewport (no scroll offset).
+    // Ensure the dropdown appears above fixed headers by using a high z-index.
     menuStyles.value = {
         position: 'fixed',
-        top: `${triggerRect.bottom + window.scrollY}px`,
+        top: `${triggerRect.bottom}px`,
         left: `${left}px`,
         minWidth: `${triggerRect.width}px`,
-        zIndex: 60,
+        zIndex: 2000,
     };
 };
 
@@ -107,7 +109,8 @@ const alignmentClasses = computed(() => {
         <!-- Full Screen Dropdown Overlay -->
         <div
             v-show="open"
-            class="fixed inset-0 z-40"
+            class="fixed inset-0"
+            :style="{ zIndex: 1999 }"
             @click="open = false"
         ></div>
 

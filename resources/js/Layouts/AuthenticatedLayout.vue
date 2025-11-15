@@ -48,15 +48,20 @@ onMounted(() => {
         fetchPermissions();
         window.addEventListener('new-notification', fetchNotifications);
     }
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        isDark.value = true;
-        document.documentElement.classList.add('dark');
-        document.documentElement.setAttribute('data-swal2-theme', 'dark');
-    } else {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        // Respect explicit light choice; otherwise default to dark
         isDark.value = false;
         document.documentElement.classList.remove('dark');
         document.documentElement.removeAttribute('data-swal2-theme');
-        localStorage.theme = 'light';
+        localStorage.setItem('theme', 'light');
+    } else {
+        isDark.value = true;
+        document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-swal2-theme', 'dark');
+        if (!savedTheme) {
+            localStorage.setItem('theme', 'dark');
+        }
     }
 
     // Expose global loader controls
@@ -141,15 +146,16 @@ onMounted(() => {
         <nav class="border-b border-gray-100 dark:border-dark-border-primary bg-white dark:bg-[#1A2C38] nav-gradient">
             <div class="mx-auto px-4 sm:px-6 lg:px-8" style="border-bottom: 1px solid rgb(225 225 225)">
                 <div class="flex h-16 justify-between">
-                    <div class="sidebar_button_nav">
+                  
+
+                    <div class="flex items-center">
+                        <div class="sidebar_button_nav">
                         <button class="sidebar_openbutton" @click="toggleSidebar">
                             <img src="/images/sidebar_icon.svg">
                         </button>
                     </div>
-
-                    <div class="flex items-center">
-                        <button class="sidebar_openbutton hidden sm:block" @click="toggleSidebarCollapse">
-                            <img src="/images/sidebar_icon.svg" style="height: 40px;">
+                        <button class="sidebar_openbutton hidden min-[1025px]:block" @click="toggleSidebarCollapse">
+                            <img src="/images/sidebar_icon.svg" class="dark:invert" style="height: 40px;">
                         </button>
 
                         <a :href="user ? (user.type === 'instructor' ? '/coursess' : '/dashboard') : '/'">
@@ -288,7 +294,7 @@ onMounted(() => {
             <AuthSidebar v-if="!isPlayerPage && !isCartPage" :class="{ 'sidebar-closed': !isSidebarOpen }" :is-collapsed="isSidebarCollapsed"/>
 
             <!-- Main Content Area -->
-            <div class="flex flex-col flex-1 main-content" :class="{ 'content-expanded': !isSidebarCollapsed, 'content-collapsed': isSidebarCollapsed }" :style="{ width: isCartPage ? '100% !important' : 'auto' }">
+            <div class="flex flex-col flex-1 main-content" :class="{ 'content-expanded': !isSidebarCollapsed, 'content-collapsed': isSidebarCollapsed, 'no-sidebar': isPlayerPage || isCartPage }">
                 <!-- Optional Page Heading -->
                 <header class="bg-white dark:bg-[#1A2C38] shadow dark:shadow-dark" v-if="$slots.header">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -324,7 +330,7 @@ onMounted(() => {
     justify-content: space-between;
 }
 
-@media (max-width: 770px) {
+@media (max-width: 1024px) {
     .mobile_view_style {
         display: flex;
     }
@@ -339,7 +345,7 @@ onMounted(() => {
     z-index: 70;
 }
 
-@media (max-width: 770px) {
+@media (max-width: 1024px) {
     .sidebar_button_nav {
         display: flex;
     }
@@ -350,7 +356,20 @@ onMounted(() => {
     cursor: pointer;
 }
 
-@media (max-width: 770px) {
+.nav-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 120;
+    width: 100%;
+}
+
+.mobile_view_style {
+    padding-top: 5rem; /* match navbar height */
+}
+
+@media (max-width: 1024px) {
     .logo_image_nav {
         /*   */
     }
@@ -535,10 +554,22 @@ main {
 }
 
 .content-expanded {
-    margin-left: 0; /* Adjust if sidebar width changes */
+    margin-left: 300px;
 }
 
 .content-collapsed {
-    margin-left: 0; /* Adjust when sidebar is collapsed */
+    margin-left: 92px;
+}
+
+.no-sidebar {
+    margin-left: 0 !important;
+}
+
+@media (max-width: 1024px) {
+    .main-content,
+    .content-expanded,
+    .content-collapsed {
+        margin-left: 0 !important;
+    }
 }
 </style>

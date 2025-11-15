@@ -69,52 +69,54 @@ class DashboardController extends Controller
             $coursesQuery->whereIn('industry_id', $request->input('course_industries'));
         }
             
-        $skillBasedCourses = $coursesQuery->get()->map(function ($course) use ($userId, $user) {
-            $firstVideo = $course->videos->first();
-            $firstVideoThumbnailUrl = null;
-            if ($firstVideo && $firstVideo->thumbnail_url) {
-                $firstVideoThumbnailUrl = asset($firstVideo->thumbnail_url);
-            }
-
-            $isPurchased = false;
-            $progress = 0;
-            if (Auth::check()) {
-                $isPurchased = Invoice::where('user_id', $userId)
-                    ->where('payment_status', 'paid')
-                    ->whereHas('details', function ($query) use ($course) {
-                        $query->where('course_id', $course->id);
-                    })
-                    ->exists();
-
-                // Use the ProgressService to get overall course progress
-                if ($user) {
-                    $progress = $this->progressService->getOverallCourseProgress($user, $course);
-                } else {
-                    
+        $skillBasedCourses = $coursesQuery
+            ->paginate(9)
+            ->withQueryString()
+            ->through(function ($course) use ($userId, $user) {
+                $firstVideo = $course->videos->first();
+                $firstVideoThumbnailUrl = null;
+                if ($firstVideo && $firstVideo->thumbnail_url) {
+                    $firstVideoThumbnailUrl = asset($firstVideo->thumbnail_url);
                 }
 
-            } else {
-                
-            }
+                $isPurchased = false;
+                $progress = 0;
+                if (Auth::check()) {
+                    $isPurchased = Invoice::where('user_id', $userId)
+                        ->where('payment_status', 'paid')
+                        ->whereHas('details', function ($query) use ($course) {
+                            $query->where('course_id', $course->id);
+                        })
+                        ->exists();
 
-            return [
-                'id' => $course->id,
-                'title' => $course->title,
-                'description' => $course->description,
-                'type' => $course->courseType ? $course->courseType->name : 'N/A',
-                'course_type_id' => $course->courseType ? $course->courseType->id : null,
-                'topic_id' => $course->topic_id,
-                'certificate_id' => $course->certificate_id,
-                'industry_id' => $course->industry_id,
-                'first_video_thumbnail_url' => $firstVideoThumbnailUrl,
-                'first_video_id' => $firstVideo ? $firstVideo->id : null,
-                'is_purchased' => $isPurchased,
-                'price' => $course->price,
-                'author' => $course->user ? $course->user->name : 'Placeholder Author',
-                'is_favorited' => $course->is_favorited,
-                'progress' => $progress,
-            ];
-        });
+                    // Use the ProgressService to get overall course progress
+                    if ($user) {
+                        $progress = $this->progressService->getOverallCourseProgress($user, $course);
+                    } else {
+                        // no-op for guests
+                    }
+                } else {
+                    // no-op for guests
+                }
+
+                return [
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'description' => $course->description,
+                    'type' => $course->courseType ? $course->courseType->name : 'N/A',
+                    'course_type_id' => $course->courseType ? $course->courseType->id : null,
+                    'topic_id' => $course->topic_id,
+                    'certificate_id' => $course->certificate_id,
+                    'industry_id' => $course->industry_id,
+                    'first_video_thumbnail_url' => $firstVideoThumbnailUrl,
+                    'first_video_id' => $firstVideo ? $firstVideo->id : null,
+                    'is_purchased' => $isPurchased,
+                    'price' => $course->price,
+                    'author' => $course->user ? $course->user->name : 'Placeholder Author',
+                    'is_favorited' => $course->is_favorited,
+                    'progress' => $progress,
+                ];
+            });
 
         // Fetch all courses for "New Releases", ordered by latest
         $allNewReleaseCourses = Course::with([

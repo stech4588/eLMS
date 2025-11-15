@@ -8,7 +8,7 @@
 
         <title inertia>{{ config('app.name', 'MBM University') }}</title>
 
-        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+        <link rel="icon" type="image/svg+xml" href="{{ asset('/images/MBM_Uni.png') }}">
         <link rel="alternate icon" type="image/png" href="{{ asset('images/MBM_Uni.png') }}">
 
         <!-- Fonts -->

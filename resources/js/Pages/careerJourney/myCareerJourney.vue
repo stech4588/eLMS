@@ -295,7 +295,7 @@ function updateTopics() {
 
 @media (min-width: 1024px) {
     .career-journey-wrapper {
-        grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+        /* grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); */
         align-items: flex-start;
     }
 }
