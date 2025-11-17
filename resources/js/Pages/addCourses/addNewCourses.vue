@@ -1514,7 +1514,8 @@ onMounted(() => {
 
 }
 .footer_upload_video {
-    background-color: white;
+    background-color: #477CAA;
+    color: white;
 }
 @media (max-width: 770px) {
     .footer_upload_video{

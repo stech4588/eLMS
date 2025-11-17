@@ -4,7 +4,7 @@
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Groups</h2>
+                <h2 class="font-semibold text-xl text-white dark:text-gray-200 leading-tight">Groups</h2>
                 <div class="flex items-center gap-4 w-full md:w-auto">
                     <input type="text" v-model="search" placeholder="Search for groups..." class="block w-full rounded-md shadow-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <button @click="showCreateGroupPopup = true" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150 flex-shrink-0">
@@ -40,12 +40,12 @@
                         </div>
                     </div>
                 </div>
-                <div v-else class="text-center text-gray-500 dark:text-gray-400 py-16">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <div v-else class="text-center text-white dark:text-gray-400 py-16">
+                    <svg class="mx-auto h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No groups found</h3>
-                    <p class="mt-1 text-sm text-gray-500">Get started by creating a new group.</p>
+                    <h3 class="mt-2 text-sm font-medium text-white dark:text-gray-100">No groups found</h3>
+                    <p class="mt-1 text-sm text-white">Get started by creating a new group.</p>
                 </div>
 
                 <!-- Pagination -->

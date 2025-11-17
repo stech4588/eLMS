@@ -62,7 +62,7 @@ watch([search, skill, date], debounce(() => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Jobs</h2>
+            <h2 class="font-semibold text-xl text-white dark:text-gray-200 leading-tight">Jobs</h2>
         </template>
 
         <div class="py-12">

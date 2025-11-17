@@ -17,11 +17,33 @@ const user = usePage().props.auth?.user;
 const showingNavigationDropdown = ref(false)
 const isSidebarOpen = ref(false)
 const isSidebarCollapsed = ref(false);
+const SIDEBAR_OPEN_STORAGE_KEY = 'elms.sidebar.open';
+const SIDEBAR_COLLAPSED_STORAGE_KEY = 'elms.sidebar.collapsed';
 const page = usePage();
 const isLoading = ref(false);
 const isDark = ref(false);
 const meta = computed(() => page.props.meta || {});
 const notifications = ref([]);
+
+watch(isSidebarOpen, (value) => {
+    if (typeof window !== 'undefined') {
+        try {
+            window.localStorage.setItem(SIDEBAR_OPEN_STORAGE_KEY, value ? 'true' : 'false');
+        } catch (error) {
+            console.warn('Unable to persist sidebar open state:', error);
+        }
+    }
+});
+
+watch(isSidebarCollapsed, (value) => {
+    if (typeof window !== 'undefined') {
+        try {
+            window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, value ? 'true' : 'false');
+        } catch (error) {
+            console.warn('Unable to persist sidebar collapsed state:', error);
+        }
+    }
+});
 
 const fetchNotifications = async () => {
     if (user) {
@@ -48,6 +70,23 @@ onMounted(() => {
         fetchPermissions();
         window.addEventListener('new-notification', fetchNotifications);
     }
+
+    if (typeof window !== 'undefined') {
+        try {
+            const savedSidebarOpen = window.localStorage.getItem(SIDEBAR_OPEN_STORAGE_KEY);
+            if (savedSidebarOpen !== null) {
+                isSidebarOpen.value = savedSidebarOpen === 'true';
+            }
+
+            const savedSidebarCollapsed = window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
+            if (savedSidebarCollapsed !== null) {
+                isSidebarCollapsed.value = savedSidebarCollapsed === 'true';
+            }
+        } catch (error) {
+            console.warn('Unable to restore sidebar state:', error);
+        }
+    }
+
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
         // Respect explicit light choice; otherwise default to dark
@@ -141,7 +180,7 @@ onMounted(() => {
         <meta name="description" :content="meta.meta_description">
         <meta name="keywords" :content="meta.meta_keywords">
     </Head>
-    <div :class="{ 'dark': isDark }" class="flex min-h-screen bg-[#97d5ff] dark:bg-dark-bg-primary mobile_view_style"
+    <div :class="{ 'dark': isDark }" class="flex min-h-screen bg-[#5A8FB3] dark:bg-dark-bg-primary mobile_view_style"
         style="flex-direction: column;">
         <nav class="border-b border-gray-100 dark:border-dark-border-primary bg-white dark:bg-[#1A2C38] nav-gradient">
             <div class="mx-auto px-4 sm:px-6 lg:px-8" style="border-bottom: 1px solid rgb(225 225 225)">
@@ -296,7 +335,7 @@ onMounted(() => {
             <!-- Main Content Area -->
             <div class="flex flex-col flex-1 main-content" :class="{ 'content-expanded': !isSidebarCollapsed, 'content-collapsed': isSidebarCollapsed, 'no-sidebar': isPlayerPage || isCartPage }">
                 <!-- Optional Page Heading -->
-                <header class="bg-white dark:bg-[#1A2C38] shadow dark:shadow-dark" v-if="$slots.header">
+                <header class="bg-light-header dark:bg-[#1A2C38] shadow dark:shadow-dark" v-if="$slots.header">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         <slot name="header" />
                     </div>
@@ -376,7 +415,7 @@ onMounted(() => {
 }
 
 .home_page_style {
-    background-color: #97d5ff;
+    background-color: #5A8FB3;
     text-align: start;
 }
 

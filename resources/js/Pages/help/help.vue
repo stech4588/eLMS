@@ -44,7 +44,7 @@ function selectTopic(topic) {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+            <h2 class="text-xl font-semibold leading-tight text-white dark:text-gray-200">
                 Support Training Tutorials
             </h2>
         </template>
