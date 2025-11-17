@@ -1310,7 +1310,7 @@ body {
 
 .nav-gradient {
   /* Warm amber gradient with shine */
-  background: #82d9ff !important;
+  background: #5A8FB3 !important;
   /* background:
     radial-gradient(1200px 400px at 10% -120px, rgba(231, 111, 81, 0.18), rgba(231, 111, 81, 0) 60%),
     radial-gradient(1200px 400px at 90% -140px, rgba(244, 162, 97, 0.16), rgba(244, 162, 97, 0) 60%),
@@ -1453,4 +1453,7 @@ body {
 
 .dark table a:hover {
     color: #9adfff;
+}
+.bg-light-header{
+  background-color: #477CAA;
 }
