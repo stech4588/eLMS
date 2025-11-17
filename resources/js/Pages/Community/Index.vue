@@ -3,7 +3,7 @@
         <div class="container mx-auto p-4">
             <!-- Header -->
             <div class="flex justify-between items-center mb-6">
-                 <h1 class="text-2xl font-bold dark:text-gray-200">Community</h1>
+                 <h1 class="text-2xl text-white font-bold dark:text-gray-200">Community</h1>
             </div>
 
             <!-- Main container for posts -->

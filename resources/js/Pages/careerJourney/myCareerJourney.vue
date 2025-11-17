@@ -283,6 +283,7 @@ function updateTopics() {
 /* Container Styles */
 .career-journey-container {
     padding: 0 16px 40px;
+    padding-top: 20px;
 }
 
 .career-journey-wrapper {
@@ -645,7 +646,8 @@ font-weight: 600;
     width: 100%;
 }
 .footer_upload_video {
-    background-color: white;
+    background-color: #477CAA;
+    color: white;
 }
 @media (max-width: 770px) {
     .footer_upload_video{

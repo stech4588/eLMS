@@ -317,7 +317,8 @@ const currentCourses = computed(() => {
     }
 }
 .footer_upload_video {
-    background-color: white;
+    background-color: #477CAA;
+    color: white;
 }
 @media (max-width: 770px) {
     .footer_upload_video{
@@ -375,12 +376,12 @@ const currentCourses = computed(() => {
 
 /* Enhanced styles for the existing footer content */
 .footer_upload_video {
-    background-color: #ffffff; /* Crisp white background */
+    background-color: #477CAA;
+    color: white; /* Crisp white background */
     padding: 20px 40px; /* Standard padding */
     border-top: 1px solid #e7e7e7; /* Very subtle top border */
     font-family: 'Arial', sans-serif; /* Common web-safe font */
-    font-size: 13px;
-    color: #5f6368; /* Standard dark grey for text */
+    font-size: 13px; /* Standard dark grey for text */
     display: flex;
     justify-content: center; /* Center items */
     align-items: center;

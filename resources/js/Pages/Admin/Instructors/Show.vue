@@ -2,7 +2,7 @@
     <Head :title="'Instructor Details - ' + instructorUser.name" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-white dark:text-gray-200 leading-tight">
                 Instructor Details: {{ instructorUser.name }}
             </h2>
         </template>
