@@ -1,10 +1,10 @@
 <template>
   <div class="main-review-section" id="testimonials">
     <div class="review-context">
-      <h2>What our clients think of <span class="animated-2">MBM University.</span></h2>
+      <h2>What Our Clients Think Of <span class="animated-2">MBM University.</span></h2>
       <p>We take pride in being transparent about our expertise and — we’re thrilled that our clients appreciate it too.
       </p>
-    </div>
+    </div>  
     <swiper ref="mySwiper" :slides-per-view="1" :space-between="10" :loop="true" :navigation="true" :autoplay="{
       delay: 2500,
       disableOnInteraction: false,
