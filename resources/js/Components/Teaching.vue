@@ -2,43 +2,40 @@
     <div class="lms-mart" id="learn">
         <div class="lms-wrapper">
             <h2 class="lms-heading">
-                The most <span class="lms-highlight">Configurable and Personalized</span><br />
-                Built for the future of MBM University
+                Discover the <span class="lms-highlight">MBM Course Library</span><br />
+                Built to guide every learner from enrollment to mastery.
             </h2>
+            <p class="lms-desc">
+                Our LMS unifies curriculum planning, live classrooms, and performance analytics so faculty can deliver
+                consistent outcomes while students always understand their next milestone.
+            </p>
 
             <div class="lms-box">
-                <!-- Card 1 -->
                 <div class="lms-card">
                     <img src="/images/AI.svg" alt="AI Icon" class="lms-icon" />
-                    <h3 class="lms-title">PERSONALISED BY AI AUTOMATION</h3>
+                    <h3 class="lms-title">CURATED PROGRAM PATHS</h3>
                     <p class="lms-desc">
-                        Harness AI and machine learning to grow your people faster with personalized career pathways.
+                        Browse undergraduate, professional, and skills-based courses mapped into clear, semester-ready sequences that keep learners progressing with confidence.
                     </p>
-                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
 
-                <!-- Card 2 -->
                 <div class="lms-card lms-border-x">
-                    <img src="/images/cube.svg" alt="Cube Icon" class="lms-icon" />
-                    <h3 class="lms-title">EXTENDED ENTERPRISE/ ECOMMERCE</h3>
+                    <img src="/images/cube.svg" alt="Coach icon" class="lms-icon" />
+                    <h3 class="lms-title">MENTORS & LIVE SESSIONS</h3>
                     <p class="lms-desc">
-                        Expand learning to external partners and grow your revenue at global scale.
+                        Book office hours, join interactive cohorts, and receive instructor feedback without leaving the platform, ensuring personalized guidance at every stage.
                     </p>
-                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
 
-                <!-- Card 3 -->
                 <div class="lms-card">
-                    <img src="/images/workforce.svg" alt="Workforce Icon" class="lms-icon" />
-                    <h3 class="lms-title">WORKFORCE ENABLEMENT</h3>
+                    <img src="/images/workforce.svg" alt="Community icon" class="lms-icon" />
+                    <h3 class="lms-title">TOOLS & CAMPUS SERVICES</h3>
                     <p class="lms-desc">
-                        Accelerate workforce capabilities, manage compliance requirements, and drive operational
-                        outcomes.
+                        Integrated library search, assessment builders, attendance reports, and AI study aides keep every class organized and every learner supported.
                     </p>
-                    <!-- <a :href="joinNowUrl" class="lms-button">➜ Join Now</a> -->
                 </div>
             </div>
-            <button @click="joinNowUrl" class="lms-button">➜ Join Now</button>
+            <button @click="joinNowUrl" class="lms-button">➜ Explore Courses</button>
         </div>
     </div>
 

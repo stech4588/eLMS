@@ -12,13 +12,13 @@
         <!-- <li><a @click="scrollToSection('result')">FEATURED</a></li> -->
         <li><a @click="scrollToSection('why-us')">WHY US</a></li>
         <li><a @click="scrollToSection('testimonials')">TESTIMONIALS</a></li>
-        
+
         <li><a @click="scrollToSection('pricing')">PRICING</a></li>
         <li><a @click="scrollToSection('faq')">FAQ</a></li>
         <!-- <li><a @click="scrollToSection('choice')">CHOICE</a></li> -->
       </ul>
 
-      <div class="action-buttons" v-if="!menuOpen"> 
+      <div class="action-buttons" v-if="!menuOpen">
         <Link :href="joinNowUrl" class="join">JOIN NOW</Link>
         <Link :href="loginUrl" class="login">LOG IN</Link>
       </div>
@@ -40,12 +40,12 @@
         <a @click="scrollToSection('education')">EDUCATION</a>
         <a @click="scrollToSection('why-us')">WHY US</a>
         <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
-        
+
         <!-- <a @click="scrollToSection('result')">FEATURED</a> -->
         <a @click="scrollToSection('pricing')">PRICING</a>
         <a @click="scrollToSection('faq')">FAQ</a>
         <!-- <a @click="scrollToSection('choice')">CHOICE</a> -->
-        
+
       </div>
     </transition>
   </nav>
@@ -66,13 +66,13 @@ export default {
       return this.$page.props.auth.user;
     },
     logoUrl() {
-        if (this.user) {
-          if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
-            return '/register/complete';
-          }
-          return '/dashboard';
+      if (this.user) {
+        if (this.$page.props.auth.profile_incomplete && this.user.type === 'student') {
+          return '/register/complete';
         }
-        return '/';
+        return '/dashboard';
+      }
+      return '/';
     },
     joinNowUrl() {
       if (this.user) {
@@ -107,8 +107,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 * {
   box-sizing: border-box;
 }
@@ -133,8 +131,10 @@ export default {
 }
 
 .logo {
+  /* transform: rotate(90deg); */
   width: 140px;
 }
+
 @media (max-width: 768px) {
   .logo {
     width: 140px;
@@ -210,7 +210,7 @@ export default {
 
 .join:hover {
   transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
+  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
 }
 
 
@@ -254,15 +254,19 @@ export default {
 /* Smooth Dropdown Styling */
 .custom-dropdown {
   background: rgba(30, 30, 47, 0.9);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-top: 1px solid #333;
   display: flex;
-  padding-bottom:30px!important;
+  padding-bottom: 30px !important;
   flex-direction: column;
   gap: 15px;
   padding: 0 30px;
   border-radius: 0 0 16px 16px;
   overflow: hidden;
+  position: absolute;
+  z-index: 1037;
+  width: 94%;
 }
 
 .custom-dropdown a {
@@ -302,6 +306,7 @@ export default {
 
 /* Responsive */
 @media (max-width: 1320px) {
+
   .nav-links,
   .action-buttons {
     display: none;
