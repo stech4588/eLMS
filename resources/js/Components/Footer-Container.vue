@@ -59,7 +59,7 @@
             <div class="mbm-footer-column">
               <h3 class="mbm-footer-heading">QUICK LINKS</h3>
               <ul class="mbm-footer-links">
-                <li><a @click="scrollToSection('why-us')" style="cursor: pointer;">why Us</a></li>
+                <li><a @click="scrollToSection('why-us')" style="cursor: pointer;">Why Us</a></li>
                 <li><a @click="scrollToSection('learn')" style="cursor: pointer;">Learn</a></li>
                 <li><a @click="scrollToSection('result')" style="cursor: pointer;">Result</a></li>
                 <li><a @click="scrollToSection('pricing')" style="cursor: pointer;">Pricing</a></li>
@@ -115,7 +115,51 @@
             <a href="#">Privacy Policy</a> |
             <a href="#">Terms of Service</a>
           </p>
-          <img src="images/linkdin.svg" alt="LinkedIn" style="height: 28px;"/>
+          <div class="mbm-social-icons">
+            <a href="https://www.instagram.com/mbmuniversity" aria-label="Instagram" class="mbm-social-icon"
+              target="_blank" rel="noopener noreferrer" title="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <!-- rounded square body -->
+                <rect x="3.5" y="3.5" width="17" height="17" rx="4" ry="4"></rect>
+                <!-- lens -->
+                <circle cx="12" cy="11.5" r="3.2"></circle>
+                <!-- little flash / dot -->
+                <circle cx="17.2" cy="6.2" r="0.9" fill="currentColor" stroke="none"></circle>
+              </svg>
+
+
+            </a>
+            <a href="https://www.facebook.com/mbmuniversity" aria-label="Facebook" class="mbm-social-icon"
+              target="_blank" rel="noopener noreferrer" title="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mbm-social-icon-svg"
+                aria-hidden="true" focusable="false">
+                <path
+                  d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.093 10.125 24v-8.48H7.078v-3.447h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.93-1.956 1.887v2.268h3.328l-.532 3.447h-2.796V24C19.612 23.093 24 18.1 24 12.073z" />
+              </svg>
+            </a>
+            <a href="https://x.com/mbmuniversity" aria-label="Twitter (X)" class="mbm-social-icon" target="_blank"
+              rel="noopener noreferrer" title="Twitter (X)">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mbm-social-icon-svg"
+                aria-hidden="true" focusable="false">
+                <path
+                  d="M19.633 0H24l-9.845 10.91L24 24h-6.741l-5.485-7.112L6.294 24H0l10.152-11.365L0 0h6.741l5.066 6.967L19.633 0z" />
+              </svg>
+            </a>
+            <a href="https://www.youtube.com/@mbmuniversity" aria-label="YouTube" class="mbm-social-icon"
+              target="_blank" rel="noopener noreferrer" title="YouTube">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mbm-social-icon-svg"
+                aria-hidden="true" focusable="false">
+                <path
+                  d="M23.498 6.186a2.974 2.974 0 00-2.09-2.104C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.582a2.974 2.974 0 00-2.09 2.104A30.45 30.45 0 000 12a30.45 30.45 0 00.502 5.814 2.974 2.974 0 002.09 2.104C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.582a2.974 2.974 0 002.09-2.104A30.45 30.45 0 0024 12a30.45 30.45 0 00-.502-5.814zM9.75 15.02V8.98L15.818 12 9.75 15.02z" />
+              </svg>
+            </a>
+            <a href="https://www.linkedin.com/company/mbmuniversity" aria-label="LinkedIn" class="mbm-social-icon"
+              target="_blank" rel="noopener noreferrer" title="LinkedIn">
+              <img src="/images/linkdin.svg" alt="LinkedIn" class="mbm-social-icon-img" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
@@ -158,8 +202,7 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
 <!-- <style scoped>
 .footer {
   background-color: #12121D;
