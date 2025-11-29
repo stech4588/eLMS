@@ -69,29 +69,35 @@
 
             <!-- Column 2: Asia Pacific Inquiries -->
             <div class="mbm-footer-column">
-              <h3 class="mbm-footer-heading">ASIA PACIFIC INQUIRIES</h3>
-              <p>Level 7 Suite 701,<br />
-                59 Goulburn St Haymarket NSW 2000
-                Australia</p>
-              <br>
-              <p>inquiries-info@mbmuniversity.com</p>
+              <h3 class="mbm-footer-heading">Popular Courses</h3>
+              <ul class="mbm-footer-links">
+                <li><a href="/dashboard" style="cursor: pointer;">E-Commerce</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Copywriting</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Stocks</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Crypto Investing</a></li>
+              </ul>
             </div>
 
             <!-- Column 3: USA Inquiries -->
             <div class="mbm-footer-column">
-              <h3 class="mbm-footer-heading">USA INQUIRIES</h3>
-              <p>300 Union Boulevard,<br />
-                Suite 360, Lakewood, CO 80228</p>
-              <p>info@mbmuniversity.com</p>
+              <h3 class="mbm-footer-heading">Top Learning Categories</h3>
+              <ul class="mbm-footer-links">
+                <li><a href="/dashboard" style="cursor: pointer;">Business & Finance</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Crypto Trading</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Content Creation & AI</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Client Acquisition & Social Media</a></li>
+              </ul>
             </div>
 
             <!-- Column 4: EMEA Inquiries -->
             <div class="mbm-footer-column">
-              <h3 class="mbm-footer-heading">EMEA ENQUIRIES</h3>
-              <p>Office 3, Level 27, Unit 2705<br />
-                Marina Plaza, Dubai Marina, DUBAI,<br />
-                UNITED ARAB EMIRATES</p>
-              <p>info@mbmuniversity.com</p>
+              <h3 class="mbm-footer-heading">Explore Our Courses</h3>
+              <ul class="mbm-footer-links">
+                <li><a href="/dashboard" style="cursor: pointer;">Ads Mastery</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">DeFi</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Digital Advertising</a></li>
+                <li><a href="/dashboard" style="cursor: pointer;">Sales</a></li>
+              </ul>
             </div>
           </div>
 
@@ -116,48 +122,20 @@
             <a href="#">Terms of Service</a>
           </p>
           <div class="mbm-social-icons">
-            <a href="https://www.instagram.com/mbmuniversity" aria-label="Instagram" class="mbm-social-icon"
-              target="_blank" rel="noopener noreferrer" title="Instagram">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <!-- rounded square body -->
-                <rect x="3.5" y="3.5" width="17" height="17" rx="4" ry="4"></rect>
-                <!-- lens -->
-                <circle cx="12" cy="11.5" r="3.2"></circle>
-                <!-- little flash / dot -->
-                <circle cx="17.2" cy="6.2" r="0.9" fill="currentColor" stroke="none"></circle>
-              </svg>
-
-
+            <a href="/dashboard" aria-label="Dashboard" class="mbm-social-icon" title="Home">
+              <img src="/images/home_icon.svg" alt="Dashboard" class="mbm-social-icon-img" />
             </a>
-            <a href="https://www.facebook.com/mbmuniversity" aria-label="Facebook" class="mbm-social-icon"
-              target="_blank" rel="noopener noreferrer" title="Facebook">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mbm-social-icon-svg"
-                aria-hidden="true" focusable="false">
-                <path
-                  d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.093 10.125 24v-8.48H7.078v-3.447h3.047V9.356c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.93-1.956 1.887v2.268h3.328l-.532 3.447h-2.796V24C19.612 23.093 24 18.1 24 12.073z" />
-              </svg>
+            <a href="/community" aria-label="Community" class="mbm-social-icon" title="Community">
+              <img src="/images/community_icon.svg" alt="Community" class="mbm-social-icon-img" />
             </a>
-            <a href="https://x.com/mbmuniversity" aria-label="Twitter (X)" class="mbm-social-icon" target="_blank"
-              rel="noopener noreferrer" title="Twitter (X)">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mbm-social-icon-svg"
-                aria-hidden="true" focusable="false">
-                <path
-                  d="M19.633 0H24l-9.845 10.91L24 24h-6.741l-5.485-7.112L6.294 24H0l10.152-11.365L0 0h6.741l5.066 6.967L19.633 0z" />
-              </svg>
+            <a href="/groups" aria-label="Groups" class="mbm-social-icon" title="Groups">
+              <img src="/images/groups_icon.svg" alt="Groups" class="mbm-social-icon-img" />
             </a>
-            <a href="https://www.youtube.com/@mbmuniversity" aria-label="YouTube" class="mbm-social-icon"
-              target="_blank" rel="noopener noreferrer" title="YouTube">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mbm-social-icon-svg"
-                aria-hidden="true" focusable="false">
-                <path
-                  d="M23.498 6.186a2.974 2.974 0 00-2.09-2.104C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.408.582a2.974 2.974 0 00-2.09 2.104A30.45 30.45 0 000 12a30.45 30.45 0 00.502 5.814 2.974 2.974 0 002.09 2.104C4.495 20.5 12 20.5 12 20.5s7.505 0 9.408-.582a2.974 2.974 0 002.09-2.104A30.45 30.45 0 0024 12a30.45 30.45 0 00-.502-5.814zM9.75 15.02V8.98L15.818 12 9.75 15.02z" />
-              </svg>
+            <a href="/jobs" aria-label="Jobs" class="mbm-social-icon" title="Jobs">
+              <img src="/images/jobs_icon.svg" alt="Jobs" class="mbm-social-icon-img" />
             </a>
-            <a href="https://www.linkedin.com/company/mbmuniversity" aria-label="LinkedIn" class="mbm-social-icon"
-              target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <img src="/images/linkdin.svg" alt="LinkedIn" class="mbm-social-icon-img" />
+            <a href="/help" aria-label="Help" class="mbm-social-icon" title="Help">
+              <img src="/images/help_icon.svg" alt="Help" class="mbm-social-icon-img" />
             </a>
           </div>
         </div>
@@ -202,7 +180,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.mbm-social-icons .mbm-social-icon-img {
+  filter: brightness(0) invert(1);
+}</style>
 <!-- <style scoped>
 .footer {
   background-color: #12121D;
