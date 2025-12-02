@@ -203,14 +203,35 @@ export default {
 }
 
 .join {
-  /* background: linear-gradient(45deg, #38b6ff, #4ccaff); */
-  background: linear-gradient(310deg, #38B6FF, #4CCAFF);
-  color: #000000;
+  background: linear-gradient(135deg, #29DFFD 0%, #245AF8 100%);
+  color: #ffffff;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(41, 223, 253, 0.3);
+}
+
+.join::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.join:hover::before {
+  left: 100%;
 }
 
 .join:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(76, 202, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(41, 223, 253, 0.5);
+  background: linear-gradient(135deg, #38E8FF 0%, #3565FF 100%);
 }
 
 
@@ -281,6 +302,26 @@ export default {
 .custom-dropdown a:hover {
   color: #4ccaff;
   transform: translateX(5px);
+}
+
+.custom-dropdown a:first-child {
+  background: linear-gradient(135deg, #29DFFD 0%, #245AF8 100%);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-align: center;
+  border: none;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(41, 223, 253, 0.3);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.custom-dropdown a:first-child:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(41, 223, 253, 0.5);
+  background: linear-gradient(135deg, #38E8FF 0%, #3565FF 100%);
+  color: #ffffff;
 }
 
 /* Vue Transition Classes */
