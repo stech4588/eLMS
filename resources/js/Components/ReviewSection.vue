@@ -9,7 +9,7 @@
       delay: 2500,
       disableOnInteraction: false,
     }" :modules="modules" :breakpoints="breakpoints" class="mySwiper">
-      <swiper-slide v-for="review in reviews" :key="review.id">
+      <swiper-slide v-for="review in allReviews" :key="review.id">
         <div class="review">
           <div class="review-row">
             <div class="review-col-1">
@@ -52,7 +52,7 @@ export default {
   props: {
     reviews: {
       type: Array,
-      required: true,
+      default: () => [],
     },
   },
   setup() {
@@ -70,11 +70,74 @@ export default {
           slidesPerView: 2,
         },
       },
+      dummyReviews: [
+        {
+          id: 'dummy-1',
+          user: {
+            name: 'Ahmed Ali',
+            profile_photo_url: 'https://ui-avatars.com/api/?name=Ahmed+Ali&size=200&background=0ea5e9&color=fff&bold=true&font-size=0.5',
+          },
+          rating: 5,
+          comment: 'Excellent learning platform with comprehensive courses and experienced instructors. Highly recommended for professional development.',
+        },
+        {
+          id: 'dummy-2',
+          user: {
+            name: 'Sara Khan',
+            profile_photo_url: 'https://ui-avatars.com/api/?name=Sara+Khan&size=200&background=8b5cf6&color=fff&bold=true&font-size=0.5',
+          },
+          rating: 5,
+          comment: 'The courses are well-structured and the interactive learning experience is amazing. Best decision I made for my career.',
+        },
+        {
+          id: 'dummy-3',
+          user: {
+            name: 'Mohammad Hassan',
+            profile_photo_url: 'https://ui-avatars.com/api/?name=Mohammad+Hassan&size=200&background=10b981&color=fff&bold=true&font-size=0.5',
+          },
+          rating: 4,
+          comment: 'Great platform with quality content. The support team is very helpful and responsive to student needs.',
+        },
+        {
+          id: 'dummy-4',
+          user: {
+            name: 'Fatima Sheikh',
+            profile_photo_url: 'https://ui-avatars.com/api/?name=Fatima+Sheikh&size=200&background=ec4899&color=fff&bold=true&font-size=0.5',
+          },
+          rating: 5,
+          comment: 'Outstanding educational experience with practical examples and real-world applications. The instructors are knowledgeable and supportive.',
+        },
+        {
+          id: 'dummy-5',
+          user: {
+            name: 'Ali Raza',
+            profile_photo_url: 'https://ui-avatars.com/api/?name=Ali+Raza&size=200&background=f59e0b&color=fff&bold=true&font-size=0.5',
+          },
+          rating: 5,
+          comment: 'I have learned so much from this platform. The course materials are comprehensive and the learning path is well designed.',
+        },
+        {
+          id: 'dummy-6',
+          user: {
+            name: 'Ayesha Malik',
+            profile_photo_url: 'https://ui-avatars.com/api/?name=Ayesha+Malik&size=200&background=6366f1&color=fff&bold=true&font-size=0.5',
+          },
+          rating: 4,
+          comment: 'Very satisfied with the course quality and delivery. The platform is user-friendly and the content is up-to-date with industry standards.',
+        },
+      ],
     };
   },
   computed: {
       user() {
           return this.$page.props.auth.user;
+      },
+      allReviews() {
+          // Combine dynamic reviews with dummy reviews
+          // Dynamic reviews come first, then dummy reviews
+          const combined = [...this.reviews, ...this.dummyReviews];
+          
+          return combined;
       },
   },
   methods: {
