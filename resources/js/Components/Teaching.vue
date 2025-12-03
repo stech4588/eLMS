@@ -1,5 +1,5 @@
 <template>
-    <div class="lms-mart" id="learn">
+    <!-- <div class="lms-mart" id="learn">
         <div class="lms-wrapper">
             <h2 class="lms-heading">
                 Discover the <span class="lms-highlight">MBM Course Library</span><br />
@@ -37,7 +37,7 @@
             </div>
             <button @click="joinNowUrl" class="lms-button">➜ Explore Courses</button>
         </div>
-    </div>
+    </div> -->
 
 </template>
 
