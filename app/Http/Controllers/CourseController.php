@@ -29,6 +29,8 @@ use App\Models\Quiz;
 use Illuminate\Support\Facades\Http;
 use App\Models\Video;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
 {
@@ -47,54 +49,121 @@ class CourseController extends Controller
 
     public function store(CourseRequest $request): RedirectResponse
     {
-        $course = $this->courseService->create($request->validated());
-        return redirect()->route('dashboard')
-            ->with('success', 'Course created successfully!')
-            ->with('course_id', $course->id);
+        try {
+            $course = $this->courseService->create($request->validated());
+            return redirect()->route('dashboard')
+                ->with('success', 'Course created successfully!')
+                ->with('course_id', $course->id);
+        } catch (\Throwable $e) {
+            Log::error('Course creation failed', [
+                'user_id' => optional($request->user())->id,
+                'title' => $request->input('title'),
+                'message' => $e->getMessage(),
+            ]);
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to create course. Please try again.');
+        }
     }
 
-    public function create() // Or your specific method name
+    public function create(): InertiaResponse
     {
-        // Fetch data from your database
-        // The ->map() is used to format the data into { value: ..., text: ... } objects
-        // Adjust the query and mapping based on your actual database schema
+        return Inertia::render('addCourses/addNewCourses', array_merge(
+            $this->getCourseFormOptions(),
+            [
+                'course' => null,
+                'courseVideos' => [],
+                'courseQuiz' => null,
+                'isEditing' => false,
+            ]
+        ));
+    }
 
-        $certificates = CourseCertificate::all()->map(function ($certificate) {
-            return [
-                'value' => $certificate->id, // Or whatever unique identifier you use
-                'text' => $certificate->name, // Or title, or display_name
-            ];
-        });
+    public function edit(Request $request, Course $course): InertiaResponse
+    {
+        $this->authorizeCourseOwner($request, $course);
 
-        $industries = CourseIndustry::all()->map(function ($industry) {
-            return [
-                'value' => $industry->id,
-                'text' => $industry->name,
-            ];
-        });
-
-        $courseTypes = CourseType::all()->map(function ($courseType) {
-            return [
-                'value' => $courseType->id,
-                'text' => $courseType->name,
-            ];
-        });
-
-        $topics = CourseTopic::all()->map(function ($topic) { // Added topics fetching
-            return [
-                'value' => $topic->id,
-                'text' => $topic->name,
-            ];
-        });
-
-        // Add this line for debugging
-        return Inertia::render('addCourses/addNewCourses', [
-            'certificates' => $certificates,
-            'industries' => $industries,
-            'courseTypes' => $courseTypes,
-            'topics' => $topics, // Pass topics to the view
-            // You can also pass other necessary data here
+        $course->load([
+            'courseType',
+            'industry',
+            'certificate',
+            'topic',
+            'videos.quiz.questions.answers',
+            'quizzes.questions.answers',
         ]);
+
+        $courseData = [
+            'id' => $course->id,
+            'title' => $course->title,
+            'description' => $course->description,
+            'additional_description' => $course->additional_description,
+            'recomendations' => $course->recomendations,
+            'certificate_id' => $course->certificate_id,
+            'industry_id' => $course->industry_id,
+            'course_type_id' => $course->course_type_id,
+            'topic_id' => $course->topic_id,
+            'price' => $course->price,
+        ];
+
+        $courseVideos = $course->videos->sortBy('order')->values()->map(function ($video) {
+            return [
+                'id' => $video->id,
+                'title' => $video->title,
+                'description' => $video->description,
+                'takeaway_notes' => $video->takeaway_notes,
+                'order' => $video->order,
+                'duration_in_seconds' => $video->duration,
+                'video_url' => $video->video_url ? asset($video->video_url) : null,
+                'video_path' => $video->video_url,
+                'thumbnail_url' => $video->thumbnail_url ? asset($video->thumbnail_url) : null,
+                'thumbnail_path' => $video->thumbnail_url,
+                'quiz' => $video->quiz ? [
+                    'title' => $video->quiz->title,
+                    'description' => $video->quiz->description,
+                    'questions' => $video->quiz->questions->map(function ($question) {
+                        return [
+                            'question_text' => $question->question_text,
+                            'answers' => $question->answers->map(function ($answer) {
+                                return [
+                                    'answer_text' => $answer->answer_text,
+                                    'is_correct' => (bool) $answer->is_correct,
+                                ];
+                            })->values(),
+                        ];
+                    })->values(),
+                ] : null,
+            ];
+        })->values();
+
+        $courseQuizModel = $course->quizzes->first();
+        $courseQuiz = $courseQuizModel ? [
+            'id' => $courseQuizModel->id,
+            'title' => $courseQuizModel->title,
+            'description' => $courseQuizModel->description,
+            'questions' => $courseQuizModel->questions->map(function ($question) {
+                return [
+                    'id' => $question->id,
+                    'question_text' => $question->question_text,
+                    'answers' => $question->answers->map(function ($answer) {
+                        return [
+                            'id' => $answer->id,
+                            'answer_text' => $answer->answer_text,
+                            'is_correct' => (bool) $answer->is_correct,
+                        ];
+                    })->values(),
+                ];
+            })->values(),
+        ] : null;
+
+        return Inertia::render('addCourses/addNewCourses', array_merge(
+            $this->getCourseFormOptions(),
+            [
+                'course' => $courseData,
+                'courseVideos' => $courseVideos,
+                'courseQuiz' => $courseQuiz,
+                'isEditing' => true,
+            ]
+        ));
     }
 
     public function storeWithVideos(Request $request): RedirectResponse
@@ -103,7 +172,7 @@ class CourseController extends Controller
         $validatedCourseData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            // 'price' => 'nullable|numeric',
+            'price' => 'nullable|numeric|min:0',
             'additional_description' => 'nullable|string',
             'recomendations' => 'nullable|string',
             'certificates' => 'nullable|exists:course_certificates,id',
@@ -140,7 +209,7 @@ class CourseController extends Controller
                 'user_id' => $request->user()->id,
                 'title' => $validatedCourseData['title'],
                 'description' => $validatedCourseData['description'],
-                'price' => $request->input('price', 0),
+                'price' => $validatedCourseData['price'] ?? 0,
                 'additional_description' => $validatedCourseData['additional_description'] ?? null,
                 'recomendations' => $validatedCourseData['recomendations'] ?? null,
                 'certificate_id' => $validatedCourseData['certificates'] ?? null,
@@ -202,65 +271,12 @@ class CourseController extends Controller
                     ]);
                     $createdVideos[] = $newVideo;
 
-                    // Optional per-video quiz creation
-                    if (isset($videoDataInput['quiz']) && is_array($videoDataInput['quiz'])) {
-                        $quizInput = ['quiz' => $videoDataInput['quiz']];
-                        $quizValidator = Validator::make($quizInput, [
-                            'quiz.title' => 'required|string|max:255',
-                            'quiz.description' => 'nullable|string',
-                            'quiz.questions' => 'present|array|min:1',
-                            'quiz.questions.*.question_text' => 'required|string',
-                            'quiz.questions.*.answers' => 'present|array|min:2',
-                            'quiz.questions.*.answers.*.answer_text' => 'required|string',
-                            'quiz.questions.*.answers.*.is_correct' => 'boolean',
-                        ]);
-                        $quizData = $quizValidator->validate()['quiz'];
-
-                        $quiz = $newVideo->quiz()->create([
-                            'course_id' => $course->id,
-                            'title' => $quizData['title'],
-                            'description' => $quizData['description'] ?? null,
-                        ]);
-                        
-
-                        foreach ($quizData['questions'] as $questionData) {
-                            $question = $quiz->questions()->create([
-                                'question_text' => $questionData['question_text'],
-                            ]);
-                            
-
-                            foreach ($questionData['answers'] as $answerData) {
-                                $question->answers()->create([
-                                    'answer_text' => $answerData['answer_text'],
-                                    'is_correct' => $answerData['is_correct'] ?? false,
-                                ]);
-                            }
-                        }
-                    }
+                    $this->syncVideoQuiz($newVideo, $videoDataInput['quiz'] ?? null);
                 }
             }
 
             if ($request->has('quiz')) {
-                $quizData = $validatedQuizData['quiz'];
-                $quiz = $course->quizzes()->create([
-                    'title' => $quizData['title'],
-                    'description' => $quizData['description'],
-                ]);
-                
-
-                foreach ($quizData['questions'] as $questionData) {
-                    $question = $quiz->questions()->create([
-                        'question_text' => $questionData['question_text'],
-                    ]);
-                    
-
-                    foreach ($questionData['answers'] as $answerData) {
-                        $question->answers()->create([
-                            'answer_text' => $answerData['answer_text'],
-                            'is_correct' => $answerData['is_correct'] ?? false,
-                        ]);
-                    }
-                }
+                $this->syncCourseQuiz($course, $validatedQuizData['quiz']);
             }
 
             DB::commit();
@@ -276,16 +292,212 @@ class CourseController extends Controller
             return redirect()->route('coursess')->with('success', 'Course and videos created successfully!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning('Course with videos validation failed', [
+                'user_id' => $request->user()->id ?? null,
+                'title' => $request->input('title'),
+                'errors' => $e->errors(),
+            ]);
             DB::rollBack();
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
+            Log::error('Course with videos creation failed', [
+                'user_id' => $request->user()->id ?? null,
+                'title' => $request->input('title'),
+                'message' => $e->getMessage(),
+            ]);
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to create course and videos: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Failed to create course and videos. Please try again.');
         }
     }
 
-    public function show(Course $course)
+    public function updateWithVideos(Request $request, Course $course): RedirectResponse
     {
+        $this->authorizeCourseOwner($request, $course);
+
+        $validatedCourseData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'nullable|numeric|min:0',
+            'additional_description' => 'nullable|string',
+            'recomendations' => 'nullable|string',
+            'certificates' => 'nullable|exists:course_certificates,id',
+            'industry' => 'nullable|exists:course_industries,id',
+            'course_type' => 'nullable|exists:course_types,id',
+            'topic' => 'nullable|exists:topics,id',
+        ]);
+
+        $request->validate([
+            'videos' => 'present|array',
+            'videos.*.id' => 'nullable|exists:videos,id',
+            'videos.*.title' => 'required_with:videos|string|max:255',
+            'videos.*.description' => 'required_with:videos|string',
+            'videos.*.takeaway_notes' => 'nullable|string',
+            'videos.*.videoFile' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:512000',
+            'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'videos.*.order' => 'required_with:videos|integer|min:1',
+            'videos.*.duration_in_seconds' => 'nullable|integer|min:0',
+        ]);
+
+        $validatedQuizData = [];
+        if ($request->has('quiz')) {
+            $validatedQuizData = $request->validate([
+                'quiz' => 'sometimes|array',
+                'quiz.title' => 'required_with:quiz|string|max:255',
+                'quiz.description' => 'nullable|string',
+                'quiz.questions' => 'required_with:quiz|array|min:1',
+                'quiz.questions.*.question_text' => 'required_with:quiz.questions|string',
+                'quiz.questions.*.answers' => 'required_with:quiz.questions|array|min:2',
+                'quiz.questions.*.answers.*.answer_text' => 'required_with:quiz.questions.*.answers|string',
+                'quiz.questions.*.answers.*.is_correct' => 'boolean',
+            ]);
+        }
+
+        $request->validate([
+            'removed_video_ids' => 'sometimes|array',
+            'removed_video_ids.*' => 'integer|exists:videos,id',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $courseDataToUpdate = [
+                'title' => $validatedCourseData['title'],
+                'description' => $validatedCourseData['description'],
+                'price' => $validatedCourseData['price'] ?? 0,
+                'additional_description' => $validatedCourseData['additional_description'] ?? null,
+                'recomendations' => $validatedCourseData['recomendations'] ?? null,
+                'certificate_id' => $validatedCourseData['certificates'] ?? null,
+                'industry_id' => $validatedCourseData['industry'] ?? null,
+                'course_type_id' => $validatedCourseData['course_type'] ?? null,
+                'topic_id' => $validatedCourseData['topic'] ?? null,
+            ];
+
+            $course->update($courseDataToUpdate);
+
+            $videoService = resolve(\App\Services\VideoService::class);
+            $processedVideoIds = collect();
+            $incomingVideos = $request->input('videos', []);
+
+            foreach ($incomingVideos as $index => $videoDataInput) {
+                $videoId = $videoDataInput['id'] ?? null;
+                $videoFile = $request->file("videos.$index.videoFile");
+                $thumbnailFile = $request->file("videos.$index.thumbnailFile");
+                $videoPath = null;
+                $thumbnailPath = null;
+
+                if ($videoFile) {
+                    $videoTargetDirectory = 'uploads/course_' . $course->id . '_videos';
+                    if (!File::isDirectory(public_path($videoTargetDirectory))) {
+                        File::makeDirectory(public_path($videoTargetDirectory), 0755, true, true);
+                    }
+                    $videoFileName = time() . '_' . Str::slug(pathinfo($videoFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $videoFile->getClientOriginalExtension();
+                    $videoFile->move(public_path($videoTargetDirectory), $videoFileName);
+                    $videoPath = $videoTargetDirectory . '/' . $videoFileName;
+                }
+
+                if ($thumbnailFile) {
+                    $thumbTargetDirectory = 'uploads/course_' . $course->id . '_video_thumbnails';
+                    if (!File::isDirectory(public_path($thumbTargetDirectory))) {
+                        File::makeDirectory(public_path($thumbTargetDirectory), 0755, true, true);
+                    }
+                    $thumbFileName = time() . '_' . Str::slug(pathinfo($thumbnailFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $thumbnailFile->getClientOriginalExtension();
+                    $thumbnailFile->move(public_path($thumbTargetDirectory), $thumbFileName);
+                    $thumbnailPath = $thumbTargetDirectory . '/' . $thumbFileName;
+                }
+
+                if (!$videoId) {
+                    if (!$videoFile) {
+                        throw ValidationException::withMessages([
+                            "videos.$index.videoFile" => 'Video file is required when adding a new video.',
+                        ]);
+                    }
+
+                    $newVideo = $videoService->create([
+                        'course_id' => $course->id,
+                        'title' => $videoDataInput['title'],
+                        'description' => $videoDataInput['description'],
+                        'takeaway_notes' => $videoDataInput['takeaway_notes'] ?? null,
+                        'video_url' => $videoPath,
+                        'thumbnail_url' => $thumbnailPath,
+                        'order' => $videoDataInput['order'],
+                        'duration' => $videoDataInput['duration_in_seconds'] ?? null,
+                    ]);
+
+                    $processedVideoIds->push($newVideo->id);
+                    $this->syncVideoQuiz($newVideo, $videoDataInput['quiz'] ?? null);
+                    continue;
+                }
+
+                $existingVideo = $course->videos()->where('id', $videoId)->firstOrFail();
+
+                $updatePayload = [
+                    'title' => $videoDataInput['title'],
+                    'description' => $videoDataInput['description'],
+                    'takeaway_notes' => $videoDataInput['takeaway_notes'] ?? null,
+                    'order' => $videoDataInput['order'],
+                    'duration' => $videoDataInput['duration_in_seconds'] ?? $existingVideo->duration,
+                ];
+
+                if ($videoPath) {
+                    $updatePayload['video_url'] = $videoPath;
+                }
+
+                if ($thumbnailPath) {
+                    $updatePayload['thumbnail_url'] = $thumbnailPath;
+                }
+
+                $videoService->update($existingVideo->id, $updatePayload);
+                $existingVideo->refresh();
+                $processedVideoIds->push($existingVideo->id);
+
+                $this->syncVideoQuiz($existingVideo, $videoDataInput['quiz'] ?? null);
+            }
+
+            $existingVideoIds = $course->videos()->pluck('id');
+            $explicitRemovedIds = collect($request->input('removed_video_ids', []));
+            $idsToDelete = $existingVideoIds->diff($processedVideoIds)->merge($explicitRemovedIds)->unique();
+
+            if ($idsToDelete->isNotEmpty()) {
+                $videosToDelete = $course->videos()->whereIn('id', $idsToDelete)->get();
+                foreach ($videosToDelete as $videoToDelete) {
+                    $this->syncVideoQuiz($videoToDelete, null);
+                    $videoToDelete->delete();
+                }
+            }
+
+            if (!empty($validatedQuizData)) {
+                $course->refresh();
+                $this->syncCourseQuiz($course, $validatedQuizData['quiz'] ?? null);
+            }
+
+            DB::commit();
+
+            return redirect()->route('coursess')->with('success', 'Course updated successfully!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            Log::error('Course update with videos failed', [
+                'course_id' => $course->id,
+                'message' => $e->getMessage(),
+            ]);
+            DB::rollBack();
+            return redirect()->back()->withInput()->with('error', 'Failed to update course and videos. Please try again.');
+        }
+    }
+
+    public function show(int $courseId)
+    {
+        $course = Course::withTrashed()->findOrFail($courseId);
+
+        if ($course->trashed()) {
+            return Inertia::render('Course/Detail', [
+                'course' => null,
+                'isPurchased' => false,
+                'unavailableMessage' => 'This course is not available or has been temparly deleted by the instructor.',
+            ]);
+        }
+
         // Eager load relationships you might need
         $course->load('courseType', 'videos', 'industry', 'certificate', 'topic', 'user'); // Added 'industry' and 'certificate'
 
@@ -333,6 +545,7 @@ class CourseController extends Controller
         return Inertia::render('Course/Detail', [
             'course' => $courseData,
             'isPurchased' => $isPurchased,
+            'unavailableMessage' => null,
         ]);
     }
 
@@ -356,16 +569,37 @@ class CourseController extends Controller
 
     public function update(CourseRequest $request, int $id): RedirectResponse
     {
-        $course = $this->courseService->update($id, $request->validated());
-        return redirect()->route('dashboard')
+        $course = Course::findOrFail($id);
+        $this->authorizeCourseOwner($request, $course);
+
+        $this->courseService->update($course->id, $request->validated());
+
+        return redirect()->route('coursess')
             ->with('success', 'Course updated successfully!');
     }
 
-    public function destroy(int $id): RedirectResponse
+    public function destroy(Request $request, int $course): RedirectResponse
     {
-        $this->courseService->delete($id);
-        return redirect()->route('dashboard')
+        $courseModel = Course::findOrFail($course);
+        $this->authorizeCourseOwner($request, $courseModel);
+
+        $this->courseService->delete($courseModel->id);
+
+        return redirect()->route('coursess')
             ->with('success', 'Course deleted successfully!');
+    }
+
+    public function restore(Request $request, int $course): RedirectResponse
+    {
+        $courseModel = Course::withTrashed()->findOrFail($course);
+        $this->authorizeCourseOwner($request, $courseModel);
+
+        if ($courseModel->trashed()) {
+            $courseModel->restore();
+        }
+
+        return redirect()->route('coursess')
+            ->with('success', 'Course restored successfully!');
     }
 
     public function play(Request $request, Course $course, $videoId = null)
@@ -484,7 +718,8 @@ class CourseController extends Controller
         $coursesData = collect(); // Default to an empty collection
 
         if ($user) {
-            $courses = \App\Models\Course::where('user_id', $user->id)
+            $courses = \App\Models\Course::withTrashed()
+                ->where('user_id', $user->id)
                 ->with(['videos' => function ($query) {
                     $query->orderBy('order', 'asc');
                 }, 'courseType']) // Eager load videos and courseType
@@ -505,6 +740,15 @@ class CourseController extends Controller
                     'type' => $course->courseType ? $course->courseType->name : 'N/A', // If you use course type.
                     'author' => $course->user ? $course->user->name : 'Placeholder Author', // Or however you get the author
                     'is_favorited' => $course->is_favorited, // Explicitly include is_favorited
+                    'price' => $course->price,
+                    'status' => $course->status,
+                    'category_id' => $course->category_id,
+                    'instructor_id' => $course->instructor_id,
+                    'thumbnail' => $course->thumbnail,
+                    'additional_description' => $course->additional_description,
+                    'recomendations' => $course->recomendations,
+                    'topic_id' => $course->topic_id,
+                    'deleted_at' => $course->deleted_at,
                     // Include other necessary course properties
                 ];
             });
@@ -571,6 +815,149 @@ class CourseController extends Controller
         return response()->json($formattedCourses);
     }
 
+    private function getCourseFormOptions(): array
+    {
+        $certificates = CourseCertificate::all()->map(function ($certificate) {
+            return [
+                'value' => $certificate->id,
+                'text' => $certificate->name,
+            ];
+        });
+
+        $industries = CourseIndustry::all()->map(function ($industry) {
+            return [
+                'value' => $industry->id,
+                'text' => $industry->name,
+            ];
+        });
+
+        $courseTypes = CourseType::all()->map(function ($courseType) {
+            return [
+                'value' => $courseType->id,
+                'text' => $courseType->name,
+            ];
+        });
+
+        $topics = CourseTopic::all()->map(function ($topic) {
+            return [
+                'value' => $topic->id,
+                'text' => $topic->name,
+            ];
+        });
+
+        return [
+            'certificates' => $certificates,
+            'industries' => $industries,
+            'courseTypes' => $courseTypes,
+            'topics' => $topics,
+        ];
+    }
+
+    private function syncVideoQuiz(Video $video, ?array $quizPayload): void
+    {
+        if (!$quizPayload || !is_array($quizPayload)) {
+            if ($video->quiz) {
+                $video->quiz->questions()->each(function ($question) {
+                    $question->answers()->delete();
+                });
+                $video->quiz->questions()->delete();
+                $video->quiz()->delete();
+            }
+            return;
+        }
+
+        $quizInput = ['quiz' => $quizPayload];
+        $quizValidator = Validator::make($quizInput, [
+            'quiz.title' => 'required|string|max:255',
+            'quiz.description' => 'nullable|string',
+            'quiz.questions' => 'present|array|min:1',
+            'quiz.questions.*.question_text' => 'required|string',
+            'quiz.questions.*.answers' => 'present|array|min:2',
+            'quiz.questions.*.answers.*.answer_text' => 'required|string',
+            'quiz.questions.*.answers.*.is_correct' => 'boolean',
+        ]);
+        $quizData = $quizValidator->validate()['quiz'];
+
+        if ($video->quiz) {
+            $video->quiz->questions()->each(function ($question) {
+                $question->answers()->delete();
+            });
+            $video->quiz->questions()->delete();
+            $video->quiz()->delete();
+        }
+
+        $quiz = $video->quiz()->create([
+            'course_id' => $video->course_id,
+            'title' => $quizData['title'],
+            'description' => $quizData['description'] ?? null,
+        ]);
+
+        foreach ($quizData['questions'] as $questionData) {
+            $question = $quiz->questions()->create([
+                'question_text' => $questionData['question_text'],
+            ]);
+
+            foreach ($questionData['answers'] as $answerData) {
+                $question->answers()->create([
+                    'answer_text' => $answerData['answer_text'],
+                    'is_correct' => $answerData['is_correct'] ?? false,
+                ]);
+            }
+        }
+    }
+
+    private function syncCourseQuiz(Course $course, ?array $quizPayload): void
+    {
+        if (!$quizPayload || !is_array($quizPayload)) {
+            $course->quizzes()->each(function ($quiz) {
+                $quiz->questions()->each(function ($question) {
+                    $question->answers()->delete();
+                });
+                $quiz->questions()->delete();
+                $quiz->delete();
+            });
+            return;
+        }
+
+        $quizInput = ['quiz' => $quizPayload];
+        $quizValidator = Validator::make($quizInput, [
+            'quiz.title' => 'required|string|max:255',
+            'quiz.description' => 'nullable|string',
+            'quiz.questions' => 'present|array|min:1',
+            'quiz.questions.*.question_text' => 'required|string',
+            'quiz.questions.*.answers' => 'present|array|min:2',
+            'quiz.questions.*.answers.*.answer_text' => 'required|string',
+            'quiz.questions.*.answers.*.is_correct' => 'boolean',
+        ]);
+        $quizData = $quizValidator->validate()['quiz'];
+
+        $course->quizzes()->each(function ($quiz) {
+            $quiz->questions()->each(function ($question) {
+                $question->answers()->delete();
+            });
+            $quiz->questions()->delete();
+            $quiz->delete();
+        });
+
+        $quiz = $course->quizzes()->create([
+            'title' => $quizData['title'],
+            'description' => $quizData['description'] ?? null,
+        ]);
+
+        foreach ($quizData['questions'] as $questionData) {
+            $question = $quiz->questions()->create([
+                'question_text' => $questionData['question_text'],
+            ]);
+
+            foreach ($questionData['answers'] as $answerData) {
+                $question->answers()->create([
+                    'answer_text' => $answerData['answer_text'],
+                    'is_correct' => $answerData['is_correct'] ?? false,
+                ]);
+            }
+        }
+    }
+
     public function organizeVideoNotes(Request $request, int $videoId): JsonResponse
     {
         $video = Video::findOrFail($videoId);
@@ -617,6 +1004,13 @@ class CourseController extends Controller
             ]);
         } catch (\Throwable $e) {
             return response()->json(['message' => 'Unexpected error while organizing notes.'], 500);
+        }
+    }
+
+    private function authorizeCourseOwner(Request $request, Course $course): void
+    {
+        if ($request->user()?->id !== $course->user_id) {
+            abort(403, 'Unauthorized action.');
         }
     }
 }

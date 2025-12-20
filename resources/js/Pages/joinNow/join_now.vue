@@ -326,10 +326,23 @@ export default {
             }
             this.paymentProcessing = true;
             this.paymentError = null;
+            const amountInCents = this.getAmountInCents();
+            const billingCycle = this.isYearly ? 'yearly' : 'monthly';
             
             try {
-                const amount = this.getAmountInCents();
-                const intentResponse = await axios.get(`/fetch-intent/${amount}`);
+                let intentResponse;
+                try {
+                    intentResponse = await axios.get(`/fetch-intent/${amountInCents}`);
+                } catch (intentError) {
+                    intentError.paymentStage = 'fetch_intent';
+                    intentError.paymentLogPayload = {
+                        plan: this.selectedPlan,
+                        billingCycle,
+                        amountInCents,
+                        email: this.formData.email,
+                    };
+                    throw intentError;
+                }
                 const clientSecret = intentResponse.data.client_secret;
 
                 const { paymentIntent, error } = await this.stripe.confirmCardPayment(
@@ -348,6 +361,14 @@ export default {
                 );
 
                 if (error) {
+                    error.paymentStage = 'confirm_card_payment';
+                    error.paymentLogPayload = {
+                        plan: this.selectedPlan,
+                        billingCycle,
+                        amountInCents,
+                        email: this.formData.email,
+                        intentId: paymentIntent?.id || null,
+                    };
                     throw error;
                 }
 
@@ -367,14 +388,55 @@ export default {
                         onFinish: () => this.paymentProcessing = false,
                     });
                 } else {
+                    await this.reportPaymentError({
+                        stage: 'confirm_card_payment',
+                        message: `Payment intent returned status ${paymentIntent.status}`,
+                        payload: {
+                            plan: this.selectedPlan,
+                            billingCycle,
+                            amountInCents,
+                            intentId: paymentIntent.id,
+                            status: paymentIntent.status,
+                        },
+                    });
                     this.paymentError = "Payment was not successful. Please try again.";
                     this.paymentProcessing = false;
                 }
 
             } catch (error) {
                 console.error(error);
-                this.paymentError = error.message || "An unexpected error occurred.";
+                const message = error?.response?.data?.error || error?.message || "An unexpected error occurred.";
+                const stage = error?.paymentStage || (error?.config?.url && error.config.url.includes('/fetch-intent')
+                    ? 'fetch_intent'
+                    : 'process_payment');
+                const payload = error?.paymentLogPayload || {
+                    plan: this.selectedPlan,
+                    billingCycle,
+                    amountInCents,
+                    email: this.formData.email,
+                    responseStatus: error?.response?.status,
+                };
+                await this.reportPaymentError({
+                    stage,
+                    message,
+                    code: error?.code || error?.response?.status || null,
+                    payload,
+                });
+                this.paymentError = message;
                 this.paymentProcessing = false;
+            }
+        },
+        async reportPaymentError({ stage, message, code = null, payload = null }) {
+            try {
+                await axios.post('/payment-error-log', {
+                    source: 'frontend',
+                    stage,
+                    message,
+                    code,
+                    payload,
+                });
+            } catch (logError) {
+                console.warn('Failed to log payment error', logError);
             }
         }
     },

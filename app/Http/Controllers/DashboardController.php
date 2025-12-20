@@ -33,7 +33,7 @@ class DashboardController extends Controller
         
 
         // Fetch first 3 courses for "Skills you Follow"
-        $coursesQuery = Course::with([
+        $coursesQuery = Course::withTrashed()->with([
             'courseType',
             'videos' => function ($query) {
                 $query->orderBy('order', 'asc');
@@ -115,11 +115,12 @@ class DashboardController extends Controller
                     'author' => $course->user ? $course->user->name : 'Placeholder Author',
                     'is_favorited' => $course->is_favorited,
                     'progress' => $progress,
+                    'deleted_at' => $course->deleted_at,
                 ];
             });
 
         // Fetch all courses for "New Releases", ordered by latest
-        $allNewReleaseCourses = Course::with([
+        $allNewReleaseCourses = Course::withTrashed()->with([
             'courseType',
             'videos' => function ($query) {
                 $query->orderBy('order', 'asc');
@@ -147,6 +148,7 @@ class DashboardController extends Controller
                     'author' => $course->user ? $course->user->name : 'Placeholder Author',
                     'is_favorited' => $course->is_favorited,
                     'progress' => $progress, // Include progress for new releases as well
+                    'deleted_at' => $course->deleted_at,
                 ];
             });
 

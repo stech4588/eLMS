@@ -5,6 +5,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import JobDetailsModal from './JobDetailsModal.vue';
 import { debounce } from 'lodash';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
     jobs: Object,
@@ -19,15 +20,18 @@ const date = ref(props.filters.date);
 
 const selectedJob = ref(null);
 const isModalVisible = ref(false);
+const modalMode = ref('view');
 
-const openModal = (job) => {
+const openModal = (job, mode = 'view') => {
     selectedJob.value = job;
+    modalMode.value = mode;
     isModalVisible.value = true;
 };
 
 const closeModal = () => {
     isModalVisible.value = false;
     selectedJob.value = null;
+    modalMode.value = 'view';
 };
 
 const truncateDescription = (description, wordCount) => {
@@ -54,6 +58,26 @@ watch([search, skill, date], debounce(() => {
         replace: true,
     });
 }, 300));
+
+const deleteJob = (job) => {
+    if (!job || job.user.id !== props.authUserId) return;
+
+    Swal.fire({
+        title: 'Delete job',
+        text: `Are you sure you want to delete "${job.title}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Delete',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('jobs.destroy', job.id), {
+                preserveScroll: true,
+            });
+        }
+    });
+};
 
 </script>
 
@@ -91,7 +115,20 @@ watch([search, skill, date], debounce(() => {
 
                         <!-- Job Listings -->
                         <div v-if="jobs.data.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div v-for="job in jobs.data" :key="job.id" class="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-200 flex flex-col" @click="openModal(job)">
+                            <div v-for="job in jobs.data" :key="job.id" class="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-200 flex flex-col relative" @click="openModal(job)">
+                                <div v-if="job.user.id === props.authUserId" class="absolute top-4 right-4 flex gap-2 z-10">
+                                    <button @click.stop.prevent="openModal(job, 'edit')" class="icon-btn bg-blue-600 hover:bg-blue-700 text-white" title="Edit job">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                            <path d="M5 18h14v2H5zM15.586 3a2 2 0 012.828 0l1.586 1.586a2 2 0 010 2.828L9 18H5v-4L15.586 3z" />
+                                        </svg>
+                                    </button>
+                                    <button @click.stop.prevent="deleteJob(job)" class="icon-btn bg-red-600 hover:bg-red-700 text-white" title="Delete job">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                            <path d="M9 3v1H4v2h16V4h-5V3H9zm2 5v9H9V8h2zm4 0v9h-2V8h2z" />
+                                            <path d="M7 20c0 1.103.897 2 2 2h6c1.103 0 2-.897 2-2V8H7v12z" />
+                                        </svg>
+                                    </button>
+                                </div>
                                 <div class="flex-grow">
                                     <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ job.title }}</h4>
                                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Posted by: {{ job.user.name }}</p>
@@ -124,6 +161,18 @@ watch([search, skill, date], debounce(() => {
             </div>
         </div>
         
-        <JobDetailsModal :show="isModalVisible" :job="selectedJob" :auth-user-id="props.authUserId" @close="closeModal" />
+        <JobDetailsModal :show="isModalVisible" :job="selectedJob" :auth-user-id="props.authUserId" :initial-mode="modalMode" @close="closeModal" />
     </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+</style>

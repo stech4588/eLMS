@@ -11,6 +11,7 @@ use App\Models\GroupInvitation;
 use App\Mail\GroupInvitationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class GroupController extends Controller
 {
@@ -159,6 +160,51 @@ class GroupController extends Controller
         return redirect()->route('groups.index')->with('success', 'Group created successfully.');
     }
 
+    public function update(Request $request, Group $group)
+    {
+        $this->ensureCreator($group);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $updateData = [
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+        ];
+
+        if ($request->hasFile('profile_picture')) {
+            if ($group->profile_picture && File::exists(public_path($group->profile_picture))) {
+                File::delete(public_path($group->profile_picture));
+            }
+
+            $file = $request->file('profile_picture');
+            $fileName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('group_profile_pictures'), $fileName);
+            $updateData['profile_picture'] = 'group_profile_pictures/' . $fileName;
+        }
+
+        $group->update($updateData);
+
+        return redirect()->route('groups.index')->with('success', 'Group updated successfully.');
+    }
+
+    public function destroy(Group $group)
+    {
+        $this->ensureCreator($group);
+
+        if ($group->profile_picture && File::exists(public_path($group->profile_picture))) {
+            File::delete(public_path($group->profile_picture));
+        }
+
+        $group->members()->detach();
+        $group->delete();
+
+        return redirect()->route('groups.index')->with('success', 'Group deleted successfully.');
+    }
+
     public function updateNotificationSettings(Request $request, Group $group)
     {
         $request->validate([
@@ -175,5 +221,12 @@ class GroupController extends Controller
         }
 
         return response()->json(['message' => 'You are not a member of this group.'], 403);
+    }
+
+    private function ensureCreator(Group $group): void
+    {
+        if (Auth::id() !== $group->creator_id) {
+            abort(403, 'You do not have permission to modify this group.');
+        }
     }
 }

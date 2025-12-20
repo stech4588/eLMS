@@ -1,13 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, usePage, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
     courses: Array,
 });
-
-// const page = usePage(); // Already imported usePage if needed for flash messages directly in script
 
 // Pagination for My Courses
 const currentPageMyCourses = ref(1);
@@ -73,6 +71,54 @@ const toggleFavorite = async (course) => {
     }
 };
 
+const goToEditCourse = (course) => {
+    router.visit(route('editcourses', { course: course.id }));
+};
+
+const showDeleteModal = ref(false);
+const coursePendingDelete = ref(null);
+const isDeleting = ref(false);
+const restoringCourseId = ref(null);
+
+const openDeleteModal = (course) => {
+    coursePendingDelete.value = course;
+    showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    coursePendingDelete.value = null;
+};
+
+const confirmDeleteCourse = () => {
+    if (!coursePendingDelete.value || isDeleting.value) return;
+    isDeleting.value = true;
+    router.delete(route('courses.destroy', { course: coursePendingDelete.value.id }), {
+        preserveScroll: true,
+        onSuccess: () => {
+            closeDeleteModal();
+        },
+        onError: () => {
+            closeDeleteModal();
+        },
+        onFinish: () => {
+            isDeleting.value = false;
+        },
+    });
+};
+
+const restoreCourse = (course) => {
+    if (restoringCourseId.value === course.id) return;
+    restoringCourseId.value = course.id;
+
+    router.post(route('courses.restore', { course: course.id }), {}, {
+        preserveScroll: true,
+        onFinish: () => {
+            restoringCourseId.value = null;
+        },
+    });
+};
+
 </script>
 
 <template>
@@ -103,7 +149,49 @@ const toggleFavorite = async (course) => {
                             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div v-for="course in paginatedMyCourses" :key="course.id">
                                 <Link :href="route('courses.show', { course: course.id })" class="block hover:shadow-lg transition-shadow duration-200 ease-in-out rounded-lg h-full">
-                                    <div class="bg-white rounded-lg shadow-md overflow-hidden my_course_card h-full flex flex-col dark:bg-gray-800">
+                                    <div class="bg-white rounded-lg shadow-md overflow-hidden my_course_card h-full flex flex-col dark:bg-gray-800 relative">
+                                        <div v-if="course.deleted_at" class="absolute top-3 left-3 z-10">
+                                            <span class="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white bg-red-600 rounded-full">
+                                                Temporarily Deleted
+                                            </span>
+                                        </div>
+                                        <div class="absolute top-3 right-3 flex gap-2 z-10">
+                                            <button
+                                                v-if="course.deleted_at"
+                                                class="icon-btn bg-green-600 hover:bg-green-700 text-white"
+                                                :disabled="restoringCourseId === course.id"
+                                                @click.stop.prevent="restoreCourse(course)"
+                                            >
+                                                <svg v-if="restoringCourseId !== course.id" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                                    <path d="M12 5v3l4-4-4-4v3c-4.418 0-8 3.582-8 8 0 1.305.314 2.536.867 3.619l1.496-1.496C6.131 11.779 6 10.912 6 10c0-3.309 2.691-6 6-6zm7.133.381L17.637 6.877C17.869 8.221 18 9.088 18 10c0 3.309-2.691 6-6 6v-3l-4 4 4 4v-3c4.418 0 8-3.582 8-8 0-1.305-.314-2.536-.867-3.619z"/>
+                                                </svg>
+                                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5-5-5-5v4a12 12 0 00-12 12h4z"></path>
+                                                </svg>
+                                            </button>
+                                            <button
+                                                v-else
+                                                class="icon-btn bg-blue-600 hover:bg-blue-700 text-white"
+                                                @click.stop.prevent="goToEditCourse(course)"
+                                                title="Edit course"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                                    <path d="M5 18h14v2H5zM15.586 3a2 2 0 012.828 0l1.586 1.586a2 2 0 010 2.828L9 18H5v-4L15.586 3z" />
+                                                </svg>
+                                            </button>
+                                            <button
+                                                v-if="!course.deleted_at"
+                                                class="icon-btn bg-red-600 hover:bg-red-700 text-white"
+                                                @click.stop.prevent="openDeleteModal(course)"
+                                                title="Delete course"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                                    <path d="M9 3v1H4v2h16V4h-5V3H9zm2 5v9H9V8h2zm4 0v9h-2V8h2z" />
+                                                    <path d="M7 20c0 1.103.897 2 2 2h6c1.103 0 2-.897 2-2V8H7v12z" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                         <div class="relative w-full h-48">
                                             <img v-if="course.thumbnail_url" :src="course.thumbnail_url" alt="Course thumbnail"
                                                 class="absolute inset-0 w-full h-full object-cover">
@@ -155,6 +243,28 @@ const toggleFavorite = async (course) => {
                 </div>
             </div>
         </div>
+
+        <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+            <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Delete course</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Are you sure you want to delete <span class="font-semibold">{{ coursePendingDelete ? coursePendingDelete.title : '' }}</span>? This action cannot be undone.
+                </p>
+                <div class="flex justify-end gap-3">
+                    <button type="button" class="px-4 py-2 rounded-md border border-gray-300 text-gray-700" @click="closeDeleteModal">
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        class="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-70"
+                        :disabled="isDeleting"
+                        @click="confirmDeleteCourse"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
     </AuthenticatedLayout>
 </template>
 
@@ -178,7 +288,18 @@ const toggleFavorite = async (course) => {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2; /* number of lines to show */
     -webkit-box-orient: vertical;
+}
+
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 </style>

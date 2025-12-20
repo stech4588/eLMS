@@ -84,6 +84,10 @@ const props = defineProps({
     show: Boolean,
     job: Object,
     authUserId: Number,
+    initialMode: {
+        type: String,
+        default: 'view',
+    },
 });
 
 const emit = defineEmits(['close']);
@@ -115,6 +119,18 @@ watch(() => props.job, (j) => {
         form.apply_url = j.apply_url || '';
         form.contact_email = j.contact_email || '';
         form.contact_phone = j.contact_phone || '';
+    }
+});
+
+watch(() => props.show, (show) => {
+    if (show) {
+        if (props.initialMode === 'edit' && isOwner.value) {
+            isEditing.value = true;
+        } else {
+            isEditing.value = false;
+        }
+    } else {
+        isEditing.value = false;
     }
 });
 
