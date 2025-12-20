@@ -102,6 +102,9 @@ Route::get('/coursess', [CourseController::class, 'myCourses'])
 Route::get('/addnewcourses', [CourseController::class, 'create'])
     ->middleware(['auth', 'verified'])
     ->name('addnewcourses');
+Route::get('/editcourses/{course}', [CourseController::class, 'edit'])
+    ->middleware(['auth', 'verified'])
+    ->name('editcourses');
 // Route::get('/leadershipAndManagement', function () {
 //     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
 // })->middleware(['auth', 'verified'])->name('leadershipAndManagement');
@@ -160,6 +163,8 @@ Route::middleware('auth')->group(function () {
     // Course routes
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
+    Route::post('/courses/{course}/update-with-videos', [CourseController::class, 'updateWithVideos'])->name('courses.updateWithVideos');
+    Route::post('/courses/{course}/restore', [CourseController::class, 'restore'])->name('courses.restore');
     Route::post('/videos/{video}/organize-notes', [CourseController::class, 'organizeVideoNotes'])->name('videos.organizeNotes');
 
 
@@ -251,6 +256,8 @@ Route::middleware('auth')->group(function () {
     // Group routes
     Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
     Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::put('/groups/{group}', [GroupController::class, 'update'])->name('groups.update');
+    Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
     Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
     Route::post('/groups/{group}/invite', [GroupController::class, 'invite'])->name('groups.invite');
     Route::get('/groups/{group}/chat', [GroupController::class, 'chat'])->name('groups.chat');
@@ -300,7 +307,8 @@ Route::get('/courses/{course}/play/{video?}', [CourseController::class, 'play'])
 
 Route::get('/courses/{course}/related', [CourseController::class, 'related'])->name('courses.related');
 
-    Route::get('/fetch-intent/{amount}', [StripeController::class, 'fetchIntent']);
+Route::get('/fetch-intent/{amount}', [StripeController::class, 'fetchIntent']);
+Route::post('/payment-error-log', [StripeController::class, 'logPaymentError']);
     //Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
 // Route for toggling course favorite status
 Route::post('/courses/{course}/favorite', [CourseFavoriteController::class, 'toggle'])

@@ -24,6 +24,37 @@ const isLoading = ref(false);
 const isDark = ref(false);
 const meta = computed(() => page.props.meta || {});
 const notifications = ref([]);
+const checkingPagePermission = ref(false);
+const hasPageAccess = ref(true);
+const permissionMessage = ref('');
+const pagePermissionMap = {
+    'Dashboard': 'dashboardView',
+    'careerJourney/myCareerJourney': 'careerJourneyView',
+    'Community/Index': 'communityView',
+    'Groups/Index': 'communityView',
+    'Groups/Chat': 'communityView',
+    'library/mylibrary': 'libraryView',
+    'content/mycontent': 'contentView',
+    'Courses/myCourses': 'mycourses',
+    'addCourses/addNewCourses': 'addnewcourses',
+    'help/help': 'helpView',
+    'Admin/Marketing/Index': 'marketingmanagement',
+    'Admin/CommunitySettings': 'communitySettingsView',
+    'CourseManagement/Index': 'coursemanagement',
+    'Admin/MetaTags/Index': 'metatagsUpdate',
+    'Admin/MetaTags/Create': 'metatagsUpdate',
+    'Admin/MetaTags/Edit': 'metatagsUpdate',
+    'Admin/Pricings/Index': 'pricingUpdate',
+    'Admin/Pricings/Create': 'pricingUpdate',
+    'Admin/Pricings/Edit': 'pricingUpdate',
+    'Admin/Pricings/Show': 'pricingUpdate',
+    'Admin/Instructors/Index': 'instructorListing',
+    'Admin/Instructors/Show': 'instructorListing',
+    'userListing/userlist': 'userView',
+    'userListing/EditUser': 'userView',
+    // 'Jobs/Index': 'jobPost',
+    // 'Jobs/Create': 'jobPost',
+};
 
 watch(isSidebarOpen, (value) => {
     if (typeof window !== 'undefined') {
@@ -107,6 +138,43 @@ onMounted(() => {
     window.showPageLoader = () => { isLoading.value = true; };
     window.hidePageLoader = () => { isLoading.value = false; };
 });
+
+const evaluatePagePermission = async () => {
+    if (!user) {
+        hasPageAccess.value = true;
+        permissionMessage.value = '';
+        checkingPagePermission.value = false;
+        return;
+    }
+
+    const requiredPermission = pagePermissionMap[page.component];
+
+    if (!requiredPermission) {
+        hasPageAccess.value = true;
+        permissionMessage.value = '';
+        checkingPagePermission.value = false;
+        return;
+    }
+
+    checkingPagePermission.value = true;
+
+    try {
+        await fetchPermissions();
+        hasPageAccess.value = hasPermission(requiredPermission);
+        permissionMessage.value = hasPageAccess.value
+            ? ''
+            : 'You do not have permission to view this page.';
+    } catch (error) {
+        hasPageAccess.value = false;
+        permissionMessage.value = 'Unable to verify permissions. Please try again.';
+    } finally {
+        checkingPagePermission.value = false;
+    }
+};
+
+watch(() => page.component, () => {
+    evaluatePagePermission();
+}, { immediate: true });
 
 onUnmounted(() => {
     window.removeEventListener('new-notification', fetchNotifications);
@@ -353,7 +421,23 @@ onMounted(() => {
                             <div id="shadow3"></div>
                         </div>
                     </div>
-                    <slot :is-sidebar-open="isSidebarOpen" :is-player-page="isPlayerPage" />
+                    <div v-if="checkingPagePermission" class="w-full py-12">
+                        <div class="max-w-4xl mx-auto text-center text-gray-700 dark:text-gray-300">
+                            Checking permissions...
+                        </div>
+                    </div>
+                    <div v-else-if="!hasPageAccess" class="w-full py-12">
+                        <div class="max-w-4xl mx-auto text-center bg-white dark:bg-[#1A2C38] border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-8">
+                            <h2 class="text-2xl font-semibold text-red-600 dark:text-red-400">Access Denied</h2>
+                            <p class="mt-4 text-gray-700 dark:text-gray-300">
+                                {{ permissionMessage || 'You do not have permission to view this page.' }}
+                            </p>
+                            <Link :href="route('dashboard')" class="mt-6 inline-block bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition">
+                                Go to Dashboard
+                            </Link>
+                        </div>
+                    </div>
+                    <slot v-else :is-sidebar-open="isSidebarOpen" :is-player-page="isPlayerPage" />
                 </main>
             </div>
         </div>
