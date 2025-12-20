@@ -1,5 +1,5 @@
 <template>
-    <Head title="Add New Video" />
+    <Head :title="pageTitle" />
 
     <AuthenticatedLayout>
 
@@ -87,7 +87,7 @@
                         <!-- Step 1: Upload Video -->
                         <div v-if="currentStep === 1" class="text-center">
                             <div class="upload_header dark:bg-[#1A2C38] dark:text-white">
-                                <div class="Upload_text">Upload Course</div>
+                                <div class="Upload_text">{{ isEditingCourse ? 'Edit Course' : 'Upload Course' }}</div>
                                 <!-- <div class="upload_left_icons">
                                     <img src="/images/guide_icon.svg" />
                                     <img src="/images/cross_icon.svg" />
@@ -407,14 +407,18 @@
 
                                             <!-- Visual Preview Area -->
                                             <div class="">
-                                                <template v-if="!videosData[currentEditingVideoIndex] || !videosData[currentEditingVideoIndex].videoFile">
+                                                <template v-if="!videosData[currentEditingVideoIndex] || (!videosData[currentEditingVideoIndex].videoFile && !videosData[currentEditingVideoIndex].videoFilePreview)">
                                                     <!-- Show Upload Video Button if no video in form -->
-
-                                                          <button @click="triggerVideoUploadFromRightPanel" class="px-4 py-2 text-black flex items-center justify-center w-full bg-[#9fd3f5] add_course_dark_input_box" style="height: 150px; width: 100%;">
-                                                              Upload Video for Video {{ currentEditingVideoIndex + 1 }}
-                                                           </button>
-                                                           <p v-if="videosData[currentEditingVideoIndex]?.errors?.videoFile" class="text-red-500 text-sm mt-1 text-center">{{ videosData[currentEditingVideoIndex].errors.videoFile }}</p>
-
+                                                    <button
+                                                        @click="triggerVideoUploadFromRightPanel"
+                                                        class="px-4 py-2 text-black flex items-center justify-center w-full bg-[#9fd3f5] add_course_dark_input_box"
+                                                        style="height: 150px; width: 100%;"
+                                                    >
+                                                        Upload Video for Video {{ currentEditingVideoIndex + 1 }}
+                                                    </button>
+                                                    <p v-if="videosData[currentEditingVideoIndex]?.errors?.videoFile" class="text-red-500 text-sm mt-1 text-center">
+                                                        {{ videosData[currentEditingVideoIndex].errors.videoFile }}
+                                                    </p>
                                                 </template>
                                                 <template v-else>
                                                     <!-- Video is in form, now check for thumbnail -->
@@ -427,23 +431,44 @@
                                                         <!-- Fallback if videoPreview isn't ready but form.video is -->
                                                         <div v-else class="flex items-center justify-center w-full bg-gray-100" style="height: 170px;">Video processing...</div>
                                                     </template>
+                                                    <button
+                                                        type="button"
+                                                        @click="triggerVideoUploadFromRightPanel"
+                                                        class="mt-3 w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                                    >
+                                                        Replace Video
+                                                    </button>
                                                 </template>
                                             </div>
 
                                             <!-- Details Section (Video Link & File Name) - only if video is present in form -->
-                                            <div v-if="videosData[currentEditingVideoIndex] && videosData[currentEditingVideoIndex].videoFile" style="background-color: #BEBCBC; font-size: 10px; padding: 5px;" class="add_course_dark_input_box">
+                                            <div
+                                                v-if="videosData[currentEditingVideoIndex] && (videosData[currentEditingVideoIndex].videoFile || videosData[currentEditingVideoIndex].videoFilePreview)"
+                                                style="background-color: #BEBCBC; font-size: 10px; padding: 5px;"
+                                                class="add_course_dark_input_box"
+                                            >
                                                 <div class="flex justify-between" >
                                                     Video link
                                                     <img src="/images/copy_icon.svg" alt="Copy Icon" class=" cursor-pointer" />
                                                 </div>
                                                 <div style="color: #2C15F5; word-break: break-all;">
-                                                    {{ videosData[currentEditingVideoIndex].videoFile.name ? 'vid.example.com/' + videosData[currentEditingVideoIndex].videoFile.name : 'Generating link...' }}
+                                                    <template v-if="videosData[currentEditingVideoIndex].videoFile">
+                                                        {{ 'vid.example.com/' + videosData[currentEditingVideoIndex].videoFile.name }}
+                                                    </template>
+                                                    <template v-else>
+                                                        {{ videosData[currentEditingVideoIndex].videoFilePreview }}
+                                                    </template>
                                                 </div>
                                                 <div >
                                                     File Name
                                                 </div>
                                                 <div style="word-break: break-all;">
-                                                    {{ videosData[currentEditingVideoIndex].videoFile.name }}
+                                                    <template v-if="videosData[currentEditingVideoIndex].videoFile">
+                                                        {{ videosData[currentEditingVideoIndex].videoFile.name }}
+                                                    </template>
+                                                    <template v-else>
+                                                        {{ videosData[currentEditingVideoIndex].videoFilePreview?.split('/').pop() }}
+                                                    </template>
                                                 </div>
                                             </div>
                                         </div>
@@ -542,7 +567,7 @@
         </div>
 
         <!-- Video Quiz Builder Modal -->
-        <div v-if="showVideoQuizModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="closeVideoQuizModal">
+        <div v-if="showVideoQuizModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="closeVideoQuizModal" style="z-index:500;">
             <div class="p-6 bg-white rounded-lg shadow-xl w-full" style="max-width: 800px; max-height: 85vh;">
                 <h3 class="mb-4 text-xl font-semibold">{{ isEditingVideoQuiz ? 'Edit' : 'Add' }} Quiz for Video {{ currentEditingVideoIndex + 1 }}</h3>
                 <div class="max-h-[65vh] overflow-y-auto pr-1">
@@ -605,7 +630,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm, router, Link } from '@inertiajs/vue3';
+import { Head, router, Link } from '@inertiajs/vue3';
 import { ref, reactive, onMounted, computed, defineProps, watch } from 'vue';
 import Swal from 'sweetalert2';
 
@@ -626,6 +651,22 @@ const props = defineProps({
         type: Array,
         default: () => []
     },
+    course: {
+        type: Object,
+        default: null,
+    },
+    courseVideos: {
+        type: Array,
+        default: () => [],
+    },
+    courseQuiz: {
+        type: Object,
+        default: null,
+    },
+    isEditing: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const errors = ref({});
@@ -634,7 +675,7 @@ const uploadedVideo = ref(null);
 const videoPreview = ref(null);
 const thumbnailPreview = ref(null);
 
-const form = useForm({
+const form = reactive({
     course_title: '',
     course_description: '',
     additional_description: '',
@@ -646,6 +687,10 @@ const form = useForm({
     course_price: '',
     visibility: 'private',
 });
+
+const isEditingCourse = computed(() => !!props.course);
+const pageTitle = computed(() => isEditingCourse.value ? 'Edit Course' : 'Add New Video');
+const removedVideoIds = ref([]);
 
 const quizForm = reactive({
     title: '',
@@ -717,6 +762,34 @@ const selectedOptions = reactive({
     course_type: { value: '', text: '' }
 });
 
+const getOptionsForDropdown = (dropdownName) => {
+    const sources = {
+        certificates: props.certificates || [],
+        topic: props.topics || [],
+        industry: props.industries || [],
+        course_type: props.courseTypes || [],
+    };
+    return sources[dropdownName] || [];
+};
+
+const setSelectedOptionById = (dropdownName, value) => {
+    const isEmptyValue = value === null || value === undefined || value === '';
+    if (isEmptyValue) {
+        selectedOptions[dropdownName] = { value: '', text: '' };
+        form[dropdownName] = '';
+        return;
+    }
+    const options = getOptionsForDropdown(dropdownName);
+    const match = options.find((option) => String(option.value) === String(value));
+    if (match) {
+        selectedOptions[dropdownName] = { value: match.value, text: match.text };
+        form[dropdownName] = match.value;
+    } else {
+        selectedOptions[dropdownName] = { value: '', text: '' };
+        form[dropdownName] = '';
+    }
+};
+
 const toggleDropdown = (dropdownName) => {
     activeDropdown.value = activeDropdown.value === dropdownName ? null : dropdownName;
 };
@@ -729,6 +802,87 @@ const selectOption = (dropdownName, value, text) => {
 
 const getSelectedText = (dropdownName) => {
     return selectedOptions[dropdownName].text;
+};
+
+const initializeEditingState = () => {
+    if (!props.course) {
+        return;
+    }
+
+    form.course_title = props.course.title || '';
+    form.course_description = props.course.description || '';
+    form.additional_description = props.course.additional_description || '';
+    form.recomendations = props.course.recomendations || '';
+    form.course_price = props.course.price ?? '';
+    form.certificates = props.course.certificate_id ?? '';
+    form.industry = props.course.industry_id ?? '';
+    form.course_type = props.course.course_type_id ?? '';
+    form.topic = props.course.topic_id ?? '';
+
+    setSelectedOptionById('certificates', props.course.certificate_id);
+    setSelectedOptionById('industry', props.course.industry_id);
+    setSelectedOptionById('course_type', props.course.course_type_id);
+    setSelectedOptionById('topic', props.course.topic_id);
+
+    removedVideoIds.value = [];
+
+    const orderedVideos = (props.courseVideos || [])
+        .slice()
+        .sort((a, b) => ((a.order ?? 0) - (b.order ?? 0)));
+
+    videosData.value = orderedVideos.map((video, index) => ({
+        id: video.id,
+        title: video.title || '',
+        description: video.description || '',
+        takeaway_notes: video.takeaway_notes || '',
+        videoFile: null,
+        videoFilePreview: video.video_url || null,
+        thumbnailFile: null,
+        thumbnailFilePreview: video.thumbnail_url || null,
+        playlist: '',
+        visibility: 'private',
+        duration_in_seconds: video.duration_in_seconds ?? null,
+        order: video.order ?? index + 1,
+        errors: {},
+        quiz: video.quiz
+            ? {
+                title: video.quiz.title || '',
+                description: video.quiz.description || '',
+                questions: (video.quiz.questions || []).map((question) => ({
+                    question_text: question.question_text || '',
+                    answers: (question.answers || []).map((answer) => ({
+                        answer_text: answer.answer_text || '',
+                        is_correct: !!answer.is_correct,
+                    })),
+                })),
+            }
+            : null,
+    }));
+
+    if (videosData.value.length > 0) {
+        currentEditingVideoIndex.value = 0;
+        populateVideoDetailsForm(0);
+    } else {
+        currentEditingVideoIndex.value = -1;
+    }
+
+    if (props.courseQuiz) {
+        quizForm.title = props.courseQuiz.title || '';
+        quizForm.description = props.courseQuiz.description || '';
+        quizForm.questions = (props.courseQuiz.questions || []).map((question) => ({
+            question_text: question.question_text || '',
+            answers: (question.answers || []).map((answer) => ({
+                answer_text: answer.answer_text || '',
+                is_correct: !!answer.is_correct,
+            })),
+        }));
+    } else {
+        quizForm.title = '';
+        quizForm.description = '';
+        quizForm.questions = [];
+    }
+
+    currentStep.value = 1;
 };
 
 const saveCurrentVideoDetails = () => {
@@ -806,7 +960,7 @@ const handleVideoUpload = async (e) => {
 
         if (videosData.value[currentEditingVideoIndex.value]) {
             const currentVideo = videosData.value[currentEditingVideoIndex.value];
-            if (currentVideo.videoFilePreview) {
+            if (currentVideo.videoFilePreview && currentVideo.videoFilePreview.startsWith('blob:')) {
                 URL.revokeObjectURL(currentVideo.videoFilePreview);
             }
             currentVideo.videoFile = file;
@@ -843,7 +997,7 @@ const handleThumbnailUpload = (e) => {
     const file = e.target.files[0];
     if (file && currentEditingVideoIndex.value >= 0 && videosData.value[currentEditingVideoIndex.value]) {
         const currentVideo = videosData.value[currentEditingVideoIndex.value];
-        if (currentVideo.thumbnailFilePreview) {
+        if (currentVideo.thumbnailFilePreview && currentVideo.thumbnailFilePreview.startsWith('blob:')) {
             URL.revokeObjectURL(currentVideo.thumbnailFilePreview);
         }
         currentVideo.thumbnailFile = file;
@@ -916,11 +1070,11 @@ const nextStep = () => {
                 video.errors.description = 'Description is required.';
                 hasErrors = true;
             }
-            if (!video.videoFile) {
+            if (!video.videoFile && !video.videoFilePreview) {
                 video.errors.videoFile = 'Video file is required.';
                 hasErrors = true;
             }
-            if (!video.thumbnailFile) {
+            if (!video.thumbnailFile && !video.thumbnailFilePreview) {
                 video.errors.thumbnailFile = 'Thumbnail file is required.';
                 hasErrors = true;
             }
@@ -1036,7 +1190,7 @@ const submitForm = async () => {
     // Append course details
     formData.append('title', form.course_title);
     formData.append('description', form.course_description);
-    // formData.append('price', form.course_price);
+    formData.append('price', form.course_price || 0);
     // Add other course fields from the 'form' object as necessary
     formData.append('additional_description', form.additional_description);
     formData.append('recomendations', form.recomendations);
@@ -1048,13 +1202,17 @@ const submitForm = async () => {
     // Append videos data
     if (videosData.value && videosData.value.length > 0) {
         videosData.value.forEach((video, index) => {
+            if (video.id) {
+                formData.append(`videos[${index}][id]`, video.id);
+            }
             formData.append(`videos[${index}][title]`, video.title || '');
             formData.append(`videos[${index}][description]`, video.description || '');
             formData.append(`videos[${index}][takeaway_notes]`, video.takeaway_notes || '');
             if (video.videoFile instanceof File) {
                 formData.append(`videos[${index}][videoFile]`, video.videoFile);
             }
-            formData.append(`videos[${index}][order]`, (index + 1).toString());
+            const orderValue = index + 1;
+            formData.append(`videos[${index}][order]`, orderValue.toString());
             // Append duration if available
             if (video.duration_in_seconds !== null && video.duration_in_seconds !== undefined) {
                 formData.append(`videos[${index}][duration_in_seconds]`, video.duration_in_seconds.toString());
@@ -1084,6 +1242,12 @@ const submitForm = async () => {
         formData.append('videos', JSON.stringify([]));
     }
 
+    if (removedVideoIds.value.length > 0) {
+        removedVideoIds.value.forEach((id) => {
+            formData.append('removed_video_ids[]', id);
+        });
+    }
+
     if (quizForm.title) {
         formData.append('quiz[title]', quizForm.title);
         formData.append('quiz[description]', quizForm.description);
@@ -1096,19 +1260,27 @@ const submitForm = async () => {
         });
     }
 
+    const submissionRoute = isEditingCourse.value && props.course
+        ? route('courses.updateWithVideos', { course: props.course.id })
+        : route('courses.storeWithVideos');
+
     try {
-        router.post(route('courses.storeWithVideos'), formData, {
+        router.post(submissionRoute, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
-            onSuccess: (page) => {
-                // Inertia will automatically follow the redirect from the backend.
-                // A client-side alert for success can be shown if desired,
-                // but the flashed message on the redirected page is often preferred.
-                // console.log('Form submitted successfully, server responded with:', page);
-                // If you have a global notification system that reads from $page.props.flash, it would pick up the success message.
-                // For now, let's assume the redirect and server-flashed message are sufficient.
-                router.visit(route('coursess')); // This is likely redundant now.
+            onSuccess: () => {
+                removedVideoIds.value = [];
+                Swal.fire({
+                    icon: 'success',
+                    title: isEditingCourse.value ? 'Course updated!' : 'Course created!',
+                    text: 'You will be redirected to My Courses.',
+                    timer: 1800,
+                    showConfirmButton: false,
+                });
+                setTimeout(() => {
+                    router.visit(route('coursess'));
+                }, 1200);
             },
             onError: (errors) => {
                 console.error('Error submitting form:', errors);
@@ -1171,6 +1343,10 @@ const removeVideo = (index) => {
                 URL.revokeObjectURL(videoToRemove.thumbnailFilePreview);
             }
 
+            if (videoToRemove.id) {
+                removedVideoIds.value = Array.from(new Set([...removedVideoIds.value, videoToRemove.id]));
+            }
+
             const wasEditingTheRemovedVideo = currentEditingVideoIndex.value === index;
             const isEditingAfterTheRemovedVideo = currentEditingVideoIndex.value > index;
 
@@ -1192,6 +1368,16 @@ const removeVideo = (index) => {
         }
     });
 };
+
+watch(
+    () => [props.course, props.courseVideos, props.courseQuiz, props.certificates, props.industries, props.courseTypes, props.topics],
+    () => {
+        if (props.course) {
+            initializeEditingState();
+        }
+    },
+    { immediate: true }
+);
 
 const addQuiz = () => {
     quizForm.title = 'New Quiz';

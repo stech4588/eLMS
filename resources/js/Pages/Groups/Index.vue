@@ -7,7 +7,7 @@
                 <h2 class="font-semibold text-xl text-white dark:text-gray-200 leading-tight">Groups</h2>
                 <div class="flex items-center gap-4 w-full md:w-auto">
                     <input type="text" v-model="search" placeholder="Search for groups..." class="block w-full rounded-md shadow-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    <button @click="showCreateGroupPopup = true" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150 flex-shrink-0">
+                    <button @click="openCreateGroupPopup" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150 flex-shrink-0">
                         Create Group
                     </button>
                 </div>
@@ -18,7 +18,20 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div v-if="groups.data.length > 0">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div v-for="group in groups.data" :key="group.id" class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                        <div v-for="group in groups.data" :key="group.id" class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col relative">
+                            <div v-if="group.creator.id === authUserId" class="absolute top-3 right-3 flex gap-2 z-10">
+                                <button @click.stop.prevent="openEditGroupPopup(group)" class="icon-btn bg-blue-600 hover:bg-blue-700 text-white" title="Edit group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                        <path d="M5 18h14v2H5zM15.586 3a2 2 0 012.828 0l1.586 1.586a2 2 0 010 2.828L9 18H5v-4L15.586 3z" />
+                                    </svg>
+                                </button>
+                                <button @click.stop.prevent="deleteGroup(group)" class="icon-btn bg-red-600 hover:bg-red-700 text-white" title="Delete group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                        <path d="M9 3v1H4v2h16V4h-5V3H9zm2 5v9H9V8h2zm4 0v9h-2V8h2z" />
+                                        <path d="M7 20c0 1.103.897 2 2 2h6c1.103 0 2-.897 2-2V8H7v12z" />
+                                    </svg>
+                                </button>
+                            </div>
                             <div class="p-6 flex-grow">
                                 <div class="flex items-center space-x-4 mb-4">
                                     <img :src="group.profile_picture_url" alt="Group Avatar" class="w-16 h-16 rounded-full object-cover flex-shrink-0">
@@ -30,7 +43,7 @@
                                 <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">{{ group.description }}</p>
                             </div>
                             <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-b-lg flex justify-end items-center space-x-2">
-                                <button v-if="group.creator.id === $page.props.auth.user.id" @click="openInvitePopup(group)" class="px-3 py-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition">Invite</button>
+                                <button v-if="group.creator.id === authUserId" @click="openInvitePopup(group)" class="px-3 py-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition">Invite</button>
                                 
                                 <Link v-if="group.is_member" :href="route('groups.chat', group.id)" class="px-3 py-1 text-sm font-semibold bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition">Chat</Link>
                                 <button v-else @click="joinGroup(group.id)" class="px-3 py-1 text-sm font-semibold bg-green-600 text-white rounded-md hover:bg-green-700 transition">Join</button>
@@ -60,7 +73,7 @@
             </div>
         </div>
 
-        <CreateGroupPopup :show="showCreateGroupPopup" @close="showCreateGroupPopup = false" />
+        <CreateGroupPopup :show="showCreateGroupPopup" :group="editingGroup" @close="closeGroupPopup" />
         <GroupDetailsPopup :show="showDetailsPopup" :group="selectedGroup" @close="showDetailsPopup = false" />
         <InviteMemberPopup :show="showInvitePopup" :group="selectedGroup" @close="showInvitePopup = false" />
     </AuthenticatedLayout>
@@ -68,8 +81,9 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
+import { ref, watch, computed } from 'vue';
+import Swal from 'sweetalert2';
 import CreateGroupPopup from './CreateGroupPopup.vue';
 import GroupDetailsPopup from './GroupDetailsPopup.vue';
 import InviteMemberPopup from './InviteMemberPopup.vue';
@@ -85,6 +99,9 @@ const showCreateGroupPopup = ref(false);
 const showDetailsPopup = ref(false);
 const showInvitePopup = ref(false);
 const selectedGroup = ref(null);
+const editingGroup = ref(null);
+const page = usePage();
+const authUserId = computed(() => page.props.auth.user?.id ?? null);
 
 watch(search, (value) => {
     router.get(route('groups.index'), { search: value }, {
@@ -108,4 +125,53 @@ const joinGroup = (groupId) => {
         preserveScroll: true,
     });
 };
+
+const openCreateGroupPopup = () => {
+    editingGroup.value = null;
+    showCreateGroupPopup.value = true;
+};
+
+const openEditGroupPopup = (group) => {
+    editingGroup.value = group;
+    showCreateGroupPopup.value = true;
+};
+
+const closeGroupPopup = () => {
+    showCreateGroupPopup.value = false;
+    editingGroup.value = null;
+};
+
+const deleteGroup = (group) => {
+    if (!group || group.creator.id !== authUserId.value) {
+        return;
+    }
+
+    Swal.fire({
+        title: 'Delete group',
+        text: `Are you sure you want to delete "${group.name}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Delete',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('groups.destroy', group.id), {
+                preserveScroll: true,
+            });
+        }
+    });
+};
 </script>
+
+<style scoped>
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+</style>
