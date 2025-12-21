@@ -176,8 +176,8 @@ export default {
     },
     data() {
         return {
-            pk: 'pk_test_51RZFkqPF8BzoPAVhNu7Lpqi40TnbQETCQGyiisJyPfztajSTaZdBOfXem930W375gIMhjyaLK9VAJOMk4mUb9NNc009zifzCDs',
             stripe: null,
+            stripePromise: null,
             elements: null,
             cardNumber: null,
             cardExpiry: null,
@@ -204,7 +204,11 @@ export default {
         };
     },
     async mounted() {
-        this.stripe = await loadStripe(this.pk);
+        try {
+            await this.initializeStripeInstance();
+        } catch (error) {
+            console.error('Stripe initialization failed:', error);
+        }
     },
     computed: {
         user() {
@@ -248,9 +252,15 @@ export default {
         togglePasswordVisibility() {
             this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
         },
-        selectPlan(plan) {
+        async selectPlan(plan) {
             this.selectedPlan = plan;
             this.showPaymentForm = true;
+            try {
+                await this.initializeStripeInstance();
+            } catch (error) {
+                console.error('Unable to initialize Stripe:', error);
+                return;
+            }
             this.$nextTick(() => {
                 this.initializeStripeElements();
                 const paymentForm = this.$el.querySelector('.payment-form');
@@ -266,12 +276,60 @@ export default {
             const price = planData[billingType] ? Number(planData[billingType].price) : 0;
             return Math.round(price * 100); // Stripe expects amount in cents
         },
-        handleBillingCycleChange() {
-            if(this.showPaymentForm) {
-                 this.initializeStripeElements();
+        async handleBillingCycleChange() {
+            if(!this.showPaymentForm) {
+                return;
+            }
+            try {
+                await this.initializeStripeInstance();
+                this.initializeStripeElements();
+            } catch (error) {
+                console.error('Unable to refresh Stripe elements:', error);
             }
         },
+        destroyStripeElements() {
+            if (this.cardNumber) {
+                this.cardNumber.destroy();
+                this.cardNumber = null;
+            }
+            if (this.cardExpiry) {
+                this.cardExpiry.destroy();
+                this.cardExpiry = null;
+            }
+            if (this.cardCvc) {
+                this.cardCvc.destroy();
+                this.cardCvc = null;
+            }
+        },
+        async initializeStripeInstance() {
+            if (this.stripe) {
+                return this.stripe;
+            }
+
+            const stripeConfig = this.$page && this.$page.props && this.$page.props.stripe
+                ? this.$page.props.stripe
+                : null;
+            const publishableKey = stripeConfig ? stripeConfig.key : null;
+
+            if (!publishableKey) {
+                const message = 'Payment configuration error. Please contact support.';
+                this.paymentError = message;
+                throw new Error(message);
+            }
+
+            if (!this.stripePromise) {
+                this.stripePromise = loadStripe(publishableKey);
+            }
+
+            this.stripe = await this.stripePromise;
+            return this.stripe;
+        },
         initializeStripeElements() {
+            if (!this.stripe) {
+                return;
+            }
+
+            this.destroyStripeElements();
             this.elements = this.stripe.elements();
             const elementStyles = {
                 base: {
@@ -324,6 +382,19 @@ export default {
             if (!this.validateForm()) {
                 return;
             }
+
+            try {
+                await this.initializeStripeInstance();
+            } catch (error) {
+                console.error('Stripe initialization failed before processing payment:', error);
+                return;
+            }
+
+            if (!this.cardNumber) {
+                this.paymentError = "Please select a plan to load the payment form.";
+                return;
+            }
+
             this.paymentProcessing = true;
             this.paymentError = null;
             const amountInCents = this.getAmountInCents();
@@ -441,15 +512,7 @@ export default {
         }
     },
     beforeDestroy() {
-        if (this.cardNumber) {
-            this.cardNumber.destroy();
-        }
-        if (this.cardExpiry) {
-            this.cardExpiry.destroy();
-        }
-        if (this.cardCvc) {
-            this.cardCvc.destroy();
-        }
+        this.destroyStripeElements();
     }
 }
 </script>

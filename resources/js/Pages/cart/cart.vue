@@ -108,7 +108,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { onMounted, ref, onUnmounted, computed } from 'vue';
 import { loadStripe } from '@stripe/stripe-js';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 
 const countdown = ref({
     days: 2,
@@ -154,6 +154,13 @@ const props = defineProps({
     course: Object
 });
 
+const page = usePage();
+const stripePublishableKey = computed(() => {
+    return page.props && page.props.stripe && page.props.stripe.key
+        ? page.props.stripe.key
+        : null;
+});
+
 const showFullDescription = ref(false);
 
 const truncatedDescription = computed(() => {
@@ -171,16 +178,26 @@ const visibleVideos = computed(() => {
     return [];
 });
 
-const pk = 'pk_test_51RZFkqPF8BzoPAVhNu7Lpqi40TnbQETCQGyiisJyPfztajSTaZdBOfXem930W375gIMhjyaLK9VAJOMk4mUb9NNc009zifzCDs';
 let stripe = null;
 let elements = null;
 const paymentProcessing = ref(false);
 
 const loadStripeDate = async () => {
     if (!props.course.price) return;
-    stripe = await loadStripe(pk);
+    const publishableKey = stripePublishableKey.value;
+    if (!publishableKey) {
+        console.error('Stripe publishable key is missing.');
+        return;
+    }
+    stripe = await loadStripe(publishableKey);
+    const price = Number(props.course.price);
+    const amountInCents = Number.isNaN(price) ? 0 : Math.round(price * 100);
+    if (amountInCents <= 0) {
+        console.error('Invalid course price supplied for payment intent.');
+        return;
+    }
     try {
-        const response = await axios.get(`/fetch-intent/${props.course.price}`);
+        const response = await axios.get(`/fetch-intent/${amountInCents}`);
         
         // Check if dark mode is enabled
         const isDarkMode = document.documentElement.classList.contains('dark');
