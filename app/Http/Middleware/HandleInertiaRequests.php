@@ -47,6 +47,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'profile_incomplete' => $profileIncomplete,
             ],
+            'stripe' => [
+                'key' => config('services.stripe.key'),
+            ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
