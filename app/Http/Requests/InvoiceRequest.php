@@ -23,9 +23,10 @@ class InvoiceRequest extends FormRequest
     {
         return [
             'user_id' => 'required|exists:users,id',
-            'course_id' => 'required|exists:courses,id',
-            'amount' => 'required|numeric|min:0',
-            'status' => 'required|string|in:pending,completed,failed',
+            'plan' => 'required|string|max:255',
+            'billing_cycle' => 'required|in:monthly,yearly',
+            'due_date' => 'nullable|date',
+            'status' => 'required|string|in:unpaid,paid,overdue',
             'payment_method' => 'nullable|string|max:100',
             'paid_at' => 'nullable|date',
         ];

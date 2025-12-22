@@ -17,6 +17,7 @@ use Inertia\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use App\Services\SubscriptionService;
 
 class RegisteredUserController extends Controller
 {
@@ -184,15 +185,25 @@ class RegisteredUserController extends Controller
                 'type' => 'student',
             ]);
     
-            Invoice::create([
-                'user_id' => $user->id,
+            /** @var SubscriptionService $subscriptionService */
+            $subscriptionService = app(SubscriptionService::class);
+            $billingDate = now();
+
+            $invoice = $subscriptionService->createMonthlyInvoice($user, $billingDate, [
                 'amount' => $request->amount,
-                'payment_method' => $request->payment_method,
-                'payment_status' => 'paid',
-                'transaction_id' => $request->transaction_id,
-                'paid_at' => now(),
                 'plan' => $request->plan,
                 'billing_cycle' => $request->billing_cycle,
+            ]);
+
+            if (!$invoice) {
+                throw new \RuntimeException('Unable to create invoice for registration payment.');
+            }
+
+            $subscriptionService->markPaid($invoice, [
+                'transaction_id' => $request->transaction_id,
+                'paid_at' => now(),
+                'payment_method' => $request->payment_method,
+                'notes' => 'Initial subscription payment',
             ]);
     
             DB::commit();

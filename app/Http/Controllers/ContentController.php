@@ -36,7 +36,7 @@ class ContentController extends Controller
         $userId = Auth::id(); // Get user ID once if authenticated
         Log::debug('ContentController@index: User ID: ' . ($userId ?? 'Guest'));
 
-        // Fetch courses for "Skills you Follow" section on content page
+        // Fetch courses for "Skills you Follow" section on content page - only published courses
         $skillBasedCourses = Course::with([
                 'courseType',
                 'videos' => function ($query) {
@@ -44,6 +44,7 @@ class ContentController extends Controller
                 },
                 'user'
             ])
+            ->where('status', 'published') // Only show published courses
             ->latest()
             ->get()
             ->map(function ($course) use ($userId) {

@@ -13,7 +13,7 @@ import axios from 'axios';
 import { fetchPermissions, clearPermissions, hasPermission } from '@/permissions.js';
 import { formatDistanceToNow } from 'date-fns';
 
-const user = usePage().props.auth?.user;
+const user = computed(() => usePage().props.auth?.user || null);
 const showingNavigationDropdown = ref(false)
 const isSidebarOpen = ref(false)
 const isSidebarCollapsed = ref(false);
@@ -265,7 +265,7 @@ onMounted(() => {
                             <img src="/images/sidebar_icon.svg" class="dark:invert" style="height: 40px;">
                         </button>
 
-                        <a :href="user ? (user.type === 'instructor' ? '/coursess' : '/dashboard') : '/'">
+                        <a :href="user && user.type === 'instructor' ? '/coursess' : (user ? '/dashboard' : '/')">
                             <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav"
                                 style="width: 80px; height: 80px;">
                         </a>
@@ -314,7 +314,7 @@ onMounted(() => {
                                     <span class="inline-flex rounded-md">
                                         <button type="button"
                                             class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-[#1A2C38] text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none" style="padding:5px !important;">
-                                            {{ $page.props.auth.user.name }}
+                                            {{ user?.name ?? 'Account' }}
                                             <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd"
@@ -384,6 +384,9 @@ onMounted(() => {
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('cart')" class="text-gray-700 dark:text-dark-text-secondary">
                             Cart
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('billing.portal')" class="text-gray-700 dark:text-dark-text-secondary">
+                            Billing
                         </ResponsiveNavLink>
                         <button @click="toggleDarkMode"
                             class="w-full text-left text-sm text-gray-700 dark:text-dark-text-secondary" style="padding: 5px;">

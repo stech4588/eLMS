@@ -568,6 +568,9 @@ font-weight: 600;
     font-size: 24px;
  color: #4D4D4D;
 }
+.dark .learning-plan-subtitle {
+    color: white;
+}
 
 @media (max-width: 640px) {
     .learning-plan-title,

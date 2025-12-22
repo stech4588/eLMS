@@ -87,6 +87,11 @@
                         <img class="sidebar_dark_icon" src="/images/content_icon.svg" alt="Content" />
                         <span v-if="!isCollapsed">Content</span>
                     </Link>
+                    <Link v-if="isStudent" class="sidebar_subtitles"
+                        :class="{ 'active': page.url === '/billing' }" :href="route('billing.portal')" :title="isCollapsed ? 'Billing' : null">
+                        <img class="sidebar_dark_icon" src="/images/pricing_icon.svg" alt="Billing" />
+                        <span v-if="!isCollapsed">Billing</span>
+                    </Link>
 
                     <!-- Instructor/Admin Links -->
                     <Link v-if="hasPermission('mycourses')" class="sidebar_subtitles"
