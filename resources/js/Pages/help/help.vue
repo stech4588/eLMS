@@ -57,7 +57,7 @@ function selectTopic(topic) {
                             <!-- Sidebar -->
                             <div class="md:col-span-1">
                                 <div class="p-4 sm:p-6 bg-gray-100 dark:bg-[#142233] border border-gray-200 dark:border-[#1f2d40] rounded-xl shadow-sm">
-                                    <div class="flex flex-col sm:flex-row sm:items-center mb-4 gap-4">
+                                    <div class="flex flex-col sm:flex-column sm:items-center mb-4 gap-4">
                                          <img src="/images/MBM_Uni.png" alt="Logo" class="w-auto h-12 mr-4">
                                         <h2 class="text-xl font-bold text-gray-900 dark:text-white">MBM University</h2>
                                     </div>

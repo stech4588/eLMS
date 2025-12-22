@@ -32,7 +32,7 @@ class DashboardController extends Controller
         $user = Auth::user(); // Get the full user object for ProgressService
         
 
-        // Fetch first 3 courses for "Skills you Follow"
+        // Fetch first 3 courses for "Skills you Follow" - only published courses
         $coursesQuery = Course::withTrashed()->with([
             'courseType',
             'videos' => function ($query) {
@@ -40,6 +40,7 @@ class DashboardController extends Controller
             },
             'user'
         ]) // Eager load the user relationship
+            ->where('status', 'published') // Only show published courses
             ->latest();
 
         if ($request->filled('search')) {
@@ -119,7 +120,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Fetch all courses for "New Releases", ordered by latest
+        // Fetch all courses for "New Releases", ordered by latest - only published courses
         $allNewReleaseCourses = Course::withTrashed()->with([
             'courseType',
             'videos' => function ($query) {
@@ -127,6 +128,7 @@ class DashboardController extends Controller
             },
             'user'
         ])
+            ->where('status', 'published') // Only show published courses
             ->latest()
             ->get()
             ->map(function ($course) use ($userId, $user) {

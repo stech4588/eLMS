@@ -167,6 +167,7 @@ Route::middleware('auth')->group(function () {
 
     // Course routes
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    Route::post('/courses/save-draft', [CourseController::class, 'saveDraft'])->name('courses.saveDraft');
     Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
     Route::post('/courses/{course}/update-with-videos', [CourseController::class, 'updateWithVideos'])->name('courses.updateWithVideos');
     Route::post('/courses/{course}/restore', [CourseController::class, 'restore'])->name('courses.restore');

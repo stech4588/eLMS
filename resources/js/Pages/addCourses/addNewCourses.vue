@@ -282,12 +282,19 @@
                                         <p v-if="errors.course_type" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_type }}</p>
                                     </div>
 
-                                    <div class="flex justify-end mt-6 space-x-4">
-                                        <!-- <button
-                                            @click="prevStep"
-                                            class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
-                                            Back
-                                        </button> -->
+                                    <div class="flex justify-between items-center mt-6 space-x-4">
+                                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                                            <span v-if="isSavingDraft" class="flex items-center gap-1">
+                                                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5-5-5-5v4a12 12 0 00-12 12h4z"></path>
+                                                </svg>
+                                                Saving...
+                                            </span>
+                                            <span v-else-if="lastSavedAt" class="text-green-600">
+                                                Draft saved
+                                            </span>
+                                        </div>
                                         <button
                                             @click="nextStep"
                                             class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600; margin-top: 37px;">
@@ -524,20 +531,43 @@
                                </div>
                            </div>
 
-                           <div class="flex justify-end mt-8 space-x-4">
-                               <button
-                                   @click="prevStep"
-                                   class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" style="  font-size: 14px; border-radius: 20px; font-weight: 600;">
-                                   Back
-                               </button>
-                               <button
-                                   @click="submitForm"
-                                   class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                                   style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
-                                   Publish
-                               </button>
-
-
+                           <div class="flex flex-col items-end mt-8 space-y-4">
+                               <!-- Incomplete data warning -->
+                               <div v-if="!isCourseComplete" class="w-full p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                   <div class="flex items-start">
+                                       <svg class="w-5 h-5 text-yellow-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                           <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                       </svg>
+                                       <div class="flex-1">
+                                           <h4 class="text-sm font-semibold text-yellow-800 mb-1">Incomplete Course Data</h4>
+                                           <p class="text-sm text-yellow-700 mb-2">You still haven't completed all required data. The course will remain as draft until all fields are filled.</p>
+                                           <div class="text-xs text-yellow-600">
+                                               <strong>Missing:</strong> {{ incompleteFieldsMessage.join(', ') }}
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                               
+                               <div class="flex space-x-4">
+                                   <button
+                                       @click="prevStep"
+                                       class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" style="  font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                       Back
+                                   </button>
+                                   <button
+                                       @click="submitForm"
+                                       :disabled="!isCourseComplete"
+                                       :class="[
+                                           'px-4 py-2 text-white rounded-md',
+                                           isCourseComplete 
+                                               ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer' 
+                                               : 'bg-gray-400 cursor-not-allowed opacity-60'
+                                       ]"
+                                       style="font-size: 14px; border-radius: 20px; font-weight: 600;"
+                                       :title="!isCourseComplete ? 'Please complete all required fields before publishing' : ''">
+                                       Publish
+                                   </button>
+                               </div>
                            </div>
                        </div>
 
@@ -688,9 +718,79 @@ const form = reactive({
     visibility: 'private',
 });
 
+const draftCourseId = ref(null);
+const autoSaveTimer = ref(null);
+const isSavingDraft = ref(false);
+const lastSavedAt = ref(null);
+
 const isEditingCourse = computed(() => !!props.course);
 const pageTitle = computed(() => isEditingCourse.value ? 'Edit Course' : 'Add New Video');
 const removedVideoIds = ref([]);
+
+// Check if course is ready to publish
+const isCourseComplete = computed(() => {
+    // Check course fields
+    const requiredCourseFields = {
+        course_title: form.course_title,
+        course_description: form.course_description,
+        additional_description: form.additional_description,
+        recomendations: form.recomendations,
+        certificates: form.certificates,
+        industry: form.industry,
+        topic: form.topic,
+        course_type: form.course_type,
+    };
+    
+    for (const [field, value] of Object.entries(requiredCourseFields)) {
+        if (!value || (typeof value === 'string' && value.trim() === '')) {
+            return false;
+        }
+    }
+    
+    // Check videos
+    if (videosData.value.length === 0) {
+        return false;
+    }
+    
+    // Check each video
+    for (const video of videosData.value) {
+        if (!video.title || video.title.trim() === '') return false;
+        if (!video.description || video.description.trim() === '') return false;
+        if (!video.videoFile && !video.videoFilePreview) return false;
+        if (!video.thumbnailFile && !video.thumbnailFilePreview) return false;
+    }
+    
+    return true;
+});
+
+const incompleteFieldsMessage = computed(() => {
+    const missing = [];
+    
+    // Check course fields
+    if (!form.course_title || form.course_title.trim() === '') missing.push('Course Title');
+    if (!form.course_description || form.course_description.trim() === '') missing.push('Description');
+    if (!form.additional_description || form.additional_description.trim() === '') missing.push('Additional Description');
+    if (!form.recomendations || form.recomendations.trim() === '') missing.push('Recommendations');
+    if (!form.certificates) missing.push('Certificates');
+    if (!form.industry) missing.push('Industry');
+    if (!form.topic) missing.push('Topic');
+    if (!form.course_type) missing.push('Course Type');
+    
+    // Check videos
+    if (videosData.value.length === 0) {
+        missing.push('At least one video');
+    } else {
+        videosData.value.forEach((video, index) => {
+            const videoNum = index + 1;
+            if (!video.title || video.title.trim() === '') missing.push(`Video ${videoNum} Title`);
+            if (!video.description || video.description.trim() === '') missing.push(`Video ${videoNum} Description`);
+            if (!video.videoFile && !video.videoFilePreview) missing.push(`Video ${videoNum} File`);
+            if (!video.thumbnailFile && !video.thumbnailFilePreview) missing.push(`Video ${videoNum} Thumbnail`);
+        });
+    }
+    
+    return missing;
+});
 
 const quizForm = reactive({
     title: '',
@@ -710,6 +810,174 @@ const videoQuizForm = reactive({
 watch(() => form.course_price, (newValue) => {
     if (newValue < 0) {
         form.course_price = 0;
+    }
+});
+
+// Auto-save functionality
+const autoSaveDraft = () => {
+    if (isSavingDraft.value) return;
+    
+    // Clear existing timer
+    if (autoSaveTimer.value) {
+        clearTimeout(autoSaveTimer.value);
+    }
+    
+    // Set new timer for 1 second (half of 2 seconds = 1000ms)
+    autoSaveTimer.value = setTimeout(async () => {
+        isSavingDraft.value = true;
+        
+        try {
+            // Save current video details if on step 2
+            if (currentStep.value === 2 && currentEditingVideoIndex.value !== -1) {
+                saveCurrentVideoDetails();
+            }
+            
+            const formData = new FormData();
+            formData.append('title', form.course_title || '');
+            formData.append('description', form.course_description || '');
+            formData.append('additional_description', form.additional_description || '');
+            formData.append('recomendations', form.recomendations || '');
+            formData.append('certificates', form.certificates || '');
+            formData.append('industry', form.industry || '');
+            formData.append('course_type', form.course_type || '');
+            formData.append('topic', form.topic || '');
+            formData.append('price', form.course_price || 0);
+            
+            if (draftCourseId.value) {
+                formData.append('course_id', draftCourseId.value);
+            }
+            
+            // Include removed video IDs for deletion
+            if (removedVideoIds.value.length > 0) {
+                removedVideoIds.value.forEach((id) => {
+                    formData.append('removed_video_ids[]', id);
+                });
+            }
+            
+            // Include videos data if on step 2 or later
+            // Include video files if they are newly uploaded (not already saved)
+            if (currentStep.value >= 2 && videosData.value.length > 0) {
+                videosData.value.forEach((video, index) => {
+                    formData.append(`videos[${index}][title]`, video.title || '');
+                    formData.append(`videos[${index}][description]`, video.description || '');
+                    formData.append(`videos[${index}][takeaway_notes]`, video.takeaway_notes || '');
+                    formData.append(`videos[${index}][order]`, (index + 1).toString());
+                    
+                    if (video.id) {
+                        formData.append(`videos[${index}][id]`, video.id);
+                    }
+                    
+                    // Include video file if it's a new file (not already saved)
+                    // Only send if videoFile exists and video doesn't have an ID (new video) or videoFilePreview is a blob (new upload)
+                    if (video.videoFile instanceof File) {
+                        formData.append(`videos[${index}][videoFile]`, video.videoFile);
+                        // Include duration if available
+                        if (video.duration_in_seconds) {
+                            formData.append(`videos[${index}][duration_in_seconds]`, video.duration_in_seconds.toString());
+                        }
+                    }
+                    
+                    // Include thumbnail file if it's a new file
+                    if (video.thumbnailFile instanceof File) {
+                        formData.append(`videos[${index}][thumbnailFile]`, video.thumbnailFile);
+                    }
+                    
+                    // Include quiz data if present - send as JSON string to avoid nested array issues
+                    if (video.quiz && video.quiz.title) {
+                        try {
+                            const quizData = {
+                                title: video.quiz.title || '',
+                                description: video.quiz.description || '',
+                                questions: (video.quiz.questions || []).map(q => ({
+                                    question_text: q.question_text || '',
+                                    answers: (q.answers || []).map(a => ({
+                                        answer_text: a.answer_text || '',
+                                        is_correct: !!a.is_correct
+                                    }))
+                                }))
+                            };
+                            formData.append(`videos[${index}][quiz]`, JSON.stringify(quizData));
+                        } catch (error) {
+                            console.error('Error serializing quiz data:', error);
+                        }
+                    }
+                });
+            }
+            
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            
+            const response = await fetch(route('courses.saveDraft'), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+                body: formData,
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                console.error('Auto-save failed:', errorData.message || 'HTTP ' + response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (data.success && data.course_id) {
+                if (!draftCourseId.value) {
+                    draftCourseId.value = data.course_id;
+                }
+                
+                // Update video IDs if returned from backend (to prevent duplicate creation)
+                if (data.video_ids && typeof data.video_ids === 'object') {
+                    Object.keys(data.video_ids).forEach((indexStr) => {
+                        const index = parseInt(indexStr);
+                        const videoId = data.video_ids[index];
+                        if (videosData.value[index] && videoId) {
+                            // Always update video ID to prevent duplicates
+                            videosData.value[index].id = videoId;
+                            // Clear videoFile after successful save to prevent re-upload
+                            if (videosData.value[index].videoFile) {
+                                videosData.value[index].videoFile = null;
+                            }
+                            if (videosData.value[index].thumbnailFile) {
+                                videosData.value[index].thumbnailFile = null;
+                            }
+                        }
+                    });
+                }
+                
+                // Clear removed video IDs after successful save
+                if (removedVideoIds.value.length > 0) {
+                    removedVideoIds.value = [];
+                }
+                
+                lastSavedAt.value = new Date();
+            } else {
+                console.error('Auto-save failed:', data.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Auto-save failed:', error);
+        } finally {
+            isSavingDraft.value = false;
+        }
+    }, 1000); // Changed from 2000ms to 1000ms (half of 2 seconds)
+};
+
+// Watch form fields for auto-save (Step 1 - Course details)
+watch([
+    () => form.course_title,
+    () => form.course_description,
+    () => form.additional_description,
+    () => form.recomendations,
+    () => form.certificates,
+    () => form.industry,
+    () => form.topic,
+    () => form.course_type,
+], () => {
+    if (currentStep.value === 1) {
+        autoSaveDraft();
     }
 });
 
@@ -745,6 +1013,24 @@ const currentVideoFormPart2 = reactive({
     playlist: '',
     visibility: 'private', // Added visibility here as it was used in saveCurrentVideoDetails
 });
+
+// Watch video form fields for auto-save (Step 2 - Video details)
+watch([
+    () => currentVideoFormPart2.title,
+    () => currentVideoFormPart2.description,
+    () => currentVideoFormPart2.takeaway_notes,
+], () => {
+    if (currentStep.value === 2 && currentEditingVideoIndex.value !== -1) {
+        autoSaveDraft();
+    }
+});
+
+// Watch videosData for changes (when quiz is added/updated)
+watch(() => videosData.value, () => {
+    if (currentStep.value >= 2) {
+        autoSaveDraft();
+    }
+}, { deep: true });
 
 const activeVideoPreviewForRightPanel = ref(null);
 const activeThumbnailPreviewForRightPanel = ref(null);
@@ -809,6 +1095,7 @@ const initializeEditingState = () => {
         return;
     }
 
+    draftCourseId.value = props.course.id;
     form.course_title = props.course.title || '';
     form.course_description = props.course.description || '';
     form.additional_description = props.course.additional_description || '';
@@ -836,12 +1123,12 @@ const initializeEditingState = () => {
         description: video.description || '',
         takeaway_notes: video.takeaway_notes || '',
         videoFile: null,
-        videoFilePreview: video.video_url || null,
+        videoFilePreview: video.video_url || video.video_path || null,
         thumbnailFile: null,
-        thumbnailFilePreview: video.thumbnail_url || null,
+        thumbnailFilePreview: video.thumbnail_url || video.thumbnail_path || null,
         playlist: '',
         visibility: 'private',
-        duration_in_seconds: video.duration_in_seconds ?? null,
+        duration_in_seconds: video.duration_in_seconds ?? video.duration ?? null,
         order: video.order ?? index + 1,
         errors: {},
         quiz: video.quiz
@@ -892,25 +1179,46 @@ const saveCurrentVideoDetails = () => {
         videosData.value[currentEditingVideoIndex.value].takeaway_notes = currentVideoFormPart2.takeaway_notes;
         videosData.value[currentEditingVideoIndex.value].playlist = currentVideoFormPart2.playlist;
         videosData.value[currentEditingVideoIndex.value].visibility = currentVideoFormPart2.visibility;
+        
+        // Trigger auto-save after saving video details
+        if (currentStep.value >= 2) {
+            autoSaveDraft();
+        }
     }
 };
 
 const populateVideoDetailsForm = (index) => {
     if (index >= 0 && videosData.value[index]) {
         const video = videosData.value[index];
+        // Populate form fields
         currentVideoFormPart2.title = video.title || '';
         currentVideoFormPart2.description = video.description || '';
         currentVideoFormPart2.takeaway_notes = video.takeaway_notes || '';
         currentVideoFormPart2.playlist = video.playlist || '';
-        currentVideoFormPart2.visibility = video.visibility || 'private'; // Reset visibility
-        activeVideoPreviewForRightPanel.value = video.videoFilePreview || null;
-        activeThumbnailPreviewForRightPanel.value = video.thumbnailFilePreview || null;
+        currentVideoFormPart2.visibility = video.visibility || 'private';
+        
+        // Set preview URLs - handle both asset URLs and paths
+        if (video.videoFilePreview) {
+            activeVideoPreviewForRightPanel.value = video.videoFilePreview;
+        } else if (video.video_url) {
+            activeVideoPreviewForRightPanel.value = video.video_url;
+        } else {
+            activeVideoPreviewForRightPanel.value = null;
+        }
+        
+        if (video.thumbnailFilePreview) {
+            activeThumbnailPreviewForRightPanel.value = video.thumbnailFilePreview;
+        } else if (video.thumbnail_url) {
+            activeThumbnailPreviewForRightPanel.value = video.thumbnail_url;
+        } else {
+            activeThumbnailPreviewForRightPanel.value = null;
+        }
     } else {
         currentVideoFormPart2.title = '';
         currentVideoFormPart2.description = '';
         currentVideoFormPart2.takeaway_notes = '';
         currentVideoFormPart2.playlist = '';
-        currentVideoFormPart2.visibility = 'private'; // Reset visibility
+        currentVideoFormPart2.visibility = 'private';
         activeVideoPreviewForRightPanel.value = null;
         activeThumbnailPreviewForRightPanel.value = null;
     }
@@ -939,11 +1247,16 @@ const addNewVideoSlot = () => {
         visibility: 'private',
         duration_in_seconds: null, // Add field to store duration
         errors: {}, // For validation errors
+        quiz: null, // Initialize quiz as null
     };
     videosData.value.push(newVideoData);
     currentEditingVideoIndex.value = videosData.value.length - 1;
     populateVideoDetailsForm(currentEditingVideoIndex.value);
-    // if(currentStep.value < 2) currentStep.value = 2;
+    
+    // Trigger auto-save after adding new video slot
+    if (currentStep.value >= 2 && draftCourseId.value) {
+        autoSaveDraft();
+    }
 };
 
 const handleVideoUpload = async (e) => {
@@ -1007,89 +1320,31 @@ const handleThumbnailUpload = (e) => {
         if (thumbnailUploadInput.value) {
             thumbnailUploadInput.value.value = '';
         }
+        
+        // Trigger auto-save after thumbnail upload
+        if (currentStep.value >= 2) {
+            autoSaveDraft();
+        }
     }
 };
 
 const nextStep = () => {
     errors.value = {}; // Clear previous step 1 errors
 
-    // Step 1 validation
-    if (currentStep.value === 1) {
-        const requiredFields = {
-            course_title: 'Course Title',
-            course_description: 'Description',
-            additional_description: 'Additional Description',
-            recomendations: 'Recomendations',
-            // course_price: 'Course Price',
-            certificates: 'Certificates',
-            industry: 'Industry',
-            topic: 'Topic',
-            course_type: 'Course Type',
-        };
-
-        Object.entries(requiredFields).forEach(([field, name]) => {
-            const value = form[field];
-            let isMissing = false;
-            
-            isMissing = !value || (typeof value === 'string' && value.trim() === '');
-            
-            if (isMissing) {
-                errors.value[field] = `${name} is required.`;
-            }
-        });
-
-        if (Object.keys(errors.value).length > 0) {
-            return; // Stop execution
-        }
-    }
-
-    // Step 2 validation
+    // Step 2: Save current video details before moving
     if (currentStep.value === 2) {
-        // Save current video details before checking all videos.
         if (currentEditingVideoIndex.value !== -1) {
             saveCurrentVideoDetails();
         }
 
+        // If no videos, add one
         if (videosData.value.length === 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please add at least one video.',
-            });
-            return;
-        }
-
-        let hasErrors = false;
-        videosData.value.forEach((video) => {
-            video.errors = {}; // Clear previous errors
-            if (!video.title || video.title.trim() === '') {
-                video.errors.title = 'Title is required.';
-                hasErrors = true;
-            }
-            if (!video.description || video.description.trim() === '') {
-                video.errors.description = 'Description is required.';
-                hasErrors = true;
-            }
-            if (!video.videoFile && !video.videoFilePreview) {
-                video.errors.videoFile = 'Video file is required.';
-                hasErrors = true;
-            }
-            if (!video.thumbnailFile && !video.thumbnailFilePreview) {
-                video.errors.thumbnailFile = 'Thumbnail file is required.';
-                hasErrors = true;
-            }
-        });
-
-        if (hasErrors) {
-            const firstErrorIndex = videosData.value.findIndex(v => Object.keys(v.errors).length > 0);
-            if (firstErrorIndex !== -1 && firstErrorIndex !== currentEditingVideoIndex.value) {
-                selectVideoToEdit(firstErrorIndex); // Switch to the problematic video
-            }
-            return;
+            addNewVideoSlot();
         }
     }
 
-    // If all validations for the current step passed, proceed.
+    // Navigate to next step without validation
+    // Validation will only happen when publishing
     if (currentStep.value === 1 && videosData.value.length === 0) {
         addNewVideoSlot();
     }
@@ -1143,6 +1398,11 @@ const handleVideoUploadFromRightPanel = async (e) => {
         if (videoUploadInputForPreview.value) {
             videoUploadInputForPreview.value.value = '';
         }
+        
+        // Trigger auto-save after video upload
+        if (currentStep.value >= 2) {
+            autoSaveDraft();
+        }
     }
 };
 
@@ -1184,6 +1444,158 @@ const submitNewCertificate = () => {
 
 const submitForm = async () => {
     saveCurrentVideoDetails();
+
+    // Validate all required fields before publishing
+    errors.value = {};
+    const requiredFields = {
+        course_title: 'Course Title',
+        course_description: 'Description',
+        additional_description: 'Additional Description',
+        recomendations: 'Recomendations',
+        certificates: 'Certificates',
+        industry: 'Industry',
+        topic: 'Topic',
+        course_type: 'Course Type',
+    };
+
+    Object.entries(requiredFields).forEach(([field, name]) => {
+        const value = form[field];
+        let isMissing = false;
+        
+        isMissing = !value || (typeof value === 'string' && value.trim() === '');
+        
+        if (isMissing) {
+            errors.value[field] = `${name} is required.`;
+        }
+    });
+
+    // Validate videos
+    if (videosData.value.length === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'Please add at least one video before publishing.',
+        });
+        currentStep.value = 2;
+        return;
+    }
+
+    let hasVideoErrors = false;
+    videosData.value.forEach((video, index) => {
+        video.errors = {};
+        if (!video.title || video.title.trim() === '') {
+            video.errors.title = 'Title is required.';
+            hasVideoErrors = true;
+        }
+        if (!video.description || video.description.trim() === '') {
+            video.errors.description = 'Description is required.';
+            hasVideoErrors = true;
+        }
+        if (!video.videoFile && !video.videoFilePreview) {
+            video.errors.videoFile = 'Video file is required.';
+            hasVideoErrors = true;
+        }
+        // Thumbnail is now required for publishing
+        if (!video.thumbnailFile && !video.thumbnailFilePreview) {
+            video.errors.thumbnailFile = 'Thumbnail is required for publishing.';
+            hasVideoErrors = true;
+        }
+        
+        // Validate quiz - if any quiz field is filled, quiz must be complete
+        if (video.quiz) {
+            const quiz = video.quiz;
+            let hasQuizData = false;
+            let quizIncomplete = false;
+            
+            // Check if any quiz field is filled
+            if (quiz.title && quiz.title.trim() !== '') hasQuizData = true;
+            if (quiz.description && quiz.description.trim() !== '') hasQuizData = true;
+            if (quiz.questions && quiz.questions.length > 0) hasQuizData = true;
+            
+            // If any quiz data exists, validate it's complete
+            if (hasQuizData) {
+                // Title is required if quiz exists
+                if (!quiz.title || quiz.title.trim() === '') {
+                    video.errors.quiz = 'Quiz title is required if quiz is added.';
+                    quizIncomplete = true;
+                }
+                
+                // If questions exist, they must be complete
+                if (quiz.questions && quiz.questions.length > 0) {
+                    quiz.questions.forEach((question, qIndex) => {
+                        if (!question.question_text || question.question_text.trim() === '') {
+                            video.errors.quiz = `Question ${qIndex + 1} text is required.`;
+                            quizIncomplete = true;
+                        }
+                        
+                        if (!question.answers || question.answers.length < 2) {
+                            video.errors.quiz = `Question ${qIndex + 1} must have at least 2 answers.`;
+                            quizIncomplete = true;
+                        } else {
+                            // Check each answer has text
+                            question.answers.forEach((answer, aIndex) => {
+                                if (!answer.answer_text || answer.answer_text.trim() === '') {
+                                    video.errors.quiz = `Question ${qIndex + 1}, Answer ${aIndex + 1} text is required.`;
+                                    quizIncomplete = true;
+                                }
+                            });
+                            
+                            // Check at least one answer is correct
+                            const hasCorrectAnswer = question.answers.some(a => a.is_correct === true);
+                            if (!hasCorrectAnswer) {
+                                video.errors.quiz = `Question ${qIndex + 1} must have at least one correct answer.`;
+                                quizIncomplete = true;
+                            }
+                        }
+                    });
+                }
+                
+                if (quizIncomplete) {
+                    hasVideoErrors = true;
+                }
+            }
+        }
+    });
+
+    if (Object.keys(errors.value).length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            html: 'Please fill in all required fields before publishing:<br>' + 
+                  Object.values(errors.value).join('<br>'),
+        });
+        currentStep.value = 1;
+        return;
+    }
+
+        if (hasVideoErrors) {
+        const missingItems = [];
+        videosData.value.forEach((video, index) => {
+            if (Object.keys(video.errors).length > 0) {
+                const videoNum = index + 1;
+                if (video.errors.title) missingItems.push(`Video ${videoNum}: Title is missing`);
+                if (video.errors.description) missingItems.push(`Video ${videoNum}: Description is missing`);
+                if (video.errors.videoFile) missingItems.push(`Video ${videoNum}: Video file is missing`);
+                if (video.errors.thumbnailFile) missingItems.push(`Video ${videoNum}: Thumbnail is missing`);
+                if (video.errors.quiz) missingItems.push(`Video ${videoNum}: ${video.errors.quiz}`);
+            }
+        });
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Incomplete Course Data',
+            html: '<strong>You still haven\'t completed all required data:</strong><br><br>' + 
+                  missingItems.join('<br>') + 
+                  '<br><br>Please complete all fields before publishing. The course will remain as draft until all data is filled.',
+            confirmButtonText: 'OK',
+        });
+        currentStep.value = 2;
+        const firstErrorIndex = videosData.value.findIndex(v => Object.keys(v.errors).length > 0);
+        if (firstErrorIndex !== -1) {
+            selectVideoToEdit(firstErrorIndex);
+        }
+        return;
+    }
 
     const formData = new FormData();
 
@@ -1260,8 +1672,11 @@ const submitForm = async () => {
         });
     }
 
-    const submissionRoute = isEditingCourse.value && props.course
-        ? route('courses.updateWithVideos', { course: props.course.id })
+    // Use draft course ID if available, otherwise use the course from props
+    const courseIdToUse = draftCourseId.value || (isEditingCourse.value && props.course ? props.course.id : null);
+    
+    const submissionRoute = courseIdToUse
+        ? route('courses.updateWithVideos', { course: courseIdToUse })
         : route('courses.storeWithVideos');
 
     try {
@@ -1365,6 +1780,11 @@ const removeVideo = (index) => {
             } else if (isEditingAfterTheRemovedVideo) {
                 currentEditingVideoIndex.value--;
             }
+            
+            // Trigger auto-save after removing video
+            if (currentStep.value >= 2 && draftCourseId.value) {
+                autoSaveDraft();
+            }
         }
     });
 };
@@ -1374,6 +1794,12 @@ watch(
     () => {
         if (props.course) {
             initializeEditingState();
+            // Ensure video form is populated after initialization
+            if (videosData.value.length > 0 && currentEditingVideoIndex.value >= 0) {
+                setTimeout(() => {
+                    populateVideoDetailsForm(currentEditingVideoIndex.value);
+                }, 200);
+            }
         }
     },
     { immediate: true }
@@ -1494,12 +1920,22 @@ const saveVideoQuiz = () => {
     videosData.value[currentEditingVideoIndex.value].quiz = quizPayload;
     showVideoQuizModal.value = false;
     Swal.fire({ icon: 'success', title: 'Quiz saved for this video' });
+    
+    // Trigger auto-save after saving quiz
+    if (currentStep.value >= 2) {
+        autoSaveDraft();
+    }
 };
 
 const removeVideoQuiz = () => {
     if (currentEditingVideoIndex.value < 0) return;
     delete videosData.value[currentEditingVideoIndex.value].quiz;
     Swal.fire({ icon: 'success', title: 'Quiz removed from this video' });
+    
+    // Trigger auto-save after removing quiz
+    if (currentStep.value >= 2) {
+        autoSaveDraft();
+    }
 };
 
 onMounted(() => {
