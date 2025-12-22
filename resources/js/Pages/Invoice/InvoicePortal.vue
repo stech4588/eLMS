@@ -200,11 +200,11 @@ watch(
                     <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
                         Billing & Invoices
                     </h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <p class="text-sm text-white-500 dark:text-gray-400">
                         View your subscription invoices and settle outstanding balances.
                     </p>
                 </div>
-                <div class="text-sm text-gray-600 dark:text-gray-300">
+                <div class="text-sm text-white-600 dark:text-gray-300">
                     <span class="font-semibold">Status:</span>
                     <span class="capitalize">{{ subscriptionStatus?.state || 'pending' }}</span>
                 </div>
@@ -213,10 +213,10 @@ watch(
 
         <div class="py-12 space-y-8">
             <div class="mx-auto max-w-6xl sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-dark-bg-secondary shadow sm:rounded-lg overflow-hidden">
+                <div class="bg-white dark:bg-dark-bg-secondary shadow sm:rounded-lg">
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Invoices</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Unpaid invoices appear with a “Pay Now” option.</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Unpaid invoices appear with a "Pay Now" option.</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

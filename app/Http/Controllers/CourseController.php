@@ -166,12 +166,11 @@ class CourseController extends Controller
         ));
     }
 
-    public function storeWithVideos(Request $request): RedirectResponse
+    public function saveDraft(Request $request): JsonResponse
     {
-
         $validatedCourseData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
             'additional_description' => 'nullable|string',
             'recomendations' => 'nullable|string',
@@ -179,6 +178,290 @@ class CourseController extends Controller
             'industry' => 'nullable|exists:course_industries,id',
             'course_type' => 'nullable|exists:course_types,id',
             'topic' => 'nullable|exists:topics,id',
+            'course_id' => 'nullable|exists:courses,id',
+            'videos' => 'nullable|array',
+            'videos.*.id' => 'nullable|exists:videos,id',
+            'videos.*.title' => 'nullable|string|max:255',
+            'videos.*.description' => 'nullable|string',
+            'videos.*.takeaway_notes' => 'nullable|string',
+            'videos.*.order' => 'nullable|integer',
+            'videos.*.quiz' => 'nullable|string', // JSON string
+            'videos.*.videoFile' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:512000',
+            'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'videos.*.duration_in_seconds' => 'nullable|integer|min:0',
+            'removed_video_ids' => 'nullable|array',
+            'removed_video_ids.*' => 'integer|exists:videos,id',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $courseId = $validatedCourseData['course_id'] ?? null;
+            $course = null;
+            
+            if ($courseId) {
+                // Update existing draft
+                $course = Course::findOrFail($courseId);
+                $this->authorizeCourseOwner($request, $course);
+                
+                $courseDataToUpdate = [
+                    'title' => $validatedCourseData['title'] ?? $course->title,
+                    'description' => $validatedCourseData['description'] ?? $course->description,
+                    'price' => $validatedCourseData['price'] ?? $course->price,
+                    'additional_description' => $validatedCourseData['additional_description'] ?? $course->additional_description,
+                    'recomendations' => $validatedCourseData['recomendations'] ?? $course->recomendations,
+                    'certificate_id' => $validatedCourseData['certificates'] ?? $course->certificate_id,
+                    'industry_id' => $validatedCourseData['industry'] ?? $course->industry_id,
+                    'course_type_id' => $validatedCourseData['course_type'] ?? $course->course_type_id,
+                    'topic_id' => $validatedCourseData['topic'] ?? $course->topic_id,
+                    'status' => 'draft',
+                ];
+                
+                $course->update($courseDataToUpdate);
+            } else {
+                // Create new draft
+                $courseDataToCreate = [
+                    'user_id' => $request->user()->id,
+                    'title' => $validatedCourseData['title'] ?? 'Untitled Course',
+                    'description' => $validatedCourseData['description'] ?? '',
+                    'price' => $validatedCourseData['price'] ?? 0,
+                    'additional_description' => $validatedCourseData['additional_description'] ?? null,
+                    'recomendations' => $validatedCourseData['recomendations'] ?? null,
+                    'certificate_id' => $validatedCourseData['certificates'] ?? null,
+                    'industry_id' => $validatedCourseData['industry'] ?? null,
+                    'course_type_id' => $validatedCourseData['course_type'] ?? null,
+                    'topic_id' => $validatedCourseData['topic'] ?? null,
+                    'status' => 'draft',
+                ];
+
+                $course = $this->courseService->create($courseDataToCreate);
+            }
+
+            // Save videos if provided
+            if ($request->has('videos') && is_array($request->input('videos'))) {
+                $videoService = resolve(\App\Services\VideoService::class);
+                $createdVideoIds = []; // Track created/updated video IDs
+                
+                foreach ($request->input('videos') as $index => $videoData) {
+                    $videoId = $videoData['id'] ?? null;
+                    
+                    // Handle video file upload
+                    $videoFile = $request->file("videos.{$index}.videoFile");
+                    $thumbnailFile = $request->file("videos.{$index}.thumbnailFile");
+                    $videoPath = null;
+                    $thumbnailPath = null;
+                    
+                    if ($videoFile) {
+                        $videoTargetDirectory = 'uploads/course_' . $course->id . '_videos';
+                        if (!File::isDirectory(public_path($videoTargetDirectory))) {
+                            File::makeDirectory(public_path($videoTargetDirectory), 0755, true, true);
+                        }
+                        $videoFileName = time() . '_' . Str::slug(pathinfo($videoFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $videoFile->getClientOriginalExtension();
+                        try {
+                            $videoFile->move(public_path($videoTargetDirectory), $videoFileName);
+                            $videoPath = $videoTargetDirectory . '/' . $videoFileName;
+                        } catch (\Throwable $e) {
+                            Log::error('Video file upload failed in draft save', [
+                                'error' => $e->getMessage(),
+                            ]);
+                        }
+                    }
+                    
+                    if ($thumbnailFile) {
+                        $thumbTargetDirectory = 'uploads/course_' . $course->id . '_video_thumbnails';
+                        if (!File::isDirectory(public_path($thumbTargetDirectory))) {
+                            File::makeDirectory(public_path($thumbTargetDirectory), 0755, true, true);
+                        }
+                        $thumbFileName = time() . '_' . Str::slug(pathinfo($thumbnailFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $thumbnailFile->getClientOriginalExtension();
+                        try {
+                            $thumbnailFile->move(public_path($thumbTargetDirectory), $thumbFileName);
+                            $thumbnailPath = $thumbTargetDirectory . '/' . $thumbFileName;
+                        } catch (\Throwable $e) {
+                            Log::error('Thumbnail file upload failed in draft save', [
+                                'error' => $e->getMessage(),
+                            ]);
+                        }
+                    }
+                    
+                    // Handle quiz data - it might be JSON string
+                    $quizData = null;
+                    if (isset($videoData['quiz'])) {
+                        if (is_string($videoData['quiz'])) {
+                            // Try to decode JSON string
+                            $decoded = json_decode($videoData['quiz'], true);
+                            $quizData = $decoded ?: null;
+                        } elseif (is_array($videoData['quiz'])) {
+                            $quizData = $videoData['quiz'];
+                        }
+                    }
+                    
+                    if ($videoId) {
+                        // Update existing video
+                        $existingVideo = $course->videos()->where('id', $videoId)->first();
+                        if ($existingVideo) {
+                            $updatePayload = [
+                                'title' => $videoData['title'] ?? $existingVideo->title,
+                                'description' => $videoData['description'] ?? $existingVideo->description,
+                                'takeaway_notes' => $videoData['takeaway_notes'] ?? $existingVideo->takeaway_notes,
+                                'order' => $videoData['order'] ?? $existingVideo->order,
+                            ];
+                            
+                            // Update video URL if new file uploaded
+                            if ($videoPath) {
+                                $updatePayload['video_url'] = $videoPath;
+                            }
+                            
+                            // Update thumbnail URL if new file uploaded
+                            if ($thumbnailPath) {
+                                $updatePayload['thumbnail_url'] = $thumbnailPath;
+                            }
+                            
+                            // Update duration if provided
+                            if (isset($videoData['duration_in_seconds'])) {
+                                $updatePayload['duration'] = $videoData['duration_in_seconds'];
+                            }
+                            
+                            $videoService->update($existingVideo->id, $updatePayload);
+                            
+                            // Sync quiz if provided - allow empty questions array for draft
+                            if ($quizData && is_array($quizData) && !empty($quizData['title'])) {
+                                // Ensure questions array exists even if empty
+                                if (!isset($quizData['questions'])) {
+                                    $quizData['questions'] = [];
+                                }
+                                $this->syncVideoQuiz($existingVideo, $quizData);
+                            }
+                            
+                            // Store video ID for response
+                            $createdVideoIds[$index] = $existingVideo->id;
+                        }
+                    } else {
+                        // Check if video with same order already exists (to avoid duplicates on auto-save)
+                        // Priority: Check by order first, then by empty video_url (draft videos)
+                        $existingVideoByOrder = $course->videos()
+                            ->where('order', $videoData['order'] ?? 1)
+                            ->where(function($query) use ($videoData) {
+                                // Match by title if provided, or find draft videos (empty video_url)
+                                if (!empty($videoData['title'])) {
+                                    $query->where('title', $videoData['title']);
+                                }
+                                $query->orWhere('video_url', '')
+                                      ->orWhereNull('video_url');
+                            })
+                            ->orderBy('created_at', 'desc') // Get most recent one
+                            ->first();
+                        
+                        if ($existingVideoByOrder) {
+                            // Update existing video instead of creating new one
+                            $updatePayload = [
+                                'title' => $videoData['title'] ?? $existingVideoByOrder->title,
+                                'description' => $videoData['description'] ?? $existingVideoByOrder->description,
+                                'takeaway_notes' => $videoData['takeaway_notes'] ?? $existingVideoByOrder->takeaway_notes,
+                                'order' => $videoData['order'] ?? $existingVideoByOrder->order,
+                            ];
+                            
+                            if ($videoPath) {
+                                $updatePayload['video_url'] = $videoPath;
+                            }
+                            
+                            if ($thumbnailPath) {
+                                $updatePayload['thumbnail_url'] = $thumbnailPath;
+                            }
+                            
+                            if (isset($videoData['duration_in_seconds'])) {
+                                $updatePayload['duration'] = $videoData['duration_in_seconds'];
+                            }
+                            
+                            $videoService->update($existingVideoByOrder->id, $updatePayload);
+                            
+                            if ($quizData && is_array($quizData)) {
+                                $this->syncVideoQuiz($existingVideoByOrder, $quizData);
+                            }
+                            
+                            // Store video ID for response
+                            $createdVideoIds[$index] = $existingVideoByOrder->id;
+                        } else {
+                            // Create new video with file uploads if available
+                            $newVideo = $videoService->create([
+                                'course_id' => $course->id,
+                                'title' => $videoData['title'] ?? 'Untitled Video',
+                                'description' => $videoData['description'] ?? '',
+                                'takeaway_notes' => $videoData['takeaway_notes'] ?? null,
+                                'video_url' => $videoPath ?: '', // Use uploaded path or empty string
+                                'thumbnail_url' => $thumbnailPath,
+                                'order' => $videoData['order'] ?? 1,
+                                'duration' => $videoData['duration_in_seconds'] ?? null,
+                            ]);
+                            
+                            // Sync quiz if provided
+                            if ($quizData && is_array($quizData)) {
+                                $this->syncVideoQuiz($newVideo, $quizData);
+                            }
+                            
+                            // Store video ID for response
+                            $createdVideoIds[$index] = $newVideo->id;
+                        }
+                    }
+                }
+            }
+            
+            // Handle removed video IDs - delete videos that were removed
+            if ($request->has('removed_video_ids') && is_array($request->input('removed_video_ids'))) {
+                $removedVideoIds = $request->input('removed_video_ids');
+                $videosToDelete = $course->videos()->whereIn('id', $removedVideoIds)->get();
+                
+                foreach ($videosToDelete as $videoToDelete) {
+                    // Remove associated quiz first
+                    if ($videoToDelete->quiz) {
+                        $videoToDelete->quiz->questions()->each(function ($question) {
+                            $question->answers()->delete();
+                        });
+                        $videoToDelete->quiz->questions()->delete();
+                        $videoToDelete->quiz()->delete();
+                    }
+                    // Delete the video
+                    $videoToDelete->delete();
+                }
+            }
+
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Draft saved successfully',
+                'course_id' => $course->id,
+                'draftCourseId' => $course->id,
+                'video_ids' => $createdVideoIds ?? [], // Return created/updated video IDs
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Draft save failed', [
+                'user_id' => $request->user()->id ?? null,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save draft: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function storeWithVideos(Request $request): RedirectResponse
+    {
+
+        $validatedCourseData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'nullable|numeric|min:0',
+            'additional_description' => 'required|string',
+            'recomendations' => 'required|string',
+            'certificates' => 'required|exists:course_certificates,id',
+            'industry' => 'required|exists:course_industries,id',
+            'course_type' => 'required|exists:course_types,id',
+            'topic' => 'required|exists:topics,id',
         ]);
 
         $validatedVideosData = $request->validate([
@@ -189,6 +472,15 @@ class CourseController extends Controller
             'videos.*.videoFile' => 'required_with:videos|file|mimes:mp4,mov,ogg,qt|max:512000',
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.order' => 'required_with:videos|integer',
+            // Per-video quiz validation - if quiz data exists, it must be complete
+            'videos.*.quiz' => 'nullable|array',
+            'videos.*.quiz.title' => 'required_with:videos.*.quiz|string|max:255',
+            'videos.*.quiz.description' => 'nullable|string',
+            'videos.*.quiz.questions' => 'required_with:videos.*.quiz|array|min:1',
+            'videos.*.quiz.questions.*.question_text' => 'required_with:videos.*.quiz.questions|string',
+            'videos.*.quiz.questions.*.answers' => 'required_with:videos.*.quiz.questions|array|min:2',
+            'videos.*.quiz.questions.*.answers.*.answer_text' => 'required_with:videos.*.quiz.questions.*.answers|string',
+            'videos.*.quiz.questions.*.answers.*.is_correct' => 'boolean',
         ]);
 
         $validatedQuizData = $request->validate([
@@ -216,6 +508,7 @@ class CourseController extends Controller
                 'industry_id' => $validatedCourseData['industry'] ?? null,
                 'course_type_id' => $validatedCourseData['course_type'] ?? null,
                 'topic_id' => $validatedCourseData['topic'] ?? null,
+                'status' => 'published',
             ];
 
             $course = $this->courseService->create($courseDataToCreate);
@@ -336,6 +629,15 @@ class CourseController extends Controller
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.order' => 'required_with:videos|integer|min:1',
             'videos.*.duration_in_seconds' => 'nullable|integer|min:0',
+            // Per-video quiz validation - if quiz data exists, it must be complete
+            'videos.*.quiz' => 'nullable|array',
+            'videos.*.quiz.title' => 'required_with:videos.*.quiz|string|max:255',
+            'videos.*.quiz.description' => 'nullable|string',
+            'videos.*.quiz.questions' => 'required_with:videos.*.quiz|array|min:1',
+            'videos.*.quiz.questions.*.question_text' => 'required_with:videos.*.quiz.questions|string',
+            'videos.*.quiz.questions.*.answers' => 'required_with:videos.*.quiz.questions|array|min:2',
+            'videos.*.quiz.questions.*.answers.*.answer_text' => 'required_with:videos.*.quiz.questions.*.answers|string',
+            'videos.*.quiz.questions.*.answers.*.is_correct' => 'boolean',
         ]);
 
         $validatedQuizData = [];
@@ -370,6 +672,7 @@ class CourseController extends Controller
                 'industry_id' => $validatedCourseData['industry'] ?? null,
                 'course_type_id' => $validatedCourseData['course_type'] ?? null,
                 'topic_id' => $validatedCourseData['topic'] ?? null,
+                'status' => 'published', // Set status to published when updating/publishing
             ];
 
             $course->update($courseDataToUpdate);
@@ -741,7 +1044,7 @@ class CourseController extends Controller
                     'author' => $course->user ? $course->user->name : 'Placeholder Author', // Or however you get the author
                     'is_favorited' => $course->is_favorited, // Explicitly include is_favorited
                     'price' => $course->price,
-                    'status' => $course->status,
+                    'status' => $course->status ?? 'draft',
                     'category_id' => $course->category_id,
                     'instructor_id' => $course->instructor_id,
                     'thumbnail' => $course->thumbnail,
@@ -767,6 +1070,7 @@ class CourseController extends Controller
 
         $relatedCourses = Course::where('topic_id', $course->topic_id)
             ->where('id', '!=', $course->id)
+            ->where('status', 'published') // Only show published courses
             ->with(['user', 'videos'])
             ->addSelect(['learners_count' => Progress::selectRaw('count(distinct user_id)')
                 ->join('videos', 'videos.id', '=', 'progress.video_id')
@@ -866,16 +1170,29 @@ class CourseController extends Controller
             return;
         }
 
+        // For draft saves, allow empty questions array
+        $isDraftSave = empty($quizPayload['questions']) || count($quizPayload['questions']) === 0;
+        
         $quizInput = ['quiz' => $quizPayload];
-        $quizValidator = Validator::make($quizInput, [
+        $validationRules = [
             'quiz.title' => 'required|string|max:255',
             'quiz.description' => 'nullable|string',
-            'quiz.questions' => 'present|array|min:1',
-            'quiz.questions.*.question_text' => 'required|string',
-            'quiz.questions.*.answers' => 'present|array|min:2',
-            'quiz.questions.*.answers.*.answer_text' => 'required|string',
-            'quiz.questions.*.answers.*.is_correct' => 'boolean',
-        ]);
+            'quiz.questions' => 'present|array',
+        ];
+        
+        // Only require questions if not a draft save (has questions)
+        if (!$isDraftSave) {
+            $validationRules['quiz.questions'] = 'present|array|min:1';
+            $validationRules['quiz.questions.*.question_text'] = 'required|string';
+            $validationRules['quiz.questions.*.answers'] = 'present|array|min:2';
+            $validationRules['quiz.questions.*.answers.*.answer_text'] = 'required|string';
+            $validationRules['quiz.questions.*.answers.*.is_correct'] = 'boolean';
+        } else {
+            // For draft, allow nullable questions
+            $validationRules['quiz.questions'] = 'nullable|array';
+        }
+        
+        $quizValidator = Validator::make($quizInput, $validationRules);
         $quizData = $quizValidator->validate()['quiz'];
 
         if ($video->quiz) {
@@ -892,16 +1209,31 @@ class CourseController extends Controller
             'description' => $quizData['description'] ?? null,
         ]);
 
-        foreach ($quizData['questions'] as $questionData) {
-            $question = $quiz->questions()->create([
-                'question_text' => $questionData['question_text'],
-            ]);
-
-            foreach ($questionData['answers'] as $answerData) {
-                $question->answers()->create([
-                    'answer_text' => $answerData['answer_text'],
-                    'is_correct' => $answerData['is_correct'] ?? false,
+        // Only create questions if they exist and are not empty
+        if (!empty($quizData['questions']) && is_array($quizData['questions'])) {
+            foreach ($quizData['questions'] as $questionData) {
+                // Skip empty questions
+                if (empty($questionData['question_text']) || empty($questionData['answers'])) {
+                    continue;
+                }
+                
+                $question = $quiz->questions()->create([
+                    'question_text' => $questionData['question_text'],
                 ]);
+
+                if (!empty($questionData['answers']) && is_array($questionData['answers'])) {
+                    foreach ($questionData['answers'] as $answerData) {
+                        // Skip empty answers
+                        if (empty($answerData['answer_text'])) {
+                            continue;
+                        }
+                        
+                        $question->answers()->create([
+                            'answer_text' => $answerData['answer_text'],
+                            'is_correct' => $answerData['is_correct'] ?? false,
+                        ]);
+                    }
+                }
             }
         }
     }
