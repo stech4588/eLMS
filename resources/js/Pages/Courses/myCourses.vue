@@ -150,8 +150,11 @@ const restoreCourse = (course) => {
                             <div v-for="course in paginatedMyCourses" :key="course.id">
                                 <Link :href="route('courses.show', { course: course.id })" class="block hover:shadow-lg transition-shadow duration-200 ease-in-out rounded-lg h-full">
                                     <div class="bg-white rounded-lg shadow-md overflow-hidden my_course_card h-full flex flex-col dark:bg-gray-800 relative">
-                                        <div v-if="course.deleted_at" class="absolute top-3 left-3 z-10">
-                                            <span class="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white bg-red-600 rounded-full">
+                                        <div class="absolute top-3 left-3 z-10 flex flex-col gap-2">
+                                            <span v-if="course.status === 'draft'" class="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white bg-yellow-600 rounded-full">
+                                                Draft
+                                            </span>
+                                            <span v-if="course.deleted_at" class="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white bg-red-600 rounded-full">
                                                 Temporarily Deleted
                                             </span>
                                         </div>

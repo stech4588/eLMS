@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\QuizAttempt;
+use App\Models\Invoice;
+use App\Models\SubscriptionStatus;
 
 class User extends Authenticatable
 {
@@ -99,6 +101,10 @@ class User extends Authenticatable
             foreach ($defaultSettings as $setting) {
                 $user->emailNotificationSettings()->create($setting);
             }
+
+            $user->subscriptionStatus()->firstOrCreate([], [
+                'state' => 'pending',
+            ]);
         });
     }
 
@@ -160,6 +166,25 @@ class User extends Authenticatable
     public function instructor(): HasOne
     {
         return $this->hasOne(Instructor::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function subscriptionStatus(): HasOne
+    {
+        return $this->hasOne(SubscriptionStatus::class);
+    }
+
+    public function scopeActiveSubscribers($query)
+    {
+        return $query->where(function ($builder) {
+            $builder->whereHas('subscriptionStatus', function ($q) {
+                $q->whereIn('state', ['active', 'pending']);
+            })->orDoesntHave('subscriptionStatus');
+        });
     }
 
     /**
