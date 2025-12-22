@@ -3,8 +3,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 
-defineProps({
-    invoices: Array,
+const props = defineProps({
+    invoices: {
+        type: Object,
+        required: true,
+    },
 });
 
 const deleteInvoice = (invoiceId) => {
@@ -47,7 +50,7 @@ const deleteInvoice = (invoiceId) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex space-x-4">
+            <div class="flex flex-wrap gap-3">
                 <Link :href="route('users.index')"
                     class="px-4 py-2 text-xl font-semibold leading-tight text-white bg-[#148ad9] rounded hover:bg-[#148ad9] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 >
@@ -57,6 +60,11 @@ const deleteInvoice = (invoiceId) => {
                     class="px-4 py-2 text-xl font-semibold leading-tight text-white bg-[#148ad9] rounded hover:bg-[#148ad9] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                 >
                     Invoice Listing
+                </Link>
+                <Link :href="route('subscription.settings.edit')"
+                    class="px-4 py-2 text-xl font-semibold leading-tight text-white bg-[#0f6fb3] rounded hover:bg-[#0c5893] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                >
+                    Subscription Settings
                 </Link>
             </div>
         </template>
@@ -69,11 +77,10 @@ const deleteInvoice = (invoiceId) => {
                 </Link>
             </div>
 
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div
-                    class="overflow-hidden bg-white dark:bg-dark-bg-secondary shadow-sm sm:rounded-lg"
-                >
-                    <div class="p-6 text-gray-900 dark:text-white" style="overflow-x: auto;">
+            <div class="mx-auto w-full sm:px-6 lg:px-8">
+                <div class="bg-white dark:bg-dark-bg-secondary shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-white">
+                        <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-800">
                                 <tr>
@@ -88,10 +95,10 @@ const deleteInvoice = (invoiceId) => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-[#293E4C]">
-                                <tr v-if="invoices && invoices.length === 0">
+                                <tr v-if="!props.invoices.data.length">
                                     <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">No invoices found.</td>
                                 </tr>
-                                <tr v-for="invoice in invoices" :key="invoice.id">
+                                <tr v-for="invoice in props.invoices.data" :key="invoice.id">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 invoice_list_dark_text">{{ invoice.id }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 invoice_list_dark_text">{{ invoice.user.name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 invoice_list_dark_text">{{ invoice.details[0]?.course?.title }}</td>
@@ -110,6 +117,34 @@ const deleteInvoice = (invoiceId) => {
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex flex-col items-center gap-2 text-sm text-gray-600 dark:text-gray-300" v-if="props.invoices.links">
+                    <div>
+                        Showing
+                        <span class="font-semibold">{{ props.invoices.from || 0 }}</span>
+                        to
+                        <span class="font-semibold">{{ props.invoices.to || 0 }}</span>
+                        of
+                        <span class="font-semibold">{{ props.invoices.total }}</span>
+                        results
+                    </div>
+                    <div class="flex gap-2">
+                        <button
+                            class="px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-bg-secondary disabled:opacity-50"
+                            :disabled="!props.invoices.prev_page_url"
+                            @click="router.get(props.invoices.prev_page_url, {}, { preserveScroll: true })"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            class="px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-bg-secondary disabled:opacity-50"
+                            :disabled="!props.invoices.next_page_url"
+                            @click="router.get(props.invoices.next_page_url, {}, { preserveScroll: true })"
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
             </div>

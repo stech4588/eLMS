@@ -9,9 +9,19 @@ use App\Console\Commands\SendDailyMotivationalQuote;
 use App\Console\Commands\SendPromptEmails;
 use App\Console\Commands\SendStudentProgressEmails;
 use App\Console\Commands\SendWellnessCheckinEmails;
+use App\Console\Commands\SubscriptionsMonthlyRollover;
 
 class Kernel extends ConsoleKernel
 {
+    /**
+     * The Artisan commands provided by the application.
+     *
+     * @var array<int, class-string>
+     */
+    protected $commands = [
+        SubscriptionsMonthlyRollover::class,
+    ];
+
     /**
      * Define the application's command schedule.
      */
@@ -23,5 +33,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(SendPromptEmails::class)->everyMinute();
         $schedule->command(SendStudentProgressEmails::class)->dailyAt('19:00');
         $schedule->command(SendWellnessCheckinEmails::class)->daily();
+        $schedule->command(SubscriptionsMonthlyRollover::class)->dailyAt('00:15');
     }
 }

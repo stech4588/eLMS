@@ -3,35 +3,43 @@ import axios from 'axios';
 
 export const permissions = ref({});
 
-let isFetching = false;
+const requiredPermissions = [
+    'userView', 'instructorListing', 'pricingUpdate', 'coursemanagement',
+    'metatagsUpdate', 'communitySettingsView', 'dashboardView', 'careerJourneyView',
+    'communityView', 'libraryView', 'contentView', 'mycourses', 'addnewcourses', 'helpView', 'marketingmanagement',
+    'jobPost'
+];
+
 let hasFetched = false;
+let fetchPromise = null;
 
 export const fetchPermissions = async () => {
-    if (isFetching || hasFetched) {
-        return;
+    if (hasFetched) {
+        return permissions.value;
     }
 
-    isFetching = true;
+    if (fetchPromise) {
+        return fetchPromise;
+    }
 
-    const requiredPermissions = [
-        'userView', 'instructorListing', 'pricingUpdate', 'coursemanagement',
-        'metatagsUpdate', 'communitySettingsView', 'dashboardView', 'careerJourneyView',
-        'communityView', 'libraryView', 'contentView', 'mycourses', 'addnewcourses', 'helpView', 'marketingmanagement',
-        'jobPost'
-    ];
-
-    try {
-        const response = await axios.get('/check-permissions', {
-            params: { permissions: requiredPermissions }
+    fetchPromise = axios.get('/check-permissions', {
+        params: { permissions: requiredPermissions }
+    })
+        .then((response) => {
+            permissions.value = response.data.permissions;
+            hasFetched = true;
+            return permissions.value;
+        })
+        .catch((error) => {
+            console.error("Error checking permissions:", error);
+            permissions.value = {};
+            throw error;
+        })
+        .finally(() => {
+            fetchPromise = null;
         });
-        permissions.value = response.data.permissions;
-        hasFetched = true;
-    } catch (error) {
-        console.error("Error checking permissions:", error);
-        permissions.value = {}; // Reset on error
-    } finally {
-        isFetching = false;
-    }
+
+    return fetchPromise;
 };
 
 export const hasPermission = (permissionName) => {
@@ -41,4 +49,5 @@ export const hasPermission = (permissionName) => {
 export const clearPermissions = () => {
     permissions.value = {};
     hasFetched = false;
+    fetchPromise = null;
 };

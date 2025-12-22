@@ -15,6 +15,7 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\SubscriptionSettingController;
 use App\Models\User;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CourseTypeController;
@@ -102,6 +103,9 @@ Route::get('/coursess', [CourseController::class, 'myCourses'])
 Route::get('/addnewcourses', [CourseController::class, 'create'])
     ->middleware(['auth', 'verified'])
     ->name('addnewcourses');
+Route::get('/editcourses/{course}', [CourseController::class, 'edit'])
+    ->middleware(['auth', 'verified'])
+    ->name('editcourses');
 // Route::get('/leadershipAndManagement', function () {
 //     return Inertia::render('leadershipAndManagement/myleadershipAndManagement');
 // })->middleware(['auth', 'verified'])->name('leadershipAndManagement');
@@ -156,10 +160,16 @@ Route::middleware('auth')->group(function () {
     Route::put('/invoices/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
     Route::post('/invoices/create-from-payment', [InvoiceController::class, 'storeFromPayment'])->name('invoices.storeFromPayment');
+    Route::get('/billing', [InvoiceController::class, 'portal'])->name('billing.portal');
+
+    Route::get('/subscription-settings', [SubscriptionSettingController::class, 'edit'])->name('subscription.settings.edit');
+    Route::post('/subscription-settings', [SubscriptionSettingController::class, 'update'])->name('subscription.settings.update');
 
     // Course routes
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     Route::post('/courses-with-videos', [CourseController::class, 'storeWithVideos'])->name('courses.storeWithVideos');
+    Route::post('/courses/{course}/update-with-videos', [CourseController::class, 'updateWithVideos'])->name('courses.updateWithVideos');
+    Route::post('/courses/{course}/restore', [CourseController::class, 'restore'])->name('courses.restore');
     Route::post('/videos/{video}/organize-notes', [CourseController::class, 'organizeVideoNotes'])->name('videos.organizeNotes');
 
 
@@ -251,6 +261,8 @@ Route::middleware('auth')->group(function () {
     // Group routes
     Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
     Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::put('/groups/{group}', [GroupController::class, 'update'])->name('groups.update');
+    Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
     Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
     Route::post('/groups/{group}/invite', [GroupController::class, 'invite'])->name('groups.invite');
     Route::get('/groups/{group}/chat', [GroupController::class, 'chat'])->name('groups.chat');
@@ -300,7 +312,8 @@ Route::get('/courses/{course}/play/{video?}', [CourseController::class, 'play'])
 
 Route::get('/courses/{course}/related', [CourseController::class, 'related'])->name('courses.related');
 
-    Route::get('/fetch-intent/{amount}', [StripeController::class, 'fetchIntent']);
+Route::get('/fetch-intent/{amount}', [StripeController::class, 'fetchIntent'])->name('fetch-intent');
+Route::post('/payment-error-log', [StripeController::class, 'logPaymentError'])->name('payment-error-log');
     //Route::post('/stripe/webhook', [StripeController::class, 'handleWebhook']);
 // Route for toggling course favorite status
 Route::post('/courses/{course}/favorite', [CourseFavoriteController::class, 'toggle'])

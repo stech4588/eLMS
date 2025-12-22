@@ -13,7 +13,7 @@ import axios from 'axios';
 import { fetchPermissions, clearPermissions, hasPermission } from '@/permissions.js';
 import { formatDistanceToNow } from 'date-fns';
 
-const user = usePage().props.auth?.user;
+const user = computed(() => usePage().props.auth?.user || null);
 const showingNavigationDropdown = ref(false)
 const isSidebarOpen = ref(false)
 const isSidebarCollapsed = ref(false);
@@ -24,6 +24,37 @@ const isLoading = ref(false);
 const isDark = ref(false);
 const meta = computed(() => page.props.meta || {});
 const notifications = ref([]);
+const checkingPagePermission = ref(false);
+const hasPageAccess = ref(true);
+const permissionMessage = ref('');
+const pagePermissionMap = {
+    'Dashboard': 'dashboardView',
+    'careerJourney/myCareerJourney': 'careerJourneyView',
+    'Community/Index': 'communityView',
+    'Groups/Index': 'communityView',
+    'Groups/Chat': 'communityView',
+    'library/mylibrary': 'libraryView',
+    'content/mycontent': 'contentView',
+    'Courses/myCourses': 'mycourses',
+    'addCourses/addNewCourses': 'addnewcourses',
+    'help/help': 'helpView',
+    'Admin/Marketing/Index': 'marketingmanagement',
+    'Admin/CommunitySettings': 'communitySettingsView',
+    'CourseManagement/Index': 'coursemanagement',
+    'Admin/MetaTags/Index': 'metatagsUpdate',
+    'Admin/MetaTags/Create': 'metatagsUpdate',
+    'Admin/MetaTags/Edit': 'metatagsUpdate',
+    'Admin/Pricings/Index': 'pricingUpdate',
+    'Admin/Pricings/Create': 'pricingUpdate',
+    'Admin/Pricings/Edit': 'pricingUpdate',
+    'Admin/Pricings/Show': 'pricingUpdate',
+    'Admin/Instructors/Index': 'instructorListing',
+    'Admin/Instructors/Show': 'instructorListing',
+    'userListing/userlist': 'userView',
+    'userListing/EditUser': 'userView',
+    // 'Jobs/Index': 'jobPost',
+    // 'Jobs/Create': 'jobPost',
+};
 
 watch(isSidebarOpen, (value) => {
     if (typeof window !== 'undefined') {
@@ -107,6 +138,43 @@ onMounted(() => {
     window.showPageLoader = () => { isLoading.value = true; };
     window.hidePageLoader = () => { isLoading.value = false; };
 });
+
+const evaluatePagePermission = async () => {
+    if (!user) {
+        hasPageAccess.value = true;
+        permissionMessage.value = '';
+        checkingPagePermission.value = false;
+        return;
+    }
+
+    const requiredPermission = pagePermissionMap[page.component];
+
+    if (!requiredPermission) {
+        hasPageAccess.value = true;
+        permissionMessage.value = '';
+        checkingPagePermission.value = false;
+        return;
+    }
+
+    checkingPagePermission.value = true;
+
+    try {
+        await fetchPermissions();
+        hasPageAccess.value = hasPermission(requiredPermission);
+        permissionMessage.value = hasPageAccess.value
+            ? ''
+            : 'You do not have permission to view this page.';
+    } catch (error) {
+        hasPageAccess.value = false;
+        permissionMessage.value = 'Unable to verify permissions. Please try again.';
+    } finally {
+        checkingPagePermission.value = false;
+    }
+};
+
+watch(() => page.component, () => {
+    evaluatePagePermission();
+}, { immediate: true });
 
 onUnmounted(() => {
     window.removeEventListener('new-notification', fetchNotifications);
@@ -197,7 +265,7 @@ onMounted(() => {
                             <img src="/images/sidebar_icon.svg" class="dark:invert" style="height: 40px;">
                         </button>
 
-                        <a :href="user ? (user.type === 'instructor' ? '/coursess' : '/dashboard') : '/'">
+                        <a :href="user && user.type === 'instructor' ? '/coursess' : (user ? '/dashboard' : '/')">
                             <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav"
                                 style="width: 80px; height: 80px;">
                         </a>
@@ -246,7 +314,7 @@ onMounted(() => {
                                     <span class="inline-flex rounded-md">
                                         <button type="button"
                                             class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-[#1A2C38] text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none" style="padding:5px !important;">
-                                            {{ $page.props.auth.user.name }}
+                                            {{ user?.name ?? 'Account' }}
                                             <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd"
@@ -317,6 +385,9 @@ onMounted(() => {
                         <ResponsiveNavLink :href="route('cart')" class="text-gray-700 dark:text-dark-text-secondary">
                             Cart
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('billing.portal')" class="text-gray-700 dark:text-dark-text-secondary">
+                            Billing
+                        </ResponsiveNavLink>
                         <button @click="toggleDarkMode"
                             class="w-full text-left text-sm text-gray-700 dark:text-dark-text-secondary" style="padding: 5px;">
                             <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i>
@@ -353,7 +424,23 @@ onMounted(() => {
                             <div id="shadow3"></div>
                         </div>
                     </div>
-                    <slot :is-sidebar-open="isSidebarOpen" :is-player-page="isPlayerPage" />
+                    <div v-if="checkingPagePermission" class="w-full py-12">
+                        <div class="max-w-4xl mx-auto text-center text-gray-700 dark:text-gray-300">
+                            Checking permissions...
+                        </div>
+                    </div>
+                    <div v-else-if="!hasPageAccess" class="w-full py-12">
+                        <div class="max-w-4xl mx-auto text-center bg-white dark:bg-[#1A2C38] border border-gray-200 dark:border-gray-700 rounded-lg shadow-md p-8">
+                            <h2 class="text-2xl font-semibold text-red-600 dark:text-red-400">Access Denied</h2>
+                            <p class="mt-4 text-gray-700 dark:text-gray-300">
+                                {{ permissionMessage || 'You do not have permission to view this page.' }}
+                            </p>
+                            <Link :href="route('dashboard')" class="mt-6 inline-block bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition">
+                                Go to Dashboard
+                            </Link>
+                        </div>
+                    </div>
+                    <slot v-else :is-sidebar-open="isSidebarOpen" :is-player-page="isPlayerPage" />
                 </main>
             </div>
         </div>
