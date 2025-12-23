@@ -396,9 +396,14 @@ const currentCourses = computed(() => {
     white-space: nowrap;
     padding: 2px 0;
 }
-
+.dark .footer-lang-select{
+    color: white;
+}
+.dark .footer-link{
+    color: white;
+}
 .footer-link {
-    color: #5f6368;
+    color: #feffff;
     text-decoration: none;
     transition: color 0.2s, text-decoration 0.2s;
     white-space: nowrap;
