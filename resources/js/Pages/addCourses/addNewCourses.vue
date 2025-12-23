@@ -3,6 +3,24 @@
 
     <AuthenticatedLayout>
 
+        <!-- Global loader overlay while draft with media is being saved/uploaded -->
+        <div
+            v-if="isSavingDraft"
+            class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-60"
+        >
+            <div class="flex flex-col items-center justify-center bg-white dark:bg-[#1A2C38] rounded-xl px-8 py-6 shadow-lg">
+                <div class="relative mb-4">
+                    <div class="h-16 w-16 rounded-full border-4 border-blue-200"></div>
+                    <div class="absolute inset-0 h-16 w-16 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                </div>
+                <p class="text-gray-700 dark:text-gray-200 font-semibold text-sm mb-1">
+                    Uploading & saving your draft...
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Please wait, do not close this page.
+                </p>
+            </div>
+        </div>
 
         <div class="py-12 main_upload_video" style="display: flex; justify-content: center;">
             <div v-if="currentStep == 2" style="width: 223px; background-color: white; padding-top: 20px; padding-bottom: 20px; flex-direction: column;display: flex;gap: 10px; height: max-content;" class="add_course_dark_left_videos">
@@ -824,7 +842,18 @@ const autoSaveDraft = () => {
     
     // Set new timer for 1 second (half of 2 seconds = 1000ms)
     autoSaveTimer.value = setTimeout(async () => {
-        isSavingDraft.value = true;
+        // Only show the full-screen loader when there is media (video/thumbnail) being uploaded
+        const hasPendingMedia =
+            currentStep.value >= 2 &&
+            Array.isArray(videosData.value) &&
+            videosData.value.some(
+                (video) =>
+                    video &&
+                    (video.videoFile instanceof File || video.thumbnailFile instanceof File)
+            );
+
+        // For text-only auto-saves (step 1 fields etc.), do not block the whole UI
+        isSavingDraft.value = hasPendingMedia;
         
         try {
             // Save current video details if on step 2
