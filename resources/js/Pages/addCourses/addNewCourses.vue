@@ -628,7 +628,7 @@
                     <textarea v-model="videoQuizForm.description" class="w-full p-2 border rounded-md" style="color:black;"></textarea>
                 </div>
                 <h4 class="mb-3 text-lg font-semibold">Questions</h4>
-                <div v-for="(question, qIndex) in videoQuizForm.questions" :key="qIndex" class="mb-4 p-4 border rounded-md">
+                    <div v-for="(question, qIndex) in videoQuizForm.questions" :key="qIndex" class="mb-4 p-4 border rounded-md">
                     <div class="flex justify-between items-center mb-2">
                         <label class="block font-medium">Question {{ qIndex + 1 }}</label>
                         <button @click="removeVideoQuizQuestion(qIndex)" class="text-red-500 hover:text-red-700">Remove</button>
@@ -636,7 +636,14 @@
                     <input type="text" v-model="question.question_text" class="w-full p-2 border rounded-md mb-2" style="color:black;" placeholder="Enter question text">
                     <h5 class="mb-2 font-semibold">Answers</h5>
                     <div v-for="(answer, aIndex) in question.answers" :key="aIndex" class="flex items-center mb-2">
-                        <input type="radio" :name="'video_quiz_correct_' + qIndex" :value="aIndex" @change="setVideoQuizCorrectAnswer(qIndex, aIndex)" class="mr-2">
+                        <input
+                            type="radio"
+                            :name="'video_quiz_correct_' + qIndex"
+                            :value="aIndex"
+                            :checked="answer.is_correct === true"
+                            @change="setVideoQuizCorrectAnswer(qIndex, aIndex)"
+                            class="mr-2"
+                        >
                         <input type="text" v-model="answer.answer_text" class="w-full p-2 border rounded-md" style="color:black;" placeholder="Answer text">
                         <button @click="removeVideoQuizAnswer(qIndex, aIndex)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
                     </div>
@@ -740,6 +747,10 @@ const draftCourseId = ref(null);
 const autoSaveTimer = ref(null);
 const isSavingDraft = ref(false);
 const lastSavedAt = ref(null);
+// Flag to avoid auto‑save loops when we update state from server responses
+const isSyncingDraftFromServer = ref(false);
+// Lightweight signature of the last payload we actually sent to the draft API
+const lastSentDraftSignature = ref(null);
 
 const isEditingCourse = computed(() => !!props.course);
 const pageTitle = computed(() => isEditingCourse.value ? 'Edit Course' : 'Add New Video');
@@ -833,7 +844,8 @@ watch(() => form.course_price, (newValue) => {
 
 // Auto-save functionality
 const autoSaveDraft = () => {
-    if (isSavingDraft.value) return;
+    // Don't start a new auto-save while we're syncing server changes
+    if (isSavingDraft.value || isSyncingDraftFromServer.value) return;
     
     // Clear existing timer
     if (autoSaveTimer.value) {
@@ -842,9 +854,10 @@ const autoSaveDraft = () => {
     
     // Set new timer for 1 second (half of 2 seconds = 1000ms)
     autoSaveTimer.value = setTimeout(async () => {
-        // Only show the full-screen loader when there is media (video/thumbnail) being uploaded
+        // Only show the full-screen loader when there is media (video/thumbnail) being uploaded.
+        // We check all videos, regardless of the current step, so every new upload (first, second, third, ...)
+        // will always trigger the loader while its draft is being saved.
         const hasPendingMedia =
-            currentStep.value >= 2 &&
             Array.isArray(videosData.value) &&
             videosData.value.some(
                 (video) =>
@@ -860,7 +873,55 @@ const autoSaveDraft = () => {
             if (currentStep.value === 2 && currentEditingVideoIndex.value !== -1) {
                 saveCurrentVideoDetails();
             }
-            
+
+            // Build a light "signature" of the current draft (without file blobs) to avoid
+            // calling the API when nothing meaningful has changed since the last save.
+            const currentDraftSignature = JSON.stringify({
+                course: {
+                    title: form.course_title || '',
+                    description: form.course_description || '',
+                    additional_description: form.additional_description || '',
+                    recomendations: form.recomendations || '',
+                    certificates: form.certificates || '',
+                    industry: form.industry || '',
+                    course_type: form.course_type || '',
+                    topic: form.topic || '',
+                    price: form.course_price || 0,
+                },
+                videos: currentStep.value >= 2
+                    ? (videosData.value || []).map((video, index) => ({
+                        // Only non-file fields participate in the signature
+                        local_index: index,
+                        id: video.id || null,
+                        title: video.title || '',
+                        description: video.description || '',
+                        takeaway_notes: video.takeaway_notes || '',
+                        order: video.order ?? index + 1,
+                        duration_in_seconds: video.duration_in_seconds ?? null,
+                        // Quiz (non-file data)
+                        quiz: video.quiz
+                            ? {
+                                title: video.quiz.title || '',
+                                description: video.quiz.description || '',
+                                questions: (video.quiz.questions || []).map((q) => ({
+                                    question_text: q.question_text || '',
+                                    answers: (q.answers || []).map((a) => ({
+                                        answer_text: a.answer_text || '',
+                                        is_correct: !!a.is_correct,
+                                    })),
+                                })),
+                            }
+                            : null,
+                    }))
+                    : [],
+                removed_video_ids: removedVideoIds.value || [],
+            });
+
+            // If there is no new media and the signature is unchanged, skip hitting the API
+            if (!hasPendingMedia && currentDraftSignature === lastSentDraftSignature.value) {
+                return;
+            }
+
             const formData = new FormData();
             formData.append('title', form.course_title || '');
             formData.append('description', form.course_description || '');
@@ -954,35 +1015,43 @@ const autoSaveDraft = () => {
             const data = await response.json();
             
             if (data.success && data.course_id) {
-                if (!draftCourseId.value) {
-                    draftCourseId.value = data.course_id;
-                }
-                
-                // Update video IDs if returned from backend (to prevent duplicate creation)
-                if (data.video_ids && typeof data.video_ids === 'object') {
-                    Object.keys(data.video_ids).forEach((indexStr) => {
-                        const index = parseInt(indexStr);
-                        const videoId = data.video_ids[index];
-                        if (videosData.value[index] && videoId) {
-                            // Always update video ID to prevent duplicates
-                            videosData.value[index].id = videoId;
-                            // Clear videoFile after successful save to prevent re-upload
-                            if (videosData.value[index].videoFile) {
-                                videosData.value[index].videoFile = null;
+                // While we apply server updates, suppress watcher‑triggered auto‑saves
+                isSyncingDraftFromServer.value = true;
+                try {
+                    if (!draftCourseId.value) {
+                        draftCourseId.value = data.course_id;
+                    }
+                    
+                    // Update video IDs if returned from backend (to prevent duplicate creation)
+                    if (data.video_ids && typeof data.video_ids === 'object') {
+                        Object.keys(data.video_ids).forEach((indexStr) => {
+                            const index = parseInt(indexStr);
+                            const videoId = data.video_ids[index];
+                            if (videosData.value[index] && videoId) {
+                                // Always update video ID to prevent duplicates
+                                videosData.value[index].id = videoId;
+                                // Clear videoFile after successful save to prevent re-upload
+                                if (videosData.value[index].videoFile) {
+                                    videosData.value[index].videoFile = null;
+                                }
+                                if (videosData.value[index].thumbnailFile) {
+                                    videosData.value[index].thumbnailFile = null;
+                                }
                             }
-                            if (videosData.value[index].thumbnailFile) {
-                                videosData.value[index].thumbnailFile = null;
-                            }
-                        }
-                    });
+                        });
+                    }
+                    
+                    // Clear removed video IDs after successful save
+                    if (removedVideoIds.value.length > 0) {
+                        removedVideoIds.value = [];
+                    }
+
+                    // Update local "last sent" signature only after a successful save
+                    lastSentDraftSignature.value = currentDraftSignature;
+                    lastSavedAt.value = new Date();
+                } finally {
+                    isSyncingDraftFromServer.value = false;
                 }
-                
-                // Clear removed video IDs after successful save
-                if (removedVideoIds.value.length > 0) {
-                    removedVideoIds.value = [];
-                }
-                
-                lastSavedAt.value = new Date();
             } else {
                 console.error('Auto-save failed:', data.message || 'Unknown error');
             }
@@ -1005,7 +1074,7 @@ watch([
     () => form.topic,
     () => form.course_type,
 ], () => {
-    if (currentStep.value === 1) {
+    if (currentStep.value === 1 && !isSyncingDraftFromServer.value) {
         autoSaveDraft();
     }
 });
@@ -1049,17 +1118,21 @@ watch([
     () => currentVideoFormPart2.description,
     () => currentVideoFormPart2.takeaway_notes,
 ], () => {
-    if (currentStep.value === 2 && currentEditingVideoIndex.value !== -1) {
+    if (currentStep.value === 2 && currentEditingVideoIndex.value !== -1 && !isSyncingDraftFromServer.value) {
         autoSaveDraft();
     }
 });
 
-// Watch videosData for changes (when quiz is added/updated)
-watch(() => videosData.value, () => {
-    if (currentStep.value >= 2) {
-        autoSaveDraft();
-    }
-}, { deep: true });
+// Watch videosData for user-driven changes (when quiz is added/updated)
+watch(
+    () => videosData.value,
+    () => {
+        if (currentStep.value >= 2 && !isSyncingDraftFromServer.value) {
+            autoSaveDraft();
+        }
+    },
+    { deep: true }
+);
 
 const activeVideoPreviewForRightPanel = ref(null);
 const activeThumbnailPreviewForRightPanel = ref(null);
@@ -1314,6 +1387,11 @@ const handleVideoUpload = async (e) => {
             console.log(`Duration for ${file.name}: ${currentVideo.duration_in_seconds}s`);
         }
         nextStep();
+
+        // Ensure this new upload always triggers a draft save & loader
+        if (currentStep.value >= 2) {
+            autoSaveDraft();
+        }
     }
 };
 function getVideoDurationFromFile(file) {
