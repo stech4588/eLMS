@@ -168,6 +168,8 @@ class CourseController extends Controller
 
     public function saveDraft(Request $request): JsonResponse
     {
+        set_time_limit(0); // Remove timeout limit for this function
+        
         $validatedCourseData = $request->validate([
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
