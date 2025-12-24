@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; // Import Str facade
 use Illuminate\Support\Facades\File; // Import File facade for directory creation
+use Illuminate\Support\Facades\Storage; // Import Storage facade for efficient file handling
 use App\Models\Course;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
@@ -168,7 +169,15 @@ class CourseController extends Controller
 
     public function saveDraft(Request $request): JsonResponse
     {
-        set_time_limit(0); // Remove timeout limit for this function
+        // Increase time limits for large file uploads (25-30 minutes)
+        set_time_limit(1800); // 30 minutes
+        ini_set('max_execution_time', 1800);
+        ini_set('max_input_time', 1800);
+        
+        // Send headers to prevent nginx timeout (if possible)
+        if (!headers_sent()) {
+            header('X-Accel-Buffering: no'); // Disable nginx buffering
+        }
         
         $validatedCourseData = $request->validate([
             'title' => 'nullable|string|max:255',
@@ -255,28 +264,89 @@ class CourseController extends Controller
                     
                     if ($videoFile) {
                         $videoTargetDirectory = 'uploads/course_' . $course->id . '_videos';
-                        if (!File::isDirectory(public_path($videoTargetDirectory))) {
-                            File::makeDirectory(public_path($videoTargetDirectory), 0755, true, true);
-                        }
                         $videoFileName = time() . '_' . Str::slug(pathinfo($videoFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $videoFile->getClientOriginalExtension();
+                        
                         try {
-                            $videoFile->move(public_path($videoTargetDirectory), $videoFileName);
-                            $videoPath = $videoTargetDirectory . '/' . $videoFileName;
+                            // Use Storage for more efficient file handling with streams
+                            // First ensure directory exists
+                            $fullPath = public_path($videoTargetDirectory);
+                            if (!File::isDirectory($fullPath)) {
+                                File::makeDirectory($fullPath, 0755, true, true);
+                            }
+                            
+                            // Use stream-based upload for large files to prevent memory issues
+                            $sourcePath = $videoFile->getRealPath();
+                            $destinationPath = $fullPath . '/' . $videoFileName;
+                            
+                            if ($sourcePath && file_exists($sourcePath)) {
+                                $sourceStream = fopen($sourcePath, 'rb');
+                                $destinationStream = fopen($destinationPath, 'wb');
+                                
+                                if ($sourceStream && $destinationStream) {
+                                    // Stream copy in chunks to handle large files efficiently
+                                    $chunkSize = 1024 * 1024; // 1MB chunks for better performance
+                                    $bytesCopied = 0;
+                                    $totalSize = filesize($sourcePath);
+                                    $lastFlushSize = 0;
+                                    $flushInterval = 10 * 1024 * 1024; // Flush every 10MB
+                                    
+                                    while (!feof($sourceStream)) {
+                                        $chunk = fread($sourceStream, $chunkSize);
+                                        if ($chunk !== false && strlen($chunk) > 0) {
+                                            fwrite($destinationStream, $chunk);
+                                            $bytesCopied += strlen($chunk);
+                                            
+                                            // Flush output periodically to prevent timeout
+                                            if (($bytesCopied - $lastFlushSize) >= $flushInterval) {
+                                                if (ob_get_level() > 0) {
+                                                    ob_flush();
+                                                }
+                                                flush();
+                                                $lastFlushSize = $bytesCopied;
+                                            }
+                                        }
+                                    }
+                                    fclose($sourceStream);
+                                    fclose($destinationStream);
+                                    
+                                    // Verify file was copied successfully
+                                    if (file_exists($destinationPath) && filesize($destinationPath) > 0) {
+                                        $videoPath = $videoTargetDirectory . '/' . $videoFileName;
+                                    } else {
+                                        throw new \Exception('File copy verification failed');
+                                    }
+                                } else {
+                                    // Fallback to move if stream fails
+                                    $videoFile->move($fullPath, $videoFileName);
+                                    $videoPath = $videoTargetDirectory . '/' . $videoFileName;
+                                }
+                            } else {
+                                // Fallback to move if getRealPath fails
+                                $videoFile->move($fullPath, $videoFileName);
+                                $videoPath = $videoTargetDirectory . '/' . $videoFileName;
+                            }
                         } catch (\Throwable $e) {
                             Log::error('Video file upload failed in draft save', [
                                 'error' => $e->getMessage(),
+                                'file' => $videoFile->getClientOriginalName(),
+                                'size' => $videoFile->getSize(),
+                                'trace' => $e->getTraceAsString(),
                             ]);
+                            // Don't fail the entire request, just log and continue
                         }
                     }
                     
                     if ($thumbnailFile) {
                         $thumbTargetDirectory = 'uploads/course_' . $course->id . '_video_thumbnails';
-                        if (!File::isDirectory(public_path($thumbTargetDirectory))) {
-                            File::makeDirectory(public_path($thumbTargetDirectory), 0755, true, true);
-                        }
                         $thumbFileName = time() . '_' . Str::slug(pathinfo($thumbnailFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $thumbnailFile->getClientOriginalExtension();
+                        
                         try {
-                            $thumbnailFile->move(public_path($thumbTargetDirectory), $thumbFileName);
+                            // Thumbnails are smaller, so regular move is fine
+                            $fullThumbPath = public_path($thumbTargetDirectory);
+                            if (!File::isDirectory($fullThumbPath)) {
+                                File::makeDirectory($fullThumbPath, 0755, true, true);
+                            }
+                            $thumbnailFile->move($fullThumbPath, $thumbFileName);
                             $thumbnailPath = $thumbTargetDirectory . '/' . $thumbFileName;
                         } catch (\Throwable $e) {
                             Log::error('Thumbnail file upload failed in draft save', [
@@ -437,17 +507,33 @@ class CourseController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            
+            $errorMessage = $e->getMessage();
+            $statusCode = 500;
+            
+            // Check if it's a timeout-related error
+            if (str_contains($errorMessage, 'timeout') || 
+                str_contains($errorMessage, 'Maximum execution time') ||
+                str_contains($errorMessage, '504')) {
+                $errorMessage = 'Upload timeout: The file is too large or the server is taking too long to process it. Please try uploading a smaller file or contact support.';
+                $statusCode = 504;
+            }
+            
             Log::error('Draft save failed', [
                 'user_id' => $request->user()->id ?? null,
+                'course_id' => $courseId ?? null,
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
+                'request_size' => $request->header('Content-Length'),
             ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to save draft: ' . $e->getMessage(),
-            ], 500);
+                'message' => $errorMessage,
+                'error_type' => 'draft_save_failed',
+            ], $statusCode);
         }
     }
 
