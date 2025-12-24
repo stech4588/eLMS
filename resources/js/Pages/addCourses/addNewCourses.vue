@@ -8,15 +8,25 @@
             v-if="isSavingDraft"
             class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-60"
         >
-            <div class="flex flex-col items-center justify-center bg-white dark:bg-[#1A2C38] rounded-xl px-8 py-6 shadow-lg">
+            <div class="flex flex-col items-center justify-center bg-white dark:bg-[#1A2C38] rounded-xl px-8 py-6 shadow-lg min-w-[300px]">
                 <div class="relative mb-4">
                     <div class="h-16 w-16 rounded-full border-4 border-blue-200"></div>
                     <div class="absolute inset-0 h-16 w-16 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{{ uploadProgress }}%</span>
+                    </div>
                 </div>
-                <p class="text-gray-700 dark:text-gray-200 font-semibold text-sm mb-1">
+                <p class="text-gray-700 dark:text-gray-200 font-semibold text-sm mb-3 text-center">
                     Uploading & saving your draft...
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
+                    <div 
+                        class="bg-blue-600 dark:bg-blue-400 h-2.5 rounded-full transition-all duration-300 ease-out"
+                        :style="{ width: uploadProgress + '%' }"
+                    ></div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
                     Please wait, do not close this page.
                 </p>
             </div>
@@ -746,6 +756,7 @@ const form = reactive({
 const draftCourseId = ref(null);
 const autoSaveTimer = ref(null);
 const isSavingDraft = ref(false);
+const uploadProgress = ref(0); // Track upload progress percentage
 const lastSavedAt = ref(null);
 // Flag to avoid auto‑save loops when we update state from server responses
 const isSyncingDraftFromServer = ref(false);
@@ -841,6 +852,87 @@ watch(() => form.course_price, (newValue) => {
         form.course_price = 0;
     }
 });
+
+// Helper to log video upload errors to the backend
+const logVideoUploadError = async (payload) => {
+    try {
+        // Validate payload to prevent errors
+        if (!payload || typeof payload !== 'object') {
+            console.error('Invalid payload for logVideoUploadError:', payload);
+            return;
+        }
+
+        const csrfToken = document
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute('content');
+
+        // Ensure all required fields are present and valid
+        const safePayload = {
+            source: payload.source || 'unknown',
+            message: String(payload.message || 'Unknown error'),
+            course_id: payload.course_id || null,
+            video_index: typeof payload.video_index === 'number' ? payload.video_index : null,
+            file_name: payload.file_name || null,
+            extra: payload.extra && typeof payload.extra === 'object' ? payload.extra : {},
+        };
+
+        await fetch(route('courses.logUploadError'), {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken || '',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(safePayload),
+        });
+    } catch (e) {
+        console.error('Failed to send upload error log:', e);
+    }
+};
+
+// Helper to reset video input state when an upload fails
+const handleFailedVideoUpload = (friendlyMessage = 'Video upload failed. Please try again.') => {
+    try {
+        // Clear any unsaved video files (blobs) from the current editing video
+        if (currentEditingVideoIndex.value >= 0 && videosData.value[currentEditingVideoIndex.value]) {
+            const video = videosData.value[currentEditingVideoIndex.value];
+
+            // Revoke blob URL if present
+            if (video.videoFilePreview && typeof video.videoFilePreview === 'string' && video.videoFilePreview.startsWith('blob:')) {
+                URL.revokeObjectURL(video.videoFilePreview);
+            }
+
+            video.videoFile = null;
+            video.videoFilePreview = null;
+            video.duration_in_seconds = null;
+
+            // Attach a user-facing error on this video
+            if (!video.errors) {
+                video.errors = {};
+            }
+            video.errors.videoFile = friendlyMessage;
+        }
+
+        // Clear the underlying file input
+        if (videoUploadInputForPreview.value) {
+            videoUploadInputForPreview.value.value = '';
+        }
+
+        // Show a SweetAlert error to the user
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Upload Error',
+                text: friendlyMessage,
+            });
+        } else {
+            console.error('Upload error:', friendlyMessage);
+        }
+    } catch (e) {
+        console.error('Failed to handle failed video upload state:', e);
+    }
+};
 
 // Auto-save functionality
 const autoSaveDraft = () => {
@@ -996,49 +1088,124 @@ const autoSaveDraft = () => {
             
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             
-            const response = await fetch(route('courses.saveDraft'), {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken || '',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                },
-                body: formData,
+            // Use XMLHttpRequest to track upload progress
+            const data = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                
+                // Track upload progress
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 100);
+                        uploadProgress.value = percentComplete;
+                    }
+                });
+                
+                // Handle completion
+                xhr.addEventListener('load', () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const responseData = JSON.parse(xhr.responseText);
+                            resolve({ ok: true, status: xhr.status, json: async () => responseData });
+                        } catch (e) {
+                            reject(new Error('Failed to parse response'));
+                        }
+                    } else {
+                        try {
+                            const errorData = JSON.parse(xhr.responseText);
+                            resolve({ ok: false, status: xhr.status, json: async () => errorData });
+                        } catch (e) {
+                            resolve({ ok: false, status: xhr.status, json: async () => ({ message: 'Unknown error' }) });
+                        }
+                    }
+                });
+                
+                // Handle errors
+                xhr.addEventListener('error', () => {
+                    reject(new Error('Network error occurred'));
+                });
+                
+                xhr.addEventListener('abort', () => {
+                    reject(new Error('Upload aborted'));
+                });
+                
+                // Open and send request
+                xhr.open('POST', route('courses.saveDraft'));
+                xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken || '');
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.setRequestHeader('Accept', 'application/json');
+                xhr.send(formData);
             });
             
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-                console.error('Auto-save failed:', errorData.message || 'HTTP ' + response.status);
+            if (!data.ok) {
+                const errorData = await data.json();
+                const message = errorData.message || 'Draft auto-save failed while uploading video.';
+                console.error('Auto-save failed:', message);
+
+                // Log to backend for observability
+                try {
+                    const currentVideo = 
+                        currentEditingVideoIndex.value >= 0 &&
+                        videosData.value &&
+                        Array.isArray(videosData.value) &&
+                        videosData.value[currentEditingVideoIndex.value]
+                            ? videosData.value[currentEditingVideoIndex.value]
+                            : null;
+
+                    await logVideoUploadError({
+                        source: 'backend',
+                        message,
+                        course_id: draftCourseId.value || null,
+                        video_index: typeof currentEditingVideoIndex.value === 'number' ? currentEditingVideoIndex.value : null,
+                        file_name: currentVideo && currentVideo.videoFile && currentVideo.videoFile instanceof File
+                            ? currentVideo.videoFile.name
+                            : null,
+                        extra: {
+                            status: data.status,
+                        },
+                    });
+                } catch (logError) {
+                    console.error('Failed to log upload error:', logError);
+                }
+
+                // If this auto-save included media, reset the video input state
+                if (hasPendingMedia) {
+                    handleFailedVideoUpload(message);
+                }
+                uploadProgress.value = 0; // Reset progress on error
                 return;
             }
             
-            const data = await response.json();
+            const responseData = await data.json();
             
-            if (data.success && data.course_id) {
+            if (responseData.success && responseData.course_id) {
                 // While we apply server updates, suppress watcher‑triggered auto‑saves
                 isSyncingDraftFromServer.value = true;
                 try {
                     if (!draftCourseId.value) {
-                        draftCourseId.value = data.course_id;
+                        draftCourseId.value = responseData.course_id;
                     }
                     
                     // Update video IDs if returned from backend (to prevent duplicate creation)
-                    if (data.video_ids && typeof data.video_ids === 'object') {
-                        Object.keys(data.video_ids).forEach((indexStr) => {
-                            const index = parseInt(indexStr);
-                            const videoId = data.video_ids[index];
-                            if (videosData.value[index] && videoId) {
-                                // Always update video ID to prevent duplicates
-                                videosData.value[index].id = videoId;
-                                // Clear videoFile after successful save to prevent re-upload
-                                if (videosData.value[index].videoFile) {
-                                    videosData.value[index].videoFile = null;
+                    if (responseData.video_ids && typeof responseData.video_ids === 'object' && responseData.video_ids !== null) {
+                        try {
+                            Object.keys(responseData.video_ids).forEach((indexStr) => {
+                                const index = parseInt(indexStr);
+                                const videoId = responseData.video_ids[index];
+                                if (videosData.value && Array.isArray(videosData.value) && videosData.value[index] && videoId) {
+                                    // Always update video ID to prevent duplicates
+                                    videosData.value[index].id = videoId;
+                                    // Clear videoFile after successful save to prevent re-upload
+                                    if (videosData.value[index].videoFile) {
+                                        videosData.value[index].videoFile = null;
+                                    }
+                                    if (videosData.value[index].thumbnailFile) {
+                                        videosData.value[index].thumbnailFile = null;
+                                    }
                                 }
-                                if (videosData.value[index].thumbnailFile) {
-                                    videosData.value[index].thumbnailFile = null;
-                                }
-                            }
-                        });
+                            });
+                        } catch (e) {
+                            console.error('Error updating video IDs:', e);
+                        }
                     }
                     
                     // Clear removed video IDs after successful save
@@ -1053,12 +1220,76 @@ const autoSaveDraft = () => {
                     isSyncingDraftFromServer.value = false;
                 }
             } else {
-                console.error('Auto-save failed:', data.message || 'Unknown error');
+                const message = responseData.message || 'Draft auto-save failed while uploading video (no success flag).';
+                console.error('Auto-save failed:', message);
+
+                try {
+                    const currentVideo = 
+                        currentEditingVideoIndex.value >= 0 &&
+                        videosData.value &&
+                        Array.isArray(videosData.value) &&
+                        videosData.value[currentEditingVideoIndex.value]
+                            ? videosData.value[currentEditingVideoIndex.value]
+                            : null;
+
+                    await logVideoUploadError({
+                        source: 'backend',
+                        message,
+                        course_id: draftCourseId.value || null,
+                        video_index: typeof currentEditingVideoIndex.value === 'number' ? currentEditingVideoIndex.value : null,
+                        file_name: currentVideo && currentVideo.videoFile && currentVideo.videoFile instanceof File
+                            ? currentVideo.videoFile.name
+                            : null,
+                        extra: {
+                            success: responseData.success ?? null,
+                        },
+                    });
+                } catch (logError) {
+                    console.error('Failed to log upload error:', logError);
+                }
+
+                if (hasPendingMedia) {
+                    handleFailedVideoUpload(message);
+                }
+                uploadProgress.value = 0; // Reset progress on error
             }
         } catch (error) {
             console.error('Auto-save failed:', error);
+
+            const message =
+                (error && error.message) ||
+                'Unexpected error occurred while auto-saving draft and uploading video.';
+
+            try {
+                const currentVideo = 
+                    currentEditingVideoIndex.value >= 0 &&
+                    videosData.value &&
+                    Array.isArray(videosData.value) &&
+                    videosData.value[currentEditingVideoIndex.value]
+                        ? videosData.value[currentEditingVideoIndex.value]
+                        : null;
+
+                await logVideoUploadError({
+                    source: 'frontend',
+                    message,
+                    course_id: draftCourseId.value || null,
+                    video_index: typeof currentEditingVideoIndex.value === 'number' ? currentEditingVideoIndex.value : null,
+                    file_name: currentVideo && currentVideo.videoFile && currentVideo.videoFile instanceof File
+                        ? currentVideo.videoFile.name
+                        : null,
+                    extra: {},
+                });
+            } catch (logError) {
+                console.error('Failed to log upload error:', logError);
+            }
+
+            if (hasPendingMedia) {
+                handleFailedVideoUpload(message);
+            }
+            uploadProgress.value = 0; // Reset progress on error
         } finally {
             isSavingDraft.value = false;
+            uploadProgress.value = 0; // Reset progress when done
         }
     }, 1000); // Changed from 2000ms to 1000ms (half of 2 seconds)
 };

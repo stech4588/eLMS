@@ -1121,6 +1121,40 @@ class CourseController extends Controller
         return response()->json($formattedCourses);
     }
 
+    /**
+     * Store detailed logs for course video upload errors originating from the frontend.
+     *
+     * This is intended to capture failures that happen before the request
+     * reaches Laravel successfully or when the frontend detects upload issues.
+     */
+    public function logUploadError(Request $request): JsonResponse
+    {
+        $payload = $request->validate([
+            'source' => 'required|string|max:50', // e.g. "frontend" | "backend"
+            'message' => 'required|string',
+            'course_id' => 'nullable|integer|exists:courses,id',
+            'video_index' => 'nullable|integer',
+            'file_name' => 'nullable|string|max:255',
+            'extra' => 'nullable|array',
+        ]);
+
+        Log::error('Course video upload error', [
+            'source' => $payload['source'],
+            'message' => $payload['message'],
+            'course_id' => $payload['course_id'] ?? null,
+            'video_index' => $payload['video_index'] ?? null,
+            'file_name' => $payload['file_name'] ?? null,
+            'extra' => $payload['extra'] ?? [],
+            'user_id' => optional($request->user())->id,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
     private function getCourseFormOptions(): array
     {
         $certificates = CourseCertificate::all()->map(function ($certificate) {
