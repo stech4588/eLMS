@@ -190,7 +190,7 @@ export default {
         }
 
         function submit() {
-            form.post(route('instructor.register'));
+            form.post('/instructor/register');
         }
 
         return { form, profilePicturePreview, profilePictureInput, nameInitial, selectProfilePicture, onProfilePictureChange, submit };

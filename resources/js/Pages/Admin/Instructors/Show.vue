@@ -139,8 +139,80 @@ const profilePhoto = computed(() => {
     return `https://ui-avatars.com/api/?name=${name}&background=0B1624&color=FFFFFF&size=256`;
 });
 const approveInstructor = (instructorId) => {
+    console.log('=== Frontend: Instructor Approval Started ===');
+    console.log('Instructor ID:', instructorId);
+    console.log('Instructor User Data:', instructorUser.value);
+    console.log('Current Status:', instructorUser.value?.instructor?.status);
+    
     router.post(`/admin/instructors/${instructorId}/approve`, {}, {
         preserveScroll: true,
+        onStart: () => {
+            console.log('=== Frontend: Approval Request Started ===');
+            console.log('Request URL:', `/admin/instructors/${instructorId}/approve`);
+        },
+        onProgress: (event) => {
+            console.log('=== Frontend: Approval Request Progress ===', {
+                progress: event.progress,
+                total: event.total,
+                percentage: event.progress?.percentage
+            });
+        },
+        onSuccess: (page) => {
+            console.log('=== Frontend: Approval Request Success ===');
+            console.log('Response Status:', page?.status || 'unknown');
+            console.log('Response Data:', page);
+            console.log('Flash Messages:', page?.props?.flash);
+        },
+        onError: (errors) => {
+            console.error('=== Frontend: Approval Request Error ===');
+            console.error('Error Object:', errors);
+            console.error('Error Keys:', Object.keys(errors || {}));
+            
+            // Log each error individually
+            if (errors) {
+                Object.keys(errors).forEach(key => {
+                    console.error(`Error [${key}]:`, errors[key]);
+                });
+            }
+            
+            // Show error to user
+            Swal.fire({
+                icon: 'error',
+                title: 'Approval Failed',
+                text: errors?.error || errors?.message || 'An error occurred while approving the instructor. Please try again.',
+            });
+        },
+        onFinish: () => {
+            console.log('=== Frontend: Approval Request Finished ===');
+        },
+        onCancel: () => {
+            console.warn('=== Frontend: Approval Request Cancelled ===');
+        },
+    }).catch((error) => {
+        // Catch any unexpected errors
+        console.error('=== Frontend: Unexpected Error in Approval ===');
+        console.error('Error Type:', error?.constructor?.name);
+        console.error('Error Message:', error?.message);
+        console.error('Error Stack:', error?.stack);
+        console.error('Full Error Object:', error);
+        
+        // Try to extract more details
+        if (error?.response) {
+            console.error('Error Response:', error.response);
+            console.error('Error Response Status:', error.response?.status);
+            console.error('Error Response Data:', error.response?.data);
+        }
+        
+        if (error?.request) {
+            console.error('Error Request:', error.request);
+        }
+        
+        // Show error to user
+        Swal.fire({
+            icon: 'error',
+            title: 'Unexpected Error',
+            text: 'An unexpected error occurred. Please check the console for details.',
+        });
     });
 };
 
@@ -162,18 +234,82 @@ const rejectInstructor = (instructorId) => {
         allowOutsideClick: () => !Swal.isLoading()
     }).then((result) => {
         if (result.isConfirmed) {
+            console.log('=== Frontend: Instructor Rejection Started ===');
+            console.log('Instructor ID:', instructorId);
+            console.log('Rejection Reason:', result.value);
+            
             router.post(`/admin/instructors/${instructorId}/reject`, { reason: result.value }, {
                 preserveScroll: true,
-                onSuccess: () => {
+                onStart: () => {
+                    console.log('=== Frontend: Rejection Request Started ===');
+                    console.log('Request URL:', `/admin/instructors/${instructorId}/reject`);
+                },
+                onProgress: (event) => {
+                    console.log('=== Frontend: Rejection Request Progress ===', {
+                        progress: event.progress,
+                        total: event.total,
+                        percentage: event.progress?.percentage
+                    });
+                },
+                onSuccess: (page) => {
+                    console.log('=== Frontend: Rejection Request Success ===');
+                    console.log('Response Status:', page?.status || 'unknown');
+                    console.log('Response Data:', page);
+                    console.log('Flash Messages:', page?.props?.flash);
                     Swal.fire('Rejected!', 'The instructor has been rejected.', 'success');
                 },
                 onError: (errors) => {
+                    console.error('=== Frontend: Rejection Request Error ===');
+                    console.error('Error Object:', errors);
+                    console.error('Error Keys:', Object.keys(errors || {}));
+                    
+                    // Log each error individually
+                    if (errors) {
+                        Object.keys(errors).forEach(key => {
+                            console.error(`Error [${key}]:`, errors[key]);
+                        });
+                    }
+                    
                     let errorText = 'An unknown error occurred.';
                     if(errors.reason) {
                         errorText = errors.reason;
+                    } else if (errors.error) {
+                        errorText = errors.error;
+                    } else if (errors.message) {
+                        errorText = errors.message;
                     }
                     Swal.fire('Error', errorText, 'error');
+                },
+                onFinish: () => {
+                    console.log('=== Frontend: Rejection Request Finished ===');
+                },
+                onCancel: () => {
+                    console.warn('=== Frontend: Rejection Request Cancelled ===');
+                },
+            }).catch((error) => {
+                // Catch any unexpected errors
+                console.error('=== Frontend: Unexpected Error in Rejection ===');
+                console.error('Error Type:', error?.constructor?.name);
+                console.error('Error Message:', error?.message);
+                console.error('Error Stack:', error?.stack);
+                console.error('Full Error Object:', error);
+                
+                // Try to extract more details
+                if (error?.response) {
+                    console.error('Error Response:', error.response);
+                    console.error('Error Response Status:', error.response?.status);
+                    console.error('Error Response Data:', error.response?.data);
                 }
+                
+                if (error?.request) {
+                    console.error('Error Request:', error.request);
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unexpected Error',
+                    text: 'An unexpected error occurred. Please check the console for details.',
+                });
             });
         }
     });

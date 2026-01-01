@@ -210,13 +210,96 @@ export default {
     },
     methods: {
         submit() {
-            this.form.post(route('instructor.register'), {
-                onFinish: () => {
-                    // Only reset passwords if submission was successful (no errors)
-                    if (!this.form.hasErrors) {
-                        this.form.reset('password', 'password_confirmation');
+            // Log form submission start
+            console.log('=== Frontend: Instructor Registration Started ===');
+            console.log('Form Data:', {
+                name: this.form.name,
+                email: this.form.email,
+                phone_number: this.form.phone_number,
+                linkedin_url: this.form.linkedin_url,
+                followers: this.form.followers,
+                linkedin_programs: this.form.linkedin_programs,
+                teaching_language: this.form.teaching_language,
+                has_profile_picture: !!this.form.profile_picture,
+                profile_picture_size: this.form.profile_picture ? this.form.profile_picture.size : 0,
+            });
+            console.log('Form Processing State:', this.form.processing);
+            console.log('Form Errors Before Submit:', this.form.errors);
+
+            this.form.post('/instructor/register', {
+                preserveScroll: false,
+                onStart: () => {
+                    console.log('=== Frontend: Request Started ===');
+                    console.log('Form is processing:', this.form.processing);
+                },
+                onProgress: (event) => {
+                    console.log('=== Frontend: Request Progress ===', {
+                        progress: event.progress,
+                        total: event.total,
+                        percentage: event.progress?.percentage
+                    });
+                },
+                onSuccess: (page) => {
+                    console.log('=== Frontend: Request Success ===');
+                    console.log('Response Status:', page?.status || 'unknown');
+                    console.log('Response Data:', page);
+                    console.log('Form Errors After Success:', this.form.errors);
+                    console.log('Form Has Errors:', this.form.hasErrors);
+                },
+                onError: (errors) => {
+                    console.error('=== Frontend: Request Error ===');
+                    console.error('Error Object:', errors);
+                    console.error('Form Errors:', this.form.errors);
+                    console.error('Form Has Errors:', this.form.hasErrors);
+                    console.error('Error Keys:', Object.keys(errors || {}));
+                    
+                    // Log each error individually
+                    if (errors) {
+                        Object.keys(errors).forEach(key => {
+                            console.error(`Error [${key}]:`, errors[key]);
+                        });
+                    }
+
+                    // Log validation errors
+                    if (this.form.errors) {
+                        console.error('Validation Errors:', JSON.stringify(this.form.errors, null, 2));
                     }
                 },
+                onFinish: () => {
+                    console.log('=== Frontend: Request Finished ===');
+                    console.log('Form Processing State:', this.form.processing);
+                    console.log('Form Has Errors:', this.form.hasErrors);
+                    console.log('Form Errors:', this.form.errors);
+                    
+                    // Only reset passwords if submission was successful (no errors)
+                    if (!this.form.hasErrors) {
+                        console.log('Resetting password fields');
+                        this.form.reset('password', 'password_confirmation');
+                    } else {
+                        console.warn('Not resetting password fields due to errors');
+                    }
+                },
+                onCancel: () => {
+                    console.warn('=== Frontend: Request Cancelled ===');
+                },
+            }).catch((error) => {
+                // Catch any unexpected errors
+                console.error('=== Frontend: Unexpected Error ===');
+                console.error('Error Type:', error?.constructor?.name);
+                console.error('Error Message:', error?.message);
+                console.error('Error Stack:', error?.stack);
+                console.error('Full Error Object:', error);
+                
+                // Try to extract more details
+                if (error?.response) {
+                    console.error('Error Response:', error.response);
+                    console.error('Error Response Status:', error.response?.status);
+                    console.error('Error Response Data:', error.response?.data);
+                }
+                
+                if (error?.request) {
+                    console.error('Error Request:', error.request);
+                }
             });
         },
         togglePassword() {

@@ -295,7 +295,8 @@ Route::middleware('auth')->group(function () {
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('courses', CourseController::class);
 Route::apiResource('enrollments', EnrollmentController::class);
-Route::apiResource('invoices', InvoiceController::class);
+// Invoice routes are defined manually above with auth middleware - do not use apiResource here
+// Route::apiResource('invoices', InvoiceController::class);
 Route::apiResource('progresses', ProgressController::class);
 Route::apiResource('watchlists', WatchlistController::class);
 Route::apiResource('reviews', ReviewController::class);
@@ -329,7 +330,8 @@ Route::middleware('guest')->group(function () {
     Route::get('instructor/register', [InstructorRegisteredUserController::class, 'create'])
         ->name('instructor.register');
 
-    Route::post('instructor/register', [InstructorRegisteredUserController::class, 'store']);
+    Route::post('instructor/register', [InstructorRegisteredUserController::class, 'store'])
+        ->name('instructor.register.store');
 });
 
 // Google Auth Routes
