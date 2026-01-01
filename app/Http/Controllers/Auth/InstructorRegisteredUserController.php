@@ -111,14 +111,6 @@ class InstructorRegisteredUserController extends Controller
 
                 DB::commit();
                 $success = true;
-
-                // Fire registered event after successful commit
-                try {
-                    event(new Registered($user));
-                } catch (\Exception $e) {
-                    Log::warning("Failed to fire Registered event: " . $e->getMessage());
-                    // Don't fail registration if event fails
-                }
             } catch (\Exception $e) {
                 DB::rollBack();
                 Log::error("Failed to create instructor registration: " . $e->getMessage(), [
@@ -129,28 +121,53 @@ class InstructorRegisteredUserController extends Controller
                 throw $e;
             }
 
-            // Notify admins via database notification (non-blocking)
+            // Prepare redirect response immediately after successful commit
+            // This ensures we always return a response even if post-processing fails
             if ($success && $user) {
+                // Prepare redirect first, before any post-processing
                 try {
+                    $redirectResponse = redirect()->route('login')->with('status', 'Your instructor application has been submitted and is pending approval.');
+                } catch (\Throwable $e) {
+                    // Fallback to simple redirect if route fails
+                    Log::warning("Failed to generate login route redirect: " . $e->getMessage());
+                    $redirectResponse = redirect('/login')->with('status', 'Your instructor application has been submitted and is pending approval.');
+                }
+
+                // All post-processing (events, emails, notifications) - completely non-blocking
+                // These run AFTER we've prepared the response, so they can't affect the redirect
+                try {
+                    // Fire registered event (non-blocking)
+                    event(new Registered($user));
+                } catch (\Throwable $e) {
+                    Log::warning("Failed to fire Registered event: " . $e->getMessage(), [
+                        'user_id' => $user->id,
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                }
+
+                try {
+                    // Notify admins via database notification (non-blocking)
                     $admins = User::where('type', 'admin')->get();
                     if ($admins->isNotEmpty()) {
                         Notification::send($admins, new NewInstructorRegisteredNotification($user));
                     }
-                } catch (\Exception $e) {
-                    Log::warning("Failed to send new instructor notification: " . $e->getMessage());
+                } catch (\Throwable $e) {
+                    Log::warning("Failed to send new instructor notification: " . $e->getMessage(), [
+                        'user_id' => $user->id
+                    ]);
                 }
 
-                // Notify admin via email (non-blocking)
                 try {
-                    Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
-                } catch (\Exception $e) {
-                    Log::warning("Failed to send new instructor notification email: " . $e->getMessage());
+                    // Notify admin via email (non-blocking)
+                    Mail::to('mbmuniversity1@gmail.com')->send(new NewInstructorNotification($user));
+                } catch (\Throwable $e) {
+                    Log::warning("Failed to send new instructor notification email: " . $e->getMessage(), [
+                        'user_id' => $user->id
+                    ]);
                 }
-            }
 
-            // Always return a redirect response on success
-            if ($success) {
-                return redirect()->route('login')->with('status', 'Your instructor application has been submitted and is pending approval.');
+                // Return the redirect response - this happens regardless of post-processing success/failure
+                return $redirectResponse;
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Re-throw validation exceptions so Inertia can handle them properly
