@@ -48,6 +48,9 @@ class InstructorController extends Controller
 
     public function approve(Instructor $instructor): RedirectResponse
     {
+        $success = false;
+        $errorMessage = null;
+
         try {
             // Load the user relationship if not already loaded
             if (!$instructor->relationLoaded('user')) {
@@ -57,7 +60,7 @@ class InstructorController extends Controller
             // Check if user exists
             if (!$instructor->user) {
                 Log::error("Instructor {$instructor->id} has no associated user");
-                return back()->with('error', 'Instructor record is missing associated user. Please contact support.');
+                return redirect()->back()->with('error', 'Instructor record is missing associated user. Please contact support.');
             }
 
             // Use database transaction to ensure data consistency
@@ -71,33 +74,61 @@ class InstructorController extends Controller
                 $instructor->user->save();
 
                 DB::commit();
+                $success = true;
             } catch (\Exception $e) {
                 DB::rollBack();
                 Log::error("Failed to approve instructor {$instructor->id}: " . $e->getMessage(), [
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
                 ]);
-                return back()->with('error', 'Failed to approve instructor. Please try again or contact support.');
+                $errorMessage = 'Failed to approve instructor. Please try again or contact support.';
             }
 
-            // Send email notification (non-blocking)
-            try {
-                Mail::to($instructor->user->email)->send(new InstructorApproved($instructor->user));
-            } catch (\Exception $e) {
-                Log::error("Failed to send approval email to {$instructor->user->email}: " . $e->getMessage());
-                // Don't fail the approval if email fails
+            // Send email notification (non-blocking) - only if approval was successful
+            if ($success) {
+                try {
+                    // Refresh the user model to ensure we have latest data
+                    $instructor->refresh();
+                    $instructor->load('user');
+                    
+                    if ($instructor->user && $instructor->user->email) {
+                        Mail::to($instructor->user->email)->send(new InstructorApproved($instructor->user));
+                    }
+                } catch (\Exception $e) {
+                    // Log but don't fail - email is non-critical
+                    Log::warning("Failed to send approval email to instructor {$instructor->id}: " . $e->getMessage(), [
+                        'email' => $instructor->user->email ?? 'unknown',
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                }
             }
 
-            return back()->with('success', 'Instructor approved successfully.');
-        } catch (\Exception $e) {
+            // Always return a redirect response
+            if ($success) {
+                return redirect()->back()->with('success', 'Instructor approved successfully.');
+            } else {
+                return redirect()->back()->with('error', $errorMessage ?? 'An error occurred while approving the instructor.');
+            }
+        } catch (\Throwable $e) {
+            // Catch any unexpected errors (including fatal errors)
             Log::error("Unexpected error in approve method for instructor {$instructor->id}: " . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'class' => get_class($e)
             ]);
-            return back()->with('error', 'An unexpected error occurred. Please try again or contact support.');
+            
+            // Always return a redirect, never let it fail
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again or contact support.');
         }
     }
 
     public function reject(Request $request, Instructor $instructor): RedirectResponse
     {
+        $success = false;
+        $errorMessage = null;
+
         try {
             $request->validate(['reason' => 'required|string|min:10']);
 
@@ -109,7 +140,7 @@ class InstructorController extends Controller
             // Check if user exists
             if (!$instructor->user) {
                 Log::error("Instructor {$instructor->id} has no associated user");
-                return back()->with('error', 'Instructor record is missing associated user. Please contact support.');
+                return redirect()->back()->with('error', 'Instructor record is missing associated user. Please contact support.');
             }
 
             // Use database transaction to ensure data consistency
@@ -123,30 +154,55 @@ class InstructorController extends Controller
                 $instructor->user->save();
 
                 DB::commit();
+                $success = true;
             } catch (\Exception $e) {
                 DB::rollBack();
                 Log::error("Failed to reject instructor {$instructor->id}: " . $e->getMessage(), [
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
                 ]);
-                return back()->with('error', 'Failed to reject instructor. Please try again or contact support.');
+                $errorMessage = 'Failed to reject instructor. Please try again or contact support.';
             }
 
-            // Send email notification (non-blocking)
-            try {
-                Mail::to($instructor->user->email)->send(new InstructorRejected($instructor->user, $request->reason));
-            } catch (\Exception $e) {
-                Log::error("Failed to send rejection email to {$instructor->user->email}: " . $e->getMessage());
-                // Don't fail the rejection if email fails
+            // Send email notification (non-blocking) - only if rejection was successful
+            if ($success) {
+                try {
+                    // Refresh the instructor model to ensure we have latest data
+                    $instructor->refresh();
+                    $instructor->load('user');
+                    
+                    if ($instructor->user && $instructor->user->email) {
+                        Mail::to($instructor->user->email)->send(new InstructorRejected($instructor->user, $request->reason));
+                    }
+                } catch (\Exception $e) {
+                    // Log but don't fail - email is non-critical
+                    Log::warning("Failed to send rejection email to instructor {$instructor->id}: " . $e->getMessage(), [
+                        'email' => $instructor->user->email ?? 'unknown',
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                }
             }
 
-            return back()->with('success', 'Instructor rejected successfully.');
+            // Always return a redirect response
+            if ($success) {
+                return redirect()->back()->with('success', 'Instructor rejected successfully.');
+            } else {
+                return redirect()->back()->with('error', $errorMessage ?? 'An error occurred while rejecting the instructor.');
+            }
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            // Catch any unexpected errors (including fatal errors)
             Log::error("Unexpected error in reject method for instructor {$instructor->id}: " . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'class' => get_class($e)
             ]);
-            return back()->with('error', 'An unexpected error occurred. Please try again or contact support.');
+            
+            // Always return a redirect, never let it fail
+            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again or contact support.');
         }
     }
 

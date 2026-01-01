@@ -35,8 +35,11 @@ class InstructorRegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
+        $success = false;
+        $user = null;
+
         try {
             $request->validate([
                 'name' => 'required|string|max:255',
@@ -53,10 +56,15 @@ class InstructorRegisteredUserController extends Controller
 
             $profilePicturePath = null;
             if ($request->hasFile('profile_picture')) {
-                $image = $request->file('profile_picture');
-                $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('profile-pictures'), $imageName);
-                $profilePicturePath = 'profile-pictures/' . $imageName;
+                try {
+                    $image = $request->file('profile_picture');
+                    $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('profile-pictures'), $imageName);
+                    $profilePicturePath = 'profile-pictures/' . $imageName;
+                } catch (\Exception $e) {
+                    Log::warning("Failed to upload profile picture: " . $e->getMessage());
+                    // Continue without profile picture
+                }
             }
 
             // Use database transaction to ensure data consistency
@@ -102,43 +110,61 @@ class InstructorRegisteredUserController extends Controller
                 Instructor::create($instructorData);
 
                 DB::commit();
+                $success = true;
 
-                event(new Registered($user));
+                // Fire registered event after successful commit
+                try {
+                    event(new Registered($user));
+                } catch (\Exception $e) {
+                    Log::warning("Failed to fire Registered event: " . $e->getMessage());
+                    // Don't fail registration if event fails
+                }
             } catch (\Exception $e) {
                 DB::rollBack();
+                Log::error("Failed to create instructor registration: " . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]);
                 throw $e;
             }
 
-            // Notify admins via database notification
-            try {
-                $admins = User::where('type', 'admin')->get();
-                if ($admins->isNotEmpty()) {
-                    Notification::send($admins, new NewInstructorRegisteredNotification($user));
+            // Notify admins via database notification (non-blocking)
+            if ($success && $user) {
+                try {
+                    $admins = User::where('type', 'admin')->get();
+                    if ($admins->isNotEmpty()) {
+                        Notification::send($admins, new NewInstructorRegisteredNotification($user));
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("Failed to send new instructor notification: " . $e->getMessage());
                 }
-            } catch (\Exception $e) {
-                Log::error("Failed to send new instructor notification: " . $e->getMessage());
+
+                // Notify admin via email (non-blocking)
+                try {
+                    Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
+                } catch (\Exception $e) {
+                    Log::warning("Failed to send new instructor notification email: " . $e->getMessage());
+                }
             }
 
-            // Notify admin via email
-            try {
-                Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
-            } catch (\Exception $e) {
-                Log::error("Failed to send new instructor notification email: " . $e->getMessage());
+            // Always return a redirect response on success
+            if ($success) {
+                return redirect()->route('login')->with('status', 'Your instructor application has been submitted and is pending approval.');
             }
-
-            // Auth::login($user);
-
-            // Consider redirecting to an instructor-specific dashboard or page
-            return redirect(route('login'))->with('status', 'Your instructor application has been submitted and is pending approval.'); 
         } catch (\Illuminate\Validation\ValidationException $e) {
+            // Re-throw validation exceptions so Inertia can handle them properly
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Instructor registration error: " . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'request_data' => $request->except(['password', 'password_confirmation'])
             ]);
             
-            return back()->withErrors([
+            // Always return a redirect, never let it fail
+            return redirect()->back()->withErrors([
                 'error' => 'An error occurred during registration. Please try again or contact support.'
             ])->withInput();
         }
