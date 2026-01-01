@@ -666,7 +666,11 @@ class CourseController extends Controller
             $students = User::where('type', 'student')->get();
             foreach ($students as $student) {
                 if ($student->canReceiveEmail('receives_new_course_notification_emails')) {
-                    Mail::to($student->email)->send(new NewCourseNotification($course));
+                    try {
+                        Mail::to($student->email)->send(new NewCourseNotification($course));
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error("Failed to send new course notification email to {$student->email}: " . $e->getMessage());
+                    }
                 }
             }
 

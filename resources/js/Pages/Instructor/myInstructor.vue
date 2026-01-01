@@ -417,6 +417,10 @@ export default {
     background-color: #bebcbc00;
     color: white;
 }
+.instructor-form-select option {
+    color: black;
+    background-color: white;
+}
 .instructor-form-select:focus {
   outline: none;
   border: 1px solid #424242; /* keep dark gray on focus */

@@ -7,6 +7,7 @@ use App\Mail\CourseCompletionEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class SendCourseCompletionEmail
 {
@@ -24,7 +25,11 @@ class SendCourseCompletionEmail
     public function handle(CourseCompleted $event): void
     {
         if ($event->user->canReceiveEmail('receives_course_completion_emails')) {
-            Mail::to($event->user->email)->send(new CourseCompletionEmail($event->user, $event->course));
+            try {
+                Mail::to($event->user->email)->send(new CourseCompletionEmail($event->user, $event->course));
+            } catch (\Exception $e) {
+                Log::error("Failed to send course completion email to {$event->user->email}: " . $e->getMessage());
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\GroupEventNotification;
 use App\Notifications\NewGroupEventNotification as NewGroupEventDbNotification;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class SendGroupEventNotifications implements ShouldQueue
 {
@@ -45,7 +46,11 @@ class SendGroupEventNotifications implements ShouldQueue
 
             // Send email notification if enabled
             if ($member->pivot->receive_email_notifications) {
-                Mail::to($user->email)->send(new GroupEventNotification($groupEvent, $user));
+                try {
+                    Mail::to($user->email)->send(new GroupEventNotification($groupEvent, $user));
+                } catch (\Exception $e) {
+                    Log::error("Failed to send group event notification email to {$user->email}: " . $e->getMessage());
+                }
             }
         }
     }

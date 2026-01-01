@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -36,72 +37,110 @@ class InstructorRegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:20', // Adjusted max length
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'linkedin_url' => 'required|url|max:255',
-            'followers' => 'required|string|max:255',
-            'linkedin_programs' => 'nullable|array', // Assuming this comes as an array of selected programs
-            'linkedin_programs.*' => 'string|max:255',
-            'teaching_language' => 'required|string|max:255', // Assuming one language is selected
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        $profilePicturePath = null;
-        if ($request->hasFile('profile_picture')) {
-            $image = $request->file('profile_picture');
-            $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('profile-pictures'), $imageName);
-            $profilePicturePath = 'profile-pictures/' . $imageName;
-        }
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'password' => Hash::make($request->password),
-            'role_id' => 2, // Role ID for Instructor
-            'type' => 'instructor', // Type for Instructor
-            'is_active' => 0, // Set as inactive by default for instructors
-            'profile_picture' => $profilePicturePath,
-        ]);
-
-        $instructorData = [
-            'user_id' => $user->id,
-            'linkedin_url' => $request->linkedin_url,
-            'followers' => $request->followers,
-            'teaching_language' => $request->teaching_language,
-            'status' => 'pending',
-        ];
-
-        if ($request->has('linkedin_programs') && is_array($request->linkedin_programs)) {
-            // Store as a comma-separated string, or JSON encode if preferred
-            $instructorData['linkedin_programs'] = implode(', ', $request->linkedin_programs);
-        } else {
-            // Handle cases where it might be a single string or not provided
-            $instructorData['linkedin_programs'] = $request->input('linkedin_programs');
-        }
-        
-        Instructor::create($instructorData);
-
-        event(new Registered($user));
-
-        // Notify admins via database notification
-        $admins = User::where('type', 'admin')->get();
-        Notification::send($admins, new NewInstructorRegisteredNotification($user));
-
-        // Notify admin via email
         try {
-            Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'phone_number' => 'required|string|max:20', // Adjusted max length
+                'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'linkedin_url' => 'required|url|max:255',
+                'followers' => 'required|string|max:255',
+                'linkedin_programs' => 'nullable|array', // Assuming this comes as an array of selected programs
+                'linkedin_programs.*' => 'string|max:255',
+                'teaching_language' => 'required|string|max:255', // Assuming one language is selected
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+
+            $profilePicturePath = null;
+            if ($request->hasFile('profile_picture')) {
+                $image = $request->file('profile_picture');
+                $imageName = 'profile_' . time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('profile-pictures'), $imageName);
+                $profilePicturePath = 'profile-pictures/' . $imageName;
+            }
+
+            // Use database transaction to ensure data consistency
+            DB::beginTransaction();
+            
+            try {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone_number' => $request->phone_number,
+                    'password' => Hash::make($request->password),
+                    'role_id' => 2, // Role ID for Instructor
+                    'type' => 'instructor', // Type for Instructor
+                    'is_active' => 0, // Set as inactive by default for instructors
+                    'profile_picture' => $profilePicturePath,
+                ]);
+
+                $instructorData = [
+                    'user_id' => $user->id,
+                    'linkedin_url' => $request->linkedin_url,
+                    'followers' => $request->followers,
+                    'teaching_language' => $request->teaching_language,
+                    'status' => 'pending',
+                ];
+
+                // Handle linkedin_programs - can be array, string, or null
+                $linkedinPrograms = $request->input('linkedin_programs');
+                if (!empty($linkedinPrograms)) {
+                    if (is_array($linkedinPrograms)) {
+                        // Filter out any empty values and implode
+                        $linkedinPrograms = array_filter($linkedinPrograms, function($value) {
+                            return !empty($value);
+                        });
+                        $instructorData['linkedin_programs'] = !empty($linkedinPrograms) ? implode(', ', $linkedinPrograms) : null;
+                    } else {
+                        // If it's already a string, use it directly
+                        $instructorData['linkedin_programs'] = $linkedinPrograms;
+                    }
+                } else {
+                    $instructorData['linkedin_programs'] = null;
+                }
+                
+                Instructor::create($instructorData);
+
+                DB::commit();
+
+                event(new Registered($user));
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+
+            // Notify admins via database notification
+            try {
+                $admins = User::where('type', 'admin')->get();
+                if ($admins->isNotEmpty()) {
+                    Notification::send($admins, new NewInstructorRegisteredNotification($user));
+                }
+            } catch (\Exception $e) {
+                Log::error("Failed to send new instructor notification: " . $e->getMessage());
+            }
+
+            // Notify admin via email
+            try {
+                Mail::to('teststechlms@gmail.com')->send(new NewInstructorNotification($user));
+            } catch (\Exception $e) {
+                Log::error("Failed to send new instructor notification email: " . $e->getMessage());
+            }
+
+            // Auth::login($user);
+
+            // Consider redirecting to an instructor-specific dashboard or page
+            return redirect(route('login'))->with('status', 'Your instructor application has been submitted and is pending approval.'); 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
-            Log::error("Failed to send new instructor notification email: " . $e->getMessage());
+            Log::error("Instructor registration error: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->except(['password', 'password_confirmation'])
+            ]);
+            
+            return back()->withErrors([
+                'error' => 'An error occurred during registration. Please try again or contact support.'
+            ])->withInput();
         }
-
-        // Auth::login($user);
-
-        // Consider redirecting to an instructor-specific dashboard or page
-        return redirect(route('login'))->with('status', 'Your instructor application has been submitted and is pending approval.'); 
     }
 }

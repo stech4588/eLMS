@@ -9,6 +9,7 @@ use App\Services\OpenAIService;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MarketingEmail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SendPromptEmails extends Command
 {
@@ -54,8 +55,13 @@ class SendPromptEmails extends Command
                         ->first();
                         
                     if ($receivesEmails && $receivesEmails->value) {
-                        Mail::to($user->email)->send(new MarketingEmail($generatedText));
-                        $this->info("Email sent to: {$user->email}");
+                        try {
+                            Mail::to($user->email)->send(new MarketingEmail($generatedText));
+                            $this->info("Email sent to: {$user->email}");
+                        } catch (\Exception $e) {
+                            Log::error("Failed to send marketing email to {$user->email}: " . $e->getMessage());
+                            $this->error("Failed to send email to {$user->email}: " . $e->getMessage());
+                        }
                     }
                 }
 

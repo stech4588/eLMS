@@ -88,23 +88,35 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::created(function ($user) {
-            $defaultSettings = [
-                ['key' => 'receives_new_course_notification_emails', 'value' => true],
-                ['key' => 'receives_course_completion_emails', 'value' => true],
-                ['key' => 'receives_course_reminder_emails', 'value' => true],
-                ['key' => 'receives_new_message_emails', 'value' => true],
-                ['key' => 'receives_promotional_emails', 'value' => false],
-                ['key' => 'receives_wellness_checkin_emails', 'value' => true],
-                ['key' => 'receives_motivational_quote_emails', 'value' => true],
-            ];
+            try {
+                $defaultSettings = [
+                    ['key' => 'receives_new_course_notification_emails', 'value' => true],
+                    ['key' => 'receives_course_completion_emails', 'value' => true],
+                    ['key' => 'receives_course_reminder_emails', 'value' => true],
+                    ['key' => 'receives_new_message_emails', 'value' => true],
+                    ['key' => 'receives_promotional_emails', 'value' => false],
+                    ['key' => 'receives_wellness_checkin_emails', 'value' => true],
+                    ['key' => 'receives_motivational_quote_emails', 'value' => true],
+                ];
 
-            foreach ($defaultSettings as $setting) {
-                $user->emailNotificationSettings()->create($setting);
+                foreach ($defaultSettings as $setting) {
+                    try {
+                        $user->emailNotificationSettings()->create($setting);
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error("Failed to create email notification setting for user {$user->id}: " . $e->getMessage());
+                    }
+                }
+
+                try {
+                    $user->subscriptionStatus()->firstOrCreate([], [
+                        'state' => 'pending',
+                    ]);
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error("Failed to create subscription status for user {$user->id}: " . $e->getMessage());
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Error in User booted method for user {$user->id}: " . $e->getMessage());
             }
-
-            $user->subscriptionStatus()->firstOrCreate([], [
-                'state' => 'pending',
-            ]);
         });
     }
 

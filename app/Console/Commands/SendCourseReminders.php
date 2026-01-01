@@ -98,7 +98,12 @@ class SendCourseReminders extends Command
                 if ($user->canReceiveEmail('receivess_course_reminder_emails')) {
                     $this->info("Sending reminder to {$user->email} for " . count($incompleteCourses) . " incomplete courses.");
                     Log::info("Attempting to send email to {$user->email} for incomplete courses.");
-                    Mail::to($user->email)->send(new CourseReminder($user, $incompleteCourses));
+                    try {
+                        Mail::to($user->email)->send(new CourseReminder($user, $incompleteCourses));
+                    } catch (\Exception $e) {
+                        Log::error("Failed to send course reminder email to {$user->email}: " . $e->getMessage());
+                        $this->error("Failed to send reminder email to {$user->email}: " . $e->getMessage());
+                    }
                 }
             } else {
                 Log::debug("No incomplete courses found for user: {$user->id} - {$user->email} that meet reminder criteria.");

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Services\OpenAIService;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WellnessCheckinEmail;
+use Illuminate\Support\Facades\Log;
 
 class SendWellnessCheckinEmails extends Command
 {
@@ -80,12 +81,17 @@ class SendWellnessCheckinEmails extends Command
             return;
         }
 
-        Mail::to($user->email)->send(new WellnessCheckinEmail($user->name, $motivationalMessage));
-        
-        if ($isTest) {
-            $this->info("Test email sent successfully to: {$user->email}");
-        } else {
-            $this->info("Wellness check-in email sent to: {$user->email}");
+        try {
+            Mail::to($user->email)->send(new WellnessCheckinEmail($user->name, $motivationalMessage));
+            
+            if ($isTest) {
+                $this->info("Test email sent successfully to: {$user->email}");
+            } else {
+                $this->info("Wellness check-in email sent to: {$user->email}");
+            }
+        } catch (\Exception $e) {
+            Log::error("Failed to send wellness check-in email to {$user->email}: " . $e->getMessage());
+            $this->error("Failed to send wellness check-in email to {$user->email}: " . $e->getMessage());
         }
     }
 }

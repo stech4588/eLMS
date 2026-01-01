@@ -56,13 +56,18 @@ class SendStudentProgressEmails extends Command
                     ->first();
 
                 if ($receivesEmails && $receivesEmails->value) {
-                    Mail::to($student->email)->send(new PromptGeneratedEmail(
-                        $generatedText,
-                        $student->name,
-                        $goalHours,
-                        $watchTimeInHours
-                    ));
-                    $this->info("Email sent to: {$student->email}");
+                    try {
+                        Mail::to($student->email)->send(new PromptGeneratedEmail(
+                            $generatedText,
+                            $student->name,
+                            $goalHours,
+                            $watchTimeInHours
+                        ));
+                        $this->info("Email sent to: {$student->email}");
+                    } catch (\Exception $e) {
+                        Log::error("Failed to send progress feedback email to {$student->email}: " . $e->getMessage());
+                        $this->error("Failed to send email to {$student->email}: " . $e->getMessage());
+                    }
                 }
             } else {
                 $this->info("No email required for {$student->name} today.");

@@ -7,6 +7,7 @@ use App\Models\Quote;
 use App\Models\User;
 use App\Mail\MotivationalQuoteMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class SendDailyMotivationalQuote extends Command
 {
@@ -44,8 +45,13 @@ class SendDailyMotivationalQuote extends Command
         }
 
         foreach ($users as $user) {
-            if ($user->emailNotificationSetting->receives_motivational_quote_emails) {
-                Mail::to($user->email)->send(new MotivationalQuoteMail($quotes));
+            if ($user->emailNotificationSetting && $user->emailNotificationSetting->receives_motivational_quote_emails) {
+                try {
+                    Mail::to($user->email)->send(new MotivationalQuoteMail($quotes));
+                } catch (\Exception $e) {
+                    Log::error("Failed to send motivational quote email to {$user->email}: " . $e->getMessage());
+                    $this->error("Failed to send email to {$user->email}: " . $e->getMessage());
+                }
             }
         }
 
