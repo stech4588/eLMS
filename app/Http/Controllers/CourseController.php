@@ -250,10 +250,26 @@ class CourseController extends Controller
 
             // Save videos if provided
             if ($request->has('videos') && is_array($request->input('videos'))) {
+                Log::info("=== Video Storage Process Started ===", [
+                    'course_id' => $course->id,
+                    'videos_count' => count($request->input('videos')),
+                    'user_id' => $request->user()->id
+                ]);
+                
                 $videoService = resolve(\App\Services\VideoService::class);
                 $createdVideoIds = []; // Track created/updated video IDs
                 
                 foreach ($request->input('videos') as $index => $videoData) {
+                    Log::info("Processing video at index {$index}", [
+                        'video_data' => [
+                            'id' => $videoData['id'] ?? null,
+                            'title' => $videoData['title'] ?? null,
+                            'order' => $videoData['order'] ?? null,
+                            'has_video_file' => $request->hasFile("videos.{$index}.videoFile"),
+                            'has_thumbnail_file' => $request->hasFile("videos.{$index}.thumbnailFile"),
+                        ]
+                    ]);
+                    
                     $videoId = $videoData['id'] ?? null;
                     
                     // Handle video file upload
@@ -263,15 +279,33 @@ class CourseController extends Controller
                     $thumbnailPath = null;
                     
                     if ($videoFile) {
+                        Log::info("Video file detected for index {$index}", [
+                            'original_name' => $videoFile->getClientOriginalName(),
+                            'size' => $videoFile->getSize(),
+                            'mime_type' => $videoFile->getMimeType(),
+                            'extension' => $videoFile->getClientOriginalExtension()
+                        ]);
+                        
                         $videoTargetDirectory = 'uploads/course_' . $course->id . '_videos';
                         $videoFileName = time() . '_' . Str::slug(pathinfo($videoFile->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $videoFile->getClientOriginalExtension();
+                        
+                        Log::info("Preparing video file upload", [
+                            'target_directory' => $videoTargetDirectory,
+                            'file_name' => $videoFileName,
+                            'full_path' => public_path($videoTargetDirectory)
+                        ]);
                         
                         try {
                             // Use Storage for more efficient file handling with streams
                             // First ensure directory exists
                             $fullPath = public_path($videoTargetDirectory);
+                            Log::info("Checking/creating directory", ['path' => $fullPath, 'exists' => File::isDirectory($fullPath)]);
+                            
                             if (!File::isDirectory($fullPath)) {
-                                File::makeDirectory($fullPath, 0755, true, true);
+                                $dirCreated = File::makeDirectory($fullPath, 0755, true, true);
+                                Log::info("Directory creation result", ['created' => $dirCreated, 'path' => $fullPath, 'writable' => is_writable($fullPath)]);
+                            } else {
+                                Log::info("Directory already exists", ['path' => $fullPath, 'writable' => is_writable($fullPath)]);
                             }
                             
                             // Use stream-based upload for large files to prevent memory issues
@@ -310,9 +344,25 @@ class CourseController extends Controller
                                     fclose($destinationStream);
                                     
                                     // Verify file was copied successfully
+                                    Log::info("Verifying file copy", [
+                                        'destination_path' => $destinationPath,
+                                        'file_exists' => file_exists($destinationPath),
+                                        'file_size' => file_exists($destinationPath) ? filesize($destinationPath) : 0,
+                                        'source_size' => filesize($sourcePath)
+                                    ]);
+                                    
                                     if (file_exists($destinationPath) && filesize($destinationPath) > 0) {
                                         $videoPath = $videoTargetDirectory . '/' . $videoFileName;
+                                        Log::info("Video file uploaded successfully", [
+                                            'video_path' => $videoPath,
+                                            'file_size' => filesize($destinationPath)
+                                        ]);
                                     } else {
+                                        Log::error("File copy verification failed", [
+                                            'destination_path' => $destinationPath,
+                                            'exists' => file_exists($destinationPath),
+                                            'size' => file_exists($destinationPath) ? filesize($destinationPath) : 0
+                                        ]);
                                         throw new \Exception('File copy verification failed');
                                     }
                                 } else {
@@ -331,6 +381,10 @@ class CourseController extends Controller
                                 'file' => $videoFile->getClientOriginalName(),
                                 'size' => $videoFile->getSize(),
                                 'trace' => $e->getTraceAsString(),
+                                'file_path' => $e->getFile(),
+                                'line' => $e->getLine(),
+                                'index' => $index,
+                                'course_id' => $course->id
                             ]);
                             // Don't fail the entire request, just log and continue
                         }
@@ -368,8 +422,15 @@ class CourseController extends Controller
                     }
                     
                     if ($videoId) {
+                        Log::info("Updating existing video", ['video_id' => $videoId, 'index' => $index]);
                         // Update existing video
                         $existingVideo = $course->videos()->where('id', $videoId)->first();
+                        Log::info("Existing video lookup result", [
+                            'video_id' => $videoId,
+                            'found' => $existingVideo !== null,
+                            'video_title' => $existingVideo?->title
+                        ]);
+                        
                         if ($existingVideo) {
                             $updatePayload = [
                                 'title' => $videoData['title'] ?? $existingVideo->title,
@@ -393,7 +454,37 @@ class CourseController extends Controller
                                 $updatePayload['duration'] = $videoData['duration_in_seconds'];
                             }
                             
-                            $videoService->update($existingVideo->id, $updatePayload);
+                            Log::info("Calling videoService->update", [
+                                'video_id' => $existingVideo->id,
+                                'update_payload' => $updatePayload
+                            ]);
+                            
+                            try {
+                                $updatedVideo = $videoService->update($existingVideo->id, $updatePayload);
+                                Log::info("VideoService->update completed", [
+                                    'video_id' => $existingVideo->id,
+                                    'result' => $updatedVideo ? 'success' : 'failed',
+                                    'video_url' => $updatedVideo?->video_url ?? 'not_set'
+                                ]);
+                                
+                                // Refresh from database to verify
+                                $existingVideo->refresh();
+                                Log::info("Video refreshed from database", [
+                                    'video_id' => $existingVideo->id,
+                                    'video_url' => $existingVideo->video_url,
+                                    'title' => $existingVideo->title,
+                                    'order' => $existingVideo->order
+                                ]);
+                            } catch (\Throwable $e) {
+                                Log::error("VideoService->update failed", [
+                                    'video_id' => $existingVideo->id,
+                                    'error' => $e->getMessage(),
+                                    'trace' => $e->getTraceAsString(),
+                                    'file' => $e->getFile(),
+                                    'line' => $e->getLine()
+                                ]);
+                                throw $e;
+                            }
                             
                             // Sync quiz if provided - allow empty questions array for draft
                             if ($quizData && is_array($quizData) && !empty($quizData['title'])) {
@@ -406,6 +497,7 @@ class CourseController extends Controller
                             
                             // Store video ID for response
                             $createdVideoIds[$index] = $existingVideo->id;
+                            Log::info("Video update completed successfully", ['video_id' => $existingVideo->id]);
                         }
                     } else {
                         // Check if video with same order already exists (to avoid duplicates on auto-save)
@@ -424,6 +516,12 @@ class CourseController extends Controller
                             ->first();
                         
                         if ($existingVideoByOrder) {
+                            Log::info("Found existing video by order, updating instead of creating", [
+                                'existing_video_id' => $existingVideoByOrder->id,
+                                'order' => $videoData['order'] ?? 1,
+                                'index' => $index
+                            ]);
+                            
                             // Update existing video instead of creating new one
                             $updatePayload = [
                                 'title' => $videoData['title'] ?? $existingVideoByOrder->title,
@@ -444,7 +542,33 @@ class CourseController extends Controller
                                 $updatePayload['duration'] = $videoData['duration_in_seconds'];
                             }
                             
-                            $videoService->update($existingVideoByOrder->id, $updatePayload);
+                            Log::info("Updating existing video by order", [
+                                'video_id' => $existingVideoByOrder->id,
+                                'update_payload' => $updatePayload
+                            ]);
+                            
+                            try {
+                                $updatedVideo = $videoService->update($existingVideoByOrder->id, $updatePayload);
+                                Log::info("VideoService->update (by order) completed", [
+                                    'video_id' => $existingVideoByOrder->id,
+                                    'result' => $updatedVideo ? 'success' : 'failed',
+                                    'video_url' => $updatedVideo?->video_url ?? 'not_set'
+                                ]);
+                                
+                                $existingVideoByOrder->refresh();
+                                Log::info("Video refreshed from database (by order)", [
+                                    'video_id' => $existingVideoByOrder->id,
+                                    'video_url' => $existingVideoByOrder->video_url,
+                                    'title' => $existingVideoByOrder->title
+                                ]);
+                            } catch (\Throwable $e) {
+                                Log::error("VideoService->update (by order) failed", [
+                                    'video_id' => $existingVideoByOrder->id,
+                                    'error' => $e->getMessage(),
+                                    'trace' => $e->getTraceAsString()
+                                ]);
+                                throw $e;
+                            }
                             
                             if ($quizData && is_array($quizData)) {
                                 $this->syncVideoQuiz($existingVideoByOrder, $quizData);
@@ -452,9 +576,10 @@ class CourseController extends Controller
                             
                             // Store video ID for response
                             $createdVideoIds[$index] = $existingVideoByOrder->id;
+                            Log::info("Video update (by order) completed successfully", ['video_id' => $existingVideoByOrder->id]);
                         } else {
                             // Create new video with file uploads if available
-                            $newVideo = $videoService->create([
+                            $videoCreateData = [
                                 'course_id' => $course->id,
                                 'title' => $videoData['title'] ?? 'Untitled Video',
                                 'description' => $videoData['description'] ?? '',
@@ -463,18 +588,94 @@ class CourseController extends Controller
                                 'thumbnail_url' => $thumbnailPath,
                                 'order' => $videoData['order'] ?? 1,
                                 'duration' => $videoData['duration_in_seconds'] ?? null,
+                            ];
+                            
+                            Log::info("Creating new video", [
+                                'index' => $index,
+                                'create_data' => $videoCreateData,
+                                'has_video_path' => !empty($videoPath),
+                                'has_thumbnail_path' => !empty($thumbnailPath)
                             ]);
+                            
+                            try {
+                                $newVideo = $videoService->create($videoCreateData);
+                                Log::info("VideoService->create completed", [
+                                    'video_id' => $newVideo->id ?? null,
+                                    'video_url' => $newVideo->video_url ?? 'not_set',
+                                    'title' => $newVideo->title ?? 'not_set',
+                                    'order' => $newVideo->order ?? 'not_set',
+                                    'created_at' => $newVideo->created_at ?? 'not_set'
+                                ]);
+                                
+                                // Verify video was actually saved to database
+                                $verifyVideo = \App\Models\Video::find($newVideo->id);
+                                if ($verifyVideo) {
+                                    Log::info("Video verified in database", [
+                                        'video_id' => $verifyVideo->id,
+                                        'video_url' => $verifyVideo->video_url,
+                                        'course_id' => $verifyVideo->course_id,
+                                        'title' => $verifyVideo->title
+                                    ]);
+                                } else {
+                                    Log::error("Video NOT found in database after creation!", [
+                                        'expected_id' => $newVideo->id,
+                                        'course_id' => $course->id
+                                    ]);
+                                }
+                            } catch (\Throwable $e) {
+                                Log::error("VideoService->create failed", [
+                                    'index' => $index,
+                                    'error' => $e->getMessage(),
+                                    'trace' => $e->getTraceAsString(),
+                                    'file' => $e->getFile(),
+                                    'line' => $e->getLine(),
+                                    'create_data' => $videoCreateData
+                                ]);
+                                throw $e;
+                            }
                             
                             // Sync quiz if provided
                             if ($quizData && is_array($quizData)) {
+                                Log::info("Syncing quiz for new video", ['video_id' => $newVideo->id]);
                                 $this->syncVideoQuiz($newVideo, $quizData);
                             }
                             
                             // Store video ID for response
                             $createdVideoIds[$index] = $newVideo->id;
+                            Log::info("New video creation completed successfully", ['video_id' => $newVideo->id]);
                         }
                     }
                 }
+                
+                Log::info("=== All Videos Processed ===", [
+                    'course_id' => $course->id,
+                    'total_videos_processed' => count($createdVideoIds),
+                    'video_ids' => $createdVideoIds
+                ]);
+                
+                // Final verification - check all videos exist in database
+                if (!empty($createdVideoIds)) {
+                    $allVideosExist = true;
+                    foreach ($createdVideoIds as $vidId) {
+                        $checkVideo = \App\Models\Video::find($vidId);
+                        if (!$checkVideo) {
+                            $allVideosExist = false;
+                            Log::error("CRITICAL: Video missing from database before commit!", [
+                                'video_id' => $vidId,
+                                'course_id' => $course->id
+                            ]);
+                        }
+                    }
+                    
+                    if ($allVideosExist) {
+                        Log::info("All videos verified in database before transaction commit", [
+                            'course_id' => $course->id,
+                            'video_count' => count($createdVideoIds)
+                        ]);
+                    }
+                }
+            } else {
+                Log::info("No videos provided in request", ['course_id' => $course->id]);
             }
             
             // Handle removed video IDs - delete videos that were removed
@@ -496,7 +697,44 @@ class CourseController extends Controller
                 }
             }
 
+            Log::info("Committing database transaction", [
+                'course_id' => $course->id,
+                'videos_processed' => count($createdVideoIds ?? []),
+                'video_ids' => $createdVideoIds ?? []
+            ]);
+            
             DB::commit();
+            
+            Log::info("Database transaction committed successfully", [
+                'course_id' => $course->id,
+                'video_ids' => $createdVideoIds ?? []
+            ]);
+            
+            // Verify videos are in database after commit
+            if (!empty($createdVideoIds)) {
+                foreach ($createdVideoIds as $index => $vidId) {
+                    $verifyVideo = \App\Models\Video::find($vidId);
+                    if ($verifyVideo) {
+                        Log::info("Video verified after commit", [
+                            'video_id' => $vidId,
+                            'video_url' => $verifyVideo->video_url,
+                            'title' => $verifyVideo->title,
+                            'course_id' => $verifyVideo->course_id
+                        ]);
+                    } else {
+                        Log::error("Video NOT found in database after commit!", [
+                            'video_id' => $vidId,
+                            'course_id' => $course->id,
+                            'index' => $index
+                        ]);
+                    }
+                }
+            }
+            
+            Log::info("=== Video Storage Process Completed Successfully ===", [
+                'course_id' => $course->id,
+                'videos_count' => count($createdVideoIds ?? [])
+            ]);
             
             return response()->json([
                 'success' => true,
