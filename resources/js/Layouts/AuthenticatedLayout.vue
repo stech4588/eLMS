@@ -137,6 +137,16 @@ onMounted(() => {
     // Expose global loader controls
     window.showPageLoader = () => { isLoading.value = true; };
     window.hidePageLoader = () => { isLoading.value = false; };
+    
+    // Initialize and watch screen size
+    if (typeof window !== 'undefined') {
+        const updateScreenSize = () => {
+            isLargeScreen.value = window.innerWidth >= 1025;
+        };
+        updateScreenSize();
+        window.addEventListener('resize', updateScreenSize);
+        window.updateLayoutScreenSize = updateScreenSize; // Store for cleanup
+    }
 });
 
 const evaluatePagePermission = async () => {
@@ -178,6 +188,10 @@ watch(() => page.component, () => {
 
 onUnmounted(() => {
     window.removeEventListener('new-notification', fetchNotifications);
+    if (typeof window !== 'undefined' && window.updateLayoutScreenSize) {
+        window.removeEventListener('resize', window.updateLayoutScreenSize);
+        delete window.updateLayoutScreenSize;
+    }
     // Clean up globals (optional)
     delete window.showPageLoader;
     delete window.hidePageLoader;
@@ -203,7 +217,7 @@ const logout = () => {
 };
 
 const toggleSidebar = () => {
-    isSidebarOpen.value = !isSidebarOpen.value
+    isSidebarOpen.value = !isSidebarOpen.value;
 }
 
 const toggleSidebarCollapse = () => {
@@ -214,6 +228,7 @@ const isPlayerPage = computed(() => page.component === 'Course/Player');
 const isCartPage = computed(() => page.component === 'cart/cart');
 const isGroupChatPage = computed(() => page.component === 'Groups/Chat');
 const isHelpPage = computed(() => page.component === 'help/help');
+const isLargeScreen = ref(typeof window !== 'undefined' ? window.innerWidth >= 1025 : false);
 
 const manageTawkToWidget = () => {
     // Use optional chaining for safety, as Tawk_API might not be loaded yet.
@@ -258,7 +273,7 @@ onMounted(() => {
                     <div class="flex items-center">
                         <div class="sidebar_button_nav">
                         <button class="sidebar_openbutton" @click="toggleSidebar">
-                            <img src="/images/sidebar_icon.svg">
+                            <img src="/images/sidebar_icon.svg" class="dark:invert">
                         </button>
                     </div>
                         <button class="sidebar_openbutton hidden min-[1025px]:block" @click="toggleSidebarCollapse">
@@ -273,13 +288,13 @@ onMounted(() => {
 
 
                     <!-- User Dropdown -->
-                    <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                        <div class="relative ms-3" style="display:flex;flex-direction: row;">
-                            <div class="flex items-center justify-center mr-4">
+                    <div v-if="user" class="flex items-center ms-3 sm:ms-6">
+                        <div class="relative" style="display:flex;flex-direction: row;">
+                            <div class="flex items-center justify-center mr-2 sm:mr-4">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
-                                        <button class="flex items-center justify-center relative">
-                                            <img src="/images/notification_icon.svg" alt="notification" class="w-6 h-6 dark:invert notification-bell">
+                                        <button class="flex items-center justify-center relative p-1">
+                                            <img src="/images/notification_icon.svg" alt="notification" class="w-5 h-5 sm:w-6 sm:h-6 dark:invert notification-bell">
                                             <span v-if="notifications.length > 0" class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-xs text-white bg-red-500 rounded-full w-4 h-4 flex items-center justify-center">
                                                 {{ notifications.length }}
                                             </span>
@@ -305,16 +320,17 @@ onMounted(() => {
                                     </template>
                                 </Dropdown>
                             </div>
-                            <div><button @click="toggleDarkMode"
-                                    class="w-full text-left  text-sm text-gray-700 dark:text-dark-text-secondary " style="padding: 5px !important;">
-                                    <i style="font-size: 22px;" :class="isDark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon text-gray-700'" :title="isDark ? 'Light Mode' : 'Dark Mode'"></i>
+                            <div class="mr-2 sm:mr-0"><button @click="toggleDarkMode"
+                                    class="text-left text-sm text-gray-700 dark:text-dark-text-secondary p-1 sm:p-1.5">
+                                    <i class="text-lg sm:text-xl" :class="isDark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon text-gray-700'" :title="isDark ? 'Light Mode' : 'Dark Mode'"></i>
                                 </button></div>
                             <Dropdown align="right" width="48">
                                 <template #trigger>
                                     <span class="inline-flex rounded-md">
                                         <button type="button"
-                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-[#1A2C38] text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none" style="padding:5px !important;">
-                                            {{ user?.name ?? 'Account' }}
+                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-[#1A2C38] text-xs sm:text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none px-2 py-1 sm:px-2.5 sm:py-1.5">
+                                            <span class="hidden sm:inline">{{ user?.name ?? 'Account' }}</span>
+                                            <span class="sm:hidden">{{ user?.name?.charAt(0)?.toUpperCase() ?? 'A' }}</span>
                                             <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd"
@@ -342,7 +358,7 @@ onMounted(() => {
                     </div>
 
                     <!-- Mobile Hamburger -->
-                    <div class="-me-2 flex items-center sm:hidden">
+                    <div class="hidden -me-2 flex items-center sm:hidden">
                         <button @click="showingNavigationDropdown = !showingNavigationDropdown"
                             class="inline-flex items-center justify-center rounded-md p-2 dark:bg-[#1A2C38]text-gray-400 dark:text-white transition hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary hover:text-gray-500 dark:hover:text-dark-text-primary focus:outline-none">
                             <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -361,7 +377,7 @@ onMounted(() => {
             </div>
 
             <!-- Responsive Menu -->
-            <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
+            <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="hidden sm:hidden">
                 <div class="space-y-1 pb-3 pt-2">
                     <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')"
                         class="text-gray-900 dark:text-dark-text-primary">Dashboard</ResponsiveNavLink>
@@ -401,10 +417,16 @@ onMounted(() => {
         </nav>
 
         <div style="display: flex; flex-direction: row;">
-            <AuthSidebar v-if="!isPlayerPage && !isCartPage" :class="{ 'sidebar-closed': !isSidebarOpen }" :is-collapsed="isSidebarCollapsed"/>
+            <AuthSidebar v-if="!isCartPage" :class="{ 'sidebar-closed': !isSidebarOpen, 'player-page-sidebar': isPlayerPage }" :is-collapsed="isSidebarCollapsed"/>
 
             <!-- Main Content Area -->
-            <div class="flex flex-col flex-1 main-content" :class="{ 'content-expanded': !isSidebarCollapsed, 'content-collapsed': isSidebarCollapsed, 'no-sidebar': isPlayerPage || isCartPage }">
+            <div class="flex flex-col flex-1 main-content" :class="{ 
+                'content-expanded': !isSidebarCollapsed && !isPlayerPage && !isCartPage, 
+                'content-collapsed': isSidebarCollapsed && !isPlayerPage && !isCartPage, 
+                'no-sidebar': (isPlayerPage || isCartPage) && !isSidebarOpen && !isLargeScreen,
+                'player-content-with-sidebar': isPlayerPage && ((isSidebarOpen && !isSidebarCollapsed) || (isLargeScreen && !isSidebarCollapsed)),
+                'player-content-with-sidebar-collapsed': isPlayerPage && ((isSidebarOpen && isSidebarCollapsed) || (isLargeScreen && isSidebarCollapsed))
+            }">
                 <!-- Optional Page Heading -->
                 <header class="bg-light-header dark:bg-[#1A2C38] shadow dark:shadow-dark" v-if="$slots.header">
                     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -695,6 +717,64 @@ main {
     .main-content,
     .content-expanded,
     .content-collapsed {
+        margin-left: 0 !important;
+    }
+}
+
+/* Player page sidebar styling */
+.player-page-sidebar {
+    z-index: 1001 !important;
+}
+
+/* Player page content adjustments when sidebar is open */
+.player-content-with-sidebar {
+    margin-left: 300px !important;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.player-content-with-sidebar-collapsed {
+    margin-left: 92px !important;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* Desktop: sidebar pushes content when open */
+@media (min-width: 1025px) {
+    .player-page-sidebar {
+        position: fixed !important;
+    }
+    
+    /* On large screens, player page content should always account for sidebar */
+    .player-content-with-sidebar {
+        margin-left: 300px !important;
+    }
+    
+    .player-content-with-sidebar-collapsed {
+        margin-left: 92px !important;
+    }
+    
+    /* Override no-sidebar on large screens for player page */
+    .main-content.no-sidebar {
+        /* Will be overridden by player-content-with-sidebar classes above */
+    }
+}
+
+/* Mobile: sidebar overlays content */
+@media (max-width: 1024px) {
+    .player-page-sidebar.sidebar-closed {
+        left: -100% !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    
+    .player-page-sidebar:not(.sidebar-closed) {
+        left: 0 !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+    
+    /* On mobile, sidebar overlays, so no margin adjustment needed */
+    .player-content-with-sidebar,
+    .player-content-with-sidebar-collapsed {
         margin-left: 0 !important;
     }
 }

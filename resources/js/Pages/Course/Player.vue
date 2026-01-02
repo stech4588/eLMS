@@ -26,6 +26,16 @@
 
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col overflow-y-auto no-scrollbar">
+                <!-- Video Sidebar Toggle Button (Mobile Only) -->
+                <div v-if="!isLargeScreen" class="fixed top-20 right-4 z-50">
+                    <button @click="isVideoSidebarOpen = !isVideoSidebarOpen" 
+                        class=" text-white p-3 rounded-lg shadow-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+                
                 <!-- Video Player -->
                 <div class="bg-black flex-shrink-0 relative group">
                     <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
@@ -323,10 +333,17 @@
             </div>
 
             <!-- Sidebar for Videos -->
-            <div v-if="isPlayerPage && (isSidebarOpen || isLargeScreen)"
-                class="w-80 bg-gray-800 text-white flex-shrink-0 player_sidebar flex flex-col h-screen">
-                <div class="p-4 border-b border-gray-700">
+            <div v-if="isPlayerPage"
+                :class="['w-80 bg-gray-800 text-white flex-shrink-0 player_sidebar flex flex-col h-screen', { 'open': isVideoSidebarOpen || isLargeScreen }]">
+                <div class="p-4 border-b border-gray-700 flex items-center justify-between">
                     <h2 class="text-xl font-semibold">{{ course.title }}</h2>
+                    <!-- Close button for mobile -->
+                    <button v-if="!isLargeScreen" @click="isVideoSidebarOpen = false" 
+                        class="lg:hidden text-gray-400 hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
 
                 <div class="overflow-y-auto flex-grow">
@@ -432,6 +449,7 @@ function closeQuizPopup() {
 
 const currentVideo = ref(null);
 const isLargeScreen = ref(window.innerWidth > 770); // Reactive variable for screen size
+const isVideoSidebarOpen = ref(false); // Separate state for video sidebar
 const newComment = ref(''); // For the new comment textarea
 const isCommentFocused = ref(false); // For showing comment buttons
 const showEmojiPicker = ref(false); // For emoji picker visibility
@@ -943,7 +961,16 @@ onUnmounted(() => {
 });
 
 const updateScreenSize = () => {
+    const wasLargeScreen = isLargeScreen.value;
     isLargeScreen.value = window.innerWidth > 770;
+    
+    // On large screens, always show sidebar; on small screens, close it if it was open due to large screen
+    if (isLargeScreen.value && !wasLargeScreen) {
+        // Just switched to large screen - sidebar will show automatically
+    } else if (!isLargeScreen.value && wasLargeScreen) {
+        // Just switched to small screen - close sidebar
+        isVideoSidebarOpen.value = false;
+    }
 };
 
 </script>
@@ -969,10 +996,17 @@ const updateScreenSize = () => {
 
 @media (max-width: 770px) {
     .player_sidebar {
-        position: absolute;
-        height: 100%;
-        z-index: 2;
-
+        position: fixed;
+        top: 5rem;
+        right: 0;
+        height: calc(100vh - 5rem);
+        z-index: 1002;
+        transition: transform 0.3s ease-in-out;
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .player_sidebar:not(.open) {
+        transform: translateX(100%);
     }
 
     .player_video {

@@ -407,6 +407,11 @@ onMounted(fetchTrendingTopics);
         height: calc(100vh - 5rem);
         z-index: 1000;
         border-radius: 0 24px 24px 0;
+        transition: left 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    }
+    
+    .main_sidebar.player-page-sidebar {
+        z-index: 1001;
     }
 }
 
