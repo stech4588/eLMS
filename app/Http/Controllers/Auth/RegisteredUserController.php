@@ -59,18 +59,13 @@ class RegisteredUserController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             
-            // Profile picture is only required if user doesn't already have one
-            $profilePictureRule = $user->profile_picture 
-                ? 'nullable|image|max:2048' 
-                : 'required|image|max:2048';
-            
             $request->validate([
                 'phone_number' => 'required|string|max:20',
                 'primary_learning_goal' => 'required|string',
                 'preferred_topics' => 'required|array',
                 'preferred_topics.*' => 'exists:topics,id',
                 'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-                'profile_picture' => $profilePictureRule,
+                'profile_picture' => 'nullable|image|max:2048',
                 'agree_to_terms' => 'accepted',
             ]);
 
