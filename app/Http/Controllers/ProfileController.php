@@ -8,7 +8,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -47,114 +46,41 @@ class ProfileController extends Controller
      */
     public function uploadPicture(Request $request)
     {
-        try {
-            Log::info("=== Profile Picture Upload Started ===", [
-                'user_id' => $request->user()->id,
-            ]);
-            
-            $request->validate([
-                'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-            $user = $request->user();
+        $user = $request->user();
 
-            // Delete old profile picture if exists
-            if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
-                try {
-                    @unlink(public_path($user->profile_picture));
-                    Log::info("Old profile picture deleted", ['path' => $user->profile_picture]);
-                } catch (\Exception $e) {
-                    Log::warning("Failed to delete old profile picture: " . $e->getMessage());
-                    // Continue even if deletion fails
-                }
-            }
+        // Delete old profile picture if exists
+        if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+            @unlink(public_path($user->profile_picture));
+        }
 
-            // Ensure directory exists with proper permissions
-            $profilePicturesDir = public_path('profile-pictures');
-            if (!File::exists($profilePicturesDir)) {
-                File::makeDirectory($profilePicturesDir, 0777, true);
-                Log::info("Created profile-pictures directory");
-            }
-            
-            // Ensure directory is writable - try multiple permission levels
-            if (!is_writable($profilePicturesDir)) {
-                // Try to fix permissions
-                @chmod($profilePicturesDir, 0777);
-                // Check again
-                if (!is_writable($profilePicturesDir)) {
-                    // Try 0755 as fallback
-                    @chmod($profilePicturesDir, 0755);
-                    if (!is_writable($profilePicturesDir)) {
-                        Log::error("Directory is not writable even after chmod attempts", [
-                            'path' => $profilePicturesDir,
-                            'current_perms' => substr(sprintf('%o', fileperms($profilePicturesDir)), -4),
-                            'owner' => fileowner($profilePicturesDir),
-                            'group' => filegroup($profilePicturesDir),
-                        ]);
-                        throw new \Exception("Unable to write to profile-pictures directory. Please contact administrator to set proper permissions (chmod 755 or 777) on: " . $profilePicturesDir);
-                    }
-                }
-            }
+        // Ensure directory exists
+        $profilePicturesDir = public_path('profile-pictures');
+        if (!File::exists($profilePicturesDir)) {
+            File::makeDirectory($profilePicturesDir, 0755, true);
+        }
 
-            // Upload new profile picture
-            $file = $request->file('profile_picture');
-            $filename = 'profile_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            
-            Log::info("Attempting to move profile picture", [
-                'filename' => $filename,
-                'directory' => $profilePicturesDir,
-                'is_writable' => is_writable($profilePicturesDir),
-            ]);
-            
-            // Use move_uploaded_file for better reliability
-            $destination = $profilePicturesDir . '/' . $filename;
-            if (!move_uploaded_file($file->getPathname(), $destination)) {
-                throw new \Exception("Failed to move uploaded file. Directory permissions may be incorrect.");
-            }
-            
-            $profilePicturePath = 'profile-pictures/' . $filename;
-            
-            Log::info("Profile picture uploaded successfully", ['path' => $profilePicturePath]);
+        // Upload new profile picture
+        $file = $request->file('profile_picture');
+        $filename = 'profile_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $file->move($profilePicturesDir, $filename);
+        $profilePicturePath = 'profile-pictures/' . $filename;
 
-            $user->profile_picture = $profilePicturePath;
-            $user->save();
-            
-            Log::info("User profile picture updated in database", ['user_id' => $user->id]);
+        $user->profile_picture = $profilePicturePath;
+        $user->save();
 
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Profile picture uploaded successfully.',
-                    'profile_picture' => $profilePicturePath,
-                ]);
-            }
-
-            return redirect()->back()->with('message', 'Profile picture uploaded successfully.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::warning("Validation failed for profile picture upload", [
-                'errors' => $e->errors(),
-            ]);
-            throw $e; // Re-throw validation exceptions
-        } catch (\Throwable $e) {
-            Log::error("=== Profile Picture Upload Failed ===", [
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-                'user_id' => $request->user()->id ?? null,
-            ]);
-            
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'An error occurred while uploading the profile picture. Please try again.',
-                ], 500);
-            }
-            
-            return redirect()->back()->withErrors([
-                'error' => 'An error occurred while uploading the profile picture. Please try again.'
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile picture uploaded successfully.',
+                'profile_picture' => $profilePicturePath,
             ]);
         }
+
+        return redirect()->back()->with('message', 'Profile picture uploaded successfully.');
     }
 
     /**
