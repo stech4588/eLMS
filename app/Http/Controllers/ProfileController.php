@@ -37,7 +37,43 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return Redirect::to('/profile');
+    }
+
+    /**
+     * Upload profile picture.
+     */
+    public function uploadPicture(Request $request)
+    {
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $user = $request->user();
+
+        // Delete old profile picture if exists
+        if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+            unlink(public_path($user->profile_picture));
+        }
+
+        // Upload new profile picture
+        $file = $request->file('profile_picture');
+        $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('profile-pictures'), $filename);
+        $profilePicturePath = 'profile-pictures/' . $filename;
+
+        $user->profile_picture = $profilePicturePath;
+        $user->save();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile picture uploaded successfully.',
+                'profile_picture' => $profilePicturePath,
+            ]);
+        }
+
+        return redirect()->back()->with('message', 'Profile picture uploaded successfully.');
     }
 
     /**

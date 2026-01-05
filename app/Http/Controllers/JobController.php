@@ -78,7 +78,7 @@ class JobController extends Controller
             'contact_email' => $validatedData['contact_email'] ?? $user->email,
         ]);
 
-        return redirect()->route('jobs.index')->with('success', 'Job posted successfully.');
+        return redirect('/jobs')->with('success', 'Job posted successfully.');
     }
 
     public function update(Request $request, Job $job)
@@ -99,7 +99,7 @@ class JobController extends Controller
 
         $job->update($validated);
 
-        return redirect()->route('jobs.index')->with('success', 'Job updated successfully.');
+        return redirect('/jobs')->with('success', 'Job updated successfully.');
     }
 
     public function destroy(Job $job)
@@ -111,6 +111,6 @@ class JobController extends Controller
 
         $job->delete();
 
-        return redirect()->route('jobs.index')->with('success', 'Job deleted successfully.');
+        return redirect('/jobs')->with('success', 'Job deleted successfully.');
     }
 }

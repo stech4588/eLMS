@@ -52,7 +52,7 @@ class CourseController extends Controller
     {
         try {
             $course = $this->courseService->create($request->validated());
-            return redirect()->route('dashboard')
+            return redirect('/dashboard')
                 ->with('success', 'Course created successfully!')
                 ->with('course_id', $course->id);
         } catch (\Throwable $e) {
@@ -673,7 +673,7 @@ class CourseController extends Controller
                 }
             }
 
-            return redirect()->route('coursess')->with('success', 'Course and videos created successfully!');
+            return redirect('/coursess')->with('success', 'Course and videos created successfully!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::warning('Course with videos validation failed', [
@@ -866,7 +866,7 @@ class CourseController extends Controller
 
             DB::commit();
 
-            return redirect()->route('coursess')->with('success', 'Course updated successfully!');
+            return redirect('/coursess')->with('success', 'Course updated successfully!');
         } catch (ValidationException $e) {
             DB::rollBack();
             throw $e;

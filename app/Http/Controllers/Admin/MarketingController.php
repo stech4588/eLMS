@@ -52,7 +52,7 @@ class MarketingController extends Controller
             'is_active' => $request->is_active ?? false,
         ]);
 
-        return redirect()->route('admin.marketing.index')->with('success', 'Quote created successfully.');
+        return redirect('/admin/marketing')->with('success', 'Quote created successfully.');
     }
 
     /**
@@ -72,7 +72,7 @@ class MarketingController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        return redirect()->route('admin.marketing.index')->with('success', 'Quote updated successfully.');
+        return redirect('/admin/marketing')->with('success', 'Quote updated successfully.');
     }
 
     /**
@@ -81,7 +81,7 @@ class MarketingController extends Controller
     public function destroyQuote(Quote $quote)
     {
         $quote->delete();
-        return redirect()->route('admin.marketing.index')->with('success', 'Quote deleted successfully.');
+        return redirect('/admin/marketing')->with('success', 'Quote deleted successfully.');
     }
 
     /**
@@ -126,7 +126,7 @@ class MarketingController extends Controller
             'till_date' => $validated['till_date'] ?? null,
         ]);
 
-        return redirect()->route('admin.marketing.index')->with('success', 'Promotion created successfully.');
+        return redirect('/admin/marketing')->with('success', 'Promotion created successfully.');
     }
 
     /**
@@ -168,7 +168,7 @@ class MarketingController extends Controller
             'till_date' => $validated['till_date'] ?? $promotion->till_date,
         ]);
 
-        return redirect()->route('admin.marketing.index')->with('success', 'Promotion updated successfully.');
+        return redirect('/admin/marketing')->with('success', 'Promotion updated successfully.');
     }
 
     /**
@@ -180,7 +180,7 @@ class MarketingController extends Controller
             unlink(public_path($promotion->image_path));
         }
         $promotion->delete();
-        return redirect()->route('admin.marketing.index')->with('success', 'Promotion deleted successfully.');
+        return redirect('/admin/marketing')->with('success', 'Promotion deleted successfully.');
     }
 
     /**
@@ -243,7 +243,7 @@ class MarketingController extends Controller
 
         Prompt::create($validated);
 
-        return redirect()->route('admin.marketing.index')->with('success', 'Prompt created successfully.');
+        return redirect('/admin/marketing')->with('success', 'Prompt created successfully.');
     }
 
     /**
@@ -270,7 +270,7 @@ class MarketingController extends Controller
 
         $prompt->update($updateData);
 
-        return redirect()->route('admin.marketing.index')->with('success', 'Prompt updated successfully.');
+        return redirect('/admin/marketing')->with('success', 'Prompt updated successfully.');
     }
 
     /**
@@ -279,7 +279,7 @@ class MarketingController extends Controller
     public function destroyPrompt(Prompt $prompt)
     {
         $prompt->delete();
-        return redirect()->route('admin.marketing.index')->with('success', 'Prompt deleted successfully.');
+        return redirect('/admin/marketing')->with('success', 'Prompt deleted successfully.');
     }
 
     /**

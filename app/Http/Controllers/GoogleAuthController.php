@@ -31,7 +31,7 @@ class GoogleAuthController extends Controller
                 'google_id' => $googleUser->getId(),
             ]);
             Auth::login($user);
-            return redirect()->route('dashboard');
+            return redirect('/dashboard');
         } else {
             // Email not found — do not allow login
             return redirect('/login')->with('error', 'Your email is not registered.');

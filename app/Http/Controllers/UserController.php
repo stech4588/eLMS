@@ -67,7 +67,7 @@ class UserController extends Controller
 
         $user->update($validatedData);
 
-        return redirect()->route('users.index')->with('message', 'User updated successfully.');
+        return redirect('/users')->with('message', 'User updated successfully.');
     }
 
     /**
@@ -76,7 +76,27 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect('/users')->with('success', 'User deleted successfully.');
+    }
+
+    public function updatePhoneNumber(Request $request)
+    {
+        $validated = $request->validate([
+            'phone_number' => 'required|string|max:20',
+            'phone_country_code' => 'nullable|string|max:10',
+        ]);
+
+        $user = $request->user();
+        $user->phone_number = $validated['phone_number'];
+        // Only update phone_country_code if the column exists in the database
+        // For now, we'll just save phone_number as it's the main field
+        $user->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Phone number updated successfully.']);
+        }
+
+        return redirect()->back()->with('message', 'Phone number updated successfully.');
     }
 
     public function updateCareerGoal(Request $request)
@@ -88,6 +108,10 @@ class UserController extends Controller
         $user = $request->user();
         $user->primary_learning_goal = $validated['primary_learning_goal'];
         $user->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Career goal updated successfully.']);
+        }
 
         return redirect()->back()->with('message', 'Career goal updated successfully.');
     }
@@ -102,6 +126,10 @@ class UserController extends Controller
         $user = $request->user();
         $user->preferred_topic_ids = $validated['preferred_topic_ids'] ?? [];
         $user->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Preferred topics updated successfully.']);
+        }
 
         return redirect()->back()->with('message', 'Preferred topics updated successfully.');
     }

@@ -111,7 +111,7 @@ class ContentController extends Controller
         if (!$user) {
             // This should ideally be caught by the 'auth' middleware
             // Redirecting to login if no user is found (though middleware should handle this)
-            return redirect()->route('login');
+            return redirect('/login');
         }
 
         // Fetch In-Progress Video Items

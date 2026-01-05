@@ -42,7 +42,7 @@ class AuthenticatedSessionController extends Controller
                              empty($user->resume_path);
 
         if ($profileIncomplete && $user->type === 'student') {
-            return redirect()->route('register.complete');
+            return redirect('/register/complete');
         }
 
         if ($user->type === 'instructor') {
@@ -52,7 +52,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended('/admin/instructors');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended('/dashboard');
     }
 
     /**

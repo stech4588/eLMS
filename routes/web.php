@@ -147,6 +147,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/phone-number', [UserController::class, 'updatePhoneNumber'])->name('phone-number.update');
     Route::patch('/career-goal', [UserController::class, 'updateCareerGoal'])->name('career-goal.update');
     Route::patch('/preferred-topics', [UserController::class, 'updatePreferredTopics'])->name('preferred-topics.update');
     Route::post('/learning-goal', [UserController::class, 'storeLearningGoal'])->name('learning-goal.store');

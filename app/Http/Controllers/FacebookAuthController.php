@@ -29,7 +29,7 @@ class FacebookAuthController extends Controller
                     'facebook_id' => $facebookUser->getId(),
                 ]);
                 Auth::login($user);
-                return redirect()->route('dashboard');
+                return redirect('/dashboard');
             } else {
                 return redirect('/login')->with('error', 'Your email is not registered. Please sign up first.');
             }

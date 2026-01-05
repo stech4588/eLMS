@@ -217,7 +217,7 @@ class InstructorController extends Controller
         }
         $user->delete();
 
-        return redirect()->route('admin.instructors.index')->with('success', 'Instructor deleted successfully.');
+        return redirect('/admin/instructors')->with('success', 'Instructor deleted successfully.');
     }
 
     public function toggleStatus(User $user): RedirectResponse

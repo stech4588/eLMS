@@ -65,7 +65,7 @@ class InvoiceController extends Controller
     {
         $payload = $this->prepareInvoicePayload($request);
         $this->invoiceService->create($payload);
-        return redirect()->route('invoices.index')->with('success', 'Invoice created successfully.');
+        return redirect('/invoices')->with('success', 'Invoice created successfully.');
     }
 
     public function show($id)
@@ -92,7 +92,7 @@ class InvoiceController extends Controller
     {
         $payload = $this->prepareInvoicePayload($request);
         $this->invoiceService->update($id, $payload);
-        return redirect()->route('invoices.index')->with('success', 'Invoice updated successfully.');
+        return redirect('/invoices')->with('success', 'Invoice updated successfully.');
     }
 
     public function destroy($id) : JsonResponse // Kept as JsonResponse for AJAX delete

@@ -52,7 +52,7 @@ class MetaTagController extends Controller
             'meta_keywords' => $request->meta_keywords,
         ]);
 
-        return redirect()->route('metatags.index');
+        return redirect('/metatags');
     }
 
     /**
@@ -92,7 +92,7 @@ class MetaTagController extends Controller
         
         $metatag->update($validated);
 
-        return redirect()->route('metatags.index');
+        return redirect('/metatags');
     }
 
     /**
@@ -104,6 +104,6 @@ class MetaTagController extends Controller
         if ($page->metatag) {
             $page->metatag->delete();
         }
-        return redirect()->route('metatags.index');
+        return redirect('/metatags');
     }
 }

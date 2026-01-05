@@ -39,6 +39,11 @@ class RegisteredUserController extends Controller
                 'user' => $user ? [
                     'name' => $user->name,
                     'email' => $user->email,
+                    'phone_number' => $user->phone_number,
+                    'phone_country_code' => 'PK', // Default value since it's not stored in DB
+                    'primary_learning_goal' => $user->primary_learning_goal,
+                    'preferred_topic_ids' => $user->preferred_topic_ids ?? [],
+                    'profile_picture' => $user->profile_picture,
                 ] : null,
             ]
         ]);
@@ -53,6 +58,12 @@ class RegisteredUserController extends Controller
     {
         if (Auth::check()) {
             $user = Auth::user();
+            
+            // Profile picture is only required if user doesn't already have one
+            $profilePictureRule = $user->profile_picture 
+                ? 'nullable|image|max:2048' 
+                : 'required|image|max:2048';
+            
             $request->validate([
                 // 'name' => 'required|string|max:255',
                 // 'email' => 'required|string|lowercase|email|max:255|unique:users,email,'.$user->id,
@@ -60,36 +71,41 @@ class RegisteredUserController extends Controller
                 'primary_learning_goal' => 'required|string',
                 'preferred_topics' => 'required|array',
                 'preferred_topics.*' => 'exists:topics,id',
-                'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
-                'profile_picture' => 'required|image|max:2048',
+                'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+                'profile_picture' => $profilePictureRule,
                 'agree_to_terms' => 'accepted',
             ]);
 
-            $resumePath = $user->resume_path;
-            if ($request->hasFile('resume')) {
-                $file = $request->file('resume');
-                $filename = 'resume_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('resumes'), $filename);
-                $resumePath = 'resumes/' . $filename;
-            }
-
-            $profilePicturePath = $user->profile_picture;
-            if ($request->hasFile('profile_picture')) {
-                $file = $request->file('profile_picture');
-                $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('profile-pictures'), $filename);
-                $profilePicturePath = 'profile-pictures/' . $filename;
-            }
-
-            $user->update([
+            $updateData = [
                 // 'name' => $request->name,
                 // 'email' => $request->email,
                 'phone_number' => $request->phone_number,
                 'primary_learning_goal' => $request->primary_learning_goal,
                 'preferred_topic_ids' => $request->preferred_topics,
-                'resume_path' => $resumePath,
-                'profile_picture' => $profilePicturePath,
-            ]);
+            ];
+            
+            // Only update resume_path if a new file was uploaded
+            if ($request->hasFile('resume')) {
+                $file = $request->file('resume');
+                $filename = 'resume_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('resumes'), $filename);
+                $updateData['resume_path'] = 'resumes/' . $filename;
+            }
+            
+            // Only update profile_picture if a new file was uploaded
+            if ($request->hasFile('profile_picture')) {
+                // Delete old profile picture if exists
+                if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+                    unlink(public_path($user->profile_picture));
+                }
+                
+                $file = $request->file('profile_picture');
+                $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('profile-pictures'), $filename);
+                $updateData['profile_picture'] = 'profile-pictures/' . $filename;
+            }
+            
+            $user->update($updateData);
 
             // Apply referral rewards once at profile completion
             if (Session::has('referral_code')) {
@@ -109,7 +125,7 @@ class RegisteredUserController extends Controller
                 Session::forget('referral_code');
             }
 
-            return redirect(route('dashboard', absolute: false));
+            return redirect('/dashboard');
         }
 
 
@@ -159,7 +175,7 @@ class RegisteredUserController extends Controller
 
         // Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect('/dashboard');
     }
 
     public function storeFromPayment(Request $request): RedirectResponse
@@ -212,7 +228,7 @@ class RegisteredUserController extends Controller
     
             event(new Registered($user));
     
-            return redirect()->route('register.complete');
+            return redirect('/register/complete');
     
         } catch (\Exception $e) {
             DB::rollBack();

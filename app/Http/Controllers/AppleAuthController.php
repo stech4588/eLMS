@@ -29,7 +29,7 @@ class AppleAuthController extends Controller
                     'apple_id' => $appleUser->getId(),
                 ]);
                 Auth::login($user);
-                return redirect()->route('dashboard');
+                return redirect('/dashboard');
             } else {
                 return redirect('/login')->with('error', 'Your email is not registered. Please sign up first.');
             }

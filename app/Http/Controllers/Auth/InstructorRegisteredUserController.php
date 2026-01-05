@@ -157,7 +157,7 @@ class InstructorRegisteredUserController extends Controller
                 Log::info("Step 8: Preparing redirect response", ['user_id' => $user->id]);
                 // Prepare redirect first, before any post-processing
                 try {
-                    $redirectResponse = redirect()->route('login')->with('status', 'Your instructor application has been submitted and is pending approval.');
+                    $redirectResponse = redirect('/login')->with('status', 'Your instructor application has been submitted and is pending approval.');
                     Log::info("Step 8: Redirect response prepared successfully using route('login')");
                 } catch (\Throwable $e) {
                     // Fallback to simple redirect if route fails

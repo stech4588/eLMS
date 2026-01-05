@@ -4,8 +4,8 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { ref, computed, onMounted } from 'vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ref, computed, onMounted, watch } from 'vue';
 
 const page = usePage();
 const authUser = computed(() => page.props.auth.user);
@@ -28,15 +28,15 @@ const togglePasswordVisibility = () => {
 
 const profilePicturePreview = ref(null);
 const profilePictureInput = ref(null);
-const resumeInput = ref(null);
+
+// Separate form for profile picture upload
+const profilePictureForm = useForm({
+    profile_picture: null,
+});
 
 const selectProfilePicture = () => {
     profilePictureInput.value.click();
 }
-
-const selectResume = () => {
-    resumeInput.value.click();
-};
 
 const onProfilePictureChange = (e) => {
     const file = e.target.files[0];
@@ -47,12 +47,43 @@ const onProfilePictureChange = (e) => {
             profilePicturePreview.value = e.target.result;
         };
         reader.readAsDataURL(file);
+        
+        // Mark that a new profile picture has been selected
+        hasExistingProfilePicture.value = false;
+        
+        // Auto-save profile picture when selected (only if user is authenticated)
+        if (authUser.value) {
+            saveProfilePicture(file);
+        }
     }
 };
 
-const onResumeChange = (e) => {
-    form.resume = e.target.files[0];
+// Auto-save profile picture
+const saveProfilePicture = (file) => {
+    if (!authUser.value || !file) return;
+    
+    profilePictureForm.profile_picture = file;
+    profilePictureForm.post('/profile/upload-picture', {
+        preserveState: true,
+        preserveScroll: true,
+        only: ['auth'],
+        forceFormData: true,
+        onSuccess: (page) => {
+            // Update preview with the new profile picture path from response or auth user
+            const profilePic = page.props.auth?.user?.profile_picture || 
+                             (page.props.profile_picture ? '/' + page.props.profile_picture : null);
+            if (profilePic) {
+                const profilePicPath = profilePic.startsWith('/') 
+                    ? profilePic 
+                    : '/' + profilePic;
+                profilePicturePreview.value = profilePicPath;
+            }
+        },
+    });
 };
+
+// Track if user already has a profile picture
+const hasExistingProfilePicture = ref(false);
 
 const form = useForm({
     name: '',
@@ -62,24 +93,51 @@ const form = useForm({
     phone_number: '',
     primary_learning_goal: '',
     preferred_topics: [],
-    resume: null,
     profile_picture: null,
     agree_to_terms: false,
 });
 
 onMounted(() => {
     if (authUser.value) {
-        form.name = authUser.value.name;
-        form.email = authUser.value.email;
+        form.name = authUser.value.name || '';
+        form.email = authUser.value.email || '';
+        form.phone_number = authUser.value.phone_number || '';
+        form.phone_country_code = authUser.value.phone_country_code || 'PK';
+        form.primary_learning_goal = authUser.value.primary_learning_goal || '';
+        form.preferred_topics = Array.isArray(authUser.value.preferred_topic_ids) 
+            ? authUser.value.preferred_topic_ids 
+            : [];
+        
+        // Load profile picture if exists
+        if (authUser.value.profile_picture) {
+            // Handle both cases: path with or without leading slash
+            const profilePicPath = authUser.value.profile_picture.startsWith('/') 
+                ? authUser.value.profile_picture 
+                : '/' + authUser.value.profile_picture;
+            profilePicturePreview.value = profilePicPath;
+            hasExistingProfilePicture.value = true;
+        }
     }
 });
 
 const submit = () => {
-    form.post(route('register'), {
+    // Transform form data - exclude profile_picture if user already has one and no new file is selected
+    form.transform((data) => {
+        const transformed = { ...data };
+        
+        // If user already has a profile picture and no new file is selected, don't send profile_picture
+        if (hasExistingProfilePicture.value && !form.profile_picture) {
+            delete transformed.profile_picture;
+        }
+        
+        return transformed;
+    }).post('/register', {
         onFinish: () => {
             if (!authUser.value) {
                 form.reset('password');
             }
+            // Reset transform
+            form.transform((data) => data);
         },
     });
 };
@@ -123,7 +181,101 @@ function toggleTopic(topicId) {
     } else {
         form.preferred_topics.splice(index, 1);
     }
+    
+    // Auto-save preferred topics when toggled (only if user is authenticated)
+    if (authUser.value) {
+        savePreferredTopics();
+    }
 }
+
+// Debounce timers
+let phoneNumberTimer = null;
+let learningGoalTimer = null;
+
+// Auto-save phone number
+const savePhoneNumber = () => {
+    if (!authUser.value || !form.phone_number) return;
+    
+    router.patch('/phone-number', {
+        phone_number: form.phone_number,
+        phone_country_code: form.phone_country_code,
+    }, {
+        preserveState: true,
+        preserveScroll: true,
+        only: [],
+    });
+};
+
+// Auto-save primary learning goal
+const savePrimaryLearningGoal = () => {
+    if (!authUser.value || !form.primary_learning_goal) return;
+    
+    router.patch('/career-goal', {
+        primary_learning_goal: form.primary_learning_goal,
+    }, {
+        preserveState: true,
+        preserveScroll: true,
+        only: [],
+    });
+};
+
+// Auto-save preferred topics
+const savePreferredTopics = () => {
+    if (!authUser.value) return;
+    
+    router.patch('/preferred-topics', {
+        preferred_topic_ids: form.preferred_topics,
+    }, {
+        preserveState: true,
+        preserveScroll: true,
+        only: [],
+    });
+};
+
+// Watch phone number with debounce
+watch(() => form.phone_number, (newValue) => {
+    if (!authUser.value) return;
+    
+    if (phoneNumberTimer) {
+        clearTimeout(phoneNumberTimer);
+    }
+    
+    phoneNumberTimer = setTimeout(() => {
+        if (newValue && newValue.trim() !== '') {
+            savePhoneNumber();
+        }
+    }, 1000); // 1 second debounce
+});
+
+// Watch phone country code with debounce
+watch(() => form.phone_country_code, (newValue) => {
+    if (!authUser.value || !form.phone_number) return;
+    
+    if (phoneNumberTimer) {
+        clearTimeout(phoneNumberTimer);
+    }
+    
+    phoneNumberTimer = setTimeout(() => {
+        if (form.phone_number && form.phone_number.trim() !== '') {
+            savePhoneNumber();
+        }
+    }, 1000);
+});
+
+// Watch primary learning goal with debounce
+watch(() => form.primary_learning_goal, (newValue) => {
+    if (!authUser.value) return;
+    
+    if (learningGoalTimer) {
+        clearTimeout(learningGoalTimer);
+    }
+    
+    learningGoalTimer = setTimeout(() => {
+        if (newValue && newValue.trim() !== '') {
+            savePrimaryLearningGoal();
+        }
+    }, 1000); // 1 second debounce
+});
 
 const topicColors = ['#f5b014', '#448cff', '#9b59b6', '#34d399', '#ef4444', '#6366f1'];
 const getTopicColor = (index) => topicColors[index % topicColors.length];
@@ -151,7 +303,7 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
             </div>
             <InputError class="form-error" :message="form.errors.profile_picture" style="text-align: center; margin-top: -1rem; margin-bottom: 1rem;" />
             <div class="flex flex-row justify-center items-center form-title">
-                <h1>Step {{ step }} to 3</h1>
+                <h1>Step {{ step }} to 2</h1>
             </div>
             <h1 class="form-title">Empower Your Learning Journey</h1>
             <p class="form-subtitle">
@@ -297,35 +449,6 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                             <InputError class="form-error" :message="form.errors.preferred_topics" />
                         </div>
                     </div>
-                </div>
-
-                <!-- Step 3: Resume, Profile Picture, and Terms -->
-                <div v-if="step === 3">
-                    <!-- Row 7: Upload Resume and Profile Picture -->
-                    <div class="form-row">
-                        <div class="form-group" :class="{ 'form-group-error': form.errors.resume }">
-                            <InputLabel value="Upload Resume" class="form-label" style="background-color: none !important; background: none !important; color: #ffffff;" />
-                            <input
-                                type="file"
-                                id="resume"
-                                ref="resumeInput"
-                                @change="onResumeChange"
-                                class="hidden"
-                                accept=".pdf,.doc,.docx"
-                            />
-                            <div class="resume-upload-container" @click="selectResume">
-                                <div v-if="form.resume" class="resume-details">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    <span>{{ form.resume.name }}</span>
-                                </div>
-                                <div v-else class="resume-placeholder">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload-cloud"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path><polyline points="16 16 12 12 8 16"></polyline></svg>
-                                    <span>Click to upload resume</span>
-                                </div>
-                            </div>
-                            <InputError class="form-error" :message="form.errors.resume" />
-                        </div>
-                    </div>
 
                     <!-- Terms and Conditions -->
                     <div class="form-group terms-group">
@@ -337,14 +460,25 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                             class="form-checkbox"
                         />
                         <label for="agree_terms" class="terms-label">
-                            I agree to the <a :href="route('privacy.policy')" target="_blank" rel="noopener noreferrer" class="form-link">Privacy Policy</a> & <a :href="route('terms.of.services')" target="_blank" rel="noopener noreferrer" class="form-link">Terms Of Services</a>
+                            I agree to the <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="form-link">Privacy Policy</a> & <a href="/terms-of-services" target="_blank" rel="noopener noreferrer" class="form-link">Terms Of Services</a>
                         </label>
                         <InputError class="form-error" :message="form.errors.agree_to_terms" />
                     </div>
                 </div>
 
+
                 <!-- Buttons -->
                 <div class="form-actions">
+                    <Link
+                        v-if="authUser"
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        type="button"
+                        class="login-button-link logout-button"
+                    >
+                        Logout
+                    </Link>
                     <button
                         v-if="step > 1"
                         type="button"
@@ -353,11 +487,8 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                     >
                         Back
                     </button>
-                    <!-- <Link v-if="step === 1" :href="route('login')" class="login-button-link">
-                        Log In
-                    </Link> -->
                     <PrimaryButton
-                        v-if="step < 3"
+                        v-if="step < 2"
                         @click.prevent="nextStep"
                         class="submit-button"
                         style="background-color: #1898e5;"
@@ -365,11 +496,11 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
                         Next
                     </PrimaryButton>
                     <PrimaryButton
-                        v-if="step === 3"
+                        v-if="step === 2"
                         class="submit-button"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
-                        style="    background-color: #1898e5;"
+                        style="background-color: #1898e5;"
                     >
                         {{ authUser ? 'Welcome to MBM University' : 'Sign Up' }}
                     </PrimaryButton>
@@ -858,38 +989,6 @@ const getTopicColor = (index) => topicColors[index % topicColors.length];
     display: none;
 }
 
-.resume-upload-container {
-    border: 2px dashed #d1d5db;
-    border-radius: 6px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100px;
-}
-
-.resume-upload-container:hover {
-    border-color: #4f46e5;
-}
-
-.resume-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: #6b7280;
-}
-
-.resume-details {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #374151;
-    font-weight: 500;
-}
 select{
     background-image: none !important;
 }

@@ -49,7 +49,7 @@ class PricingController extends Controller
             'type' => $request->type
         ]);
 
-        return redirect()->route('pricings.index');
+        return redirect('/admin/pricings');
     }
 
     /**
@@ -92,7 +92,7 @@ class PricingController extends Controller
             'type' => $request->type
         ]);
 
-        return redirect()->route('pricings.index');
+        return redirect('/admin/pricings');
     }
 
     /**
@@ -101,7 +101,7 @@ class PricingController extends Controller
     public function destroy(Pricing $pricing)
     {
         $pricing->delete();
-        return redirect()->route('pricings.index');
+        return redirect('/admin/pricings');
     }
 
     public function showJoinNowPage()

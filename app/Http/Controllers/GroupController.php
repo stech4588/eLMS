@@ -120,7 +120,7 @@ class GroupController extends Controller
 
         // Check if the user is logged in
         if (!Auth::check()) {
-            return redirect()->route('login', ['redirect' => route('groups.acceptInvite', $token)]);
+            return redirect('/login?redirect=' . urlencode('/invitations/accept/' . $token));
         }
 
         // Add the user to the group
@@ -129,7 +129,7 @@ class GroupController extends Controller
         // Update the invitation status
         $invitation->update(['status' => 'accepted']);
 
-        return redirect()->route('groups.index')->with('success', 'You have successfully joined the group: ' . $invitation->group->name);
+        return redirect('/groups')->with('success', 'You have successfully joined the group: ' . $invitation->group->name);
     }
 
     public function store(Request $request)
@@ -157,7 +157,7 @@ class GroupController extends Controller
 
         $group->members()->attach(Auth::id(), ['role' => 'admin']);
 
-        return redirect()->route('groups.index')->with('success', 'Group created successfully.');
+        return redirect('/groups')->with('success', 'Group created successfully.');
     }
 
     public function update(Request $request, Group $group)
@@ -188,7 +188,7 @@ class GroupController extends Controller
 
         $group->update($updateData);
 
-        return redirect()->route('groups.index')->with('success', 'Group updated successfully.');
+        return redirect('/groups')->with('success', 'Group updated successfully.');
     }
 
     public function destroy(Group $group)
@@ -202,7 +202,7 @@ class GroupController extends Controller
         $group->members()->detach();
         $group->delete();
 
-        return redirect()->route('groups.index')->with('success', 'Group deleted successfully.');
+        return redirect('/groups')->with('success', 'Group deleted successfully.');
     }
 
     public function updateNotificationSettings(Request $request, Group $group)
