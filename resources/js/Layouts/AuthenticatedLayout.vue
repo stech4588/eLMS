@@ -13,7 +13,10 @@ import axios from 'axios';
 import { fetchPermissions, clearPermissions, hasPermission } from '@/permissions.js';
 import { formatDistanceToNow } from 'date-fns';
 
-const user = computed(() => usePage().props.auth?.user || null);
+const user = computed(() => {
+    const authUser = usePage().props.auth?.user;
+    return authUser || null;
+});
 const showingNavigationDropdown = ref(false)
 const isSidebarOpen = ref(false)
 const isSidebarCollapsed = ref(false);
@@ -329,8 +332,8 @@ onMounted(() => {
                                     <span class="inline-flex rounded-md">
                                         <button type="button"
                                             class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-[#1A2C38] text-xs sm:text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none px-2 py-1 sm:px-2.5 sm:py-1.5">
-                                            <span class="hidden sm:inline">{{ user?.name ?? 'Account' }}</span>
-                                            <span class="sm:hidden">{{ user?.name?.charAt(0)?.toUpperCase() ?? 'A' }}</span>
+                                            <span class="hidden sm:inline">{{ user?.name || page.props.auth?.user?.name || 'Account' }}</span>
+                                            <span class="sm:hidden">{{ (user?.name || page.props.auth?.user?.name || 'A').charAt(0).toUpperCase() }}</span>
                                             <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd"

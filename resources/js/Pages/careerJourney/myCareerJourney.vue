@@ -17,6 +17,74 @@ const user = computed(() => {
     };
 });
 
+// Profile picture upload
+const profilePicturePreview = ref(null);
+const profilePictureInput = ref(null);
+const profilePictureForm = useForm({
+    profile_picture: null,
+});
+
+// Get first letter of user's name
+const nameInitial = computed(() => {
+    return user.value.name ? user.value.name.charAt(0).toUpperCase() : '';
+});
+
+// Get profile picture URL or show initial
+const profilePictureUrl = computed(() => {
+    if (profilePicturePreview.value) {
+        return profilePicturePreview.value;
+    }
+    // Check if user has a profile picture (not the default user.svg)
+    if (user.value.profile_picture || (user.value.profile_photo_url && !user.value.profile_photo_url.includes('user.svg'))) {
+        return user.value.profile_photo_url;
+    }
+    return null;
+});
+
+onMounted(() => {
+    // Load existing profile picture if available
+    if (user.value.profile_picture || (user.value.profile_photo_url && !user.value.profile_photo_url.includes('user.svg'))) {
+        profilePicturePreview.value = user.value.profile_photo_url;
+    }
+});
+
+const selectProfilePicture = () => {
+    profilePictureInput.value.click();
+};
+
+const onProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        profilePictureForm.profile_picture = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            profilePicturePreview.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        
+        // Auto-upload profile picture
+        saveProfilePicture(file);
+    }
+};
+
+const saveProfilePicture = (file) => {
+    if (!file) return;
+    
+    profilePictureForm.profile_picture = file;
+    profilePictureForm.post('/profile/upload-picture', {
+        preserveState: true,
+        preserveScroll: true,
+        only: ['auth'],
+        forceFormData: true,
+        onSuccess: (page) => {
+            // Update preview with the new profile picture from auth user
+            if (page.props.auth?.user?.profile_photo_url) {
+                profilePicturePreview.value = page.props.auth.user.profile_photo_url;
+            }
+        },
+    });
+};
+
 const leaderboard = ref([]);
 
 onMounted(() => {
@@ -140,7 +208,19 @@ function updateTopics() {
                     <div class="profile-sections-container">
                         <!-- Profile Card -->
                         <div class="profile-card">
-                            <img :src="user.profile_photo_url || '/images/profile.svg'" alt="myCareerJourney" class="profile-image" />
+                            <div class="profile-picture-wrapper">
+                                <div @click="selectProfilePicture" class="profile-picture-container">
+                                    <img v-if="profilePictureUrl" :src="profilePictureUrl" class="profile-picture-image" />
+                                    <span v-else class="profile-picture-initial">{{ nameInitial }}</span>
+                                    <div @click.stop="selectProfilePicture" class="camera-icon-container">
+                                        <svg class="camera-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <input type="file" ref="profilePictureInput" @change="onProfilePictureChange" class="hidden" accept="image/*">
+                            </div>
                             <div class="profile-name">{{ user.name }}</div>
                             <div class="profile-title">{{ user.type }}</div>
                         </div>
@@ -532,6 +612,72 @@ function updateTopics() {
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 12px;
+}
+
+/* Profile Picture Upload Styles */
+.profile-picture-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.profile-picture-container {
+    width: 85px; 
+    height: 85px;
+    background-color: #4CAF50; 
+    border-radius: 9999px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: visible;
+    position: relative;
+    color: white;
+}
+
+.profile-picture-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 9999px;
+}
+
+.profile-picture-initial {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.camera-icon-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 9999px;
+    padding: 0.3rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+    border: 2px solid #4CAF50;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transform: translate(25%, 25%);
+}
+
+.camera-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: #4A5568; 
+}
+
+.hidden {
+    display: none;
+}
+
+.relative {
+    position: relative;
 }
 
 .goal-action-buttons {

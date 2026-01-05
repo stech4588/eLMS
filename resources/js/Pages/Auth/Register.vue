@@ -48,9 +48,6 @@ const onProfilePictureChange = (e) => {
         };
         reader.readAsDataURL(file);
         
-        // Mark that a new profile picture has been selected
-        hasExistingProfilePicture.value = false;
-        
         // Auto-save profile picture when selected (only if user is authenticated)
         if (authUser.value) {
             saveProfilePicture(file);
@@ -82,8 +79,6 @@ const saveProfilePicture = (file) => {
     });
 };
 
-// Track if user already has a profile picture
-const hasExistingProfilePicture = ref(false);
 
 const form = useForm({
     name: '',
@@ -115,18 +110,17 @@ onMounted(() => {
                 ? authUser.value.profile_picture 
                 : '/' + authUser.value.profile_picture;
             profilePicturePreview.value = profilePicPath;
-            hasExistingProfilePicture.value = true;
         }
     }
 });
 
 const submit = () => {
-    // Transform form data - exclude profile_picture if user already has one and no new file is selected
+    // Transform form data - exclude profile_picture if no file is selected (it's optional)
     form.transform((data) => {
         const transformed = { ...data };
         
-        // If user already has a profile picture and no new file is selected, don't send profile_picture
-        if (hasExistingProfilePicture.value && !form.profile_picture) {
+        // Don't send profile_picture if no file is selected (optional field)
+        if (!form.profile_picture) {
             delete transformed.profile_picture;
         }
         
@@ -136,7 +130,6 @@ const submit = () => {
             if (!authUser.value) {
                 form.reset('password');
             }
-            // Reset transform
             form.transform((data) => data);
         },
     });
