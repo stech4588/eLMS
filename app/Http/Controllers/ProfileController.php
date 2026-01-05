@@ -8,6 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,35 +47,84 @@ class ProfileController extends Controller
      */
     public function uploadPicture(Request $request)
     {
-        $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+        try {
+            Log::info("=== Profile Picture Upload Started ===", [
+                'user_id' => $request->user()->id,
+            ]);
+            
+            $request->validate([
+                'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
 
-        $user = $request->user();
+            $user = $request->user();
 
-        // Delete old profile picture if exists
-        if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
-            unlink(public_path($user->profile_picture));
-        }
+            // Delete old profile picture if exists
+            if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+                try {
+                    @unlink(public_path($user->profile_picture));
+                    Log::info("Old profile picture deleted", ['path' => $user->profile_picture]);
+                } catch (\Exception $e) {
+                    Log::warning("Failed to delete old profile picture: " . $e->getMessage());
+                    // Continue even if deletion fails
+                }
+            }
 
-        // Upload new profile picture
-        $file = $request->file('profile_picture');
-        $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('profile-pictures'), $filename);
-        $profilePicturePath = 'profile-pictures/' . $filename;
+            // Ensure directory exists
+            $profilePicturesDir = public_path('profile-pictures');
+            if (!File::exists($profilePicturesDir)) {
+                File::makeDirectory($profilePicturesDir, 0755, true);
+                Log::info("Created profile-pictures directory");
+            }
 
-        $user->profile_picture = $profilePicturePath;
-        $user->save();
+            // Upload new profile picture
+            $file = $request->file('profile_picture');
+            $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            Log::info("Attempting to move profile picture", ['filename' => $filename]);
+            $file->move($profilePicturesDir, $filename);
+            $profilePicturePath = 'profile-pictures/' . $filename;
+            
+            Log::info("Profile picture uploaded successfully", ['path' => $profilePicturePath]);
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Profile picture uploaded successfully.',
-                'profile_picture' => $profilePicturePath,
+            $user->profile_picture = $profilePicturePath;
+            $user->save();
+            
+            Log::info("User profile picture updated in database", ['user_id' => $user->id]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Profile picture uploaded successfully.',
+                    'profile_picture' => $profilePicturePath,
+                ]);
+            }
+
+            return redirect()->back()->with('message', 'Profile picture uploaded successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning("Validation failed for profile picture upload", [
+                'errors' => $e->errors(),
+            ]);
+            throw $e; // Re-throw validation exceptions
+        } catch (\Throwable $e) {
+            Log::error("=== Profile Picture Upload Failed ===", [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $request->user()->id ?? null,
+            ]);
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'An error occurred while uploading the profile picture. Please try again.',
+                ], 500);
+            }
+            
+            return redirect()->back()->withErrors([
+                'error' => 'An error occurred while uploading the profile picture. Please try again.'
             ]);
         }
-
-        return redirect()->back()->with('message', 'Profile picture uploaded successfully.');
     }
 
     /**

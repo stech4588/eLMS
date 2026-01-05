@@ -17,6 +17,7 @@ use Inertia\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\File;
 use App\Services\SubscriptionService;
 
 class RegisteredUserController extends Controller
@@ -56,76 +57,134 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            
-            // Profile picture is only required if user doesn't already have one
-            $profilePictureRule = $user->profile_picture 
-                ? 'nullable|image|max:2048' 
-                : 'required|image|max:2048';
-            
-            $request->validate([
-                // 'name' => 'required|string|max:255',
-                // 'email' => 'required|string|lowercase|email|max:255|unique:users,email,'.$user->id,
-                'phone_number' => 'required|string|max:20',
-                'primary_learning_goal' => 'required|string',
-                'preferred_topics' => 'required|array',
-                'preferred_topics.*' => 'exists:topics,id',
-                'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-                'profile_picture' => $profilePictureRule,
-                'agree_to_terms' => 'accepted',
-            ]);
-
-            $updateData = [
-                // 'name' => $request->name,
-                // 'email' => $request->email,
-                'phone_number' => $request->phone_number,
-                'primary_learning_goal' => $request->primary_learning_goal,
-                'preferred_topic_ids' => $request->preferred_topics,
-            ];
-            
-            // Only update resume_path if a new file was uploaded
-            if ($request->hasFile('resume')) {
-                $file = $request->file('resume');
-                $filename = 'resume_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('resumes'), $filename);
-                $updateData['resume_path'] = 'resumes/' . $filename;
-            }
-            
-            // Only update profile_picture if a new file was uploaded
-            if ($request->hasFile('profile_picture')) {
-                // Delete old profile picture if exists
-                if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
-                    unlink(public_path($user->profile_picture));
-                }
+        try {
+            if (Auth::check()) {
+                $user = Auth::user();
                 
-                $file = $request->file('profile_picture');
-                $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('profile-pictures'), $filename);
-                $updateData['profile_picture'] = 'profile-pictures/' . $filename;
-            }
-            
-            $user->update($updateData);
+                Log::info("=== Registration Update Started ===", [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                ]);
+                
+                // Profile picture is only required if user doesn't already have one
+                $profilePictureRule = $user->profile_picture 
+                    ? 'nullable|image|max:2048' 
+                    : 'required|image|max:2048';
+                
+                $request->validate([
+                    // 'name' => 'required|string|max:255',
+                    // 'email' => 'required|string|lowercase|email|max:255|unique:users,email,'.$user->id,
+                    'phone_number' => 'required|string|max:20',
+                    'primary_learning_goal' => 'required|string',
+                    'preferred_topics' => 'required|array',
+                    'preferred_topics.*' => 'exists:topics,id',
+                    'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+                    'profile_picture' => $profilePictureRule,
+                    'agree_to_terms' => 'accepted',
+                ]);
 
-            // Apply referral rewards once at profile completion
-            if (Session::has('referral_code')) {
-                $code = Session::get('referral_code');
-                // Decode base36 code back to user id
-                $referrerId = intval(base_convert($code, 36, 10));
-                if ($referrerId > 0 && $referrerId !== $user->id) {
-                    $referrer = User::find($referrerId);
-                    if ($referrer) {
-                        // Award points to referrer; adjust amount as desired
-                        $referrer->increment('points', 100);
-                        // Optionally, give a smaller bonus to the referred user
-                        $user->increment('points', 25);
+                $updateData = [
+                    // 'name' => $request->name,
+                    // 'email' => $request->email,
+                    'phone_number' => $request->phone_number,
+                    'primary_learning_goal' => $request->primary_learning_goal,
+                    'preferred_topic_ids' => $request->preferred_topics,
+                ];
+                
+                // Only update resume_path if a new file was uploaded
+                if ($request->hasFile('resume')) {
+                    try {
+                        $resumeDir = public_path('resumes');
+                        if (!File::exists($resumeDir)) {
+                            File::makeDirectory($resumeDir, 0755, true);
+                        }
+                        
+                        $file = $request->file('resume');
+                        $filename = 'resume_' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->move($resumeDir, $filename);
+                        $updateData['resume_path'] = 'resumes/' . $filename;
+                        Log::info("Resume uploaded successfully", ['filename' => $filename]);
+                    } catch (\Exception $e) {
+                        Log::warning("Failed to upload resume: " . $e->getMessage(), [
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        // Continue without resume
                     }
                 }
-                // Ensure we only process once
-                Session::forget('referral_code');
-            }
+                
+                // Only update profile_picture if a new file was uploaded
+                if ($request->hasFile('profile_picture')) {
+                    try {
+                        // Delete old profile picture if exists
+                        if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+                            @unlink(public_path($user->profile_picture));
+                        }
+                        
+                        $profilePicturesDir = public_path('profile-pictures');
+                        if (!File::exists($profilePicturesDir)) {
+                            File::makeDirectory($profilePicturesDir, 0755, true);
+                        }
+                        
+                        $file = $request->file('profile_picture');
+                        $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->move($profilePicturesDir, $filename);
+                        $updateData['profile_picture'] = 'profile-pictures/' . $filename;
+                        Log::info("Profile picture uploaded successfully", ['filename' => $filename]);
+                    } catch (\Exception $e) {
+                        Log::warning("Failed to upload profile picture: " . $e->getMessage(), [
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        // Continue without profile picture if user already has one
+                        if (!$user->profile_picture) {
+                            throw $e; // Re-throw if user doesn't have one and upload fails
+                        }
+                    }
+                }
+                
+                $user->update($updateData);
+                Log::info("User updated successfully", ['user_id' => $user->id]);
 
-            return redirect('/dashboard');
+                // Apply referral rewards once at profile completion
+                if (Session::has('referral_code')) {
+                    try {
+                        $code = Session::get('referral_code');
+                        // Decode base36 code back to user id
+                        $referrerId = intval(base_convert($code, 36, 10));
+                        if ($referrerId > 0 && $referrerId !== $user->id) {
+                            $referrer = User::find($referrerId);
+                            if ($referrer) {
+                                // Award points to referrer; adjust amount as desired
+                                $referrer->increment('points', 100);
+                                // Optionally, give a smaller bonus to the referred user
+                                $user->increment('points', 25);
+                            }
+                        }
+                        // Ensure we only process once
+                        Session::forget('referral_code');
+                    } catch (\Exception $e) {
+                        Log::warning("Failed to process referral code: " . $e->getMessage());
+                        // Continue even if referral processing fails
+                    }
+                }
+
+                return redirect('/dashboard');
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning("Validation failed", [
+                'errors' => $e->errors(),
+            ]);
+            throw $e; // Re-throw validation exceptions
+        } catch (\Throwable $e) {
+            Log::error("=== Registration Update Failed ===", [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return redirect()->back()->withErrors([
+                'error' => 'An error occurred during registration. Please try again or contact support.'
+            ])->withInput();
         }
 
 
