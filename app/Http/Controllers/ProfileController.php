@@ -69,19 +69,49 @@ class ProfileController extends Controller
                 }
             }
 
-            // Ensure directory exists
+            // Ensure directory exists with proper permissions
             $profilePicturesDir = public_path('profile-pictures');
             if (!File::exists($profilePicturesDir)) {
-                File::makeDirectory($profilePicturesDir, 0755, true);
+                File::makeDirectory($profilePicturesDir, 0777, true);
                 Log::info("Created profile-pictures directory");
+            }
+            
+            // Ensure directory is writable - try multiple permission levels
+            if (!is_writable($profilePicturesDir)) {
+                // Try to fix permissions
+                @chmod($profilePicturesDir, 0777);
+                // Check again
+                if (!is_writable($profilePicturesDir)) {
+                    // Try 0755 as fallback
+                    @chmod($profilePicturesDir, 0755);
+                    if (!is_writable($profilePicturesDir)) {
+                        Log::error("Directory is not writable even after chmod attempts", [
+                            'path' => $profilePicturesDir,
+                            'current_perms' => substr(sprintf('%o', fileperms($profilePicturesDir)), -4),
+                            'owner' => fileowner($profilePicturesDir),
+                            'group' => filegroup($profilePicturesDir),
+                        ]);
+                        throw new \Exception("Unable to write to profile-pictures directory. Please contact administrator to set proper permissions (chmod 755 or 777) on: " . $profilePicturesDir);
+                    }
+                }
             }
 
             // Upload new profile picture
             $file = $request->file('profile_picture');
-            $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'profile_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             
-            Log::info("Attempting to move profile picture", ['filename' => $filename]);
-            $file->move($profilePicturesDir, $filename);
+            Log::info("Attempting to move profile picture", [
+                'filename' => $filename,
+                'directory' => $profilePicturesDir,
+                'is_writable' => is_writable($profilePicturesDir),
+            ]);
+            
+            // Use move_uploaded_file for better reliability
+            $destination = $profilePicturesDir . '/' . $filename;
+            if (!move_uploaded_file($file->getPathname(), $destination)) {
+                throw new \Exception("Failed to move uploaded file. Directory permissions may be incorrect.");
+            }
+            
             $profilePicturePath = 'profile-pictures/' . $filename;
             
             Log::info("Profile picture uploaded successfully", ['path' => $profilePicturePath]);

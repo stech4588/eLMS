@@ -96,12 +96,34 @@ class RegisteredUserController extends Controller
                     try {
                         $resumeDir = public_path('resumes');
                         if (!File::exists($resumeDir)) {
-                            File::makeDirectory($resumeDir, 0755, true);
+                            File::makeDirectory($resumeDir, 0777, true);
+                            Log::info("Created resumes directory");
+                        }
+                        
+                        // Ensure directory is writable - try multiple permission levels
+                        if (!is_writable($resumeDir)) {
+                            @chmod($resumeDir, 0777);
+                            if (!is_writable($resumeDir)) {
+                                @chmod($resumeDir, 0755);
+                                if (!is_writable($resumeDir)) {
+                                    Log::error("Directory is not writable even after chmod attempts", [
+                                        'path' => $resumeDir,
+                                        'current_perms' => substr(sprintf('%o', fileperms($resumeDir)), -4),
+                                    ]);
+                                    throw new \Exception("Unable to write to resumes directory. Please contact administrator to set proper permissions on: " . $resumeDir);
+                                }
+                            }
                         }
                         
                         $file = $request->file('resume');
-                        $filename = 'resume_' . time() . '.' . $file->getClientOriginalExtension();
-                        $file->move($resumeDir, $filename);
+                        $filename = 'resume_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                        
+                        // Use move_uploaded_file for better reliability
+                        $destination = $resumeDir . '/' . $filename;
+                        if (!move_uploaded_file($file->getPathname(), $destination)) {
+                            throw new \Exception("Failed to move uploaded file. Directory permissions may be incorrect.");
+                        }
+                        
                         $updateData['resume_path'] = 'resumes/' . $filename;
                         Log::info("Resume uploaded successfully", ['filename' => $filename]);
                     } catch (\Exception $e) {
@@ -122,12 +144,34 @@ class RegisteredUserController extends Controller
                         
                         $profilePicturesDir = public_path('profile-pictures');
                         if (!File::exists($profilePicturesDir)) {
-                            File::makeDirectory($profilePicturesDir, 0755, true);
+                            File::makeDirectory($profilePicturesDir, 0777, true);
+                            Log::info("Created profile-pictures directory");
+                        }
+                        
+                        // Ensure directory is writable - try multiple permission levels
+                        if (!is_writable($profilePicturesDir)) {
+                            @chmod($profilePicturesDir, 0777);
+                            if (!is_writable($profilePicturesDir)) {
+                                @chmod($profilePicturesDir, 0755);
+                                if (!is_writable($profilePicturesDir)) {
+                                    Log::error("Directory is not writable even after chmod attempts", [
+                                        'path' => $profilePicturesDir,
+                                        'current_perms' => substr(sprintf('%o', fileperms($profilePicturesDir)), -4),
+                                    ]);
+                                    throw new \Exception("Unable to write to profile-pictures directory. Please contact administrator to set proper permissions on: " . $profilePicturesDir);
+                                }
+                            }
                         }
                         
                         $file = $request->file('profile_picture');
-                        $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
-                        $file->move($profilePicturesDir, $filename);
+                        $filename = 'profile_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                        
+                        // Use move_uploaded_file for better reliability
+                        $destination = $profilePicturesDir . '/' . $filename;
+                        if (!move_uploaded_file($file->getPathname(), $destination)) {
+                            throw new \Exception("Failed to move uploaded file. Directory permissions may be incorrect.");
+                        }
+                        
                         $updateData['profile_picture'] = 'profile-pictures/' . $filename;
                         Log::info("Profile picture uploaded successfully", ['filename' => $filename]);
                     } catch (\Exception $e) {
