@@ -64,7 +64,10 @@
                 <li><a @click="scrollToSection('result')" style="cursor: pointer;">Result</a></li>
                 <li><a @click="scrollToSection('pricing')" style="cursor: pointer;">Pricing</a></li>
               </ul>
-              <a :href="joinNowUrl" class="mbm-footer-button">JOIN NOW ➜</a>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a :href="joinNowUrl" class="mbm-footer-button">JOIN NOW ➜</a>
+                <a href="/contact" class="mbm-footer-button">CONTACT US ➜</a>
+              </div>
             </div>
 
             <!-- Column 2: Asia Pacific Inquiries -->

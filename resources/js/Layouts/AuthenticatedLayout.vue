@@ -7,6 +7,7 @@ import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
 import PromotionPopup from '@/Components/PromotionPopup.vue';
 import LearningGoalPopup from '@/Components/LearningGoalPopup.vue';
+import ContactNotificationModal from '@/Components/ContactNotificationModal.vue';
 import { Link, usePage, router, Head } from '@inertiajs/vue3'
 import AuthSidebar from '@/Components/AuthSidebar.vue'
 import axios from 'axios';
@@ -30,6 +31,8 @@ const notifications = ref([]);
 const checkingPagePermission = ref(false);
 const hasPageAccess = ref(true);
 const permissionMessage = ref('');
+const showContactModal = ref(false);
+const selectedContactNotification = ref(null);
 const pagePermissionMap = {
     'Dashboard': 'dashboardView',
     'careerJourney/myCareerJourney': 'careerJourneyView',
@@ -88,6 +91,40 @@ const fetchNotifications = async () => {
             console.error('Error fetching notifications:', error);
         }
     }
+};
+
+const handleNotificationClick = async (notification) => {
+    // Check if it's a contact form notification (by type or by presence of contact fields)
+    const isContactNotification = notification.data && (
+        notification.data.type === 'contact_form' || 
+        (notification.data.contact_name && notification.data.contact_email)
+    );
+    
+    if (isContactNotification) {
+        // Mark as read
+        try {
+            await axios.post(route('notifications.markRead', notification.id));
+            // Remove from notifications list
+            notifications.value = notifications.value.filter(n => n.id !== notification.id);
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+        
+        // Show modal with notification data
+        selectedContactNotification.value = {
+            ...notification.data,
+            created_at: notification.created_at,
+        };
+        showContactModal.value = true;
+    } else {
+        // For other notifications, use the default link behavior
+        window.location.href = route('notifications.read', notification.id);
+    }
+};
+
+const closeContactModal = () => {
+    showContactModal.value = false;
+    selectedContactNotification.value = null;
 };
 
 // Check for saved theme preference or system preference
@@ -308,14 +345,19 @@ onMounted(() => {
                                             Notifications
                                         </div>
                                         <div v-if="notifications.length > 0" class="max-h-96 overflow-y-auto">
-                                            <Link v-for="notification in notifications" :key="notification.id" :href="route('notifications.read', notification.id)" class="flex items-start px-4 py-3 text-sm transition duration-150 ease-in-out border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                            <a 
+                                                v-for="notification in notifications" 
+                                                :key="notification.id" 
+                                                @click.prevent="handleNotificationClick(notification)"
+                                                class="flex items-start px-4 py-3 text-sm transition duration-150 ease-in-out border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary cursor-pointer"
+                                            >
                                                 <div class="w-full">
                                                     <p class="text-gray-700 dark:text-gray-300">{{ notification.data.message }}</p>
                                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                                         {{ formatDistanceToNow(new Date(notification.created_at), { addSuffix: true }) }}
                                                     </p>
                                                 </div>
-                                            </Link>
+                                            </a>
                                         </div>
                                         <div v-else class="px-4 py-10 text-sm text-center text-gray-500 dark:text-dark-text-secondary">
                                             You have no new notifications
@@ -471,6 +513,11 @@ onMounted(() => {
         </div>
         <PromotionPopup v-if="user && (user.type === 'student' || user.type === 'instructor')" />
         <LearningGoalPopup v-if="user && user.type === 'student'" />
+        <ContactNotificationModal 
+            :show="showContactModal" 
+            :notification-data="selectedContactNotification"
+            @close="closeContactModal"
+        />
     </div>
 </template>
 

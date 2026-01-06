@@ -27,4 +27,11 @@ class NotificationController extends Controller
         $notification->markAsRead();
         return redirect($link);
     }
+
+    public function markAsRead($id)
+    {
+        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+        return response()->json(['success' => true]);
+    }
 }

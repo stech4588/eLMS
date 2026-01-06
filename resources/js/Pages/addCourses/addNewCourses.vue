@@ -424,13 +424,40 @@
                                             @change="handleThumbnailUpload"
                                         />
                                         <p v-if="videosData[currentEditingVideoIndex]?.errors?.thumbnailFile" class="text-red-500 text-sm mt-1 text-center" style="display: flex; justify-content: flex-start; text-align: start;">{{ videosData[currentEditingVideoIndex].errors.thumbnailFile }}</p>
-                                        <label
-                                            for="thumbnail-upload"
-                                            class="block  p-2 text-center   cursor-pointer hover:bg-gray-50 add_course_dark_input_box"
-                                            style="background-color: #9fd3f5; width: 178px; height: 79px; text-align: center; justify-content: center; align-items: center; display: flex; border-radius: 8px; color: black; font-size: 12px; font-weight: 600;"
-                                        >
-                                            Add your Thumbnail
-                                        </label>
+                                        <template v-if="activeThumbnailPreviewForRightPanel">
+                                            <div class="relative mb-2" style="width: 178px;">
+                                                <img 
+                                                    :src="activeThumbnailPreviewForRightPanel" 
+                                                    alt="Thumbnail preview" 
+                                                    class="w-full h-auto rounded-md border border-gray-300"
+                                                    style="max-height: 150px; object-fit: contain;"
+                                                />
+                                                <button
+                                                    @click.stop="removeThumbnail"
+                                                    class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                                                    style="font-size: 14px;"
+                                                    title="Remove thumbnail"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                            <label
+                                                for="thumbnail-upload"
+                                                class="block p-2 text-center cursor-pointer hover:bg-gray-50 add_course_dark_input_box"
+                                                style="background-color: #9fd3f5; width: 178px; height: 40px; text-align: center; justify-content: center; align-items: center; display: flex; border-radius: 8px; color: black; font-size: 12px; font-weight: 600;"
+                                            >
+                                                Replace Thumbnail
+                                            </label>
+                                        </template>
+                                        <template v-else>
+                                            <label
+                                                for="thumbnail-upload"
+                                                class="block  p-2 text-center   cursor-pointer hover:bg-gray-50 add_course_dark_input_box"
+                                                style="background-color: #9fd3f5; width: 178px; height: 79px; text-align: center; justify-content: center; align-items: center; display: flex; border-radius: 8px; color: black; font-size: 12px; font-weight: 600;"
+                                            >
+                                                Add your Thumbnail
+                                            </label>
+                                        </template>
                                     </div>
                                 </div>
                                 <div>
@@ -456,16 +483,10 @@
                                                     </p>
                                                 </template>
                                                 <template v-else>
-                                                    <!-- Video is in form, now check for thumbnail -->
-                                                    <template v-if="activeThumbnailPreviewForRightPanel">
-                                                        <img :src="activeThumbnailPreviewForRightPanel" alt="Thumbnail preview" class="w-full h-auto" />
-                                                    </template>
-                                                    <template v-else>
-                                                        <!-- Video exists, but no thumbnail, show video player -->
-                                                        <video v-if="activeVideoPreviewForRightPanel" :src="activeVideoPreviewForRightPanel" controls class="w-full h-auto" style="max-height: 200px; display: block;"></video>
-                                                        <!-- Fallback if videoPreview isn't ready but form.video is -->
-                                                        <div v-else class="flex items-center justify-center w-full bg-gray-100" style="height: 170px;">Video processing...</div>
-                                                    </template>
+                                                    <!-- Video exists, show video player -->
+                                                    <video v-if="activeVideoPreviewForRightPanel" :src="activeVideoPreviewForRightPanel" controls class="w-full h-auto" style="max-height: 200px; display: block;"></video>
+                                                    <!-- Fallback if videoPreview isn't ready but form.video is -->
+                                                    <div v-else class="flex items-center justify-center w-full bg-gray-100" style="height: 170px;">Video processing...</div>
                                                     <button
                                                         type="button"
                                                         @click="triggerVideoUploadFromRightPanel"
@@ -1660,6 +1681,37 @@ const handleThumbnailUpload = (e) => {
         }
         
         // Trigger auto-save after thumbnail upload
+        if (currentStep.value >= 2) {
+            autoSaveDraft();
+        }
+    }
+};
+
+const removeThumbnail = () => {
+    if (currentEditingVideoIndex.value >= 0 && videosData.value[currentEditingVideoIndex.value]) {
+        const currentVideo = videosData.value[currentEditingVideoIndex.value];
+        
+        // Revoke blob URL if present
+        if (currentVideo.thumbnailFilePreview && currentVideo.thumbnailFilePreview.startsWith('blob:')) {
+            URL.revokeObjectURL(currentVideo.thumbnailFilePreview);
+        }
+        
+        // Clear thumbnail data
+        currentVideo.thumbnailFile = null;
+        currentVideo.thumbnailFilePreview = null;
+        activeThumbnailPreviewForRightPanel.value = null;
+
+        // Clear the input
+        if (thumbnailUploadInput.value) {
+            thumbnailUploadInput.value.value = '';
+        }
+        
+        // Clear any errors
+        if (currentVideo.errors && currentVideo.errors.thumbnailFile) {
+            delete currentVideo.errors.thumbnailFile;
+        }
+        
+        // Trigger auto-save after removing thumbnail
         if (currentStep.value >= 2) {
             autoSaveDraft();
         }

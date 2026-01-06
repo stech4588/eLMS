@@ -57,6 +57,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\Admin\MarketingController;
 use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/', [WelcomeController::class, 'index']);
@@ -69,6 +70,9 @@ Route::get('/privacy-policy', function () {
 Route::get('/terms-of-services', function () {
     return Inertia::render('TermsOfService');
 })->name('terms.of.services');
+
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.submit');
 
 Route::get('/CommunityChat', [CommunityController::class, 'index'])
     ->middleware(['auth', 'verified', CheckCommunityAccess::class])
@@ -217,6 +221,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsReadAndRedirect'])->name('notifications.read');
+    Route::post('/notifications/{id}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
 
     Route::get('/register/complete', [RegisteredUserController::class, 'create'])->name('register.complete');
     Route::resource('admin/pricings', \App\Http\Controllers\Admin\PricingController::class);

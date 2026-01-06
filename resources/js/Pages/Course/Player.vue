@@ -352,8 +352,26 @@
                             <button @click="selectVideo(video)"
                                 :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-3',
                                     currentVideo && currentVideo.id === video.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
-                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span>{{ video.title }}</span>
+                                <!-- Thumbnail if available -->
+                                <div v-if="video.thumbnail_url" class="flex-shrink-0 relative w-16 h-10 overflow-hidden rounded">
+                                    <img 
+                                        :src="video.thumbnail_url" 
+                                        :alt="video.title + ' thumbnail'"
+                                        class="w-full h-full object-cover"
+                                    />
+                                    <!-- Play icon overlay -->
+                                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <!-- Fallback play icon if no thumbnail -->
+                                <svg v-else class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="flex-1 truncate">{{ video.title }}</span>
                             </button>
                         </li>
                     </ul>

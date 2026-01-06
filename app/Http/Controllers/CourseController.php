@@ -1041,6 +1041,7 @@ class CourseController extends Controller
                 'description' => $video->description, // Ensure Video model has description
                 'takeaway_notes' => $video->takeaway_notes,
                 'video_url' => $video->video_url ? asset($video->video_url) : null,
+                'thumbnail_url' => $video->thumbnail_url ? asset($video->thumbnail_url) : null,
                 'order' => $video->order,
                 'quiz' => $video->quiz ? [
                     'id' => $video->quiz->id,
