@@ -101,9 +101,73 @@ billing-cycle-switcher<template>
                         </div>
                     </div>
                     <div class="form-row">
-                         <div class="form-group billing-address">
-                            <label for="billing-address">Billing Address</label>
-                            <input type="text" id="billing-address" placeholder="Billing Address" v-model="formData.billingAddress" class="stripe-input">
+                         <div class="form-group billing-street">
+                            <label for="billing-street">Street Address</label>
+                            <input type="text" id="billing-street" placeholder="Street Address" v-model="formData.billingStreet" class="stripe-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                         <div class="form-group billing-city">
+                            <label for="billing-city">City</label>
+                            <input type="text" id="billing-city" placeholder="City" v-model="formData.billingCity" class="stripe-input">
+                        </div>
+                         <div class="form-group billing-state">
+                            <label for="billing-state">State/Province</label>
+                            <input type="text" id="billing-state" placeholder="State/Province" v-model="formData.billingState" class="stripe-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                         <div class="form-group billing-postal">
+                            <label for="billing-postal">Postal Code</label>
+                            <input type="text" id="billing-postal" placeholder="Postal Code" v-model="formData.billingPostal" class="stripe-input">
+                        </div>
+                         <div class="form-group billing-country">
+                            <label for="billing-country">Country</label>
+                            <select id="billing-country" v-model="formData.billingCountry" class="stripe-input">
+                                <option value="">Select Country</option>
+                                <option value="US">United States</option>
+                                <option value="PK">Pakistan</option>
+                                <option value="GB">United Kingdom</option>
+                                <option value="CA">Canada</option>
+                                <option value="AU">Australia</option>
+                                <option value="NZ">New Zealand</option>
+                                <option value="ZA">South Africa</option>
+                                <option value="IN">India</option>
+                                <option value="DE">Germany</option>
+                                <option value="FR">France</option>
+                                <option value="IT">Italy</option>
+                                <option value="ES">Spain</option>
+                                <option value="NL">Netherlands</option>
+                                <option value="BE">Belgium</option>
+                                <option value="CH">Switzerland</option>
+                                <option value="AT">Austria</option>
+                                <option value="SE">Sweden</option>
+                                <option value="NO">Norway</option>
+                                <option value="DK">Denmark</option>
+                                <option value="FI">Finland</option>
+                                <option value="IE">Ireland</option>
+                                <option value="PL">Poland</option>
+                                <option value="PT">Portugal</option>
+                                <option value="GR">Greece</option>
+                                <option value="TR">Turkey</option>
+                                <option value="BR">Brazil</option>
+                                <option value="MX">Mexico</option>
+                                <option value="AR">Argentina</option>
+                                <option value="CL">Chile</option>
+                                <option value="CO">Colombia</option>
+                                <option value="AE">United Arab Emirates</option>
+                                <option value="SA">Saudi Arabia</option>
+                                <option value="EG">Egypt</option>
+                                <option value="JP">Japan</option>
+                                <option value="CN">China</option>
+                                <option value="KR">South Korea</option>
+                                <option value="SG">Singapore</option>
+                                <option value="MY">Malaysia</option>
+                                <option value="TH">Thailand</option>
+                                <option value="PH">Philippines</option>
+                                <option value="ID">Indonesia</option>
+                                <option value="VN">Vietnam</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -122,6 +186,13 @@ billing-cycle-switcher<template>
                             <label for="full-name">Full Name</label>
                             <input type="text" id="full-name" placeholder="Full Name" v-model="formData.name" class="stripe-input">
                             <div v-if="formErrors.name" class="text-red-500 mt-1 text-xs">{{ formErrors.name }}</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group phone-number">
+                            <label for="phone-number">Phone Number</label>
+                            <input type="tel" id="phone-number" placeholder="Phone Number" v-model="formData.phoneNumber" class="stripe-input">
+                            <div v-if="formErrors.phoneNumber" class="text-red-500 mt-1 text-xs">{{ formErrors.phoneNumber }}</div>
                         </div>
                     </div>
                     <div class="form-row">
@@ -192,13 +263,19 @@ export default {
                 name: '',
                 email: '',
                 password: '',
-                billingAddress: '',
+                phoneNumber: '',
+                billingStreet: '',
+                billingCity: '',
+                billingState: '',
+                billingPostal: '',
+                billingCountry: '',
                 terms: false,
             },
             formErrors: {
                 name: '',
                 email: '',
                 password: '',
+                phoneNumber: '',
                 terms: '',
             },
         };
@@ -216,9 +293,6 @@ export default {
     },
     logoUrl() {
       if (this.user) {
-        if (this.$page.props.auth.profile_incomplete) {
-          return '/register/complete';
-        }
         return '/dashboard';
       }
       return '/';
@@ -251,6 +325,16 @@ export default {
     methods: {
         togglePasswordVisibility() {
             this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+        },
+        getCombinedBillingAddress() {
+            const addressParts = [
+                this.formData.billingStreet,
+                this.formData.billingCity,
+                this.formData.billingState,
+                this.formData.billingPostal,
+                this.formData.billingCountry
+            ].filter(part => part && part.trim() !== '');
+            return addressParts.join(', ');
         },
         async selectPlan(plan) {
             this.selectedPlan = plan;
@@ -357,7 +441,7 @@ export default {
             this.cardCvc.mount('#card-cvc-element');
         },
         validateForm() {
-            this.formErrors = { name: '', email: '', password: '', terms: '' };
+            this.formErrors = { name: '', email: '', password: '', phoneNumber: '', terms: '' };
             this.paymentError = null;
             let hasError = false;
             if (!this.formData.name) {
@@ -366,6 +450,10 @@ export default {
             }
             if (!this.formData.email) {
                 this.formErrors.email = 'Email address is required.';
+                hasError = true;
+            }
+            if (!this.formData.phoneNumber) {
+                this.formErrors.phoneNumber = 'Phone number is required.';
                 hasError = true;
             }
             if (!this.formData.password) {
@@ -424,7 +512,11 @@ export default {
                                 name: this.formData.name,
                                 email: this.formData.email,
                                 address: {
-                                    line1: this.formData.billingAddress,
+                                    line1: this.formData.billingStreet,
+                                    city: this.formData.billingCity,
+                                    state: this.formData.billingState,
+                                    postal_code: this.formData.billingPostal,
+                                    country: this.formData.billingCountry,
                                 },
                             },
                         },
@@ -444,11 +536,15 @@ export default {
                 }
 
                 if (paymentIntent.status === 'succeeded') {
+                    // Combine address fields for backend
+                    const billingAddress = this.getCombinedBillingAddress();
+                    
                     const postPaymentData = {
                         name: this.formData.name,
                         email: this.formData.email,
                         password: this.formData.password,
-                        billingAddress: this.formData.billingAddress,
+                        phone_number: this.formData.phoneNumber,
+                        billingAddress: billingAddress,
                         transaction_id: paymentIntent.id,
                         amount: this.totalDue,
                         plan: this.selectedPlan,
@@ -811,7 +907,8 @@ input:checked + .slider:before {
     color: #a0a0a0;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     background-color: #ffffff;
     border: 1px solid #333;
     border-radius: 5px;
@@ -832,9 +929,14 @@ input:checked + .slider:before {
 .card-number { flex-basis: 50%; }
 .expiration-date { flex-basis: 25%; }
 .cvc { flex-basis: 25%; }
-.billing-address { flex-basis: 100%; }
+.billing-street { flex-basis: 100%; }
+.billing-city { flex-basis: 50%; }
+.billing-state { flex-basis: 50%; }
+.billing-postal { flex-basis: 50%; }
+.billing-country { flex-basis: 50%; }
 .email-address { flex-basis: 100%; }
 .full-name { flex-basis: 100%; }
+.phone-number { flex-basis: 100%; }
 
 /* Total Due */
 .total-due {

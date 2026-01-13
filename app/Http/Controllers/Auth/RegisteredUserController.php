@@ -181,6 +181,7 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => 'required|string',
+            'phone_number' => 'required|string|max:20',
             'transaction_id' => 'required|string',
             'amount' => 'required|numeric',
             'plan' => 'required|string',
@@ -194,6 +195,7 @@ class RegisteredUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'phone_number' => $request->phone_number,
                 'role_id' => 3, // student
                 'type' => 'student',
             ]);
@@ -225,11 +227,11 @@ class RegisteredUserController extends Controller
     
             event(new Registered($user));
     
-            return redirect('/register/complete');
+            return redirect('/dashboard');
     
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Registration from payment failed: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Registration from payment failed: ' . $e->getMessage());
             return back()->withErrors(['payment_error' => 'An error occurred during registration. Please contact support.']);
         }
     }
