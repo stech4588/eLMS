@@ -21,7 +21,7 @@
         <div class="fusion-layout-column fusion_builder_column_1_2">
           <div class="fusion-column-wrapper">
             <div class="large-p" style="font-size: 20px; text-align: left; margin-bottom: 20px;">
-              <p>MBM University's complete learning environment<br>
+              <p>ElevateU University's complete learning environment<br>
                 everything you need, all in one place:</p>
             </div>
             <div class="fusion-builder-row-inner">

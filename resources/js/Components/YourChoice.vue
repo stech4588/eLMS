@@ -41,7 +41,7 @@
             <section class="mbm-banner">
                 <div class="mbm-banner-content">
                     <h2 class="mbm-banner-heading">
-                        The Old World Teaches Servival, MBM University Teaches Modern Wealth Creation.
+                        The Old World Teaches Servival, ElevateU University Teaches Modern Wealth Creation.
                     </h2>
                     <div class="subtext">
                         <p class="mbm-banner-subtext">

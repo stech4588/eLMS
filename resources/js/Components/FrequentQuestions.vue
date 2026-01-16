@@ -57,27 +57,27 @@ export default {
         {
           question: "How fast do I get my money back?",
           answer:
-            " It depends how much you commit to MBM University. If you are dedicated and apply our expertise advice, it's typical to see return on your investment within the first few weeks. No profit is guaranteed. It's up to you to do the work.",
+            " It depends how much you commit to ElevateU University. If you are dedicated and apply our expertise advice, it's typical to see return on your investment within the first few weeks. No profit is guaranteed. It's up to you to do the work.",
         },
         {
-          question: "Do I need money once I join MBM University?",
+          question: "Do I need money once I join ElevateU University?",
           answer:
-            " In MBM University, we provide training on modern wealth-building strategies like e-commerce, copywriting and client acquisitionect, which can be started with no money.",
+            " In ElevateU University, we provide training on modern wealth-building strategies like e-commerce, copywriting and client acquisitionect, which can be started with no money.",
         },
         {
           question: "Will you be able to access all the courses after joining?",
           answer:
-            "Yes, when you join MBM University, you will get access to all of our courses, not just the one you choose.",
+            "Yes, when you join ElevateU University, you will get access to all of our courses, not just the one you choose.",
         },
         {
           question: "Can I cancel whenever I want?",
           answer:
-            "Yes, can cancel your membership whenever you want. That said, most students in MBM University choose to renew, often earning enough to cover their next month's membership and beyond.",
+            "Yes, can cancel your membership whenever you want. That said, most students in ElevateU University choose to renew, often earning enough to cover their next month's membership and beyond.",
         },
         {
           question: "Does my age truly matter?",
           answer:
-            " Not at all! That said, if you're under 18, we recommend getting permission from a parent or guardian before joining MBM University. Why spend money on the latest video games only to lose interest in a week? Instead, become part of our community, launch your own business, and amaze your friends and family by being the kid who levels up in real life",
+            " Not at all! That said, if you're under 18, we recommend getting permission from a parent or guardian before joining ElevateU University. Why spend money on the latest video games only to lose interest in a week? Instead, become part of our community, launch your own business, and amaze your friends and family by being the kid who levels up in real life",
         },
         {
           question:
@@ -88,12 +88,12 @@ export default {
         {
           question: "I have a busy schedule—can I still join?",
           answer:
-            "Absolutely! In MBM University, speed is key. Our methods are built for fast implementation, so even with just a few hours a day, you can start applying these skills and earning your first dollar online.",
+            "Absolutely! In ElevateU University, speed is key. Our methods are built for fast implementation, so even with just a few hours a day, you can start applying these skills and earning your first dollar online.",
         },
         {
           question: "Does it matter that I'm from X country?",
           answer:
-            "No, it's not an issue at all! MBM University focuses on online income, so your location won't hold you back.",
+            "No, it's not an issue at all! ElevateU University focuses on online income, so your location won't hold you back.",
         },
       ],
     };

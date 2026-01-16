@@ -36,7 +36,7 @@ class PromptGeneratedEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Daily Progress Update from MBM University',
+            subject: 'Your Daily Progress Update from ElevateU University',
         );
     }
 

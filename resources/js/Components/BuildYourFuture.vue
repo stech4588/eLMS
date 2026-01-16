@@ -20,7 +20,7 @@
           </div>
           <div class="future-description">
             <p>
-              MBM University students succeed because
+              ElevateU University students succeed because
               <span class="highlight">they take action.</span> We provide the tested path, and you shape your journey.
             </p>
             <p>

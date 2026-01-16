@@ -2,5 +2,5 @@
 {!! nl2br(e($emailContent)) !!}
 
 Thanks,<br>
-MBM University
+ElevateU University
 </x-mail::message>

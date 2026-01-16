@@ -129,7 +129,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'MBM University'), '_').'_session'
+        Str::slug(env('APP_NAME', 'ElevateU University'), '_').'_session'
     ),
 
     /*

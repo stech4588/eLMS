@@ -39,9 +39,9 @@
 
       <hr class="divider dark:border-dark-border-primary" />
       <div class="footer-bottom">
-        <p class="bottom-text">Everything taught within MBM University is for education purposes only. It is up to each student to implement and do the work.</p>
-        <p class="bottom-text">MBM University team does not guarantee any specific outcomes or success. Results may vary based on individual effort and circumstances.</p>
-        <p class="bottom-text">© {{ new Date().getFullYear() }} MBM University. All rights reserved.</p>
+        <p class="bottom-text">Everything taught within ElevateU University is for education purposes only. It is up to each student to implement and do the work.</p>
+        <p class="bottom-text">ElevateU University team does not guarantee any specific outcomes or success. Results may vary based on individual effort and circumstances.</p>
+        <p class="bottom-text">© {{ new Date().getFullYear() }} ElevateU University. All rights reserved.</p>
       </div>
     </footer>
   </div>
@@ -119,7 +119,7 @@
 
         <!-- Bottom Bar -->
         <div class="mbm-footer-bottom">
-          <p>© MBM University 2025</p>
+          <p>© ElevateU University 2025</p>
           <p>
             <a href="#">Privacy Policy</a> |
             <a href="#">Terms of Service</a>

@@ -3,7 +3,7 @@
         <div class="hero-overlay"></div>
         <div class="hero-container">
             <div class="hero-text">
-                <h1>Welcome<br> <span>To MBM University</span></h1>
+                <h1>Welcome To<br> <span>ElevateU University</span></h1>
                 <p>
                     Where ordinary people transform into global online entrepreneurs. 
                 </p>

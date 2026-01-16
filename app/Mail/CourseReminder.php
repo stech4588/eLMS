@@ -33,7 +33,7 @@ class CourseReminder extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Don\'t forget your MBM University courses!',
+            subject: 'Don\'t forget your ElevateU University courses!',
         );
     }
 

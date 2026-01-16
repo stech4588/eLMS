@@ -18,5 +18,5 @@
 Keep up the great work!
 
 Thanks,<br>
-MBM University
+ElevateU University
 </x-mail::message>

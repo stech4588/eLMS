@@ -102,7 +102,7 @@
       <!-- Join button -->
       <div class="text-center mt-20 hero-section-join-button">
         <a :href="joinNowUrl" class="bg-gradient-to-r from-[#4ACFF8] to-[#4ACFF8] text-black font-bold py-4 px-12 rounded-lg text-lg uppercase tracking-wider sequence-canvas-join-button">
-          Join MBM University
+          Join ElevateU University
         </a>
       </div>
     </div>

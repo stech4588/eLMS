@@ -4,7 +4,7 @@
     <div class="lms-lep-top">
       <div class="lms-lep-top-content">
         <div class="lms-lep-heading">
-          The Best Of MBM University
+          The Best Of ElevateU University
         </div>
         <div class="lms-lep-desc">
           Seize your destiny, conquer the online world, and turn every lesson into unstoppable income.

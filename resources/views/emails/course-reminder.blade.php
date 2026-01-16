@@ -20,11 +20,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('/images/MBM_Uni.png') }}" alt="MBM University Logo">
+            <img src="{{ asset('/images/MBM_Uni.png') }}" alt="ElevateU University Logo">
             <h1>Hello {{ $user->name }},</h1>
         </div>
         <div class="content">
-            <p>We noticed you haven't completed some of your courses at MBM University. Keep up the great work and finish strong!</p>
+            <p>We noticed you haven't completed some of your courses at ElevateU University. Keep up the great work and finish strong!</p>
             <p>Here are the courses you're still working on:</p>
             <ul class="course-list">
                 @foreach ($courses as $course)
@@ -39,7 +39,7 @@
             <p>Happy learning!</p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} MBM University. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} ElevateU University. All rights reserved.</p>
         </div>
     </div>
 </body>

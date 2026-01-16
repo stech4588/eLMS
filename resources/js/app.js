@@ -7,7 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-const appName = 'MBM University';
+const appName = 'ElevateU University';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

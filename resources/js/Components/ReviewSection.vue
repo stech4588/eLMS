@@ -1,7 +1,7 @@
 <template>
   <div class="main-review-section" id="testimonials">
     <div class="review-context">
-      <h2>What Our Clients Think Of <span class="animated-2">MBM University.</span></h2>
+      <h2>What Our Clients Think Of <span class="animated-2">ElevateU University.</span></h2>
       <p>We take pride in being transparent about our expertise and — we’re thrilled that our clients appreciate it too.
       </p>
     </div>  

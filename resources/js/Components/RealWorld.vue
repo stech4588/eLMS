@@ -16,7 +16,7 @@
 
         <div class="mbm-description">
           <p>
-            <span class="silver">MBM University</span> is a
+            <span class="silver">ElevateU University</span> is a
             <span class="gold">global community</span>
             <span class="silver"></span> where like-minded individuals work toward achieving their personal
             goals.

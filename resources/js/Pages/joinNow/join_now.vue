@@ -222,11 +222,11 @@ billing-cycle-switcher<template>
                     <span v-if="paymentProcessing">Processing...</span>
                     <span v-else class="flex items-center justify-center">
                          <img src="/images/p_box.svg" style="height:24px; filter: invert(0); margin-right: 10px;" alt="card icon" />
-                        Enter MBM University
+                        Enter ElevateU University
                     </span>
                 </button>
                 <div v-if="paymentError" class="text-red-500 mt-4 text-center">{{ paymentError }}</div>
-                <p class="copyright">Copyright © 2025 MBM University</p>
+                <p class="copyright">Copyright © 2025 ElevateU University</p>
             </div>
             </transition>
         </div>

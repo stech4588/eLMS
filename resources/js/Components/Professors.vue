@@ -1,7 +1,7 @@
 <template>
   <section class="mbm-lms-solution" ref="solutionSection" id="why-us">
     <div class="mbm-lms-container">
-      <h2 class="mbm-lms-title">Why MBM University Chooses Smart Technology For Smarter Learning.</h2>
+      <h2 class="mbm-lms-title">Why ElevateU University Chooses Smart Technology For Smarter Learning.</h2>
       <div class="mbm-lms-grid">
         <div class="mbm-lms-stat" v-for="(stat, index) in countedStats" :key="index">
           <div class="mbm-lms-value">{{ stat.displayValue }}</div>
