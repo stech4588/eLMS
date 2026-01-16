@@ -2,7 +2,7 @@
     <section class="why-lms-section" id="education">
         <div class="container">
             <div class="section-header">
-                <h2>Why Choose MBM?</h2>
+                <h2>Why Choose ElevateU University?</h2>
                 <!-- <p>
                     We’re the only platform that empowers both learner-centric and organization-driven outcomes through a scalable Learning Enablement Platform (LEP).
                 </p> -->
