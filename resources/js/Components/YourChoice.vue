@@ -35,7 +35,7 @@
         </div>
     </div>
 </template> -->
-<template>
+<!-- <template>
     <div class="main-nbm-banner" id="choice">
         <div class="nbm-banner-row">
             <section class="mbm-banner">
@@ -52,6 +52,28 @@
 
                 </div>
             </section>
+        </div>
+    </div>
+</template> -->
+
+<template>
+    <div class="choice-redesign" id="choice">
+        <div class="choice-container">
+            <div class="choice-card">
+                <div class="choice-tag">PREMIUM ACCESS</div>
+                <h2 class="choice-heading">
+                    The Old World Teaches <span class="text-gray">Survival</span>, <br>
+                    ElevateU University Teaches <span class="text-green">Modern Wealth Creation.</span>
+                </h2>
+                <p class="choice-subtext">
+                    Break free from limitations. Contact us today to see how we can help you level up!
+                </p>
+                <div class="choice-action">
+                    <Link :href="joinNowUrl" class="btn-primary-green">
+                    JOIN ELEVATEU UNIVERSITY NOW ➜
+                    </Link>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -73,7 +95,96 @@ const joinNowUrl = computed(() => {
 
 </script>
 
-<style>
+<style scoped>
+/* NEW REDESIGNED STYLES */
+.choice-redesign {
+    background-color: #ffffff;
+    padding: 120px 20px;
+    font-family: 'Inter', system-ui, sans-serif;
+    border-bottom: none !important;
+}
+
+.choice-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.choice-card {
+    text-align: center;
+}
+
+.choice-tag {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2ecc71;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.choice-heading {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #000000;
+    margin-bottom: 30px;
+    letter-spacing: -1px;
+}
+
+.text-gray {
+    color: #64748b;
+    font-weight: 400;
+}
+
+.text-green {
+    color: #2ecc71;
+}
+
+.choice-subtext {
+    font-size: 1.2rem;
+    color: #475569;
+    max-width: 700px;
+    margin: 0 auto 50px;
+    line-height: 1.6;
+}
+
+.choice-action {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-primary-green {
+    background-color: #2ecc71;
+    color: #ffffff;
+    padding: 20px 40px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px -5px rgba(46, 204, 113, 0.4);
+    display: inline-block;
+}
+
+.btn-primary-green:hover {
+    background-color: #27ae60;
+    transform: translateY(-3px);
+    box-shadow: 0 20px 30px -10px rgba(46, 204, 113, 0.5);
+}
+
+@media (max-width: 768px) {
+    .choice-heading {
+        font-size: 2.2rem;
+    }
+
+    .choice-subtext {
+        font-size: 1.1rem;
+    }
+
+    .btn-primary-green {
+        width: 100%;
+        padding: 18px 20px;
+    }
+}
 </style>
 <!-- <style scoped>
 * {

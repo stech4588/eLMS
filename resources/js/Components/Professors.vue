@@ -1,5 +1,6 @@
 <template>
-  <section class="mbm-lms-solution" ref="solutionSection" id="why-us">
+  <section class="stat-section" ref="solutionSection" id="why-us">
+    <!-- ===== ORIGINAL COMPONENT DESIGN (COMMENTED FOR BACKUP) =====
     <div class="mbm-lms-container">
       <h2 class="mbm-lms-title">Why ElevateU University Chooses Smart Technology For Smarter Learning.</h2>
       <div class="mbm-lms-grid">
@@ -7,9 +8,21 @@
           <div class="mbm-lms-value">{{ stat.displayValue }}</div>
           <div class="mbm-lms-label" v-html="stat.label"></div>
         </div>
-        <!-- <div class="mbm-lms-award">
-          <img src="/images/icon1.svg" alt="Award Badge" />
-        </div> -->
+      </div>
+    </div>
+    -->
+
+    <!-- NEW REDESIGNED UI -->
+    <div class="stat-container">
+      <h2 class="stat-main-title">Why ElevateU University Chooses Smart Technology For Smarter Learning.</h2>
+      
+      <div class="stat-grid-3x2">
+        <div class="stat-item" v-for="(stat, index) in (countedStats.length ? countedStats : stats)" :key="index">
+          <div class="stat-number">
+             {{ countedStats.length ? stat.displayValue : stat.value }}
+          </div>
+          <p class="stat-label" v-html="stat.label"></p>
+        </div>
       </div>
     </div>
   </section>
@@ -89,81 +102,100 @@ export default {
 };
 </script>
 
-
 <style scoped>
+/* NEW STYLES */
+.stat-section {
+  background-color: #272d34;
+  padding: 100px 20px;
+  text-align: center;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.stat-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.stat-main-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 70px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.3;
+}
+
+.stat-grid-3x2 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 60px 40px;
+  justify-items: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 52px;
+  font-weight: 700;
+  color: #2ecc71; /* Green color for values */
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .stat-grid-3x2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+  .stat-number {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .stat-grid-3x2 {
+    grid-template-columns: 1fr;
+  }
+  .stat-main-title {
+    font-size: 22px;
+    margin-bottom: 40px;
+  }
+}
+
+/* 
+ORIGINAL STYLES (COMMENTED FOR BACKUP)
 .mbm-lms-solution {
   background-color: #0f2b55;
   color: #fff;
   padding: 60px 20px;
   text-align: center;
-  font-family: 'Inter', sans-serif;
 }
-
-.mbm-lms-container {
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  margin: 0 auto;
-}
-
 .mbm-lms-title {
   text-align: left;
   font-size: 34px;
-  font-weight: bold;
-  margin-bottom: 40px;
 }
-
-.mbm-lms-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-}
-
-.mbm-lms-stat {
-  min-width: 100px;
-  max-width: 140px;
-}
-
 .mbm-lms-value {
   font-size: 42px;
-  font-weight: bold;
   color: #00a3e0;
-  margin-bottom: 8px;
 }
-
-.mbm-lms-label {
-  font-size: 13px;
-  color: #fff;
-  line-height: 1.4;
-}
-
-.mbm-lms-award {
-  flex: 0 0 auto;
-  max-width: 110px;
-}
-
-.mbm-lms-award img {
-  width: 100%;
-  height: auto;
-}
-
-@media (max-width: 768px) {
-  .mbm-lms-title {
-    font-size: 20px;
-  }
-
-  .mbm-lms-grid {
-    gap: 20px;
-  }
-
-  .mbm-lms-value {
-    font-size: 22px;
-  }
-
-  .mbm-lms-label {
-    font-size: 12px;
-  }
-}
+... (rest of old styles)
+*/
 </style>
+

@@ -1062,11 +1062,8 @@ body {
 /* review Section */
 
 .main-review-section {
-  padding-bottom: 30px;
-  margin-bottom: 20px;
-  margin-top: 120px;
-  margin-left: 30px;
-  margin-right: 30px;
+  padding-bottom: 0px;
+  margin: 0;
 }
 
 .review-context p {

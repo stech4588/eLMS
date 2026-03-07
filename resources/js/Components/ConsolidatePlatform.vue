@@ -1,3 +1,4 @@
+<!-- 
 <template>
   <div class="fusion-fullwidth-container" id="access">
     <div class="fusion-fullwidth">
@@ -310,4 +311,6 @@ export default {
     height: 70vh;
     overflow-y: auto;
 }
-</style> 
+</style>
+-->
+ 
