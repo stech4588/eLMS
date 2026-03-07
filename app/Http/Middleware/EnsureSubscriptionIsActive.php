@@ -16,6 +16,7 @@ class EnsureSubscriptionIsActive
         'register.from.payment',
         'fetch-intent',
         'payment-error-log',
+        'purchase-course.*',
     ];
 
     public function handle(Request $request, Closure $next): Response

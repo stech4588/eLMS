@@ -58,9 +58,14 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\Admin\MarketingController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CoursePurchaseController;
 use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/', [WelcomeController::class, 'index']);
+
+Route::get('/purchase-course', [CoursePurchaseController::class, 'show'])->name('purchase-course.show');
+Route::post('/purchase-course', [CoursePurchaseController::class, 'store'])->name('purchase-course.store');
+Route::post('/purchase-course/check-email', [CoursePurchaseController::class, 'checkEmail'])->name('purchase-course.checkEmail');
 Route::get('/invitations/accept/{token}', [GroupController::class, 'acceptInvite'])->name('groups.acceptInvite');
 
 Route::get('/privacy-policy', function () {
