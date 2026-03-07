@@ -44,7 +44,15 @@ class Course extends Model
     }
 
     /**
-     * Get the videos for the course.
+     * Get the sections for the course.
+     */
+    public function sections(): HasMany
+    {
+        return $this->hasMany(CourseSection::class, 'course_id')->orderBy('order');
+    }
+
+    /**
+     * Get the videos for the course (all videos regardless of section).
      */
     public function videos(): HasMany
     {

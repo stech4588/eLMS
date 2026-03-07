@@ -18,6 +18,7 @@ use Illuminate\Support\Str; // Import Str facade
 use Illuminate\Support\Facades\File; // Import File facade for directory creation
 use Illuminate\Support\Facades\Storage; // Import Storage facade for efficient file handling
 use App\Models\Course;
+use App\Models\CourseSection;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
 use App\Events\CourseViewed; // Import the CourseViewed event
@@ -73,6 +74,7 @@ class CourseController extends Controller
             $this->getCourseFormOptions(),
             [
                 'course' => null,
+                'courseSections' => [],
                 'courseVideos' => [],
                 'courseQuiz' => null,
                 'isEditing' => false,
@@ -89,7 +91,14 @@ class CourseController extends Controller
             'industry',
             'certificate',
             'topic',
+            'sections' => function ($q) {
+                $q->orderBy('order');
+            },
+            'sections.videos' => function ($q) {
+                $q->orderBy('order');
+            },
             'videos.quiz.questions.answers',
+            'videos.courseSection',
             'quizzes.questions.answers',
         ]);
 
@@ -109,6 +118,7 @@ class CourseController extends Controller
         $courseVideos = $course->videos->sortBy('order')->values()->map(function ($video) {
             return [
                 'id' => $video->id,
+                'course_section_id' => $video->course_section_id,
                 'title' => $video->title,
                 'description' => $video->description,
                 'takeaway_notes' => $video->takeaway_notes,
@@ -136,6 +146,32 @@ class CourseController extends Controller
             ];
         })->values();
 
+        $courseSections = $course->sections->map(function ($s) {
+            return [
+                'id' => $s->id,
+                'title' => $s->title,
+                'order' => $s->order,
+            ];
+        })->values();
+
+        // Backward compatibility: if course has videos but no sections, create one default section and assign videos to it
+        if ($courseSections->isEmpty() && $course->videos->isNotEmpty()) {
+            $defaultSection = CourseSection::create([
+                'course_id' => $course->id,
+                'title' => 'Section 1',
+                'order' => 0,
+            ]);
+            $course->videos()->update(['course_section_id' => $defaultSection->id]);
+            $course->load('sections');
+            $courseSections = $course->sections->map(function ($s) {
+                return [
+                    'id' => $s->id,
+                    'title' => $s->title,
+                    'order' => $s->order,
+                ];
+            })->values();
+        }
+
         $courseQuizModel = $course->quizzes->first();
         $courseQuiz = $courseQuizModel ? [
             'id' => $courseQuizModel->id,
@@ -160,6 +196,7 @@ class CourseController extends Controller
             $this->getCourseFormOptions(),
             [
                 'course' => $courseData,
+                'courseSections' => $courseSections,
                 'courseVideos' => $courseVideos,
                 'courseQuiz' => $courseQuiz,
                 'isEditing' => true,
@@ -200,8 +237,16 @@ class CourseController extends Controller
             'videos.*.videoFile' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:512000',
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.duration_in_seconds' => 'nullable|integer|min:0',
+            'videos.*.course_section_id' => 'nullable|exists:course_sections,id',
+            'videos.*.section_index' => 'nullable|integer|min:0',
             'removed_video_ids' => 'nullable|array',
             'removed_video_ids.*' => 'integer|exists:videos,id',
+            'sections' => 'nullable|array',
+            'sections.*.id' => 'nullable|exists:course_sections,id',
+            'sections.*.title' => 'nullable|string|max:255',
+            'sections.*.order' => 'nullable|integer|min:0',
+            'removed_section_ids' => 'nullable|array',
+            'removed_section_ids.*' => 'integer|exists:course_sections,id',
         ]);
 
         DB::beginTransaction();
@@ -214,7 +259,7 @@ class CourseController extends Controller
                 // Update existing draft
                 $course = Course::findOrFail($courseId);
                 $this->authorizeCourseOwner($request, $course);
-                
+
                 $courseDataToUpdate = [
                     'title' => $validatedCourseData['title'] ?? $course->title,
                     'description' => $validatedCourseData['description'] ?? $course->description,
@@ -227,34 +272,109 @@ class CourseController extends Controller
                     'topic_id' => $validatedCourseData['topic'] ?? $course->topic_id,
                     'status' => 'draft',
                 ];
-                
+
                 $course->update($courseDataToUpdate);
             } else {
-                // Create new draft
-                $courseDataToCreate = [
-                    'user_id' => $request->user()->id,
-                    'title' => $validatedCourseData['title'] ?? 'Untitled Course',
-                    'description' => $validatedCourseData['description'] ?? '',
-                    'price' => $validatedCourseData['price'] ?? 0,
-                    'additional_description' => $validatedCourseData['additional_description'] ?? null,
-                    'recomendations' => $validatedCourseData['recomendations'] ?? null,
-                    'certificate_id' => $validatedCourseData['certificates'] ?? null,
-                    'industry_id' => $validatedCourseData['industry'] ?? null,
-                    'course_type_id' => $validatedCourseData['course_type'] ?? null,
-                    'topic_id' => $validatedCourseData['topic'] ?? null,
-                    'status' => 'draft',
-                ];
+                // Reuse recent empty draft to avoid duplicate courses (e.g. multiple rapid save-draft calls)
+                $recentDraft = Course::where('user_id', $request->user()->id)
+                    ->where('status', 'draft')
+                    ->where(function ($q) {
+                        $q->where('title', 'Untitled Course')
+                            ->orWhereNull('title')
+                            ->orWhere('title', '');
+                    })
+                    ->where('created_at', '>=', now()->subMinutes(3))
+                    ->orderByDesc('id')
+                    ->first();
 
-                $course = $this->courseService->create($courseDataToCreate);
+                if ($recentDraft) {
+                    $course = $recentDraft;
+                    $courseDataToUpdate = [
+                        'title' => $validatedCourseData['title'] ?? $course->title,
+                        'description' => $validatedCourseData['description'] ?? $course->description,
+                        'price' => $validatedCourseData['price'] ?? $course->price,
+                        'additional_description' => $validatedCourseData['additional_description'] ?? $course->additional_description,
+                        'recomendations' => $validatedCourseData['recomendations'] ?? $course->recomendations,
+                        'certificate_id' => $validatedCourseData['certificates'] ?? $course->certificate_id,
+                        'industry_id' => $validatedCourseData['industry'] ?? $course->industry_id,
+                        'course_type_id' => $validatedCourseData['course_type'] ?? $course->course_type_id,
+                        'topic_id' => $validatedCourseData['topic'] ?? $course->topic_id,
+                        'status' => 'draft',
+                    ];
+                    $course->update($courseDataToUpdate);
+                } else {
+                    $courseDataToCreate = [
+                        'user_id' => $request->user()->id,
+                        'title' => $validatedCourseData['title'] ?? 'Untitled Course',
+                        'description' => $validatedCourseData['description'] ?? '',
+                        'price' => $validatedCourseData['price'] ?? 0,
+                        'additional_description' => $validatedCourseData['additional_description'] ?? null,
+                        'recomendations' => $validatedCourseData['recomendations'] ?? null,
+                        'certificate_id' => $validatedCourseData['certificates'] ?? null,
+                        'industry_id' => $validatedCourseData['industry'] ?? null,
+                        'course_type_id' => $validatedCourseData['course_type'] ?? null,
+                        'topic_id' => $validatedCourseData['topic'] ?? null,
+                        'status' => 'draft',
+                    ];
+                    $course = $this->courseService->create($courseDataToCreate);
+                }
+            }
+
+            // Sync sections (create/update/delete)
+            if ($course->exists) {
+                if ($request->has('removed_section_ids') && is_array($request->input('removed_section_ids'))) {
+                    CourseSection::where('course_id', $course->id)
+                        ->whereIn('id', $request->input('removed_section_ids'))
+                        ->delete();
+                }
+                if ($request->has('sections') && is_array($request->input('sections'))) {
+                    $order = 0;
+                    foreach ($request->input('sections') as $sectionData) {
+                        $title = isset($sectionData['title']) ? trim($sectionData['title']) : '';
+                        if ($title === '') {
+                            continue;
+                        }
+                        if (!empty($sectionData['id'])) {
+                            $section = CourseSection::where('course_id', $course->id)->where('id', $sectionData['id'])->first();
+                            if ($section) {
+                                $section->update([
+                                    'title' => $title,
+                                    'order' => (int) ($sectionData['order'] ?? $order),
+                                ]);
+                                $order++;
+                            }
+                        } else {
+                            // firstOrCreate to avoid duplicate sections (same course + title)
+                            $section = CourseSection::firstOrCreate(
+                                [
+                                    'course_id' => $course->id,
+                                    'title' => $title,
+                                ],
+                                [
+                                    'order' => (int) ($sectionData['order'] ?? $order),
+                                ]
+                            );
+                            if ($section->wasRecentlyCreated === false) {
+                                $section->update(['order' => (int) ($sectionData['order'] ?? $order)]);
+                            }
+                            $order++;
+                        }
+                    }
+                }
             }
 
             // Save videos if provided
             if ($request->has('videos') && is_array($request->input('videos'))) {
                 $videoService = resolve(\App\Services\VideoService::class);
                 $createdVideoIds = []; // Track created/updated video IDs
-                
+                $sectionIdsOrdered = $course->sections()->orderBy('order')->pluck('id')->values();
+
                 foreach ($request->input('videos') as $index => $videoData) {
                     $videoId = $videoData['id'] ?? null;
+                    $courseSectionId = $videoData['course_section_id'] ?? null;
+                    if (empty($courseSectionId) && isset($videoData['section_index'])) {
+                        $courseSectionId = $sectionIdsOrdered->get((int) $videoData['section_index']);
+                    }
                     
                     // Handle video file upload
                     $videoFile = $request->file("videos.{$index}.videoFile");
@@ -375,6 +495,7 @@ class CourseController extends Controller
                                 'description' => $videoData['description'] ?? $existingVideo->description,
                                 'takeaway_notes' => $videoData['takeaway_notes'] ?? $existingVideo->takeaway_notes,
                                 'order' => $videoData['order'] ?? $existingVideo->order,
+                                'course_section_id' => $courseSectionId ?? $existingVideo->course_section_id,
                             ];
                             
                             // Update video URL if new file uploaded
@@ -429,6 +550,7 @@ class CourseController extends Controller
                                 'description' => $videoData['description'] ?? $existingVideoByOrder->description,
                                 'takeaway_notes' => $videoData['takeaway_notes'] ?? $existingVideoByOrder->takeaway_notes,
                                 'order' => $videoData['order'] ?? $existingVideoByOrder->order,
+                                'course_section_id' => $courseSectionId ?? $existingVideoByOrder->course_section_id,
                             ];
                             
                             if ($videoPath) {
@@ -455,6 +577,7 @@ class CourseController extends Controller
                             // Create new video with file uploads if available
                             $newVideo = $videoService->create([
                                 'course_id' => $course->id,
+                                'course_section_id' => $courseSectionId,
                                 'title' => $videoData['title'] ?? 'Untitled Video',
                                 'description' => $videoData['description'] ?? '',
                                 'takeaway_notes' => $videoData['takeaway_notes'] ?? null,
@@ -496,13 +619,16 @@ class CourseController extends Controller
             }
 
             DB::commit();
-            
+
+            $sectionIds = $course->sections()->orderBy('order')->pluck('id')->values()->all();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Draft saved successfully',
                 'course_id' => $course->id,
                 'draftCourseId' => $course->id,
-                'video_ids' => $createdVideoIds ?? [], // Return created/updated video IDs
+                'video_ids' => $createdVideoIds ?? [],
+                'section_ids' => $sectionIds,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -893,7 +1019,20 @@ class CourseController extends Controller
         }
 
         // Eager load relationships you might need
-        $course->load('courseType', 'videos', 'industry', 'certificate', 'topic', 'user'); // Added 'industry' and 'certificate'
+        $course->load([
+            'courseType',
+            'industry',
+            'certificate',
+            'topic',
+            'user',
+            'sections' => function ($q) {
+                $q->orderBy('order');
+            },
+            'sections.videos' => function ($q) {
+                $q->orderBy('order');
+            },
+        ]);
+        $course->load('videos'); // keep for first_video_thumbnail_url and flat list fallback
 
         $isPurchased = false;
         if (Auth::check()) {
@@ -926,10 +1065,26 @@ class CourseController extends Controller
                     'id' => $video->id,
                     'title' => $video->title,
                     'thumbnail_url' => $video->thumbnail_url ? asset($video->thumbnail_url) : null,
-                    'video_url' => $video->video_path ? asset($video->video_path) : null, // Assuming video_path stores the path
+                    'video_url' => $video->video_url ? asset($video->video_url) : null,
                     'order' => $video->order,
                 ];
-            })->sortBy('order')->values(), // Ensure videos are ordered and keys are reset
+            })->sortBy('order')->values(),
+            'sections' => $course->sections->map(function ($section) {
+                return [
+                    'id' => $section->id,
+                    'title' => $section->title,
+                    'order' => $section->order,
+                    'videos' => $section->videos->map(function ($video) {
+                        return [
+                            'id' => $video->id,
+                            'title' => $video->title,
+                            'thumbnail_url' => $video->thumbnail_url ? asset($video->thumbnail_url) : null,
+                            'video_url' => $video->video_url ? asset($video->video_url) : null,
+                            'order' => $video->order,
+                        ];
+                    })->values(),
+                ];
+            })->values(),
         ];
 
         if ($course->videos->isNotEmpty() && $course->videos->first()->thumbnail_url) {
@@ -1008,6 +1163,12 @@ class CourseController extends Controller
                 $query->orderBy('order', 'asc');
             },
             'videos.quiz.questions.answers',
+            'sections' => function ($q) {
+                $q->orderBy('order');
+            },
+            'sections.videos' => function ($q) {
+                $q->orderBy('order');
+            },
             'comments' => function ($query) {
                 $query->with('user')->latest(); // Eager load user for comments and order by latest
             },
@@ -1091,6 +1252,20 @@ class CourseController extends Controller
                 ];
             }),
             'videos' => $videosData,
+            'sections' => $course->sections->map(function ($section) {
+                return [
+                    'id' => $section->id,
+                    'title' => $section->title,
+                    'order' => $section->order,
+                    'videos' => $section->videos->map(function ($v) {
+                        return [
+                            'id' => $v->id,
+                            'title' => $v->title,
+                            'order' => $v->order,
+                        ];
+                    })->values(),
+                ];
+            })->values(),
             // Add other course properties if needed by the player page
         ];
 

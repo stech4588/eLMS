@@ -33,35 +33,41 @@
         </div>
 
         <div class="py-12 main_upload_video" style="display: flex; justify-content: center;">
-            <div v-if="currentStep == 2" style="width: 223px; background-color: white; padding-top: 20px; padding-bottom: 20px; flex-direction: column;display: flex;gap: 10px; height: max-content;" class="add_course_dark_left_videos">
-                <div
-                    v-for="(video, index) in videosData"
-                    :key="index"
-                    style="width: 100%; font-size: 16px; font-weight: 600; display: flex; align-items: center;"
-                    :class="index === currentEditingVideoIndex ? 'add_course_dark_left_videos_item_active' : ''"
-                    :style="index === currentEditingVideoIndex ? { backgroundColor: '#9fd3f5', borderLeft: '2px solid #148ad9' } : {}"
-                >
-                    <span @click="selectVideoToEdit(index)" style="flex-grow: 1; padding: 10px 30px; cursor: pointer;" class="add_course_dark_left_videos_item_text">
-                        Video {{ index + 1 }}
-                    </span>
-                    <button @click.stop="removeVideo(index)" style="background:transparent; border:none; cursor:pointer; padding-right: 20px;" title="Remove video" >
-                        <img src="/images/cross_icon.svg" alt="Remove" style="height: 12px; width: 12px;" class="dark_dropdown_arrow" />
-                    </button>
-                </div>
-                <div
-                    @click="addNewVideoSlot"
-                    style="width: 100%;padding: 10px 18px; color: #2C15F5; display: flex; gap:5px; font-size: 16px; font-weight: 600; cursor: pointer;"
-                    class="add_course_dark_text"
-                >
-                    <img src="/images/blue_add_icon.svg" alt="Add Icon" class="add_course_dark_icons"/>
-                    Add Videos
-                </div>
+            <div v-if="currentStep == 3" style="width: 223px; background-color: white; padding-top: 20px; padding-bottom: 20px; flex-direction: column;display: flex;gap: 10px; height: max-content;" class="add_course_dark_left_videos dark:bg-[#1A2C38]">
+                <template v-if="sectionsData.length > 0">
+                    <div v-for="(section, sectionIdx) in sectionsData" :key="section.id || 's-' + sectionIdx" class="flex flex-col gap-1">
+                        <div class="font-semibold text-gray-800 dark:text-white px-2 py-1 text-sm">{{ section.title || '(Untitled section)' }}</div>
+                        <div
+                            v-for="entry in getVideosInSection(sectionIdx)"
+                            :key="entry.globalIndex"
+                            style="width: 100%; font-size: 14px; font-weight: 600; display: flex; align-items: center;"
+                            :class="entry.globalIndex === currentEditingVideoIndex ? 'add_course_dark_left_videos_item_active' : ''"
+                            :style="entry.globalIndex === currentEditingVideoIndex ? { backgroundColor: '#9fd3f5', borderLeft: '2px solid #148ad9' } : {}"
+                        >
+                            <span @click="selectVideoToEdit(entry.globalIndex)" style="flex-grow: 1; padding: 8px 16px; cursor: pointer;" class="add_course_dark_left_videos_item_text truncate" :title="entry.video.title">
+                                {{ entry.video.title || 'Video ' + (entry.globalIndex + 1) }}
+                            </span>
+                            <button @click.stop="removeVideo(entry.globalIndex)" style="background:transparent; border:none; cursor:pointer; padding-right: 12px;" title="Remove video">
+                                <img src="/images/cross_icon.svg" alt="Remove" style="height: 12px; width: 12px;" class="dark_dropdown_arrow" />
+                            </button>
+                        </div>
+                        <div
+                            @click="addNewVideoSlot(sectionIdx)"
+                            style="width: 100%; padding: 8px 16px; color: #2C15F5; display: flex; gap:5px; font-size: 14px; font-weight: 600; cursor: pointer;"
+                            class="add_course_dark_text"
+                        >
+                            <img src="/images/blue_add_icon.svg" alt="Add Icon" class="add_course_dark_icons"/>
+                            Add Video
+                        </div>
+                    </div>
+                </template>
+                <p v-else class="px-2 text-sm text-gray-500 dark:text-gray-400">Add sections in Step 2 first.</p>
              </div>
             <div class=" max-w-7xl sm:px-1 lg:px-8" style="width: 100%;">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="bg-white border-b border-gray-200 dark:bg-[#1A2C38] dark:border-dark-border-secondary dark:text-white">
 
-                        <div v-if="currentStep >= 2" class="mb-1 p-6 ">
+                        <div v-if="currentStep >= 3" class="mb-1 p-6 ">
                             <h2 class="vedio_title font-semibold leading-tight text-black-600">
                                 <span v-if="form.course_title">Course: {{ form.course_title }} - </span>
                                 Video {{ currentEditingVideoIndex + 1 }}
@@ -74,41 +80,12 @@
 
                         <!-- Step Indicator -->
                         <div v-if="currentStep >= 2" class="flex justify-center p-6 ">
-                            <div class="flex items-center w-full">
-                                <div
-                                    :class="{
-                                        'border-4 border-black text-white': currentStep >= 2,
-                                        'bg-black': currentStep < 2
-                                    }"
-                                    class="flex items-center justify-center w-6 h-6 rounded-full">
-                                    <span class="check_text text-sm">Details</span>
-                                </div>
-
-                                <div
-                                    :class="{
-                                        'bg-black': currentStep >= 3,
-                                        'bg-black': currentStep < 3
-                                    }"
-                                    class="w-1/2 h-1  bg-black">
-                                </div>
-                                <div
-                                    :class="{
-                                        'border-4 border-black text-white': currentStep >= 3,
-                                        'bg-black': currentStep < 3
-                                    }"
-                                    class="flex items-center justify-center w-6 h-6 rounded-full">
-                                    <span class="check_text text-sm">Quiz</span>
-                                </div>
-
-                                <div class="w-1/2 h-1 bg-black"></div>
-                                <div
-                                :class="{
-                                'border-4 border-black text-white': currentStep >= 4,
-                                'bg-black': currentStep < 4
-                                }"
-                                class="flex items-center justify-center w-6 h-6 rounded-full">
-                                    <span class="check_text text-sm">Visibility</span>
-                                </div>
+                            <div class="flex items-center w-full flex-wrap gap-1">
+                                <div :class="{ 'border-4 border-black text-white': currentStep >= 2, 'bg-black': currentStep < 2 }" class="flex items-center justify-center w-6 h-6 rounded-full"><span class="check_text text-sm">Sections</span></div>
+                                <div class="w-1/2 h-1 bg-black min-w-[20px]"></div>
+                                <div :class="{ 'border-4 border-black text-white': currentStep >= 3, 'bg-black': currentStep < 3 }" class="flex items-center justify-center w-6 h-6 rounded-full"><span class="check_text text-sm">Videos</span></div>
+                                <div class="w-1/2 h-1 bg-black min-w-[20px]"></div>
+                                <div :class="{ 'border-4 border-black text-white': currentStep >= 4, 'bg-black': currentStep < 4 }" class="flex items-center justify-center w-6 h-6 rounded-full"><span class="check_text text-sm">Visibility</span></div>
                             </div>
                         </div>
 
@@ -193,21 +170,21 @@
                                         </div>
                                     </div>
 
-                                    <div v-if="false" class="mb-6" style="">
+                                    <div class="mb-6" style="">
                                         <label for="course_price" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Course Price <span style="color: red;">*</span></label>
                                         <input
                                             type="number"
                                             id="course_price"
                                             v-model="form.course_price"
                                             min="0"
-                                            class="w-full p-2 border-none dark:bg-[#1A2C38]"
-                                            placeholder="Enter Course Price"
+                                            step="0.01"
+                                            class="w-full p-2 border-none dark:bg-[#1A2C38] dark:text-white"
+                                            placeholder="Enter Course Price (e.g. 49.00)"
                                             style="outline: none !important;
                                                 box-shadow: none !important;
                                                 border: none !important; border: 1px solid grey; border-radius: 15px; padding: 20px;"
                                         />
                                         <p v-if="errors.course_price" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.course_price }}</p>
-                                        
                                     </div>
 
 
@@ -336,8 +313,65 @@
 
                         </div>
 
-                        <!-- Step 2: Video Details -->
-                        <div v-if="currentStep === 2" class="p-6" style="padding-top: 0;">
+                        <!-- Step 2: Add Sections -->
+                        <div v-if="currentStep === 2" class="p-6">
+                            <h3 class="mb-4 text-lg font-medium dark:text-white">Course Sections</h3>
+                            <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">Add sections to organize your course. Each video will belong to a section.</p>
+                            <div class="mb-6 flex flex-wrap gap-2">
+                                <input
+                                    v-model="newSectionTitle"
+                                    type="text"
+                                    placeholder="Section title (e.g. Building Your Business)"
+                                    class="flex-1 min-w-[200px] rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A2C38] px-4 py-2 dark:text-white"
+                                    @keyup.enter="addSection"
+                                />
+                                <button
+                                    type="button"
+                                    @click="addSection"
+                                    class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                                >
+                                    Add Section
+                                </button>
+                            </div>
+                            <div v-if="sectionsData.length > 0" class="space-y-2">
+                                <h4 class="text-sm font-semibold dark:text-white">Section List:</h4>
+                                <div
+                                    v-for="(section, idx) in sectionsData"
+                                    :key="section.id || 'temp-' + idx"
+                                    class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-[#1A2C38] px-4 py-2"
+                                >
+                                    <span class="dark:text-white">{{ idx + 1 }}. {{ section.title || '(Untitled)' }}</span>
+                                    <button
+                                        type="button"
+                                        @click="removeSection(idx)"
+                                        class="text-red-600 hover:text-red-700"
+                                        title="Remove section"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <p v-else class="text-sm text-gray-500 dark:text-gray-400">No sections yet. Add one above.</p>
+                            <div class="flex justify-end mt-6 space-x-4">
+                                <button
+                                    type="button"
+                                    @click="prevStep"
+                                    class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
+                                    style="font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                    Back
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="nextStep"
+                                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                    style="background-color: #148ad9; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Video Details -->
+                        <div v-if="currentStep === 3" class="p-6" style="padding-top: 0;">
                             <h3 class="mb-6 text-lg font-medium">Details</h3>
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                                 <div class="md:col-span-2">
@@ -741,6 +775,10 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    courseSections: {
+        type: Array,
+        default: () => [],
+    },
     courseVideos: {
         type: Array,
         default: () => [],
@@ -787,6 +825,11 @@ const lastSentDraftSignature = ref(null);
 const isEditingCourse = computed(() => !!props.course);
 const pageTitle = computed(() => isEditingCourse.value ? 'Edit Course' : 'Add New Video');
 const removedVideoIds = ref([]);
+const removedSectionIds = ref([]);
+
+// Sections: { id?, title, order } (id null for new sections)
+const sectionsData = ref([]);
+const newSectionTitle = ref('');
 
 // Check if course is ready to publish
 const isCourseComplete = computed(() => {
@@ -955,17 +998,25 @@ const handleFailedVideoUpload = (friendlyMessage = 'Video upload failed. Please 
     }
 };
 
+// Cooldown (ms) after a successful save to prevent watch-driven save loops
+const SAVE_DRAFT_COOLDOWN_MS = 2500;
+
 // Auto-save functionality
 const autoSaveDraft = () => {
     // Don't start a new auto-save while we're syncing server changes
     if (isSavingDraft.value || isSyncingDraftFromServer.value) return;
+
+    // Prevent immediate re-save after a successful save (stops continuous API loop)
+    if (lastSavedAt.value && (Date.now() - lastSavedAt.value.getTime()) < SAVE_DRAFT_COOLDOWN_MS) {
+        return;
+    }
     
     // Clear existing timer
     if (autoSaveTimer.value) {
         clearTimeout(autoSaveTimer.value);
     }
     
-    // Set new timer for 1 second (half of 2 seconds = 1000ms)
+    // Debounce: 2.5s so we don't fire too often and avoid loops from server response updates
     autoSaveTimer.value = setTimeout(async () => {
         // Only show the full-screen loader when there is media (video/thumbnail) being uploaded.
         // We check all videos, regardless of the current step, so every new upload (first, second, third, ...)
@@ -982,8 +1033,8 @@ const autoSaveDraft = () => {
         isSavingDraft.value = hasPendingMedia;
         
         try {
-            // Save current video details if on step 2
-            if (currentStep.value === 2 && currentEditingVideoIndex.value !== -1) {
+            // Save current video details if on step 3 (videos)
+            if (currentStep.value === 3 && currentEditingVideoIndex.value !== -1) {
                 saveCurrentVideoDetails();
             }
 
@@ -1001,7 +1052,8 @@ const autoSaveDraft = () => {
                     topic: form.topic || '',
                     price: form.course_price || 0,
                 },
-                videos: currentStep.value >= 2
+                sections: (sectionsData.value || []).map((s, i) => ({ id: s.id, title: s.title, order: s.order ?? i })),
+                videos: currentStep.value >= 3
                     ? (videosData.value || []).map((video, index) => ({
                         // Only non-file fields participate in the signature
                         local_index: index,
@@ -1028,6 +1080,7 @@ const autoSaveDraft = () => {
                     }))
                     : [],
                 removed_video_ids: removedVideoIds.value || [],
+                removed_section_ids: removedSectionIds.value || [],
             });
 
             // If there is no new media and the signature is unchanged, skip hitting the API
@@ -1049,6 +1102,14 @@ const autoSaveDraft = () => {
             if (draftCourseId.value) {
                 formData.append('course_id', draftCourseId.value);
             }
+
+            // Sections
+            sectionsData.value.forEach((section, idx) => {
+                formData.append(`sections[${idx}][title]`, section.title || '');
+                formData.append(`sections[${idx}][order]`, String(section.order ?? idx));
+                if (section.id) formData.append(`sections[${idx}][id]`, section.id);
+            });
+            removedSectionIds.value.forEach((id) => formData.append('removed_section_ids[]', id));
             
             // Include removed video IDs for deletion
             if (removedVideoIds.value.length > 0) {
@@ -1057,14 +1118,18 @@ const autoSaveDraft = () => {
                 });
             }
             
-            // Include videos data if on step 2 or later
-            // Include video files if they are newly uploaded (not already saved)
-            if (currentStep.value >= 2 && videosData.value.length > 0) {
+            // Include videos data if on step 3 or later
+            if (currentStep.value >= 3 && videosData.value.length > 0) {
                 videosData.value.forEach((video, index) => {
                     formData.append(`videos[${index}][title]`, video.title || '');
                     formData.append(`videos[${index}][description]`, video.description || '');
                     formData.append(`videos[${index}][takeaway_notes]`, video.takeaway_notes || '');
                     formData.append(`videos[${index}][order]`, (index + 1).toString());
+                    if (video.course_section_id) {
+                        formData.append(`videos[${index}][course_section_id]`, video.course_section_id);
+                    } else if (video.section_index !== undefined && video.section_index !== null) {
+                        formData.append(`videos[${index}][section_index]`, String(video.section_index));
+                    }
                     
                     if (video.id) {
                         formData.append(`videos[${index}][id]`, video.id);
@@ -1228,6 +1293,22 @@ const autoSaveDraft = () => {
                             console.error('Error updating video IDs:', e);
                         }
                     }
+
+                    // Update section IDs if returned from backend
+                    if (Array.isArray(responseData.section_ids) && responseData.section_ids.length > 0) {
+                        responseData.section_ids.forEach((id, idx) => {
+                            if (sectionsData.value[idx]) sectionsData.value[idx].id = id;
+                        });
+                        // Update videos' course_section_id from section_index
+                        videosData.value.forEach((v) => {
+                            if (v.section_index != null && sectionsData.value[v.section_index]?.id) {
+                                v.course_section_id = sectionsData.value[v.section_index].id;
+                                v.section_index = undefined;
+                            }
+                        });
+                    }
+
+                    if (removedSectionIds.value.length > 0) removedSectionIds.value = [];
                     
                     // Clear removed video IDs after successful save
                     if (removedVideoIds.value.length > 0) {
@@ -1312,7 +1393,7 @@ const autoSaveDraft = () => {
             isSavingDraft.value = false;
             uploadProgress.value = 0; // Reset progress when done
         }
-    }, 1000); // Changed from 2000ms to 1000ms (half of 2 seconds)
+    }, 2500); // Debounce 2.5s to avoid continuous save-draft loop
 };
 
 // Watch form fields for auto-save (Step 1 - Course details)
@@ -1370,20 +1451,21 @@ watch([
     () => currentVideoFormPart2.description,
     () => currentVideoFormPart2.takeaway_notes,
 ], () => {
-    if (currentStep.value === 2 && currentEditingVideoIndex.value !== -1 && !isSyncingDraftFromServer.value) {
+    if (currentStep.value === 3 && currentEditingVideoIndex.value !== -1 && !isSyncingDraftFromServer.value) {
         autoSaveDraft();
     }
 });
 
-// Watch videosData for user-driven changes (when quiz is added/updated)
+// Watch videosData only for structural changes (add/remove video) to avoid continuous
+// save-draft from every deep change (e.g. videoFile, id) which caused API loops.
+// Quiz/thumbnail/file changes trigger explicit autoSaveDraft() in their handlers.
 watch(
-    () => videosData.value,
+    () => (currentStep.value >= 2 ? videosData.value.length : 0),
     () => {
         if (currentStep.value >= 2 && !isSyncingDraftFromServer.value) {
             autoSaveDraft();
         }
-    },
-    { deep: true }
+    }
 );
 
 const activeVideoPreviewForRightPanel = ref(null);
@@ -1466,6 +1548,13 @@ const initializeEditingState = () => {
     setSelectedOptionById('topic', props.course.topic_id);
 
     removedVideoIds.value = [];
+    removedSectionIds.value = [];
+
+    sectionsData.value = (props.courseSections || []).map((s, i) => ({
+        id: s.id,
+        title: s.title || '',
+        order: s.order ?? i,
+    }));
 
     const orderedVideos = (props.courseVideos || [])
         .slice()
@@ -1473,6 +1562,8 @@ const initializeEditingState = () => {
 
     videosData.value = orderedVideos.map((video, index) => ({
         id: video.id,
+        course_section_id: video.course_section_id ?? null,
+        section_index: undefined,
         title: video.title || '',
         description: video.description || '',
         takeaway_notes: video.takeaway_notes || '',
@@ -1535,7 +1626,7 @@ const saveCurrentVideoDetails = () => {
         videosData.value[currentEditingVideoIndex.value].visibility = currentVideoFormPart2.visibility;
         
         // Trigger auto-save after saving video details
-        if (currentStep.value >= 2) {
+        if (currentStep.value >= 3) {
             autoSaveDraft();
         }
     }
@@ -1586,32 +1677,76 @@ const selectVideoToEdit = (index) => {
     populateVideoDetailsForm(index);
 };
 
-const addNewVideoSlot = () => {
+const addNewVideoSlot = (sectionIdx = 0) => {
     saveCurrentVideoDetails();
-
+    const section = sectionsData.value[sectionIdx];
+    // When adding first video from "Upload Video" panel, preserve any text already entered in the form
+    const isFirstVideo = videosData.value.length === 0;
     const newVideoData = {
         videoFile: null,
         videoFilePreview: null,
-        title: '',
-        description: '',
-        takeaway_notes: '',
+        title: isFirstVideo ? (currentVideoFormPart2.title || '') : '',
+        description: isFirstVideo ? (currentVideoFormPart2.description || '') : '',
+        takeaway_notes: isFirstVideo ? (currentVideoFormPart2.takeaway_notes || '') : '',
         thumbnailFile: null,
         thumbnailFilePreview: null,
-        playlist: '',
-        visibility: 'private',
-        duration_in_seconds: null, // Add field to store duration
-        errors: {}, // For validation errors
-        quiz: null, // Initialize quiz as null
+        playlist: isFirstVideo ? (currentVideoFormPart2.playlist || '') : '',
+        visibility: isFirstVideo ? (currentVideoFormPart2.visibility || 'private') : 'private',
+        duration_in_seconds: null,
+        errors: {},
+        quiz: null,
+        course_section_id: section?.id ?? null,
+        section_index: section ? sectionIdx : undefined,
     };
     videosData.value.push(newVideoData);
     currentEditingVideoIndex.value = videosData.value.length - 1;
     populateVideoDetailsForm(currentEditingVideoIndex.value);
-    
-    // Trigger auto-save after adding new video slot
-    if (currentStep.value >= 2 && draftCourseId.value) {
+
+    if (currentStep.value >= 3 && draftCourseId.value) {
         autoSaveDraft();
     }
 };
+
+function getVideoSectionIndex(video) {
+    if (video.course_section_id != null) {
+        const idx = sectionsData.value.findIndex(s => s.id === video.course_section_id);
+        return idx >= 0 ? idx : (video.section_index ?? 0);
+    }
+    return video.section_index ?? 0;
+}
+
+function getVideosInSection(sectionIdx) {
+    const list = [];
+    videosData.value.forEach((video, globalIndex) => {
+        if (getVideoSectionIndex(video) === sectionIdx) list.push({ globalIndex, video });
+    });
+    return list;
+}
+
+function addSection() {
+    const title = (newSectionTitle.value || '').trim();
+    if (!title) return;
+    sectionsData.value.push({ id: null, title, order: sectionsData.value.length });
+    newSectionTitle.value = '';
+}
+
+function removeSection(idx) {
+    const section = sectionsData.value[idx];
+    if (section?.id) removedSectionIds.value.push(section.id);
+    sectionsData.value.splice(idx, 1);
+    videosData.value.forEach(v => {
+        const vSectionIdx = getVideoSectionIndex(v);
+        if (vSectionIdx === idx) {
+            v.course_section_id = null;
+            v.section_index = sectionsData.value.length > 0 ? 0 : undefined;
+        } else if (typeof v.section_index === 'number' && v.section_index > idx) {
+            v.section_index--;
+        } else if (v.course_section_id && sectionsData.value.some(s => s.id === v.course_section_id)) {
+            const newIdx = sectionsData.value.findIndex(s => s.id === v.course_section_id);
+            if (newIdx >= 0) v.section_index = newIdx;
+        }
+    });
+}
 
 const handleVideoUpload = async (e) => {
     const file = e.target.files[0];
@@ -1681,7 +1816,7 @@ const handleThumbnailUpload = (e) => {
         }
         
         // Trigger auto-save after thumbnail upload
-        if (currentStep.value >= 2) {
+        if (currentStep.value >= 3) {
             autoSaveDraft();
         }
     }
@@ -1712,7 +1847,7 @@ const removeThumbnail = () => {
         }
         
         // Trigger auto-save after removing thumbnail
-        if (currentStep.value >= 2) {
+        if (currentStep.value >= 3) {
             autoSaveDraft();
         }
     }
@@ -1721,25 +1856,18 @@ const removeThumbnail = () => {
 const nextStep = () => {
     errors.value = {}; // Clear previous step 1 errors
 
-    // Step 2: Save current video details before moving
-    if (currentStep.value === 2) {
-        if (currentEditingVideoIndex.value !== -1) {
-            saveCurrentVideoDetails();
-        }
-
-        // If no videos, add one
-        if (videosData.value.length === 0) {
-            addNewVideoSlot();
-        }
+    if (currentStep.value === 3) {
+        saveCurrentVideoDetails();
     }
 
-    // Navigate to next step without validation
-    // Validation will only happen when publishing
-    if (currentStep.value === 1 && videosData.value.length === 0) {
-        addNewVideoSlot();
-    }
-    // Skip legacy Step 3 (quiz handled per video in Step 2)
-    if (currentStep.value === 2) {
+    if (currentStep.value === 1) {
+        currentStep.value = 2;
+    } else if (currentStep.value === 2) {
+        if (sectionsData.value.length === 0) {
+            sectionsData.value.push({ id: null, title: 'Section 1', order: 0 });
+        }
+        currentStep.value = 3;
+    } else if (currentStep.value === 3) {
         currentStep.value = 4;
     } else {
         currentStep.value++;
@@ -1747,15 +1875,10 @@ const nextStep = () => {
 };
 
 const prevStep = () => {
-    if (currentStep.value >=2 && currentEditingVideoIndex.value !== -1) {
-         saveCurrentVideoDetails();
+    if (currentStep.value >= 3 && currentEditingVideoIndex.value !== -1) {
+        saveCurrentVideoDetails();
     }
-    // Skip legacy step 3 when going back
-    if (currentStep.value === 4) {
-        currentStep.value = 2;
-    } else {
-        currentStep.value--;
-    }
+    if (currentStep.value > 1) currentStep.value--;
 };
 
 const triggerVideoUploadFromRightPanel = () => {
@@ -1790,7 +1913,7 @@ const handleVideoUploadFromRightPanel = async (e) => {
         }
         
         // Trigger auto-save after video upload
-        if (currentStep.value >= 2) {
+        if (currentStep.value >= 3) {
             autoSaveDraft();
         }
     }
@@ -2172,7 +2295,7 @@ const removeVideo = (index) => {
             }
             
             // Trigger auto-save after removing video
-            if (currentStep.value >= 2 && draftCourseId.value) {
+            if (currentStep.value >= 3 && draftCourseId.value) {
                 autoSaveDraft();
             }
         }
@@ -2312,7 +2435,7 @@ const saveVideoQuiz = () => {
     Swal.fire({ icon: 'success', title: 'Quiz saved for this video' });
     
     // Trigger auto-save after saving quiz
-    if (currentStep.value >= 2) {
+    if (currentStep.value >= 3) {
         autoSaveDraft();
     }
 };
@@ -2323,15 +2446,13 @@ const removeVideoQuiz = () => {
     Swal.fire({ icon: 'success', title: 'Quiz removed from this video' });
     
     // Trigger auto-save after removing quiz
-    if (currentStep.value >= 2) {
+    if (currentStep.value >= 3) {
         autoSaveDraft();
     }
 };
 
 onMounted(() => {
-    if (videosData.value.length === 0) {
-        addNewVideoSlot();
-    } else if (currentEditingVideoIndex.value === -1 && videosData.value.length > 0) {
+    if (videosData.value.length > 0 && currentEditingVideoIndex.value === -1) {
         selectVideoToEdit(0);
     }
 

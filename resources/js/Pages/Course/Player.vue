@@ -347,30 +347,41 @@
                 </div>
 
                 <div class="overflow-y-auto flex-grow">
-                    <ul class="p-4 space-y-2">
+                    <!-- With sections -->
+                    <template v-if="course.sections && course.sections.length > 0">
+                        <div v-for="section in course.sections" :key="section.id" class="p-4">
+                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">{{ section.title }}</h3>
+                            <ul class="space-y-2">
+                                <li v-for="vid in section.videos" :key="vid.id">
+                                    <button v-if="getVideoById(vid.id)" @click="selectVideo(getVideoById(vid.id))"
+                                        :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-3',
+                                            currentVideo && currentVideo.id === vid.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
+                                        <div v-if="getVideoById(vid.id).thumbnail_url" class="flex-shrink-0 relative w-16 h-10 overflow-hidden rounded">
+                                            <img :src="getVideoById(vid.id).thumbnail_url" :alt="vid.title" class="w-full h-full object-cover" />
+                                            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                                            </div>
+                                        </div>
+                                        <svg v-else class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span class="flex-1 truncate">▶ {{ vid.title }}</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                    <!-- Flat list (no sections) -->
+                    <ul v-else class="p-4 space-y-2">
                         <li v-for="video in sortedVideos" :key="video.id">
                             <button @click="selectVideo(video)"
                                 :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-3',
                                     currentVideo && currentVideo.id === video.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
-                                <!-- Thumbnail if available -->
                                 <div v-if="video.thumbnail_url" class="flex-shrink-0 relative w-16 h-10 overflow-hidden rounded">
-                                    <img 
-                                        :src="video.thumbnail_url" 
-                                        :alt="video.title + ' thumbnail'"
-                                        class="w-full h-full object-cover"
-                                    />
-                                    <!-- Play icon overlay -->
+                                    <img :src="video.thumbnail_url" :alt="video.title + ' thumbnail'" class="w-full h-full object-cover" />
                                     <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                                        </svg>
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
                                     </div>
                                 </div>
-                                <!-- Fallback play icon if no thumbnail -->
-                                <svg v-else class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+                                <svg v-else class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <span class="flex-1 truncate">{{ video.title }}</span>
                             </button>
                         </li>
@@ -541,9 +552,10 @@ const sortedVideos = computed(() => {
     if (!props.course || !props.course.videos) {
         return [];
     }
-    // Ensure videos are sorted by their 'order' property
     return [...props.course.videos].sort((a, b) => a.order - b.order);
 });
+
+const getVideoById = (id) => sortedVideos.value.find(v => v.id === id);
 
 const currentVideoIndex = computed(() => {
     if (!currentVideo.value || !sortedVideos.value.length) {
