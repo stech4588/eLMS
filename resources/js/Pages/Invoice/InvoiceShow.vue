@@ -17,7 +17,7 @@ defineProps({
                     Invoice Details: #{{ invoice.id }}
                 </h2>
                 <Link :href="route('invoices.index')"
-                    class="px-4 py-2 text-sm font-semibold leading-tight text-white bg-[#22c55e] rounded-lg hover:bg-[#16a34a] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-60 transition-colors"
+                    class="px-4 py-2 text-sm font-semibold leading-tight text-white bg-[#1C355E] rounded-lg hover:bg-[#254a7a] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-60 transition-colors"
                 >
                     Back to Invoice List
                 </Link>

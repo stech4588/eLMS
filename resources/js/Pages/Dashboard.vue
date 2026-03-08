@@ -137,7 +137,7 @@
                     <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Leadership & Management
-                            <a href="/content" class="course-card-button dark:bg-[#22c55e] dark:text-white">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-[#1C355E] dark:text-white">Explore</a>
                         </div>
                         <img src="/images/leadership_management_image.svg" alt="Leadership & Management"
                             class="course-card-image" />
@@ -146,7 +146,7 @@
                     <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Diversity & Equity
-                            <a href="/content" class="course-card-button dark:bg-[#22c55e] dark:text-white">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-[#1C355E] dark:text-white">Explore</a>
                         </div>
                         <img src="/images/diversity_image.svg" alt="Diversity & Equity" class="course-card-image" />
                     </div>
@@ -154,7 +154,7 @@
                     <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Productivity
-                            <a href="/content" class="course-card-button dark:bg-[#22c55e] dark:text-white">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-[#1C355E] dark:text-white">Explore</a>
                         </div>
                         <img src="/images/productivity_image.svg" alt="Productivity" class="course-card-image" />
                     </div>
@@ -1138,7 +1138,7 @@ const toggleFavorite = async (course) => {
 }
 
 .my-programs-heading {
-    font-size: 1.5rem;
+    font-size: 3.5rem;
     font-weight: 700;
     color: #111827;
     margin: 0 0 1.25rem;
@@ -1220,10 +1220,11 @@ const toggleFavorite = async (course) => {
     margin: 0 0 1rem;
     line-height: 1.5;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dark .my-program-desc {
@@ -1244,16 +1245,16 @@ const toggleFavorite = async (course) => {
     padding: 0.5rem 1.25rem;
     font-size: 0.9375rem;
     font-weight: 600;
-    color: #22c55e;
+    color: #1C355E;
     background: #ffffff;
-    border: 2px solid #22c55e;
+    border: 2px solid #1C355E;
     border-radius: 6px;
     text-decoration: none;
     transition: background 0.2s, color 0.2s;
 }
 
 .my-program-btn-start:hover {
-    background: #22c55e;
+    background: #1C355E;
     color: #ffffff;
 }
 
@@ -1264,9 +1265,9 @@ const toggleFavorite = async (course) => {
 }
 
 .dark .my-program-btn-start:hover {
-    background: #22c55e;
+    background: #1C355E;
     color: #ffffff;
-    border-color: #22c55e;
+    border-color: #1C355E;
 }
 
 @media (max-width: 640px) {

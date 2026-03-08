@@ -193,14 +193,14 @@ const romanNumeral = (n) => {
     display: inline-block;
     margin-top: 1rem;
     padding: 0.5rem 1.25rem;
-    background: #22c55e;
+    background: #1C355E;
     color: #fff;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
 }
 .course-detail-unavailable-btn:hover {
-    background: #16a34a;
+    background: #254a7a;
 }
 
 /* Hero */
@@ -220,7 +220,7 @@ const romanNumeral = (n) => {
 .course-detail-hero-btn {
     display: inline-block;
     padding: 0.75rem 2rem;
-    background: #22c55e;
+    background: #1C355E;
     color: #fff;
     font-weight: 600;
     border-radius: 6px;
@@ -228,7 +228,7 @@ const romanNumeral = (n) => {
     transition: background 0.2s;
 }
 .course-detail-hero-btn:hover {
-    background: #16a34a;
+    background: #254a7a;
 }
 .course-detail-hero-btn-disabled {
     background: #9ca3af;
@@ -386,7 +386,7 @@ const romanNumeral = (n) => {
 }
 .course-detail-feedback-link {
     font-size: 0.875rem;
-    color: #22c55e;
+    color: #1C355E;
     font-weight: 600;
     text-decoration: none;
 }

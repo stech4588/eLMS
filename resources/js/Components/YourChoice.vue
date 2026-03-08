@@ -155,7 +155,7 @@ const joinNowUrl = computed(() => {
 }
 
 .gradient-text {
-    background: linear-gradient(90deg, #22c55e, #16a34a);
+    background: linear-gradient(90deg, #1C355E, #254a7a);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -169,7 +169,7 @@ const joinNowUrl = computed(() => {
 }
 
 /* .underline {
-    border-bottom: 2px solid #22c55e;
+    border-bottom: 2px solid #1C355E;
 } */
 
 .cta-section {
@@ -213,7 +213,7 @@ const joinNowUrl = computed(() => {
 }
 
 .pill-accent {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: linear-gradient(135deg, #1C355E, #254a7a);
 }
 
 .video-box {

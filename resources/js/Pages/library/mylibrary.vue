@@ -52,9 +52,9 @@ const currentCourses = computed(() => {
     <Head title=" My Library" />
 
     <AuthenticatedLayout>
-        
-        <div class="bg-white dark:bg-dark-bg-secondary p-6 dark:text-white"
-             style="gap: 20px; display: flex; flex-direction: column;">
+        <div class="page-with-footer-wrap">
+        <div class="bg-white dark:bg-dark-bg-secondary p-6 dark:text-white library-page-content"
+             style="gap: 20px; display: flex; flex-direction: column; flex: 1;">
             <div style="font-size: 36px; font-weight: 600;">
                 My Library
             </div>
@@ -251,8 +251,9 @@ const currentCourses = computed(() => {
                 </div>
             </div>
         </div>
+        </div>
 
-        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white">
+        <footer class="footer_upload_video footer-stick-bottom dark:bg-dark-bg-secondary dark:text-white">
             <div class="footer-lang-select libaray_dark_text">
                 Language(Eng)
             </div>
@@ -265,6 +266,7 @@ const currentCourses = computed(() => {
             <span class="footer-divider libaray_dark_text">•</span>
             <a href="#" class="footer-link libaray_dark_text">Accessibility</a>
         </footer>
+        </div>
     </AuthenticatedLayout>
 </template>
 
@@ -316,8 +318,15 @@ const currentCourses = computed(() => {
         flex-direction: column;
     }
 }
+.page-with-footer-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 5rem);
+}
+.library-page-content { flex: 1; }
+.footer-stick-bottom { margin-top: auto; }
 .footer_upload_video {
-    background-color: #477CAA;
+    background-color: #1C355E;
     color: white;
 }
 @media (max-width: 770px) {
@@ -361,7 +370,7 @@ const currentCourses = computed(() => {
 }
 
 .empty-library-button {
-    background-color: #22c55e; /* primary green */
+    background-color: #1C355E; /* primary green */
     color: #fff;
     padding: 10px 20px;
     border-radius: 20px;
@@ -413,7 +422,7 @@ const currentCourses = computed(() => {
 }
 
 .footer-link:hover {
-    color: #16a34a; /* green hover */
+    color: #254a7a; /* green hover */
     text-decoration: underline;
 }
 

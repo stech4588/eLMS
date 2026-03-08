@@ -38,7 +38,7 @@
                                     <button type="button" class="inline-flex justify-center rounded-md border border-transparent bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" @click="closeModal">
                                         Cancel
                                     </button>
-                                    <button type="submit" :disabled="form.processing" class="inline-flex justify-center rounded-md border border-transparent bg-[#22c55e] px-4 py-2 text-sm font-medium text-white hover:bg-[#16a34a] focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:opacity-50">
+                                    <button type="submit" :disabled="form.processing" class="inline-flex justify-center rounded-md border border-transparent bg-[#1C355E] px-4 py-2 text-sm font-medium text-white hover:bg-[#254a7a] focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 disabled:opacity-50">
                                         {{ isEditing ? 'Save Changes' : 'Create Group' }}
                                     </button>
                                 </div>

@@ -146,7 +146,7 @@ const submit = () => {
 
                             <div class="flex items-center justify-end mt-4">
                                 <button type="submit"
-                                    class="px-4 py-2 font-bold text-white bg-[#22c55e] rounded hover:bg-[#16a34a] focus:outline-none focus:shadow-outline active:bg-[#15803d]"
+                                    class="px-4 py-2 font-bold text-white bg-[#1C355E] rounded hover:bg-[#254a7a] focus:outline-none focus:shadow-outline active:bg-[#1a3d6e]"
                                     :disabled="form.processing">
                                     {{ invoice ? 'Update Invoice' : 'Create Invoice' }}
                                 </button>

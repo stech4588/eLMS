@@ -15,7 +15,7 @@ defineProps({
                 <div class="bg-white dark:bg-[#1A2C38] overflow-hidden shadow-sm sm:rounded-lg text-center p-8">
                     <h1 class="text-2xl font-bold text-red-600 dark:text-red-400 mt-3">Access Denied</h1>
                     <p class="mt-4 text-gray-700 dark:text-gray-300">{{ message }}</p>
-                    <Link :href="route('dashboard')" class="mt-6 mb-6 inline-block bg-[#22c55e] text-white px-4 py-2 rounded hover:bg-[#16a34a]">
+                    <Link :href="route('dashboard')" class="mt-6 mb-6 inline-block bg-[#1C355E] text-white px-4 py-2 rounded hover:bg-[#254a7a]">
                         Go to Dashboard
                     </Link>
                 </div>

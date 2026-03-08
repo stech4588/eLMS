@@ -15,7 +15,7 @@
                 <p class="text-lg text-gray-700 dark:text-gray-300 mb-2">Your Score</p>
                 <p class="text-5xl sm:text-6xl font-extrabold text-gray-900 dark:text-gray-200">{{ attempt.score }} / {{ attempt.quiz.questions.length }}</p>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-4">
-                    <div class="bg-[#22c55e] dark:bg-[#22c55e] h-2.5 rounded-full" :style="{ width: scorePercentage + '%' }"></div>
+                    <div class="bg-[#1C355E] dark:bg-[#1C355E] h-2.5 rounded-full" :style="{ width: scorePercentage + '%' }"></div>
                 </div>
                 <p class="text-xl sm:text-2xl font-semibold mt-3" :class="scorePercentage >= 50 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'">
                     {{ scorePercentage.toFixed(1) }}%
@@ -53,7 +53,7 @@
             </div>
 
             <div class="mt-6 text-right">
-                <button @click="$emit('close')" class="inline-block bg-[#22c55e] text-white font-bold py-2.5 px-6 rounded-lg hover:bg-[#16a34a] transition-transform transform hover:scale-105 duration-300 shadow-lg">
+                <button @click="$emit('close')" class="inline-block bg-[#1C355E] text-white font-bold py-2.5 px-6 rounded-lg hover:bg-[#254a7a] transition-transform transform hover:scale-105 duration-300 shadow-lg">
                     Close
                 </button>
             </div>

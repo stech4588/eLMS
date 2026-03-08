@@ -60,13 +60,13 @@
                                                 <button @click="deleteInstructor(instructorUser.id)" class="text-red-600 hover:text-red-900 cursor-pointer dark:invert"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 action-icon"></button>
                                                 
                                                 <div v-if="instructorUser.instructor.status === 'pending'" class="flex space-x-2">
-                                                    <Link :href="route('admin.instructors.show', { user: instructorUser.id, source: 'request' })" class="px-2 py-1 bg-[#22c55e] text-white rounded hover:bg-[#16a34a] text-xs">Request View</Link>
+                                                    <Link :href="route('admin.instructors.show', { user: instructorUser.id, source: 'request' })" class="px-2 py-1 bg-[#1C355E] text-white rounded hover:bg-[#254a7a] text-xs">Request View</Link>
                                                    
                                                 </div>
                                                 <div v-else-if="instructorUser.instructor.status === 'approved'">
                                                     <label class="relative inline-flex items-center cursor-pointer">
                                                         <input type="checkbox" :checked="instructorUser.is_active" @change="toggleStatus(instructorUser.id)" class="sr-only peer">
-                                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#22c55e]"></div>
+                                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#1C355E]"></div>
                                                     </label>
                                                 </div>
                                                 <div v-else>

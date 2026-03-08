@@ -73,7 +73,7 @@ const submit = () => {
 
                             <div class="mt-6 flex items-center justify-end space-x-3">
                                 <a :href="route('jobs.index')" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-[#24364a] dark:hover:bg-[#2f4460] dark:text-gray-100 transition-colors">Cancel</a>
-                                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="bg-[#22c55e] hover:bg-[#16a34a] dark:bg-[#22c55e] dark:hover:bg-[#16a34a] transition-colors">
+                                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="bg-[#1C355E] hover:bg-[#254a7a] dark:bg-[#1C355E] dark:hover:bg-[#254a7a] transition-colors">
                                     Post Job
                                 </PrimaryButton>
                             </div>

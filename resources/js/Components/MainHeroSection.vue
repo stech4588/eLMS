@@ -126,7 +126,7 @@ onMounted(() => {
 }
 
 .mbm-accent {
-  color: #22c55e;
+  color: #1C355E;
 }
 
 .mbm-bold {

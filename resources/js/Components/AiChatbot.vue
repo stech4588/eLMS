@@ -57,7 +57,7 @@
                             :placeholder="placeholder"
                             class="w-full px-4 py-3 pr-16 text-gray-800 bg-gray-100 border-2 border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white resize-none"
                         ></textarea>
-                        <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()" class="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-12 text-white bg-[#22c55e] rounded-full transition-transform duration-200 transform hover:scale-110 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:scale-100">
+                        <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()" class="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-12 text-white bg-[#1C355E] rounded-full transition-transform duration-200 transform hover:scale-110 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:scale-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                             </svg>

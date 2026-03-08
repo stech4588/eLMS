@@ -25,7 +25,7 @@
                                 Offer valid until: <span class="font-semibold">{{ formattedTillDate }}</span>
                             </p>
                             <span v-else></span>
-                            <button @click="closePopup" class="ml-auto bg-[#22c55e] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#16a34a] transition-transform transform hover:scale-105 duration-300">
+                            <button @click="closePopup" class="ml-auto bg-[#1C355E] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#254a7a] transition-transform transform hover:scale-105 duration-300">
                                 Got it!
                             </button>
                         </div>

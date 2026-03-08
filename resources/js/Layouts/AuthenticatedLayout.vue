@@ -283,6 +283,18 @@ const profileMenuItems = computed(() => {
     ];
     return items;
 });
+
+// Nav links for navbar (subset of profile items - key pages only)
+const navbarLinks = computed(() => {
+    const links = [
+        { label: 'Dashboard', href: '/dashboard', show: hasPermission('dashboardView') },
+        { label: 'My Courses', href: '/coursess', show: hasPermission('mycourses') },
+        { label: 'Add Course', href: '/addnewcourses', show: hasPermission('addnewcourses') },
+        { label: 'My Library', href: '/library', show: hasPermission('libraryView') },
+        { label: 'Help', href: '/help', show: true },
+    ];
+    return links.filter(l => l.show);
+});
 const isGroupChatPage = computed(() => page.component === 'Groups/Chat');
 const isHelpPage = computed(() => page.component === 'help/help');
 const isLargeScreen = ref(typeof window !== 'undefined' ? window.innerWidth >= 1025 : false);
@@ -346,8 +358,20 @@ onMounted(() => {
                     </div>
 
 
-                    <!-- User Dropdown -->
-                    <div v-if="user" class="flex items-center ms-3 sm:ms-6">
+                    <!-- Right: Nav links + Notifications + Profile -->
+                    <div v-if="user" class="flex items-center gap-2 sm:gap-4">
+                        <!-- Nav links (right side, visible on md+) -->
+                        <nav v-if="navbarLinks.length" class="hidden md:flex items-center gap-0.5 mr-2">
+                            <Link
+                                v-for="item in navbarLinks"
+                                :key="item.href"
+                                :href="item.href"
+                                class="nav-bar-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#1C355E] dark:hover:text-[#93c5fd] hover:bg-gray-100 dark:hover:bg-[#0F202D] transition"
+                                :class="{ 'text-[#1C355E] dark:text-[#93c5fd]': page.url.startsWith(item.href) && item.href !== '/' }"
+                            >
+                                {{ item.label }}
+                            </Link>
+                        </nav>
                         <div class="relative" style="display:flex;flex-direction: row;">
                             <div class="flex items-center justify-center mr-2 sm:mr-4">
                                 <Dropdown align="right" width="48">
@@ -529,7 +553,7 @@ onMounted(() => {
                             <p class="mt-4 text-gray-700 dark:text-gray-300">
                                 {{ permissionMessage || 'You do not have permission to view this page.' }}
                             </p>
-                            <Link :href="route('dashboard')" class="mt-6 inline-block bg-[#22c55e] text-white px-5 py-2 rounded-md hover:bg-[#16a34a] transition">
+                            <Link :href="route('dashboard')" class="mt-6 inline-block bg-[#1C355E] text-white px-5 py-2 rounded-md hover:bg-[#254a7a] transition">
                                 Go to Dashboard
                             </Link>
                         </div>

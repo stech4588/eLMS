@@ -246,7 +246,7 @@ function togglePassword() {
 
 .login-input:focus {
   outline: none;
-  border-color: #22c55e;
+  border-color: #1C355E;
   box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
 }
 
@@ -314,7 +314,7 @@ function togglePassword() {
   font-size: 1rem;
   font-weight: 600;
   color: #ffffff;
-  background-color: #22c55e;
+  background-color: #1C355E;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -322,7 +322,7 @@ function togglePassword() {
 }
 
 .login-submit-btn:hover:not(:disabled) {
-  background-color: #16a34a;
+  background-color: #254a7a;
 }
 
 .login-submit-btn:disabled {

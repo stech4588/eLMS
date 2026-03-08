@@ -16,7 +16,7 @@
                 @close="showChatbot = false"
             />
             <div class="fixed bottom-4 right-4 z-40">
-                <button @click="showChatbot = true" class="bg-[#22c55e] text-white rounded-full p-4 shadow-lg hover:bg-[#16a34a] transition">
+                <button @click="showChatbot = true" class="bg-[#1C355E] text-white rounded-full p-4 shadow-lg hover:bg-[#254a7a] transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                 </button>
             </div>
@@ -251,7 +251,7 @@
                                                 Cancel
                                             </button>
                                             <button @click="submitComment" :disabled="!newComment.trim()"
-                                                class="px-6 py-2 bg-[#22c55e] text-white rounded-lg hover:bg-[#16a34a] disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors text-sm font-semibold">
+                                                class="px-6 py-2 bg-[#1C355E] text-white rounded-lg hover:bg-[#254a7a] disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors text-sm font-semibold">
                                                 Comment
                                             </button>
                                         </div>
@@ -1045,20 +1045,20 @@ const updateScreenSize = () => {
     font-size: 0.875rem;
     font-weight: 500;
     color: white;
-    background-color: #22c55e;
+    background-color: #1C355E;
     border: none;
     border-radius: 0.375rem;
     cursor: pointer;
 }
-.player-nav-btn:hover { background-color: #16a34a; }
+.player-nav-btn:hover { background-color: #254a7a; }
 .player-mark-complete {
     display: inline-block;
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #22c55e;
+    color: #1C355E;
     background: transparent;
-    border: 1px solid #22c55e;
+    border: 1px solid #1C355E;
     border-radius: 0.375rem;
     cursor: pointer;
 }
@@ -1073,7 +1073,7 @@ const updateScreenSize = () => {
 .dark .player-video-title { color: #fff; }
 .player-section-label {
     font-size: 0.875rem;
-    color: #22c55e;
+    color: #1C355E;
     margin: 0;
 }
 .dark .player-section-label { color: #4ade80; }
@@ -1145,7 +1145,7 @@ const updateScreenSize = () => {
 .player-lesson-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
 .player-lesson-item-active {
     background: rgba(34, 197, 94, 0.2);
-    color: #22c55e;
+    color: #1C355E;
 }
 .player-lesson-thumb {
     width: 120px;
@@ -1169,7 +1169,7 @@ const updateScreenSize = () => {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
-    color: #22c55e;
+    color: #1C355E;
 }
 .player-category-nav {
     display: flex;
@@ -1190,9 +1190,9 @@ const updateScreenSize = () => {
 .player-category-btn:hover { color: #fff; background: #4b5563; }
 .player-category-btn-primary {
     color: #fff;
-    background: #22c55e;
+    background: #1C355E;
 }
-.player-category-btn-primary:hover { background: #16a34a; }
+.player-category-btn-primary:hover { background: #254a7a; }
 .player-instructor-card {
     padding: 1rem 0;
     border-top: 1px solid #374151;
@@ -1217,7 +1217,7 @@ const updateScreenSize = () => {
 }
 .player-instructor-role {
     font-size: 0.8125rem;
-    color: #22c55e;
+    color: #1C355E;
     margin: 0.25rem 0 0 0;
 }
 .player-instructor-bio {
@@ -1231,7 +1231,7 @@ const updateScreenSize = () => {
     text-align: center;
     padding: 0.5rem;
     font-size: 0.875rem;
-    color: #22c55e;
+    color: #1C355E;
     text-decoration: none;
     border-radius: 0.375rem;
     margin-top: 0.5rem;

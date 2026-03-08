@@ -75,7 +75,7 @@ const features = [
 }
 
 .section-header h2 {
-    background: linear-gradient(90deg, #22c55e, #16a34a);
+    background: linear-gradient(90deg, #1C355E, #254a7a);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2.5rem;

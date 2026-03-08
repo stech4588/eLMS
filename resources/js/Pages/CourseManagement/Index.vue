@@ -41,7 +41,7 @@
                                 <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     Cancel
                                 </button>
-                                <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-[#22c55e] border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#16a34a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-[#1C355E] border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#254a7a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     {{ editingItem ? 'Save Changes' : 'Create' }}
                                 </button>
                             </div>
@@ -75,7 +75,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Course Types</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#1C355E] text-white rounded hover:bg-[#254a7a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -106,7 +106,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Topics</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#1C355E] text-white rounded hover:bg-[#254a7a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -139,7 +139,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Course Certificates</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#1C355E] text-white rounded hover:bg-[#254a7a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -172,7 +172,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Course Industries</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#1C355E] text-white rounded hover:bg-[#254a7a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

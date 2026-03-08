@@ -175,7 +175,7 @@ const restoreCourse = (course) => {
                                             </button>
                                             <button
                                                 v-else
-                                                class="icon-btn bg-[#22c55e] hover:bg-[#16a34a] text-white"
+                                                class="icon-btn bg-[#1C355E] hover:bg-[#254a7a] text-white"
                                                 @click.stop.prevent="goToEditCourse(course)"
                                                 title="Edit course"
                                             >

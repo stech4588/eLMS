@@ -22,7 +22,7 @@
                 <!-- Progress Bar -->
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
                     <div 
-                        class="bg-[#22c55e] dark:bg-[#22c55e] h-2.5 rounded-full transition-all duration-300 ease-out"
+                        class="bg-[#1C355E] dark:bg-[#1C355E] h-2.5 rounded-full transition-all duration-300 ease-out"
                         :style="{ width: uploadProgress + '%' }"
                     ></div>
                 </div>
@@ -32,36 +32,42 @@
             </div>
         </div>
 
-        <div class="py-12 main_upload_video" style="display: flex; justify-content: center;">
-            <div v-if="currentStep == 3" style="width: 223px; background-color: white; padding-top: 20px; padding-bottom: 20px; flex-direction: column;display: flex;gap: 10px; height: max-content;" class="add_course_dark_left_videos dark:bg-[#1A2C38]">
+        <div class="add-new-courses-page">
+        <div class="py-12 main_upload_video add-new-courses-content" style="display: flex; justify-content: center;">
+            <div v-if="currentStep == 3" class="add-course-sections-sidebar">
+                <div class="add-course-sections-sidebar-inner">
+                    <h3 class="add-course-sections-heading">Course Sections</h3>
+                    <p class="add-course-sections-hint">Click a video to edit, or add new.</p>
                 <template v-if="sectionsData.length > 0">
-                    <div v-for="(section, sectionIdx) in sectionsData" :key="section.id || 's-' + sectionIdx" class="flex flex-col gap-1">
-                        <div class="font-semibold text-gray-800 dark:text-white px-2 py-1 text-sm">{{ section.title || '(Untitled section)' }}</div>
-                        <div
-                            v-for="entry in getVideosInSection(sectionIdx)"
-                            :key="entry.globalIndex"
-                            style="width: 100%; font-size: 14px; font-weight: 600; display: flex; align-items: center;"
-                            :class="entry.globalIndex === currentEditingVideoIndex ? 'add_course_dark_left_videos_item_active' : ''"
-                            :style="entry.globalIndex === currentEditingVideoIndex ? { backgroundColor: '#dcfce7', borderLeft: '2px solid #22c55e' } : {}"
-                        >
-                            <span @click="selectVideoToEdit(entry.globalIndex)" style="flex-grow: 1; padding: 8px 16px; cursor: pointer;" class="add_course_dark_left_videos_item_text truncate" :title="entry.video.title">
-                                {{ entry.video.title || 'Video ' + (entry.globalIndex + 1) }}
-                            </span>
-                            <button @click.stop="removeVideo(entry.globalIndex)" style="background:transparent; border:none; cursor:pointer; padding-right: 12px;" title="Remove video">
-                                <img src="/images/cross_icon.svg" alt="Remove" style="height: 12px; width: 12px;" class="dark_dropdown_arrow" />
-                            </button>
+                    <div v-for="(section, sectionIdx) in sectionsData" :key="section.id || 's-' + sectionIdx" class="add-course-section-block">
+                        <div class="add-course-section-title">
+                            <span class="add-course-section-num">{{ sectionIdx + 1 }}</span>
+                            <span class="add-course-section-name">{{ section.title || 'Untitled section' }}</span>
                         </div>
-                        <div
-                            @click="addNewVideoSlot(sectionIdx)"
-                            style="width: 100%; padding: 8px 16px; color: #2C15F5; display: flex; gap:5px; font-size: 14px; font-weight: 600; cursor: pointer;"
-                            class="add_course_dark_text"
-                        >
-                            <img src="/images/blue_add_icon.svg" alt="Add Icon" class="add_course_dark_icons"/>
+                        <ul class="add-course-section-videos">
+                            <li
+                                v-for="entry in getVideosInSection(sectionIdx)"
+                                :key="entry.globalIndex"
+                                :class="['add-course-video-item', entry.globalIndex === currentEditingVideoIndex ? 'add-course-video-item-active' : '']"
+                            >
+                                <span @click="selectVideoToEdit(entry.globalIndex)" class="add-course-video-item-title truncate" :title="entry.video.title">
+                                    {{ entry.video.title || 'Video ' + (entry.globalIndex + 1) }}
+                                </span>
+                                <button type="button" @click.stop="removeVideo(entry.globalIndex)" class="add-course-video-item-remove" title="Remove video" aria-label="Remove video">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                </button>
+                            </li>
+                        </ul>
+                        <button type="button" @click="addNewVideoSlot(sectionIdx)" class="add-course-add-video-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="add-course-add-video-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                             Add Video
-                        </div>
+                        </button>
                     </div>
                 </template>
-                <p v-else class="px-2 text-sm text-gray-500 dark:text-gray-400">Add sections in Step 2 first.</p>
+                <div v-else class="add-course-sections-empty">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Add sections in Step 2 first.</p>
+                </div>
+                </div>
              </div>
             <div class=" max-w-7xl sm:px-1 lg:px-8" style="width: 100%;">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
@@ -78,14 +84,23 @@
 
 
 
-                        <!-- Step Indicator -->
-                        <div v-if="currentStep >= 2" class="flex justify-center p-6 ">
-                            <div class="flex items-center w-full flex-wrap gap-1">
-                                <div :class="{ 'border-4 border-black text-white': currentStep >= 2, 'bg-black': currentStep < 2 }" class="flex items-center justify-center w-6 h-6 rounded-full"><span class="check_text text-sm">Sections</span></div>
-                                <div class="w-1/2 h-1 bg-black min-w-[20px]"></div>
-                                <div :class="{ 'border-4 border-black text-white': currentStep >= 3, 'bg-black': currentStep < 3 }" class="flex items-center justify-center w-6 h-6 rounded-full"><span class="check_text text-sm">Videos</span></div>
-                                <div class="w-1/2 h-1 bg-black min-w-[20px]"></div>
-                                <div :class="{ 'border-4 border-black text-white': currentStep >= 4, 'bg-black': currentStep < 4 }" class="flex items-center justify-center w-6 h-6 rounded-full"><span class="check_text text-sm">Visibility</span></div>
+                        <!-- Step Indicator (footer color #1C355E) -->
+                        <div v-if="currentStep >= 2" class="add-course-stepper-wrap">
+                            <div class="add-course-stepper">
+                                <div class="add-course-stepper-item">
+                                    <span class="add-course-stepper-label">Sections</span>
+                                    <div :class="['add-course-stepper-dot', currentStep >= 2 ? 'add-course-stepper-dot-active' : 'add-course-stepper-dot-pending']"></div>
+                                </div>
+                                <div class="add-course-stepper-line" :class="{ 'add-course-stepper-line-filled': currentStep >= 3 }"></div>
+                                <div class="add-course-stepper-item">
+                                    <span class="add-course-stepper-label">Videos</span>
+                                    <div :class="['add-course-stepper-dot', currentStep >= 3 ? 'add-course-stepper-dot-active' : 'add-course-stepper-dot-pending']"></div>
+                                </div>
+                                <div class="add-course-stepper-line" :class="{ 'add-course-stepper-line-filled': currentStep >= 4 }"></div>
+                                <div class="add-course-stepper-item">
+                                    <span class="add-course-stepper-label">Visibility</span>
+                                    <div :class="['add-course-stepper-dot', currentStep >= 4 ? 'add-course-stepper-dot-active' : 'add-course-stepper-dot-pending']"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -302,7 +317,7 @@
                                         </div>
                                         <button
                                             @click="nextStep"
-                                            class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]" style="background-color: #22c55e; color: white; font-size: 14px; border-radius: 20px; font-weight: 600; margin-top: 37px;">
+                                            class="px-4 py-2 text-white bg-[#1C355E] rounded-md hover:bg-[#254a7a]" style="background-color: #1C355E; color: white; font-size: 14px; border-radius: 20px; font-weight: 600; margin-top: 37px;">
                                             Next
                                         </button>
                                     </div>
@@ -363,8 +378,8 @@
                                 <button
                                     type="button"
                                     @click="nextStep"
-                                    class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]"
-                                    style="background-color: #22c55e; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                    class="px-4 py-2 text-white bg-[#1C355E] rounded-md hover:bg-[#254a7a]"
+                                    style="background-color: #1C355E; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Next
                                 </button>
                             </div>
@@ -524,7 +539,7 @@
                                                     <button
                                                         type="button"
                                                         @click="triggerVideoUploadFromRightPanel"
-                                                        class="mt-3 w-full px-3 py-2 text-sm font-semibold text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]"
+                                                        class="mt-3 w-full px-3 py-2 text-sm font-semibold text-white bg-[#1C355E] rounded-md hover:bg-[#254a7a]"
                                                     >
                                                         Replace Video
                                                     </button>
@@ -584,7 +599,7 @@
                                 </button>
                                 <button
                                     @click="nextStep"
-                                    class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]" style="background-color: #22c55e; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                    class="px-4 py-2 text-white bg-[#1C355E] rounded-md hover:bg-[#254a7a]" style="background-color: #1C355E; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Next
                                 </button>
                             </div>
@@ -674,7 +689,7 @@
                 </div>
                 <div class="flex justify-end space-x-2">
                     <button @click="showCertificatePopup = false" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button @click="submitNewCertificate" class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]">Add Certificate</button>
+                    <button @click="submitNewCertificate" class="px-4 py-2 text-white bg-[#1C355E] rounded-md hover:bg-[#254a7a]">Add Certificate</button>
                 </div>
             </div>
         </div>
@@ -719,12 +734,12 @@
 
                 <div class="flex justify-end mt-6 space-x-2">
                     <button @click="closeVideoQuizModal" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button @click="saveVideoQuiz" class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]">Save Quiz</button>
+                    <button @click="saveVideoQuiz" class="px-4 py-2 text-white bg-[#1C355E] rounded-md hover:bg-[#254a7a]">Save Quiz</button>
                 </div>
             </div>
         </div>
 
-        <footer class="footer_upload_video dark:bg-[#1A2C38] dark:text-white" style=" display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
+        <footer class="footer_upload_video add-new-courses-footer dark:bg-[#1A2C38] dark:text-white" style=" display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
             <div>
                 Language(Eng)
             </div>
@@ -745,6 +760,7 @@
                Accessibility
             </div>
         </footer>
+        </div>
     </AuthenticatedLayout>
 </template>
 
@@ -2601,7 +2617,7 @@ onMounted(() => {
 
 .custom-select select:focus {
     outline: none;
-    border-color: #22c55e;
+    border-color: #1C355E;
 }
 
 .custom-radio {
@@ -2634,20 +2650,263 @@ onMounted(() => {
   box-shadow: none !important;
   border: 0.5px solid #000 !important;
 }
-.home_page_style{
+/* Add New Courses page: footer at bottom */
+.add-new-courses-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.add-new-courses-content {
+    flex: 1;
+}
+.add-new-courses-footer {
+    margin-top: auto;
+}
 
+/* Step progress bar - footer color #1C355E */
+.add-course-stepper-wrap {
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: center;
+}
+.add-course-stepper {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    max-width: 360px;
+    width: 100%;
+}
+.add-course-stepper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+.add-course-stepper-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+.dark .add-course-stepper-label {
+    color: #9ca3af;
+}
+.add-course-stepper-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.add-course-stepper-dot-pending {
+    background: #e5e7eb;
+    border: 2px solid #d1d5db;
+}
+.dark .add-course-stepper-dot-pending {
+    background: #374151;
+    border-color: #4b5563;
+}
+.add-course-stepper-dot-active {
+    background: #1C355E;
+    border: 2px solid #1C355E;
+    box-shadow: 0 0 0 2px rgba(28, 53, 94, 0.2);
+}
+.add-course-stepper-line {
+    flex: 1;
+    min-width: 24px;
+    height: 3px;
+    margin-bottom: 0.4rem;
+    background: #e5e7eb;
+    transition: background 0.2s;
+}
+.dark .add-course-stepper-line {
+    background: #4b5563;
+}
+.add-course-stepper-line-filled {
+    background: #1C355E;
+}
+
+/* Refined left sidebar - Course Sections */
+.add-course-sections-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+    height: max-content;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+}
+.dark .add-course-sections-sidebar {
+    background: #1A2C38;
+    border-color: #374151;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.add-course-sections-sidebar-inner {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.add-course-sections-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 0.15rem 0;
+}
+.dark .add-course-sections-heading { color: #f3f4f6; }
+.add-course-sections-hint {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0 0 0.5rem 0;
+}
+.dark .add-course-sections-hint { color: #9ca3af; }
+.add-course-section-block {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.dark .add-course-section-block {
+    background: #111827;
+    border-color: #374151;
+}
+.add-course-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.add-course-section-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1C355E;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.add-course-section-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dark .add-course-section-name { color: #e5e7eb; }
+.add-course-section-videos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.add-course-video-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    transition: background 0.15s;
+}
+.add-course-video-item:hover {
+    background: #f3f4f6;
+}
+.dark .add-course-video-item:hover { background: #374151; }
+.add-course-video-item-active {
+    background: rgba(28, 53, 94, 0.12);
+    border-left-color: #1C355E;
+}
+.dark .add-course-video-item-active {
+    background: rgba(28, 53, 94, 0.25);
+}
+.add-course-video-item-title {
+    flex: 1;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dark .add-course-video-item-title { color: #d1d5db; }
+.add-course-video-item-active .add-course-video-item-title {
+    color: #1C355E;
+    font-weight: 600;
+}
+.dark .add-course-video-item-active .add-course-video-item-title { color: #93c5fd; }
+.add-course-video-item-remove {
+    flex-shrink: 0;
+    padding: 0.25rem;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+}
+.add-course-video-item-remove:hover {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.1);
+}
+.add-course-add-video-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1C355E;
+    background: transparent;
+    border: 1px dashed #1C355E;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.add-course-add-video-btn:hover {
+    background: #1C355E;
+    color: #fff;
+}
+.dark .add-course-add-video-btn {
+    color: #93c5fd;
+    border-color: #1C355E;
+}
+.dark .add-course-add-video-btn:hover {
+    background: #1C355E;
+    color: #fff;
+}
+.add-course-add-video-icon {
+    width: 1rem;
+    height: 1rem;
+}
+.add-course-sections-empty {
+    padding: 0.75rem 0;
+    text-align: center;
+}
+
+.home_page_style{
     justify-content: space-between;
     display: flex;
     flex-direction: column;
     padding-bottom: 0;
-
-    background-color: #22c55e;
     padding-left: 0;
     padding-right: 0;
-
 }
 .footer_upload_video {
-    background-color: #477CAA;
+    background-color: #1C355E;
     color: white;
 }
 @media (max-width: 770px) {

@@ -22,7 +22,7 @@
                                 <input type="radio" :id="'goal_' + option.value" :value="option.value" v-model="selectedGoal" class="hidden">
                                 <span class="w-5 h-5 mr-4 border-2 rounded-full flex-shrink-0 transition-colors"
                                       :class="{
-                                          'bg-[#22c55e] border-[#22c55e]': selectedGoal === option.value,
+                                          'bg-[#1C355E] border-[#1C355E]': selectedGoal === option.value,
                                           'border-gray-400': selectedGoal !== option.value
                                       }"></span>
                                 <span class="text-gray-800 dark:text-gray-200 font-semibold">{{ option.label }}</span>
@@ -31,7 +31,7 @@
 
                         <div class="mt-8 grid grid-cols-2 gap-4">
                             <button @click="dismissPopup" type="button" class="w-full px-6 py-3 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-semibold transition-colors">Ask Me Later</button>
-                            <button @click="submitGoal" :disabled="!selectedGoal" class="w-full px-6 py-3 bg-[#22c55e] text-white rounded-lg hover:bg-[#16a34a] font-semibold disabled:opacity-50 transition-colors">Set My Goal</button>
+                            <button @click="submitGoal" :disabled="!selectedGoal" class="w-full px-6 py-3 bg-[#1C355E] text-white rounded-lg hover:bg-[#254a7a] font-semibold disabled:opacity-50 transition-colors">Set My Goal</button>
                         </div>
                     </div>
                 </div>

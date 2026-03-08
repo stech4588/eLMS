@@ -31,7 +31,7 @@
                                 <button
                                     @click="submitPost"
                                     :disabled="!newPostContent.trim() && attachments.length === 0"
-                                    class="bg-[#22c55e] text-white px-4 py-2 rounded-lg hover:bg-[#16a34a] dark:bg-[#22c55e] dark:hover:bg-[#16a34a] disabled:bg-gray-300 dark:disabled:bg-[#1f2d40] transition-colors"
+                                    class="bg-[#1C355E] text-white px-4 py-2 rounded-lg hover:bg-[#254a7a] dark:bg-[#1C355E] dark:hover:bg-[#254a7a] disabled:bg-gray-300 dark:disabled:bg-[#1f2d40] transition-colors"
                                 >
                                     Post
                                 </button>

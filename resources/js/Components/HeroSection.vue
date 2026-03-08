@@ -339,7 +339,7 @@ onMounted(() => {
 }
 
 .icon-box {
-    color: #22c55e;
+    color: #1C355E;
     margin-bottom: 20px;
 }
 

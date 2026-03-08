@@ -76,7 +76,7 @@
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">WhatsApp call link</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" v-model="form.hasCallLink" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#22c55e]"></div>
+                        <div class="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1C355E]"></div>
                     </label>
                 </div>
                 <div v-if="form.hasCallLink">
@@ -85,7 +85,7 @@
                 </div>
                 <div class="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
                     <button type="button" @click="$emit('close')" :disabled="isLoading" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">Cancel</button>
-                    <button type="submit" :disabled="isLoading" class="ml-3 inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-[#22c55e] border border-transparent rounded-md shadow-sm hover:bg-[#16a34a] disabled:opacity-50">
+                    <button type="submit" :disabled="isLoading" class="ml-3 inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-[#1C355E] border border-transparent rounded-md shadow-sm hover:bg-[#254a7a] disabled:opacity-50">
                         <span v-if="isLoading">Creating...</span>
                         <span v-else>Create Event</span>
                     </button>

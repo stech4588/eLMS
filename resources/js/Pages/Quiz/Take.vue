@@ -16,7 +16,7 @@
                                 <span class="text-sm font-medium text-gray-900 dark:text-white">{{ answeredQuestionsCount }} of {{ quiz.questions.length }} answered</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                <div class="bg-[#22c55e] h-2.5 rounded-full" :style="{ width: progressPercentage + '%' }"></div>
+                                <div class="bg-[#1C355E] h-2.5 rounded-full" :style="{ width: progressPercentage + '%' }"></div>
                             </div>
                         </div>
 
@@ -33,7 +33,7 @@
                                         <input type="radio" :name="'question_' + question.id" :value="answer.id" v-model="form.answers[question.id]" class="hidden">
                                         <span class="w-5 h-5 mr-4 border-2 rounded-full flex-shrink-0"
                                               :class="{
-                                                  'bg-[#22c55e] border-[#22c55e]': form.answers[question.id] === answer.id,
+                                                  'bg-[#1C355E] border-[#1C355E]': form.answers[question.id] === answer.id,
                                                   'border-gray-400': form.answers[question.id] !== answer.id
                                               }"></span>
                                         <span class="text-gray-800 dark:text-gray-300">{{ answer.answer_text }}</span>
@@ -44,7 +44,7 @@
                             <div class="mt-8 text-center">
                                 <button type="submit" 
                                         :disabled="form.processing"
-                                        class="inline-block bg-[#22c55e] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#16a34a] transition-transform transform hover:scale-105 duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                                        class="inline-block bg-[#1C355E] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#254a7a] transition-transform transform hover:scale-105 duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
                                     Submit Quiz
                                 </button>
                             </div>

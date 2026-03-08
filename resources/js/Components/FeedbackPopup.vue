@@ -30,7 +30,7 @@
                             </div>
                             <div class="flex justify-end space-x-4">
                                 <button type="button" @click="close" class="px-6 py-2.5 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-semibold">Cancel</button>
-                                <button type="submit" :disabled="form.processing" class="px-6 py-2.5 bg-[#22c55e] text-white rounded-lg hover:bg-[#16a34a] font-semibold disabled:opacity-50">Submit Review</button>
+                                <button type="submit" :disabled="form.processing" class="px-6 py-2.5 bg-[#1C355E] text-white rounded-lg hover:bg-[#254a7a] font-semibold disabled:opacity-50">Submit Review</button>
                             </div>
                         </form>
                     </div>

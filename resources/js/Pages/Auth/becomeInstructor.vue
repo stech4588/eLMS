@@ -428,7 +428,7 @@ export default {
 }
 .home_page_style{
     padding: 0;
-    background-color: #22c55e;
+    background-color: #1C355E;
 }
 
 .profile-picture-container {
