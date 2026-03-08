@@ -155,7 +155,7 @@ const joinNowUrl = computed(() => {
 }
 
 .gradient-text {
-    background: linear-gradient(90deg, #4f46e5, #3b82f6);
+    background: linear-gradient(90deg, #22c55e, #16a34a);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -169,7 +169,7 @@ const joinNowUrl = computed(() => {
 }
 
 /* .underline {
-    border-bottom: 2px solid #3b82f6;
+    border-bottom: 2px solid #22c55e;
 } */
 
 .cta-section {
@@ -212,8 +212,8 @@ const joinNowUrl = computed(() => {
     background: linear-gradient(135deg, #f43f5e, #fb7185);
 }
 
-.pill-blue {
-    background: linear-gradient(135deg, #2563eb, #38bdf8);
+.pill-accent {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
 }
 
 .video-box {

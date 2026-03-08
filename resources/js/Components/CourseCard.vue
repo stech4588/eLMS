@@ -18,7 +18,7 @@
             </template>
             <template v-else>
                 <div class="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
-                    <div class="bg-blue-600 h-1.5 rounded-full" :style="{ width: course.progress + '%' }"></div>
+                    <div class="bg-[#22c55e] h-1.5 rounded-full" :style="{ width: course.progress + '%' }"></div>
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-300 mb-4">{{ Math.round(course.progress) }}% complete</p>
 
@@ -38,7 +38,7 @@
                         Details
                     </Link>
                     <Link :href="course.first_video_id ? route('courses.play', { course: course.id, video: course.first_video_id }) : '#'" 
-                          class="course-action-btn-play dark:bg-blue-600 dark:text-white w-full">
+                          class="course-action-btn-play dark:bg-[#22c55e] dark:text-white w-full">
                         Play Course
                     </Link>
                 </div>

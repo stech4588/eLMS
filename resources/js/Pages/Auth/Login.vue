@@ -6,10 +6,8 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-
-const user = usePage().props.auth.user
 
 defineProps({
   canResetPassword: Boolean,
@@ -47,422 +45,331 @@ function onBlurpass() {
 function togglePassword() {
   showPassword.value = !showPassword.value;
 }
-
-const redirectToGoogle = () => {
-  window.location.href = route('google.redirect');
-};
-
-const redirectToFacebook = () => {
-  window.location.href = route('facebook.redirect');
-};
-
-const redirectToApple = () => {
-  window.location.href = route('apple.redirect');
-};
-
-const joinNowUrl = computed(() => {
-  if (user) {
-    if (usePage().props.auth.profile_incomplete && user.type === 'student') {
-      return '/register/complete';
-    }
-    return '/dashboard';
-  }
-  return '/joinnow';
-});
 </script>
 
 <template>
   <GuestLayout>
     <Head title="Log in" />
-    <div class="login-container">
-      <div class="login-header">
-        <h2>Empower Your Learning Journey</h2>
-        <p>Welcome Back, Please Login to your account.</p>
-      </div>
+    <div class="login-page-theme">
+      <div class="login-card">
+        <div class="login-card-inner">
+          <a href="/" class="login-logo-link">
+            <img src="/images/MBM_Uni.png" alt="Logo" class="login-logo" />
+          </a>
+          <h1 class="login-heading">Sign in to your account</h1>
 
-      <div class="login-divider"></div>
+          <div v-if="$page.props.flash.error" class="login-error">
+            {{ $page.props.flash.error }}
+          </div>
+          <div v-if="status" class="login-status">
+            {{ status }}
+          </div>
 
-      <div v-if="$page.props.flash.error" class="error-message">
-        {{ $page.props.flash.error }}
-      </div>
+          <form @submit.prevent="submit" class="login-form">
+            <div class="login-field">
+              <InputLabel for="email" value="Email" class="login-label" />
+              <TextInput
+                id="email"
+                type="email"
+                v-model="form.email"
+                required
+                autocomplete="username"
+                placeholder="Enter your email"
+                class="login-input"
+                @focus="onFocus"
+                @blur="onBlur"
+              />
+              <InputError class="login-field-error" :message="form.errors.email" />
+            </div>
 
-      <div v-if="status" class="status-message">
-        {{ status }}
-      </div>
+            <div class="login-field">
+              <InputLabel for="password" value="Password" class="login-label" />
+              <div class="login-password-wrap">
+                <TextInput
+                  :type="showPassword ? 'text' : 'password'"
+                  id="password"
+                  v-model="form.password"
+                  required
+                  autocomplete="current-password"
+                  placeholder="Enter your password"
+                  class="login-input"
+                  @focus="onFocuspass"
+                  @blur="onBlurpass"
+                />
+                <button type="button" class="login-toggle-password" @click="togglePassword" aria-label="Toggle password visibility">
+                  <img src="/images/view_icon.svg" alt="" class="login-view-icon" />
+                </button>
+              </div>
+              <InputError class="login-field-error" :message="form.errors.password" />
+            </div>
 
-      <form @submit.prevent="submit">
-        <div class="floating-group">
-          <TextInput
-            id="email"
-            type="email"
-            v-model="form.email"
-            required
-            autocomplete="username"
-            placeholder=" "
-            class="floating-input"
-            @focus="onFocus"
-            @blur="onBlur"
-          />
-          <label
-            for="email"
-            class="floating-label"
-            :class="{ active: form.email || isFocused }"
-          >
-            Email
-          </label>
-          <InputError class="mt-2" :message="form.errors.email" />
-        </div>
+            <div class="login-remember-forgot">
+              <label class="login-remember">
+                <Checkbox name="remember" v-model:checked="form.remember" />
+                <span class="login-remember-text">Remember Me</span>
+              </label>
+              <Link
+                v-if="canResetPassword"
+                :href="route('password.request')"
+                class="login-forgot-link"
+              >
+                Forgot Password?
+              </Link>
+            </div>
 
-        <div class="floating-group">
-          <TextInput
-            :type="showPassword ? 'text' : 'password'"
-            id="password"
-            v-model="form.password"
-            required
-            autocomplete="current-password"
-            placeholder=" "
-            class="floating-input"
-            @focus="onFocuspass"
-            @blur="onBlurpass"
-          />
-          <label
-            for="password"
-            class="floating-label"
-            :class="{ active: form.password || isFocusedpass }"
-          >
-            Password
-          </label>
-          <img
-            src="/images/view_icon.svg"
-            alt="Toggle visibility"
-            class="view-icon"
-            @click="togglePassword"
-          />
-          <InputError class="mt-2" :message="form.errors.password" />
-        </div>
-
-        <div class="forgot-password-wrapper">
-          <span class="forgot-password-text">Forgot Password? </span>
-          <Link
-            v-if="canResetPassword"
-            :href="route('password.request')"
-            class="forgot-password-link"
-          >
-             click here to reset your password!
-          </Link>
-        </div>
-
-        <div class="login-button-wrapper">
-          <div class="login-button-wrapper-left">
             <PrimaryButton
-            class="login-btn"
-            :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing"
-          >
-            Log in
-          </PrimaryButton>
-          </div>
-          <div class="join-now-button-wrapper">
-            <Link :href="joinNowUrl" class="signup-link signup-btn-wrapper">
-              Join Now
-            </Link>
-         
+              type="submit"
+              class="login-submit-btn"
+              :class="{ 'opacity-25': form.processing }"
+              :disabled="form.processing"
+            >
+              Sign In
+            </PrimaryButton>
 
-          
-            <Link :href="route('Instructor')" class="signup-link-instructor signup-btn-wrapper">
-              Sign Up with Instructor
-            </Link>
-          </div>
-            
-         
+            <div class="login-bottom-links">
+              <Link :href="route('Instructor')" class="login-forgot-link">
+                Sign up as Instructor
+              </Link>
+            </div>
 
-          
-           
-          
+            <div class="login-social-row">
+              <a :href="route('apple.redirect')" class="login-social-btn" aria-label="Sign in with Apple">
+                <img src="/images/apple_logo.svg" alt="Apple" class="login-social-icon login-social-icon-apple" />
+              </a>
+              <a :href="route('facebook.redirect')" class="login-social-btn" aria-label="Sign in with Facebook">
+                <img src="/images/facebook_icon.svg" alt="Facebook" class="login-social-icon" />
+              </a>
+              <a :href="route('google.redirect')" class="login-social-btn" aria-label="Sign in with Google">
+                <img src="/images/google_icon.svg" alt="Google" class="login-social-icon" />
+              </a>
+            </div>
+          </form>
         </div>
-
-        <div class="or-divider">
-          <!-- <div class="line"></div> -->
-          <span>or sign in with</span>
-          <!-- <div class="line"></div> -->
-        </div>
-
-        <div class="social-login-container">
-          <button class="social-login-btn">
-            <img src="/images/apple_logo.svg" alt="Apple" class="social-login-apple-icon" />
-          </button>
-          <button class="social-login-btn social-login-btn-facebook" @click="redirectToFacebook">
-            <img src="/images/facebook_icon.svg" alt="Facebook" />
-          </button>
-          <button class="social-login-btn" @click="redirectToGoogle">
-            <img src="/images/google_icon.svg" alt="Google" />
-          </button>
-        </div>
-        <div class="forgot-password-wrapper" style="margin-top: 20px; justify-content: center; display: flex;">
-          <span class="forgot-password-text">Need to find </span>
-          <Link
-            v-if="canResetPassword"
-            :href="route('password.request')"
-            class="forgot-password-link"
-          >
-              your password?
-          </Link>
-        </div>
-      </form>
+      </div>
     </div>
   </GuestLayout>
 </template>
 
 <style scoped>
-.login-container {
-  max-width: 550px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Arial', sans-serif;
-  padding-top:0px;
-  /* background-color: #0D1016;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 50px 50px; */
-}
-
-.login-header {
-  text-align: center;
-  /* margin-bottom: 2rem; */
-}
-
-.login-header h2 {
-  font-weight: 600;
-  font-size: 30px;
-  color: rgb(255, 255, 255);
-  margin-top: 0.5rem;
-}
-
-.login-header p {
-  font-size: 12px;
-  text-align: justify;
-  color: #cccccc;
-  margin-top: 1.5rem;
-}
-
-.login-divider {
-  height: 1px;
-  background-color: #eee;
-  margin-bottom: 16px;
-  width: 50%;;
-}
-
-.status-message {
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: green;
-}
-
-.error-message {
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: red;
-  background-color: rgba(255, 0, 0, 0.1);
+.login-page-theme {
+  position: fixed;
+  inset: 0;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
   padding: 1rem;
-  border-radius: 6px;
-  text-align: center;
-  border: 1px solid red;
 }
 
-.floating-group {
-  position: relative;
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.login-card-inner {
+  padding: 2rem 2rem 1.5rem;
+}
+
+.login-logo-link {
+  display: block;
+  text-align: center;
   margin-bottom: 1.5rem;
 }
 
-.floating-input {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  color: #000000;
-  font-size: 1rem;
-  background-color: #ffffff !important;
-  border-left: 5px solid #c9c9c9;
-
-}
-.floating-input:focus {
-  outline: none;
-  box-shadow: none;
+.login-logo {
+  width: 80px;
+  height: auto;
+  display: inline-block;
 }
 
-.floating-label {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
+.login-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  text-align: center;
+  margin: 0 0 1.5rem;
+}
+
+.login-error {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  color: #000000;
-  background: #ffffff !important;
-  padding: 0 5px;
-  transition: all 0.3s ease;
-  pointer-events: none;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #fecaca;
 }
 
-.floating-label.active {
-  top: 5px;
-  font-size: 14px;
-  color: #000000;
+.login-status {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #15803d;
+  text-align: center;
 }
 
-.view-icon {
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.login-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: start;
+  color: #111827;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  color: #111827;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.login-password-wrap {
+  position: relative;
+}
+
+.login-toggle-password {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
   cursor: pointer;
 }
 
-.forgot-password-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.5rem;
-  gap: 3px;
+.login-view-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
-.forgot-password-link {
-  font-size: 0.875rem;
-  color: #c9c9c9;
-  text-decoration: none;
-  text-decoration: underline;
+.login-field-error {
+  font-size: 0.8125rem;
 }
-.forgot-password-link:hover{
-  color: #fcfcfc;
-  
-}
-.forgot-password-text{
-  font-size: 12px;
-  color: #c9c9c9;
-  text-decoration: none;
+
+.login-remember-forgot {
+  display: flex;
   align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
-.login-button-wrapper {
-  display: flex;
-  gap: 36px;
-  margin-top: 10px;
   justify-content: space-between;
-}
-@media (max-width: 550px) {
-  .login-button-wrapper {
-    flex-direction: column;
-    gap: 17px;
-  }
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.login-btn {
-  padding: 14px 25px;
-  background-color: #1898e5;
-  color: white;
+.login-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.login-remember-text {
+  user-select: none;
+}
+
+.login-forgot-link {
+  font-size: 0.875rem;
+  color: #111827;
+  text-decoration: none;
+}
+
+.login-forgot-link:hover {
+  text-decoration: underline;
+  color: #374151;
+}
+
+.login-submit-btn {
+  justify-content:center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #22c55e;
   border: none;
   border-radius: 6px;
-  font-size: 12px;
   cursor: pointer;
-  justify-content: center;
+  transition: background-color 0.2s;
 }
 
-.signup-btn-wrapper {
+.login-submit-btn:hover:not(:disabled) {
+  background-color: #16a34a;
+}
+
+.login-submit-btn:disabled {
+  cursor: not-allowed;
+}
+
+.login-bottom-links {
   text-align: center;
-  padding: 12px 14px;
-  border: 1px solid #7E7E7E;
+  margin-top: 0.25rem;
+}
+
+.login-social-row {
+  display: flex;
   justify-content: center;
-  border-radius: 6px;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.login-social-btn {
   display: flex;
   align-items: center;
-}
-
-.signup-link {
-  text-decoration: none;
-  font-size: 12px;
-  color: #c9c9c9;
-}
-
-.signup-link-instructor {
-  text-decoration: none;
-  font-size: 12px;
-  color: #c9c9c9;
-}
-.or-divider {
-  display: flex;
-  align-items: center;
-  margin: 1rem 0 1.5rem;
   justify-content: center;
-}
-
-.or-divider .line {
-  flex-grow: 1;
-  height: 1px;
-  background-color: #999999;
-}
-
-.or-divider span {
-  padding: 0 1rem;
-  color: #999999;
-}
-
-.social-login-container {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-.join-now-button-wrapper{
-  display: flex;
-  gap: 20px;
-  align-items: end;
-  justify-content: end;
-}
-@media (max-width: 550px) {
-  .join-now-button-wrapper{
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-  }
-}
-@media (max-width: 550px) {
-  .login-button-wrapper-left{
-    align-items: center;
-    justify-content: center !important;
-    display: flex !important;
-  }
-}
-
-.social-login-btn {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  padding: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  width: 70px; /* Adjust width as needed */
-  height: 50px; /* Adjust height as needed */
+  transition: border-color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
 }
 
-.social-login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.login-social-btn:hover {
+  border-color: #9ca3af;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.social-login-btn img {
-  height: 24px; /* Adjust icon size as needed */
-  width: 24px;  /* Adjust icon size as needed */
+.login-social-icon {
+  width: 24px;
+  height: 24px;
 }
-.social-login-btn-facebook img{
-  height: 36px; /* Adjust icon size as needed */
-  width: 36px;  /* Adjust icon size as needed */
-}
-.social-login-apple-icon{
+
+.login-social-icon-apple {
   filter: invert(1);
 }
 </style>

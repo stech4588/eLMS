@@ -41,43 +41,43 @@ const submit = () => {
                                 <div class="space-y-4">
                                     <div>
                                         <label class="flex items-center">
-                                            <input type="checkbox" v-model="form.receives_course_completion_emails" class="form-checkbox h-5 w-5 text-blue-600">
+                                            <input type="checkbox" v-model="form.receives_course_completion_emails" class="form-checkbox h-5 w-5 text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">Receive Course Completion Emails</span>
                                         </label>
                                     </div>
                                     <div>
                                         <label class="flex items-center">
-                                            <input type="checkbox" v-model="form.receives_course_reminder_emails" class="form-checkbox h-5 w-5 text-blue-600">
+                                            <input type="checkbox" v-model="form.receives_course_reminder_emails" class="form-checkbox h-5 w-5 text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">Receive Course Reminder Emails</span>
                                         </label>
                                     </div>
                                     <div>
                                         <label class="flex items-center">
-                                            <input type="checkbox" v-model="form.receives_marketing_emails" class="form-checkbox h-5 w-5 text-blue-600">
+                                            <input type="checkbox" v-model="form.receives_marketing_emails" class="form-checkbox h-5 w-5 text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">Receive Marketing Emails</span>
                                         </label>
                                     </div>
                                     <div>
                                         <label class="flex items-center">
-                                            <input type="checkbox" v-model="form.receives_motivational_quote_emails" class="form-checkbox h-5 w-5 text-blue-600">
+                                            <input type="checkbox" v-model="form.receives_motivational_quote_emails" class="form-checkbox h-5 w-5 text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">Receive Motivational Quote Emails</span>
                                         </label>
                                     </div>
                                     <div>
                                         <label class="flex items-center">
-                                            <input type="checkbox" v-model="form.receives_new_course_notification_emails" class="form-checkbox h-5 w-5 text-blue-600">
+                                            <input type="checkbox" v-model="form.receives_new_course_notification_emails" class="form-checkbox h-5 w-5 text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">Receive New Course Notification Emails</span>
                                         </label>
                                     </div>
                                     <div>
                                         <label class="flex items-center">
-                                            <input type="checkbox" v-model="form.receives_prompt_generated_emails" class="form-checkbox h-5 w-5 text-blue-600">
+                                            <input type="checkbox" v-model="form.receives_prompt_generated_emails" class="form-checkbox h-5 w-5 text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">Receive AI Prompt Generated Emails</span>
                                         </label>
                                     </div>
                                     <div>
                                         <label class="flex items-center">
-                                            <input type="checkbox" v-model="form.receives_wellness_checkin_emails" class="form-checkbox h-5 w-5 text-blue-600">
+                                            <input type="checkbox" v-model="form.receives_wellness_checkin_emails" class="form-checkbox h-5 w-5 text-green-600">
                                             <span class="ml-2 text-gray-700 dark:text-gray-300">Receive Wellness Check-in Emails</span>
                                         </label>
                                     </div>

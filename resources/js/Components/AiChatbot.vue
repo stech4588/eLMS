@@ -12,7 +12,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-700/50">
                     <div class="flex items-center space-x-3">
-                        <div class="p-1.5 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full">
+                        <div class="p-1.5 bg-gradient-to-br from-green-400 to-green-600 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a8 8 0 1116 0 8 8 0 01-16 0zm9.333-3.047a.75.75 0 00-1.48-.314l-2.5 6.333a.75.75 0 001.314.65l.613-1.54A.75.75 0 0110 11.5h.047a.75.75 0 01.625.333l.613 1.54a.75.75 0 001.314-.65l-2.5-6.333zM9.414 9.5H10.5a.75.75 0 01.6.3l.375.938a.75.75 0 01-1.424.124L9.414 9.5z" clip-rule="evenodd" />
                             </svg>
@@ -30,7 +30,7 @@
                 <div ref="messagesContainer" class="flex-1 p-6 overflow-y-auto space-y-6">
                     <div v-for="(message, index) in messages" :key="index" class="flex items-start space-x-3" :class="message.isUser ? 'flex-row-reverse space-x-reverse' : ''">
                          <img :src="message.isUser ? authUser.profile_photo_url : '/images/ai-avatar.jpg'" class="w-8 h-8 rounded-full object-cover">
-                        <div class="p-3 rounded-lg max-w-md prose dark:prose-invert" :class="message.isUser ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white'">
+                        <div class="p-3 rounded-lg max-w-md prose dark:prose-invert" :class="message.isUser ? 'bg-gray-800 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white'">
                             <div v-html="message.text"></div>
                         </div>
                     </div>
@@ -55,9 +55,9 @@
                             ref="inputBox"
                             rows="1"
                             :placeholder="placeholder"
-                            class="w-full px-4 py-3 pr-16 text-gray-800 bg-gray-100 border-2 border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none"
+                            class="w-full px-4 py-3 pr-16 text-gray-800 bg-gray-100 border-2 border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white resize-none"
                         ></textarea>
-                        <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()" class="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full transition-transform duration-200 transform hover:scale-110 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:scale-100">
+                        <button @click="sendMessage" :disabled="isLoading || !newMessage.trim()" class="absolute inset-y-0 right-0 flex items-center justify-center w-12 h-12 text-white bg-[#22c55e] rounded-full transition-transform duration-200 transform hover:scale-110 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:scale-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                             </svg>

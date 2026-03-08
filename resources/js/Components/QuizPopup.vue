@@ -14,11 +14,11 @@
             <!-- Progress Bar -->
             <div class="mb-6">
                 <div class="flex justify-between mb-1">
-                    <span class="text-base font-medium text-indigo-700 dark:text-white">Progress</span>
-                    <span class="text-sm font-medium text-indigo-700 dark:text-white">{{ answeredQuestionsCount }} of {{ quiz.questions.length }} answered</span>
+                    <span class="text-base font-medium text-gray-900 dark:text-white">Progress</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ answeredQuestionsCount }} of {{ quiz.questions.length }} answered</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 overflow-hidden">
-                    <div class="bg-indigo-600 h-2.5 rounded-full" :style="{ width: clampedProgress + '%' }"></div>
+                    <div class="bg-[#22c55e] h-2.5 rounded-full" :style="{ width: clampedProgress + '%' }"></div>
                 </div>
             </div>
 
@@ -30,13 +30,13 @@
                              <label v-for="answer in question.answers" :key="answer.id" 
                                    class="flex items-center p-4 rounded-lg border cursor-pointer transition-colors duration-200"
                                    :class="{
-                                       'bg-indigo-100 dark:bg-indigo-900/50 border-indigo-500 dark:border-indigo-400': form.answers[question.id] === answer.id,
+                                       'bg-green-50 dark:bg-green-900/30 border-green-500 dark:border-green-400': form.answers[question.id] === answer.id,
                                        'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700': form.answers[question.id] !== answer.id
                                    }">
                                 <input type="radio" :name="'question_' + question.id" :value="answer.id" v-model="form.answers[question.id]" class="sr-only">
                                 <span class="w-5 h-5 mr-4 border-2 rounded-full flex-shrink-0"
                                       :class="{
-                                          'bg-indigo-600 border-indigo-600': form.answers[question.id] === answer.id,
+                                          'bg-[#22c55e] border-[#22c55e]': form.answers[question.id] === answer.id,
                                           'border-gray-400': form.answers[question.id] !== answer.id
                                       }"></span>
                                 <span class="text-gray-800 dark:text-gray-300">{{ answer.answer_text }}</span>
@@ -51,7 +51,7 @@
                     </button>
                     <button type="submit" 
                             :disabled="form.processing"
-                            class="inline-block bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="inline-block bg-[#22c55e] text-white font-bold py-2.5 px-6 rounded-lg hover:bg-[#16a34a] transition-transform transform hover:scale-105 duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
                         Submit Quiz
                     </button>
                 </div>

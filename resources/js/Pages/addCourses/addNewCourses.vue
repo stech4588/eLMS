@@ -10,10 +10,10 @@
         >
             <div class="flex flex-col items-center justify-center bg-white dark:bg-[#1A2C38] rounded-xl px-8 py-6 shadow-lg min-w-[300px]">
                 <div class="relative mb-4">
-                    <div class="h-16 w-16 rounded-full border-4 border-blue-200"></div>
-                    <div class="absolute inset-0 h-16 w-16 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                    <div class="h-16 w-16 rounded-full border-4 border-gray-200"></div>
+                    <div class="absolute inset-0 h-16 w-16 rounded-full border-4 border-green-500 border-t-transparent animate-spin"></div>
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{{ uploadProgress }}%</span>
+                        <span class="text-xs font-bold text-gray-900 dark:text-gray-200">{{ uploadProgress }}%</span>
                     </div>
                 </div>
                 <p class="text-gray-700 dark:text-gray-200 font-semibold text-sm mb-3 text-center">
@@ -22,7 +22,7 @@
                 <!-- Progress Bar -->
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-2">
                     <div 
-                        class="bg-blue-600 dark:bg-blue-400 h-2.5 rounded-full transition-all duration-300 ease-out"
+                        class="bg-[#22c55e] dark:bg-[#22c55e] h-2.5 rounded-full transition-all duration-300 ease-out"
                         :style="{ width: uploadProgress + '%' }"
                     ></div>
                 </div>
@@ -42,7 +42,7 @@
                             :key="entry.globalIndex"
                             style="width: 100%; font-size: 14px; font-weight: 600; display: flex; align-items: center;"
                             :class="entry.globalIndex === currentEditingVideoIndex ? 'add_course_dark_left_videos_item_active' : ''"
-                            :style="entry.globalIndex === currentEditingVideoIndex ? { backgroundColor: '#9fd3f5', borderLeft: '2px solid #148ad9' } : {}"
+                            :style="entry.globalIndex === currentEditingVideoIndex ? { backgroundColor: '#dcfce7', borderLeft: '2px solid #22c55e' } : {}"
                         >
                             <span @click="selectVideoToEdit(entry.globalIndex)" style="flex-grow: 1; padding: 8px 16px; cursor: pointer;" class="add_course_dark_left_videos_item_text truncate" :title="entry.video.title">
                                 {{ entry.video.title || 'Video ' + (entry.globalIndex + 1) }}
@@ -302,7 +302,7 @@
                                         </div>
                                         <button
                                             @click="nextStep"
-                                            class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600; margin-top: 37px;">
+                                            class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]" style="background-color: #22c55e; color: white; font-size: 14px; border-radius: 20px; font-weight: 600; margin-top: 37px;">
                                             Next
                                         </button>
                                     </div>
@@ -363,8 +363,8 @@
                                 <button
                                     type="button"
                                     @click="nextStep"
-                                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                                    style="background-color: #148ad9; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                    class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]"
+                                    style="background-color: #22c55e; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Next
                                 </button>
                             </div>
@@ -524,7 +524,7 @@
                                                     <button
                                                         type="button"
                                                         @click="triggerVideoUploadFromRightPanel"
-                                                        class="mt-3 w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                                        class="mt-3 w-full px-3 py-2 text-sm font-semibold text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]"
                                                     >
                                                         Replace Video
                                                     </button>
@@ -584,7 +584,7 @@
                                 </button>
                                 <button
                                     @click="nextStep"
-                                    class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700" style="background-color: #148ad9; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
+                                    class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]" style="background-color: #22c55e; color: white; font-size: 14px; border-radius: 20px; font-weight: 600;">
                                     Next
                                 </button>
                             </div>
@@ -674,7 +674,7 @@
                 </div>
                 <div class="flex justify-end space-x-2">
                     <button @click="showCertificatePopup = false" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button @click="submitNewCertificate" class="px-4 py-2 text-white bg-[#148ad9] rounded-md hover:bg-[#148ad9]">Add Certificate</button>
+                    <button @click="submitNewCertificate" class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]">Add Certificate</button>
                 </div>
             </div>
         </div>
@@ -712,14 +712,14 @@
                         <input type="text" v-model="answer.answer_text" class="w-full p-2 border rounded-md" style="color:black;" placeholder="Answer text">
                         <button @click="removeVideoQuizAnswer(qIndex, aIndex)" class="ml-2 text-red-500 hover:text-red-700">Remove</button>
                     </div>
-                    <button @click="addVideoQuizAnswer(qIndex)" class="text-blue-600 hover:text-blue-800">Add Answer</button>
+                    <button @click="addVideoQuizAnswer(qIndex)" class="text-gray-900 hover:text-gray-700">Add Answer</button>
                 </div>
                 <button @click="addVideoQuizQuestion" class="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700">Add Question</button>
                 </div>
 
                 <div class="flex justify-end mt-6 space-x-2">
                     <button @click="closeVideoQuizModal" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button @click="saveVideoQuiz" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Save Quiz</button>
+                    <button @click="saveVideoQuiz" class="px-4 py-2 text-white bg-[#22c55e] rounded-md hover:bg-[#16a34a]">Save Quiz</button>
                 </div>
             </div>
         </div>
@@ -2601,7 +2601,7 @@ onMounted(() => {
 
 .custom-select select:focus {
     outline: none;
-    border-color: #148ad9;
+    border-color: #22c55e;
 }
 
 .custom-radio {
@@ -2641,7 +2641,7 @@ onMounted(() => {
     flex-direction: column;
     padding-bottom: 0;
 
-    background-color: #1898e5;
+    background-color: #22c55e;
     padding-left: 0;
     padding-right: 0;
 

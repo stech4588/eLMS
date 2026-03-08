@@ -68,7 +68,7 @@ function selectTopic(topic) {
                                                :class="[
                                                    'block px-3 py-2 rounded-lg transition-colors',
                                                    activeTopic && activeTopic.title === topic.title
-                                                       ? 'font-semibold text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-500/10'
+                                                       ? 'font-semibold text-gray-900 dark:text-gray-200 bg-gray-100 dark:bg-gray-600/30'
                                                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#1f2d40]'
                                                ]">
                                                 {{ topic.title }}
@@ -116,7 +116,7 @@ function selectTopic(topic) {
         </div>
 
         <!-- Chatbot FAB -->
-        <button @click="isChatOpen = true" class="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-500 transition z-40">
+        <button @click="isChatOpen = true" class="fixed bottom-8 right-8 bg-[#22c55e] text-white p-4 rounded-full shadow-lg hover:bg-[#16a34a] transition z-40">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>

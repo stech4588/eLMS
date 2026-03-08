@@ -53,7 +53,7 @@
             </div>
             <div class="mt-6 flex justify-between items-center">
                 <div>
-                    <a :href="job.apply_url" target="_blank" rel="noopener noreferrer" class="mr-3 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                    <a :href="job.apply_url" target="_blank" rel="noopener noreferrer" class="mr-3 px-4 py-2 bg-[#22c55e] text-white rounded-md hover:bg-[#16a34a]">
                         Open Job Link
                     </a>
                 </div>

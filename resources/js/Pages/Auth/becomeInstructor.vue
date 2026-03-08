@@ -10,7 +10,7 @@
                     <div class="instructor-content-container">
 
                         <!-- Left Column -->
-                        <div class="instructor-left-column">
+                        <!-- <div class="instructor-left-column">
                             <div style="display: flex; flex-direction: column; gap: 40px;">
                                  <h1 class="instructor-main-heading">Become a MBM Learning Instructor</h1>
                             <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of MBM Learning Instructors and share your knowledge with millions of learners worldwide.</p>
@@ -38,7 +38,7 @@
                             <p class="instructor-text">
                                 Lorem ipsum dolor sit amet consectetur. Convallis aenaan sed aenean vel sem lorem amet neque tristique. Gravida neque sit neque nec. Blandit ac diam ornare orci. Amet porttitor lobortis amet nascetur tempor. Aliquam scelerisque tellus enim nisi dui interdum <a href="#" class="instructor-link">Here</a>
                             </p>
-                        </div>
+                        </div> -->
 
                         <!-- Right Column -->
                         <div class="instructor-right-column">
@@ -228,6 +228,7 @@ export default {
 
 .instructor-content-container {
     display: flex;
+    justify-content: center;
     padding: 1.5rem;
 }
 @media (max-width: 768px) {
@@ -289,7 +290,8 @@ export default {
 
 /* Right column styles */
 .instructor-right-column {
-    flex: 1;
+    /* flex: 1; */
+    width:50%;
     padding-left: 1rem;
     background-color: #BEBCBC4D;
     padding: 1.5rem;
@@ -299,6 +301,7 @@ export default {
 .instructor-form-heading {
     font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
     margin-bottom: 1rem;
 }
 
@@ -425,7 +428,7 @@ export default {
 }
 .home_page_style{
     padding: 0;
-    background-color: #1898e5;
+    background-color: #22c55e;
 }
 
 .profile-picture-container {

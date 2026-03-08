@@ -64,9 +64,9 @@ const currentCourses = computed(() => {
                     <div class="flex items-center justify-between">
                         <div>
                             <div class="flex items-center">
-                                <div class="p-2 mr-2 bg-blue-100 rounded-full">
+                                <div class="p-2 mr-2 bg-gray-100 rounded-full">
                                     <!-- Placeholder for an icon -->
-                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor"
+                                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
@@ -208,7 +208,7 @@ const currentCourses = computed(() => {
                                                     <Link 
                                                         v-if="selectedOption === 'In Progress' && course.course_id && course.video_id"
                                                         :href="route('courses.play', { course: course.course_id, video: course.video_id })"
-                                                        class="px-4 py-2 text-sm text-blue-500 border border-blue-500 rounded hover:bg-blue-50"
+                                                        class="px-4 py-2 text-sm text-gray-700 border border-gray-600 rounded hover:bg-gray-100"
                                                         style="border-radius: 30px;"
                                                     >
                                                         Continue
@@ -217,7 +217,7 @@ const currentCourses = computed(() => {
                                                     <Link 
                                                         v-if="selectedOption === 'Saved' && course.id" 
                                                         :href="route('courses.show', { course: course.id })"
-                                                        class="px-4 py-2 text-sm text-blue-500 border border-blue-500 rounded hover:bg-blue-50" 
+                                                        class="px-4 py-2 text-sm text-gray-700 border border-gray-600 rounded hover:bg-gray-100" 
                                                         style="border-radius: 30px;"
                                                         >
                                                         View Course
@@ -361,7 +361,7 @@ const currentCourses = computed(() => {
 }
 
 .empty-library-button {
-    background-color: #0a66c2; /* LinkedIn blue */
+    background-color: #22c55e; /* primary green */
     color: #fff;
     padding: 10px 20px;
     border-radius: 20px;
@@ -413,7 +413,7 @@ const currentCourses = computed(() => {
 }
 
 .footer-link:hover {
-    color: #0073b1; /* LinkedIn blue for hover */
+    color: #16a34a; /* green hover */
     text-decoration: underline;
 }
 

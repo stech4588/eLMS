@@ -13,17 +13,17 @@
                         <form @submit.prevent="submitForm">
                             <div>
                                 <label for="itemName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                                <input type="text" v-model="form.name" id="itemName" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Name">
+                                <input type="text" v-model="form.name" id="itemName" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Name">
                                 <p v-if="form.errors.name" class="text-red-500 dark:text-red-400 text-xs italic mt-1">{{ form.errors.name }}</p>
                             </div>
                             <div class="mt-4" v-if="activeTab === 'courseCertificate'">
                                 <label for="itemDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                                <textarea v-model="form.description" id="itemDescription" rows="3" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Description"></textarea>
+                                <textarea v-model="form.description" id="itemDescription" rows="3" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Description"></textarea>
                                 <p v-if="form.errors.description" class="text-red-500 dark:text-red-400 text-xs italic mt-1">{{ form.errors.description }}</p>
                             </div>
                             <div class="mt-4" v-if="activeTab === 'topic'">
                                 <label for="isTrending" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Is Trending?</label>
-                                <select v-model="form.is_trending" id="isTrending" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <select v-model="form.is_trending" id="isTrending" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
                                     <option :value="1">Yes</option>
                                     <option :value="0">No</option>
                                 </select>
@@ -38,10 +38,10 @@
                                 <p v-if="form.errors.logo" class="text-red-500 dark:text-red-400 text-xs italic mt-1">{{ form.errors.logo }}</p>
                             </div>
                             <div class="mt-6 flex justify-end space-x-3">
-                                <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     Cancel
                                 </button>
-                                <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-[#22c55e] border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#16a34a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                     {{ editingItem ? 'Save Changes' : 'Create' }}
                                 </button>
                             </div>
@@ -75,7 +75,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Course Types</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -106,7 +106,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Topics</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -139,7 +139,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Course Certificates</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -172,7 +172,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Course Industries</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Create New</button>
+                                    <button @click="startCreate" class="px-4 py-2 bg-[#22c55e] text-white rounded hover:bg-[#16a34a]">Create New</button>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

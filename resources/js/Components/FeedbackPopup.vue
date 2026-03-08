@@ -26,11 +26,11 @@
                             </div>
                             <div class="mb-6">
                                 <label for="comment" class="block text-gray-700 dark:text-gray-300 mb-2 font-semibold">Your Comment</label>
-                                <textarea id="comment" v-model="form.comment" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" rows="4" placeholder="Tell us about your experience..."></textarea>
+                                <textarea id="comment" v-model="form.comment" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition" rows="4" placeholder="Tell us about your experience..."></textarea>
                             </div>
                             <div class="flex justify-end space-x-4">
                                 <button type="button" @click="close" class="px-6 py-2.5 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-semibold">Cancel</button>
-                                <button type="submit" :disabled="form.processing" class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold disabled:opacity-50">Submit Review</button>
+                                <button type="submit" :disabled="form.processing" class="px-6 py-2.5 bg-[#22c55e] text-white rounded-lg hover:bg-[#16a34a] font-semibold disabled:opacity-50">Submit Review</button>
                             </div>
                         </form>
                     </div>

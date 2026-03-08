@@ -42,7 +42,7 @@
             <div class="px-6 py-4 border-t border-gray-200 dark:border-dark-border-primary flex justify-end">
                 <button 
                     @click="closeModal" 
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors font-medium"
+                    class="px-4 py-2 bg-[#22c55e] hover:bg-[#16a34a] text-white rounded-md transition-colors font-medium"
                 >
                     Close
                 </button>

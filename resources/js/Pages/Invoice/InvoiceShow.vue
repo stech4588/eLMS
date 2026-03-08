@@ -17,7 +17,7 @@ defineProps({
                     Invoice Details: #{{ invoice.id }}
                 </h2>
                 <Link :href="route('invoices.index')"
-                    class="px-4 py-2 text-sm font-semibold leading-tight text-white bg-[#148ad9] rounded-lg hover:bg-[#0f6fb3] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-60 transition-colors"
+                    class="px-4 py-2 text-sm font-semibold leading-tight text-white bg-[#22c55e] rounded-lg hover:bg-[#16a34a] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-60 transition-colors"
                 >
                     Back to Invoice List
                 </Link>
@@ -37,7 +37,7 @@ defineProps({
                                 </p>
                             </div>
                             <div class="flex flex-wrap gap-4">
-                                <div class="px-5 py-3 rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-200">
+                                <div class="px-5 py-3 rounded-xl bg-gray-100 text-gray-800 dark:bg-gray-600/30 dark:text-gray-200">
                                     <span class="block text-xs uppercase tracking-wide">Amount</span>
                                     <span class="mt-1 text-xl font-semibold">{{ invoice.amount }}</span>
                                 </div>

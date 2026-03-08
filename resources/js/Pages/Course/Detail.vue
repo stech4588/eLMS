@@ -2,127 +2,143 @@
     <Head :title="course ? course.title : 'Course Detail'" />
 
     <AuthenticatedLayout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
-                <div v-if="unavailableMessage" class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200 text-center dark:bg-dark-bg-secondary dark:text-white">
-                        <p class="text-xl font-semibold text-red-600 dark:text-red-400">{{ unavailableMessage }}</p>
-                        <p class="mt-2 text-gray-600 dark:text-gray-300">Please check back later or contact the instructor if you believe this is a mistake.</p>
-                        <Link
-                            :href="((user && user.type === 'student') || !user) ? route('dashboard') : route('coursess')"
-                            class="inline-block mt-4 px-5 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-                        >
-                            {{ ((user && user.type === 'student') || !user) ? 'Go to Dashboard' : 'Go to My Courses' }}
-                        </Link>
-                    </div>
+        <div v-if="unavailableMessage" class="course-detail-unavailable">
+            <div class="course-detail-unavailable-box">
+                <p class="course-detail-unavailable-title">{{ unavailableMessage }}</p>
+                <p class="course-detail-unavailable-text">Please check back later or contact the instructor if you believe this is a mistake.</p>
+                <Link
+                    :href="((user && user.type === 'student') || !user) ? route('dashboard') : route('coursess')"
+                    class="course-detail-unavailable-btn"
+                >
+                    {{ ((user && user.type === 'student') || !user) ? 'Go to Dashboard' : 'Go to My Courses' }}
+                </Link>
+            </div>
+        </div>
+
+        <template v-else-if="course">
+            <!-- Hero Section -->
+            <div class="course-detail-hero">
+                <h1 class="course-detail-hero-title">{{ course.title }}</h1>
+                <Link
+                    v-if="hasAnyVideos"
+                    :href="route('courses.play', { course: course.id, video: firstVideoId })"
+                    class="course-detail-hero-btn"
+                >
+                    Start Course
+                </Link>
+                <span v-else class="course-detail-hero-btn course-detail-hero-btn-disabled">Start Course</span>
+            </div>
+
+            <!-- Main Content: two columns -->
+            <div class="course-detail-main">
+                <!-- Left Column: Sections & Videos -->
+                <div class="course-detail-left">
+                    <template v-if="course.sections && course.sections.length > 0">
+                        <section v-for="(section, sIndex) in course.sections" :key="section.id" class="course-detail-section">
+                            <h2 class="course-detail-section-title">{{ romanNumeral(sIndex + 1) }}. {{ section.title }}</h2>
+                            <div class="course-detail-lesson-list">
+                                <Link
+                                    v-for="video in section.videos"
+                                    :key="video.id"
+                                    :href="route('courses.play', { course: course.id, video: video.id })"
+                                    class="course-detail-lesson-item"
+                                >
+                                    <img
+                                        :src="video.thumbnail_url || '/images/skill_section_thumbnail.svg'"
+                                        :alt="video.title"
+                                        class="course-detail-lesson-thumb"
+                                    />
+                                    <span class="course-detail-lesson-name">{{ video.title }}</span>
+                                </Link>
+                            </div>
+                        </section>
+                    </template>
+                    <template v-else-if="course.videos && course.videos.length > 0">
+                        <section class="course-detail-section">
+                            <h2 class="course-detail-section-title">Lessons</h2>
+                            <div class="course-detail-lesson-list">
+                                <Link
+                                    v-for="video in course.videos"
+                                    :key="video.id"
+                                    :href="route('courses.play', { course: course.id, video: video.id })"
+                                    class="course-detail-lesson-item"
+                                >
+                                    <img
+                                        :src="video.thumbnail_url || '/images/skill_section_thumbnail.svg'"
+                                        :alt="video.title"
+                                        class="course-detail-lesson-thumb"
+                                    />
+                                    <span class="course-detail-lesson-name">{{ video.title }}</span>
+                                </Link>
+                            </div>
+                        </section>
+                    </template>
+                    <p v-else class="course-detail-no-videos">No videos available for this course.</p>
                 </div>
-                <div v-else-if="course" class="bg-white overflow-hidden shadow-sm sm:rounded-lg ">
-                    <div class="p-6 bg-white border-b border-gray-200 dark:bg-dark-bg-secondary dark:text-white">
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <div class="md:w-1/3">
-                                <img v-if="course.first_video_thumbnail_url" :src="course.first_video_thumbnail_url" alt="Course Thumbnail" class="w-full h-auto rounded-lg shadow-md">
-                                <div v-else class="w-full h-48 bg-gray-200 rounded-lg shadow-md flex items-center justify-center text-gray-500 dark:text-white">
-                                    No Thumbnail Available
-                                </div>
+
+                <!-- Right Column: Thumbnail, Progress, Instructor -->
+                <div class="course-detail-right">
+                    <div class="course-detail-preview-card">
+                        <img
+                            v-if="course.first_video_thumbnail_url"
+                            :src="course.first_video_thumbnail_url"
+                            alt="Course preview"
+                            class="course-detail-preview-img"
+                        />
+                        <div v-else class="course-detail-preview-placeholder">No preview</div>
+                        <p class="course-detail-progress-text">{{ completedCount }} of {{ course.lessons_count || totalVideosCount }} Lessons Completed</p>
+                    </div>
+                    <div class="course-detail-instructor">
+                        <h3 class="course-detail-instructor-heading">Instructor</h3>
+                        <div v-if="course.instructor" class="course-detail-instructor-card">
+                            <img
+                                :src="course.instructor.profile_photo_url || '/images/user_listing.svg'"
+                                :alt="course.instructor.name"
+                                class="course-detail-instructor-avatar"
+                            />
+                            <div class="course-detail-instructor-info">
+                                <p class="course-detail-instructor-name">{{ course.instructor.name }}</p>
+                                <p class="course-detail-instructor-role">Instructor</p>
+                                <p class="course-detail-instructor-bio">Course creator and instructor.</p>
                             </div>
-                            <div class="md:w-2/3">
-                                <h1 class="text-3xl font-bold mb-2 dark:text-white">{{ course.title }}</h1>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Type:</span> {{ course.type || 'N/A' }}</p>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Industry:</span> {{ course.industry_name || 'N/A' }}</p>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Certificate:</span> {{ course.certificate_name || 'N/A' }}</p>
-                                <p class="text-lg text-gray-700 mb-1 dark:text-white truncate"><span class="font-semibold dark:text-white">Author:</span> {{ course.author || 'N/A' }}</p>
-
-
-                                <!-- Add more course details here as needed -->
-                                <h2 class="text-2xl font-semibold mb-2 mt-6 dark:text-white">Description</h2>
-                                <p class="text-gray-600 whitespace-pre-wrap dark:text-white">{{ course.description || 'No description available.' }}</p>
-
-                                <h2 class="text-2xl font-semibold mb-2 mt-6 dark:text-white">Additional Description</h2>
-                                <p class="text-gray-600 whitespace-pre-wrap dark:text-white">{{ course.additional_description || 'No additional description available.' }}</p>
-
-                                <h2 class="text-2xl font-semibold mb-2 mt-6">Recomendations</h2>
-                                <p class="text-gray-600 whitespace-pre-wrap dark:text-white">{{ course.recomendations || 'No recomendations available.' }}</p>
-
-                                 <!-- Course content: sections with videos or flat video list -->
-                                <div class="mt-6">
-                                    <h3 class="text-xl font-semibold dark:text-white">Course Content</h3>
-                                    <p v-if="!hasAnyVideos" class="text-gray-500 dark:text-gray-400">No videos available for this course.</p>
-                                    <template v-else>
-                                        <!-- Sections with nested videos -->
-                                        <template v-if="course.sections && course.sections.length > 0">
-                                            <div v-for="section in course.sections" :key="section.id" class="mt-4">
-                                                <h4 class="font-semibold text-gray-800 dark:text-white">{{ section.title }}</h4>
-                                                <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-600 dark:text-gray-300">
-                                                    <li v-for="video in section.videos" :key="video.id">▶ {{ video.title }}</li>
-                                                </ul>
-                                            </div>
-                                        </template>
-                                        <!-- Fallback: flat video list (no sections or legacy) -->
-                                        <ul v-else class="list-disc pl-5 mt-2 space-y-1 text-gray-600 dark:text-white">
-                                            <li v-for="video in course.videos" :key="video.id">▶ {{ video.title }}</li>
-                                        </ul>
-                                    </template>
-
-                                    <div v-if="hasAnyVideos" class="mt-4" style="display: flex; justify-content: flex-end; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                                        <Link v-if="user && user.id === course.user_id"
-                                              :href="route('courses.feedback', { course: course.id })"
-                                              class="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition-colors">
-                                            View Feedback
-                                        </Link>
-                                        <Link
-                                            v-if="user && user.id !== course.user_id"
-                                            :href="route('dashboard')"
-                                            class="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
-                                            Go to Dashboard
-                                        </Link>
-                                        <Link
-                                            :href="route('courses.play', { course: course.id, video: firstVideoId })"
-                                            class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">
-                                            Play Course
-                                        </Link>
-                                    </div>
-                                    <div v-else class="mt-4 text-right">
-                                        <button class="bg-gray-400 text-white px-6 py-2 rounded-md cursor-not-allowed" disabled>
-                                            Play Course
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div v-else class="course-detail-instructor-card">
+                            <p class="course-detail-instructor-name">{{ course.author || 'Instructor' }}</p>
+                            <p class="course-detail-instructor-role">Instructor</p>
                         </div>
                     </div>
                 </div>
-                <div v-else class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200 text-center">
-                        <p class="text-xl text-gray-500">Loading course details or course not found...</p>
-                    </div>
-                </div>
             </div>
+
+            <!-- Optional: Feedback link for course owner -->
+            <div v-if="user && user.id === course.user_id" class="course-detail-footer-actions">
+                <Link :href="route('courses.feedback', { course: course.id })" class="course-detail-feedback-link">View Feedback</Link>
+            </div>
+        </template>
+
+        <div v-else class="course-detail-loading">
+            <p>Loading course details or course not found...</p>
         </div>
     </AuthenticatedLayout>
 </template>
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage, router } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const props = defineProps({
-    course: Object, // Expects a single course object
+    course: Object,
     isPurchased: Boolean,
-    unavailableMessage: {
-        type: String,
-        default: null,
-    },
+    unavailableMessage: { type: String, default: null },
 });
 
 const page = usePage();
-const user = computed(() => page.props.auth.user);
+const user = computed(() => page.props.auth?.user);
 
 const hasAnyVideos = computed(() => {
     if (!props.course) return false;
-    if (props.course.sections?.length) {
-        return props.course.sections.some(s => s.videos?.length);
-    }
+    if (props.course.sections?.length) return props.course.sections.some(s => s.videos?.length);
     return props.course.videos?.length > 0;
 });
 
@@ -135,9 +151,265 @@ const firstVideoId = computed(() => {
     }
     return props.course.videos?.[0]?.id ?? null;
 });
+
+const totalVideosCount = computed(() => {
+    if (!props.course) return 0;
+    if (props.course.lessons_count != null) return props.course.lessons_count;
+    if (props.course.sections?.length) return props.course.sections.reduce((sum, s) => sum + (s.videos?.length || 0), 0);
+    return props.course.videos?.length || 0;
+});
+
+const completedCount = computed(() => 0); // TODO: from progress API if needed
+
+const romanNumeral = (n) => {
+    const map = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
+    return map[n - 1] || String(n);
+};
 </script>
 
-<style >
+<style scoped>
+.course-detail-unavailable {
+    padding: 2rem;
+    max-width: 42rem;
+    margin: 0 auto;
+}
+.course-detail-unavailable-box {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+}
+.course-detail-unavailable-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #b91c1c;
+}
+.course-detail-unavailable-text {
+    margin-top: 0.5rem;
+    color: #4b5563;
+}
+.course-detail-unavailable-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1.25rem;
+    background: #22c55e;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+.course-detail-unavailable-btn:hover {
+    background: #16a34a;
+}
 
-/* Add any page-specific styles here */
+/* Hero */
+.course-detail-hero {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+    background-size: cover;
+    background-position: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+.course-detail-hero-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1.5rem;
+}
+.course-detail-hero-btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: #22c55e;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.course-detail-hero-btn:hover {
+    background: #16a34a;
+}
+.course-detail-hero-btn-disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Main two columns */
+.course-detail-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 4rem;
+    background: #fff;
+}
+@media (max-width: 900px) {
+    .course-detail-main {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Left: sections & videos */
+.course-detail-left {
+    min-width: 0;
+}
+.course-detail-section {
+    margin-bottom: 2rem;
+}
+.course-detail-section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.75rem;
+}
+.course-detail-lesson-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.course-detail-lesson-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    text-decoration: none;
+    color: #111827;
+    transition: background 0.15s;
+}
+.course-detail-lesson-item:hover {
+    background: #f9fafb;
+}
+.course-detail-lesson-thumb {
+    width: 160px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+.course-detail-lesson-name {
+    font-weight: 500;
+    font-size: 0.9375rem;
+}
+.course-detail-no-videos {
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Right: preview + instructor */
+.course-detail-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.course-detail-preview-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f9fafb;
+}
+.course-detail-preview-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    display: block;
+}
+.course-detail-preview-placeholder {
+    width: 100%;
+    aspect-ratio: 16/10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+.course-detail-progress-text {
+    padding: 0.75rem 1rem;
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+    border-top: 1px solid #e5e7eb;
+}
+.course-detail-instructor {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    background: #fff;
+}
+.course-detail-instructor-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.75rem;
+}
+.course-detail-instructor-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+.course-detail-instructor-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.course-detail-instructor-info {
+    min-width: 0;
+}
+.course-detail-instructor-name {
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+}
+.course-detail-instructor-role {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin: 0 0 0.5rem;
+}
+.course-detail-instructor-bio {
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.5;
+    margin: 0;
+}
+.course-detail-footer-actions {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem;
+    text-align: right;
+}
+.course-detail-feedback-link {
+    font-size: 0.875rem;
+    color: #22c55e;
+    font-weight: 600;
+    text-decoration: none;
+}
+.course-detail-feedback-link:hover {
+    text-decoration: underline;
+}
+.course-detail-loading {
+    padding: 3rem;
+    text-align: center;
+    color: #6b7280;
+}
+
+.dark .course-detail-hero-title { color: #fff; }
+.dark .course-detail-main { background: #111827; }
+.dark .course-detail-section-title,
+.dark .course-detail-lesson-name,
+.dark .course-detail-progress-text,
+.dark .course-detail-instructor-heading,
+.dark .course-detail-instructor-name { color: #f9fafb; }
+.dark .course-detail-lesson-item { color: #e5e7eb; border-color: #374151; }
+.dark .course-detail-lesson-item:hover { background: #1f2937; }
+.dark .course-detail-preview-card,
+.dark .course-detail-instructor { border-color: #374151; background: #1f2937; }
+.dark .course-detail-instructor-role,
+.dark .course-detail-instructor-bio { color: #9ca3af; }
 </style>

@@ -7,15 +7,15 @@
         <div class="instructor-page-container">
             <div class="instructor-page-wrapper">
                 <div class="instructor-card">
-                    <div style="border-bottom: 1px solid #414141;">
+                    <div class="instructor-card-header">
                      <a :href="user ? '/dashboard' : '/'">   
-                        <img src="/images/MBM_Uni.png" alt="logo" class="" style="margin-left: 55px; width: 100px; height: 100px;">
+                        <img src="/images/MBM_Uni.png" alt="logo" class="" style=" width: 100px; height: 100px;">
                         </a>
                     </div>
                     <div class="instructor-content-container" style="text-align: start;">
 
                         <!-- Left Column -->
-                        <div class="instructor-left-column">
+                        <!-- <div class="instructor-left-column">
                             <div style="display: flex; flex-direction: column; gap: 40px;">
                                  <h1 class="instructor-main-heading">Become a MBM Learning Instructor</h1>
                             <p class="instructor-text">Do you have a passion for teaching and expertise in your field? Join the global community of MBM Learning Instructors and share your knowledge with millions of learners worldwide.</p>
@@ -45,7 +45,7 @@
 
 📩 Start your journey with MBM Learning today. Apply to become an instructor! <a href="#" class="instructor-link">Here</a>
                             </p>
-                        </div>
+                        </div> -->
 
                         <!-- Right Column -->
                         <div class="instructor-right-column">
@@ -339,7 +339,9 @@ export default {
 }
 
 .instructor-page-container {
-    
+    min-height: 100vh;
+    background-color: #f3f4f6;
+    padding: 1.5rem 0;
 }
 
 .instructor-page-wrapper {
@@ -351,15 +353,15 @@ export default {
 }
 
 .instructor-card {
-    background-color: white;
+    background-color: #ffffff;
     overflow: hidden;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important;
 }
 
 .instructor-content-container {
     display: flex;
     padding: 1.5rem;
+    justify-content: center;
 }
 @media (max-width: 768px) {
     .instructor-content-container {
@@ -367,11 +369,17 @@ export default {
     }
 }
 
+.instructor-card-header {
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: center;
+}
+
 /* Left column styles */
 .instructor-left-column {
     flex: 1;
     padding-right: 2rem;
-    color: white;
+    color: #111827;
 }
 
 .instructor-main-heading {
@@ -379,12 +387,12 @@ export default {
     font-weight: 600;
     margin-bottom: 1rem;
     line-height: normal;
-    
+    color: #111827;
 }
 
 .instructor-text {
     margin-bottom: 2rem;
-    color: white;
+    color: #374151;
     line-height: normal;
 }
 
@@ -392,8 +400,8 @@ export default {
     list-style-type: disc;
     margin-left: 1.5rem;
     margin-bottom: 1.5rem;
-    color: white;
-        line-height: normal;
+    color: #374151;
+    line-height: normal;
 }
 
 .instructor-subheading {
@@ -401,48 +409,57 @@ export default {
     font-weight: bold;
     margin-top: 2rem;
     margin-bottom: 0.5rem;
-    color: white;
+    color: #111827;
 }
 
 .instructor-link {
-    color: #2C15F5;
+    color: #111827;
+    text-decoration: underline;
+}
 
+.instructor-link:hover {
+    color: #374151;
 }
 
 .instructor-quote {
-   
     padding: 1rem;
     margin-bottom: 1.5rem;
-   text-align: center;
-   line-height: normal;
-   color: white;
+    text-align: center;
+    line-height: normal;
+    color: #374151;
+    background-color: #f9fafb;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
 }
 
 .instructor-quote-author {
-   
-    
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
 }
 
 /* Right column styles */
 .instructor-right-column {
-    flex: 1;
+    /* flex: 1; */
     padding-left: 1rem;
-    border: 1px solid white;
+    width:50%;
+    border: 1px solid #e5e7eb;
     padding: 1.5rem;
     border-radius: 0.375rem;
-
+    background-color: #f9fafb;
 }
 
 .instructor-form-heading {
     font-size: 1.5rem;
     font-weight: bold;
+    text-align: center;
     margin-bottom: 1rem;
-    color: white;
+    color: #111827;
 }
 
 .instructor-linkedin-btn {
-    background-color: #1898e5;
-    color: white;
+    background-color: #111827;
+    color: #ffffff;
     padding: 0.5rem 1rem;
     margin-top: 20px;
     border: none;
@@ -453,7 +470,7 @@ export default {
     font-weight: 600;
 }
 .instructor-linkedin-btn:hover {
-    background-color: #A0AEC0;
+    background-color: #374151;
 }
 
 /* Form elements */
@@ -464,51 +481,52 @@ export default {
 .instructor-form-label {
     display: block;
     margin-bottom: 0.25rem;
-    color: white;
+    color: #111827;
     font-size: 0.875rem;
 }
 
 .instructor-form-note {
-    color: white;
+    color: #6b7280;
 }
 
 .instructor-form-input {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid white;
-    background-color: #bebcbc00;
-    color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    background-color: #ffffff;
+    color: #111827;
 }
 
 .instructor-form-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-  opacity: 1; /* Firefox */
+    color: #9ca3af;
+    opacity: 1;
 }
 
 .instructor-form-input:focus {
-  outline: none;
-  border: 1px solid white; /* keep dark gray on focus */
-  box-shadow: none;       /* remove any glow or highlight */
-  color: white;
+    outline: none;
+    border-color: #374151;
+    box-shadow: 0 0 0 1px #374151;
+    color: #111827;
 }
 
 .instructor-form-select {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #7E7E7E;
+    border: 1px solid #d1d5db;
     border-radius: 0.25rem;
-    background-color: #bebcbc00;
-    color: white;
+    background-color: #ffffff;
+    color: #111827;
 }
 .instructor-form-select option {
-    color: black;
-    background-color: white;
+    color: #111827;
+    background-color: #ffffff;
 }
 .instructor-form-select:focus {
-  outline: none;
-  border: 1px solid #424242; /* keep dark gray on focus */
-  box-shadow: none;       /* remove any glow or highlight */
-  color: white;
+    outline: none;
+    border-color: #374151;
+    box-shadow: none;
+    color: #111827;
 }
 
 .instructor-checkbox-group {
@@ -521,9 +539,8 @@ export default {
 }
 
 .instructor-checkbox-label {
-    color: #4D4D4D;
+    color: #374151;
     font-size: 0.875rem;
-    color: white;
 }
 
 .instructor-radio-group {
@@ -556,9 +573,8 @@ export default {
 }
 
 .instructor-radio-label {
-    color: #4D4D4D;
+    color: #374151;
     font-size: 0.875rem;
-    color: white;
 }
 
 .instructor-disabled-input {
@@ -567,13 +583,16 @@ export default {
 }
 
 .instructor-submit-btn {
-    background-color: #1898e5;
-    color: black;
+    background-color: #111827;
+    color: #ffffff;
     padding: 7px 1.5rem;
     border-radius: 0.25rem;
     border: none;
     cursor: pointer;
     font-weight: bold;
+}
+.instructor-submit-btn:hover:not(:disabled) {
+    background-color: #374151;
 }
 .home_page_style{
     padding: 0;
@@ -584,17 +603,17 @@ export default {
 }
 
 .profile-picture-container {
-    width: 8rem; 
+    width: 8rem;
     height: 8rem;
-    background-color: #4CAF50; 
-    border-radius: 9999px; 
+    background-color: #e5e7eb;
+    border-radius: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     overflow: hidden;
     position: relative;
-    color: white;
+    color: #374151;
     margin: 0 auto;
 }
 
@@ -611,11 +630,12 @@ export default {
 
 .camera-icon-container {
     position: absolute;
-    bottom: 0.5rem; 
-    right: 0.5rem; 
-    background-color: white;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
     border-radius: 9999px;
-    padding: 0.5rem; 
+    padding: 0.5rem;
     cursor: pointer;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
@@ -623,7 +643,7 @@ export default {
 .camera-icon {
     width: 1.5rem;
     height: 1.5rem;
-    color: #4A5568; 
+    color: #374151;
 }
 
 .hidden {
