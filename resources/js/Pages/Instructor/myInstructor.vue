@@ -9,7 +9,7 @@
                 <div class="instructor-card">
                     <div class="instructor-card-header">
                      <a :href="user ? '/dashboard' : '/'">   
-                        <img src="/images/MBM_Uni.png" alt="logo" class="" style=" width: 100px; height: 100px;">
+                        <img src="/images/MBM_Uni.png" alt="logo" class="" style=" width: 100px; height: 100px;filter: grayscale(100%) brightness(0);">
                         </a>
                     </div>
                     <div class="instructor-content-container" style="text-align: start;">

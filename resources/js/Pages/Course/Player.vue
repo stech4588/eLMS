@@ -102,7 +102,9 @@
                             <div class="player-instructor-card">
                                 <h3 class="player-instructor-heading">Instructor</h3>
                                 <div class="flex items-start gap-3">
-                                    <img :src="course.user && course.user.profile_photo_url ? course.user.profile_photo_url : '/images/user_listing.svg'" :alt="course.user?.name" class="player-instructor-avatar" />
+                                    <div class="player-instructor-avatar player-instructor-avatar-initials">
+                                        {{ getInitials(course.user ? course.user.name : '') }}
+                                    </div>
                                     <div>
                                         <p class="player-instructor-name">{{ course.user ? course.user.name : 'Instructor' }}</p>
                                         <p class="player-instructor-role">Instructor</p>
@@ -232,8 +234,9 @@
 
                             <!-- New comment form -->
                             <div class="flex items-start space-x-4 mb-8">
-                                <img :src="authUser && authUser.profile_photo_url ? authUser.profile_photo_url : '/images/profile_photo.jpg'"
-                                    alt="Your avatar" class="w-10 h-10 rounded-full object-cover">
+                                <div class="w-10 h-10 rounded-full bg-[#1C355E] text-white flex items-center justify-center font-semibold text-sm">
+                                    {{ getInitials(authUser && authUser.name ? authUser.name : 'You') }}
+                                </div>
                                 <div class="flex-1 relative">
                                     <textarea v-model="newComment" rows="1" placeholder="Add a comment..."
                                         @focus="isCommentFocused = true"
@@ -329,6 +332,16 @@ const props = defineProps({
     course: Object, // Contains course details and an array of its videos
     initialVideoId: [String, Number, null], // Optional ID of the video to play first
 });
+
+const getInitials = (name) => {
+    if (!name || typeof name !== 'string') return '';
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '';
+    return parts
+        .slice(0, 2)
+        .map((p) => p.charAt(0).toUpperCase())
+        .join('');
+};
 
 const showFeedbackPopup = ref(false);
 const completedCourse = ref(null);
@@ -1160,6 +1173,7 @@ const updateScreenSize = () => {
 }
 .player-lesson-title {
     flex: 1;
+    color: #ffffff;
     font-size: 0.875rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1169,7 +1183,7 @@ const updateScreenSize = () => {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
-    color: #1C355E;
+    color: #fff;
 }
 .player-category-nav {
     display: flex;
@@ -1210,6 +1224,18 @@ const updateScreenSize = () => {
     object-fit: cover;
     flex-shrink: 0;
 }
+.player-instructor-avatar-initials {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1C355E;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
 .player-instructor-name {
     font-weight: 600;
     margin: 0;
@@ -1217,7 +1243,7 @@ const updateScreenSize = () => {
 }
 .player-instructor-role {
     font-size: 0.8125rem;
-    color: #1C355E;
+    color: #ffffff;
     margin: 0.25rem 0 0 0;
 }
 .player-instructor-bio {
@@ -1231,7 +1257,7 @@ const updateScreenSize = () => {
     text-align: center;
     padding: 0.5rem;
     font-size: 0.875rem;
-    color: #1C355E;
+    color: #fcfcfc;
     text-decoration: none;
     border-radius: 0.375rem;
     margin-top: 0.5rem;

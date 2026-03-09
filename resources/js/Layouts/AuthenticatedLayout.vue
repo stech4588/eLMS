@@ -204,6 +204,14 @@ const evaluatePagePermission = async () => {
         permissionMessage.value = hasPageAccess.value
             ? ''
             : 'You do not have permission to view this page.';
+        // If user doesn't have access to this page, redirect them away instead of
+        // showing an \"Access Denied\" screen.
+        if (requiredPermission && !hasPageAccess.value) {
+            const current = route().current();
+            if (current !== 'dashboard') {
+                router.visit(route('dashboard'));
+            }
+        }
     } catch (error) {
         hasPageAccess.value = false;
         permissionMessage.value = 'Unable to verify permissions. Please try again.';
@@ -291,7 +299,6 @@ const navbarLinks = computed(() => {
         { label: 'My Courses', href: '/coursess', show: hasPermission('mycourses') },
         { label: 'Add Course', href: '/addnewcourses', show: hasPermission('addnewcourses') },
         { label: 'My Library', href: '/library', show: hasPermission('libraryView') },
-        { label: 'Help', href: '/help', show: true },
     ];
     return links.filter(l => l.show);
 });
@@ -602,6 +609,7 @@ onMounted(() => {
 
 .logo_image_nav {
     display: block;
+    filter: grayscale(100%) brightness(0);
     cursor: pointer;
 }
 

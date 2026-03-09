@@ -183,6 +183,7 @@ function togglePassword() {
 
 .login-logo {
   width: 80px;
+  filter: grayscale(100%) brightness(0);
   height: auto;
   display: inline-block;
 }

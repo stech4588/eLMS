@@ -91,11 +91,9 @@
                     <div class="course-detail-instructor">
                         <h3 class="course-detail-instructor-heading">Instructor</h3>
                         <div v-if="course.instructor" class="course-detail-instructor-card">
-                            <img
-                                :src="course.instructor.profile_photo_url || '/images/user_listing.svg'"
-                                :alt="course.instructor.name"
-                                class="course-detail-instructor-avatar"
-                            />
+                            <div class="course-detail-instructor-avatar-initials">
+                                {{ getInitials(course.instructor.name) }}
+                            </div>
                             <div class="course-detail-instructor-info">
                                 <p class="course-detail-instructor-name">{{ course.instructor.name }}</p>
                                 <p class="course-detail-instructor-role">Instructor</p>
@@ -135,6 +133,16 @@ const props = defineProps({
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+
+const getInitials = (name) => {
+    if (!name || typeof name !== 'string') return '';
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '';
+    return parts
+        .slice(0, 2)
+        .map((p) => p.charAt(0).toUpperCase())
+        .join('');
+};
 
 const hasAnyVideos = computed(() => {
     if (!props.course) return false;
@@ -351,11 +359,27 @@ const romanNumeral = (n) => {
     gap: 1rem;
     align-items: flex-start;
 }
+.course-detail-instructor-avatar-wrap {
+    flex-shrink: 0;
+}
 .course-detail-instructor-avatar {
     width: 56px;
     height: 56px;
     border-radius: 50%;
     object-fit: cover;
+    flex-shrink: 0;
+}
+.course-detail-instructor-avatar-initials {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #1C355E;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.03em;
     flex-shrink: 0;
 }
 .course-detail-instructor-info {

@@ -183,7 +183,7 @@
 
         <!-- Actions -->
         <div class="footer-col footer-actions">
-          <Link :href="joinNowUrl" class="btn-footer-green">JOIN NOW ➜</Link>
+          <!-- <Link :href="joinNowUrl" class="btn-footer-green">JOIN NOW ➜</Link> -->
           <Link href="/contact" class="btn-footer-outline">CONTACT ➜</Link>
         </div>
       </div>
