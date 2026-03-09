@@ -7,149 +7,123 @@
         <NotesPopup :show="showNotesPopup" :video="notesForVideo" @close="handleCloseNotesPopup" />
         <QuizPopup :show="showQuizPopup" :quiz="activeQuiz" @close="closeQuizPopup" @completed="onQuizCompleted" />
         <QuizResultPopup :show="showQuizResultPopup" :attempt="quizAttemptResult" @close="onQuizResultClosed" />
-        <div class="flex h-screen bg-gray-100 dark:bg-gray-900 relative">
-            <!-- AI Chatbot -->
-            <AiChatbot 
-                :show="showChatbot" 
-                :chat-context="chatbotContext" 
+        <div class="player-page-wrap bg-gray-100 dark:bg-gray-900 min-h-screen relative">
+            <AiChatbot
+                :show="showChatbot"
+                :chat-context="chatbotContext"
                 :welcome-message="chatbotWelcomeMessage"
                 :placeholder="chatbotPlaceholder"
-                @close="showChatbot = false" 
+                @close="showChatbot = false"
             />
-
-            <!-- Floating AI Chat Button -->
             <div class="fixed bottom-4 right-4 z-40">
-                <button @click="showChatbot = true" class="bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 transition">
-                    <svg xmlns="http://www.w.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                <button @click="showChatbot = true" class="bg-[#1C355E] text-white rounded-full p-4 shadow-lg hover:bg-[#254a7a] transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                 </button>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="flex-1 flex flex-col overflow-y-auto no-scrollbar">
-                <!-- Video Sidebar Toggle Button (Mobile Only) -->
-                <div v-if="!isLargeScreen" class="fixed top-20 right-4 z-50">
-                    <button @click="isVideoSidebarOpen = !isVideoSidebarOpen" 
-                        class=" text-white p-3 rounded-lg shadow-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-                </div>
-                
-                <!-- Video Player -->
-                <div class="bg-black flex-shrink-0 relative group">
-                    <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
-                        :src="currentVideo.video_url" controls controlslist="nodownload" @contextmenu.prevent
-                        autoplay @pause="onPause"
-                        @ended="handleEnded" @loadedmetadata="handleLoadedMetadata"
-                        class="w-full h-[60vh] object-contain player_video" @play="onPlay">
-                        <!-- <source :src="currentVideo.video_url" type="video/mp4"> -->
-                        Your browser does not support the video tag.
-                    </video>
-                    <div v-else class="w-full h-[60vh] bg-black flex items-center justify-center text-white">
-                        <p v-if="!course.videos || course.videos.length === 0">No videos available for this course.</p>
-                        <p v-else>Select a video to play.</p>
-                    </div>
-
-                    <!-- Custom Controls Overlay -->
-                    <div v-if="currentVideo && currentVideo.video_url"
-                        class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="flex items-center justify-center space-x-12 pointer-events-auto">
-                            <button @click="skipBackward(10)"
-                                class="text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110">
-                                <svg width="60" height="60" viewBox="0 0 20 20" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M10.0003 4.16666L9.08033 2.87916C8.73866 2.39916 8.56616 2.15916 8.67449 1.93749C8.78283 1.71416 9.05783 1.70166 9.60783 1.67582C9.73783 1.66971 9.86866 1.66666 10.0003 1.66666C14.6028 1.66666 18.3337 5.39749 18.3337 9.99999C18.3337 14.6025 14.6028 18.3333 10.0003 18.3333C5.39783 18.3333 1.66699 14.6025 1.66699 9.99999C1.66635 8.70617 1.96727 7.43 2.54589 6.27277C3.1245 5.11554 3.96488 4.1091 5.00033 3.33332"
-                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M6.66016 9.16998C7.10016 8.81998 7.50016 8.24165 7.75016 8.34998C8.00016 8.45665 7.92016 8.80998 7.92016 9.35998V13.34M13.3352 10.5C13.3352 9.34998 13.3902 9.03998 13.1702 8.66998C12.9502 8.29998 12.4002 8.33165 11.8502 8.33165C11.3002 8.33165 10.9002 8.29998 10.6352 8.59998C10.3102 8.94998 10.4502 9.59998 10.4102 10.5C10.5002 11.7 10.2552 12.65 10.6302 13.05C10.9002 13.38 11.3802 13.33 11.9502 13.34C12.5168 13.3333 12.8602 13.36 13.1402 13.04C13.4502 12.76 13.3002 11.65 13.3352 10.5Z"
-                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </button>
-
-                            <button @click="togglePlayPause"
-                                class="text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110">
-                                <svg v-if="!isPlaying" xmlns="http://www.w3.org/2000/svg" width="64" height="64"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16">
-                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                </svg>
-                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="64" height="64"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round" class="w-16 h-16">
-                                    <rect x="6" y="4" width="4" height="16"></rect>
-                                    <rect x="14" y="4" width="4" height="16"></rect>
-                                </svg>
-                            </button>
-
-                            <button @click="skipForward(10)"
-                                class="text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110">
-                                <svg width="60" height="60" viewBox="0 0 20 20" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M10.0003 4.16666L10.9203 2.87916C11.262 2.39916 11.4345 2.15916 11.3262 1.93749C11.2178 1.71416 10.9428 1.70166 10.3928 1.67582C10.2628 1.66971 10.132 1.66666 10.0003 1.66666C5.39783 1.66666 1.66699 5.39749 1.66699 9.99999C1.66699 14.6025 5.39783 18.3333 10.0003 18.3333C14.6028 18.3333 18.3337 14.6025 18.3337 9.99999C18.3343 8.70617 18.0334 7.43 17.4548 6.27277C16.8762 5.11554 16.0358 4.1091 15.0003 3.33332"
-                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M6.66016 9.16998C7.10016 8.81998 7.50016 8.24165 7.75016 8.34998C8.00016 8.45665 7.92016 8.80998 7.92016 9.35998V13.34M13.3352 10.5C13.3352 9.34998 13.3902 9.03998 13.1702 8.66998C12.9502 8.29998 12.4002 8.33165 11.8502 8.33165C11.3002 8.33165 10.9002 8.29998 10.6352 8.59998C10.3102 8.94998 10.4502 9.59998 10.4102 10.5C10.5002 11.7 10.2552 12.65 10.6302 13.05C10.9002 13.38 11.3802 13.33 11.9502 13.34C12.5168 13.3333 12.8602 13.36 13.1402 13.04C13.4502 12.76 13.3002 11.65 13.3352 10.5Z"
-                                        stroke="white" stroke-width="1.25" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
+            <div class="player-contained max-w-7xl mx-auto px-4 py-6">
+                <div class="player-grid">
+                    <!-- Left: Video + details -->
+                    <div class="player-left">
+                        <div v-if="!isLargeScreen" class="flex justify-end mb-2">
+                            <button @click="isVideoSidebarOpen = !isVideoSidebarOpen" class="player-mobile-menu-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
                             </button>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Prev/Next Video Buttons -->
-                <div v-if="currentVideo && sortedVideos.length > 1"
-                    class="flex items-center justify-between px-6 py-4 bg-white dark:bg-dark-bg-secondary">
-                    <button v-if="currentVideoIndex > 0" @click="playPreviousVideo"
-                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#3b82f6] border border-transparent rounded-md shadow-sm hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <!-- Heroicon name: solid/chevron-left -->
-                        <svg class="w-5 h-5 mr-2 -ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                            fill="currentColor" aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        Previous
-                    </button>
-                    <div v-else>&nbsp;</div> <!-- Placeholder to maintain layout -->
-
-                    <button v-if="currentVideoIndex < sortedVideos.length - 1" @click="playNextVideo"
-                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#3b82f6] border border-transparent rounded-md shadow-sm hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Next
-                        <!-- Heroicon name: solid/chevron-right -->
-                        <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                            fill="currentColor" aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Video Details -->
-                <div class="p-6 lg:p-8 bg-white dark:bg-dark-bg-secondary dark:text-white flex-1">
-                    <div v-if="currentVideo">
-                        <h1 class="text-3xl font-bold mb-3 dark:text-white">{{ currentVideo.title }}</h1>
-                        
-                        <!-- Instructor Section -->
-                        <div class="mt-6">
-                            <h2 class="text-xl font-semibold mb-3 dark:text-white">Instructor</h2>
-                            <div class="flex items-center">
-                                <img :src="course.user.profile_photo_url ? course.user.profile_photo_url : '/images/profile_photo.jpg'" class="w-16 h-16 rounded-full object-cover" />
-                                <div class="ml-4">
-                                    <h3 class="text-lg font-semibold dark:text-white">{{ course.user.name }}</h3>
-                                    <button class="mt-1 text-sm text-blue-600 dark:text-blue-400 border border-blue-600 dark:border-blue-400 rounded-full px-4 py-1 hover:bg-blue-50 dark:hover:bg-gray-700 transition">
-                                        + Follow
-                                    </button>
-                                </div>
+                        <div class="player-video-box bg-black rounded-lg overflow-hidden relative group">
+                            <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
+                                :src="currentVideo.video_url" controls controlslist="nodownload" @contextmenu.prevent
+                                autoplay @pause="onPause" @ended="handleEnded" @loadedmetadata="handleLoadedMetadata"
+                                class="player-video-el w-full aspect-video object-contain" @play="onPlay">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div v-else class="w-full aspect-video bg-black flex items-center justify-center text-white">
+                                <p v-if="!course.videos || course.videos.length === 0">No videos available.</p>
+                                <p v-else>Select a video to play.</p>
                             </div>
                         </div>
+
+                        <div v-if="currentVideo && sortedVideos.length > 1" class="player-prev-next">
+                            <button v-if="currentVideoIndex > 0" @click="playPreviousVideo" class="player-nav-btn">Previous</button>
+                            <div v-else></div>
+                            <button v-if="currentVideoIndex < sortedVideos.length - 1" @click="playNextVideo" class="player-nav-btn">Next</button>
+                        </div>
+
+                        <div v-if="currentVideo" class="player-below-video bg-white dark:bg-dark-bg-secondary rounded-lg border border-gray-200 dark:border-gray-700 p-4 mt-4">
+                            <button @click="saveProgress(true, false)" class="player-mark-complete">
+                                Mark As Complete
+                            </button>
+                            <h1 class="player-video-title">{{ currentVideo.title }}</h1>
+                            <p v-if="currentVideoSection" class="player-section-label">{{ (currentVideoSection.order != null ? currentVideoSection.order : (courseSections.findIndex(s => s.id === currentVideoSection.id) + 1)) }}. {{ currentVideoSection.title }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Right: One section + Next Category -->
+                    <div :class="['player-right', { 'open': isVideoSidebarOpen || isLargeScreen }]">
+                        <div class="player-sidebar-inner">
+                            <div v-if="!isLargeScreen" class="flex justify-end mb-2">
+                                <button @click="isVideoSidebarOpen = false" class="text-gray-400 hover:text-white p-1">✕</button>
+                            </div>
+                            <template v-if="courseSections.length > 0 && currentSidebarSection">
+                                <h3 class="player-sidebar-heading">{{ romanNumeral(currentSectionIndex + 1) }}. {{ currentSidebarSection.title }}</h3>
+                                <p class="player-sidebar-lessons">{{ (currentSidebarSection.videos || []).length }} Lessons</p>
+                                <ul class="player-lesson-list">
+                                    <li v-for="vid in (currentSidebarSection.videos || [])" :key="vid.id">
+                                        <button v-if="getVideoById(vid.id)" @click="selectVideo(getVideoById(vid.id))"
+                                            :class="['player-lesson-item', currentVideo && currentVideo.id === vid.id ? 'player-lesson-item-active' : '']">
+                                            <img v-if="getVideoById(vid.id).thumbnail_url" :src="getVideoById(vid.id).thumbnail_url" :alt="vid.title" class="player-lesson-thumb" />
+                                            <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder"></div>
+                                            <span class="player-lesson-title">{{ vid.title }}</span>
+                                            <svg v-if="currentVideo && currentVideo.id === vid.id" class="player-lesson-play-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </button>
+                                    </li>
+                                </ul>
+                                <div class="player-category-nav">
+                                    <button v-if="hasPrevCategory" @click="prevCategory" class="player-category-btn">Previous Category</button>
+                                    <button v-if="hasNextCategory" @click="nextCategory" class="player-category-btn player-category-btn-primary">Next Category</button>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <h3 class="player-sidebar-heading">Lessons</h3>
+                                <ul class="player-lesson-list">
+                                    <li v-for="video in sortedVideos" :key="video.id">
+                                        <button @click="selectVideo(video)"
+                                            :class="['player-lesson-item', currentVideo && currentVideo.id === video.id ? 'player-lesson-item-active' : '']">
+                                            <img v-if="video.thumbnail_url" :src="video.thumbnail_url" :alt="video.title" class="player-lesson-thumb" />
+                                            <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder"></div>
+                                            <span class="player-lesson-title">{{ video.title }}</span>
+                                            <svg v-if="currentVideo && currentVideo.id === video.id" class="player-lesson-play-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </template>
+
+                            <div class="player-instructor-card">
+                                <h3 class="player-instructor-heading">Instructor</h3>
+                                <div class="flex items-start gap-3">
+                                    <div class="player-instructor-avatar player-instructor-avatar-initials">
+                                        {{ getInitials(course.user ? course.user.name : '') }}
+                                    </div>
+                                    <div>
+                                        <p class="player-instructor-name">{{ course.user ? course.user.name : 'Instructor' }}</p>
+                                        <p class="player-instructor-role">Instructor</p>
+                                        <p class="player-instructor-bio">Course creator and instructor.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Link :href="route('courses.show', { course: course.id })" class="player-back-link">Back to Course Details</Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expanded details (description, etc.) below the grid -->
+            <div class="max-w-7xl mx-auto px-4 pb-8">
+                <div class="p-6 lg:p-8 bg-white dark:bg-dark-bg-secondary dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 mt-6">
+                    <div v-if="currentVideo">
+                        <h1 class="text-3xl font-bold mb-3 dark:text-white">{{ currentVideo.title }}</h1>
 
                         <!-- Video Description -->
                         <div class="mt-8 prose dark:prose-invert max-w-none">
@@ -228,7 +202,7 @@
                                     <div class="flex-grow">
                                         <p class="text-sm text-gray-500 dark:text-gray-400">Course</p>
                                         <Link :href="route('courses.show', { course: relatedCourse.id })"
-                                            class="hover:text-blue-500 dark:hover:text-blue-400">
+                                            class="hover:text-gray-900 dark:hover:text-gray-200">
                                         <h4 class="text-lg font-semibold truncate dark:text-white">{{ relatedCourse.title
                                         }}</h4>
                                         </Link>
@@ -240,7 +214,7 @@
                                     <div class="flex-shrink-0">
                                         <button @click.prevent="toggleFavorite(relatedCourse)" class="p-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
-                                                :class="relatedCourse.is_favorited ? 'text-blue-500 fill-current' : 'text-gray-400'"
+                                                :class="relatedCourse.is_favorited ? 'text-green-600 fill-current' : 'text-gray-400'"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -260,12 +234,13 @@
 
                             <!-- New comment form -->
                             <div class="flex items-start space-x-4 mb-8">
-                                <img :src="authUser && authUser.profile_photo_url ? authUser.profile_photo_url : '/images/profile_photo.jpg'"
-                                    alt="Your avatar" class="w-10 h-10 rounded-full object-cover">
+                                <div class="w-10 h-10 rounded-full bg-[#1C355E] text-white flex items-center justify-center font-semibold text-sm">
+                                    {{ getInitials(authUser && authUser.name ? authUser.name : 'You') }}
+                                </div>
                                 <div class="flex-1 relative">
                                     <textarea v-model="newComment" rows="1" placeholder="Add a comment..."
                                         @focus="isCommentFocused = true"
-                                        class="w-full p-3 bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-0 transition resize-none"
+                                        class="w-full p-3 bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-green-500 focus:ring-0 transition resize-none"
                                         style="outline: none;"></textarea>
                                     <div v-if="isCommentFocused" class="flex justify-between items-center mt-2">
                                         <button @click="showEmojiPicker = !showEmojiPicker" class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
@@ -279,7 +254,7 @@
                                                 Cancel
                                             </button>
                                             <button @click="submitComment" :disabled="!newComment.trim()"
-                                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors text-sm font-semibold">
+                                                class="px-6 py-2 bg-[#1C355E] text-white rounded-lg hover:bg-[#254a7a] disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors text-sm font-semibold">
                                                 Comment
                                             </button>
                                         </div>
@@ -313,11 +288,11 @@
                             <!-- Show More / Show Less Buttons -->
                             <div class="mt-6 text-center" v-if="totalCommentsCount > COMMENTS_TO_SHOW_INCREMENT">
                                 <button v-if="hasMoreComments" @click="showMoreComments"
-                                    class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                                    class="text-sm font-semibold text-gray-900 dark:text-gray-200 hover:underline">
                                     Show More Comments
                                 </button>
                                 <button v-else @click="showLessComments"
-                                    class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                                    class="text-sm font-semibold text-gray-900 dark:text-gray-200 hover:underline">
                                     Show Less Comments
                                 </button>
                             </div>
@@ -329,70 +304,6 @@
                         <p class="text-gray-600">Video details will appear here once a video is selected.</p>
                     </div>
 
-                </div>
-            </div>
-
-            <!-- Sidebar for Videos -->
-            <div v-if="isPlayerPage"
-                :class="['w-80 bg-gray-800 text-white flex-shrink-0 player_sidebar flex flex-col h-screen', { 'open': isVideoSidebarOpen || isLargeScreen }]">
-                <div class="p-4 border-b border-gray-700 flex items-center justify-between">
-                    <h2 class="text-xl font-semibold">{{ course.title }}</h2>
-                    <!-- Close button for mobile -->
-                    <button v-if="!isLargeScreen" @click="isVideoSidebarOpen = false" 
-                        class="lg:hidden text-gray-400 hover:text-white transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="overflow-y-auto flex-grow">
-                    <!-- With sections -->
-                    <template v-if="course.sections && course.sections.length > 0">
-                        <div v-for="section in course.sections" :key="section.id" class="p-4">
-                            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-2">{{ section.title }}</h3>
-                            <ul class="space-y-2">
-                                <li v-for="vid in section.videos" :key="vid.id">
-                                    <button v-if="getVideoById(vid.id)" @click="selectVideo(getVideoById(vid.id))"
-                                        :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-3',
-                                            currentVideo && currentVideo.id === vid.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
-                                        <div v-if="getVideoById(vid.id).thumbnail_url" class="flex-shrink-0 relative w-16 h-10 overflow-hidden rounded">
-                                            <img :src="getVideoById(vid.id).thumbnail_url" :alt="vid.title" class="w-full h-full object-cover" />
-                                            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
-                                            </div>
-                                        </div>
-                                        <svg v-else class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span class="flex-1 truncate">▶ {{ vid.title }}</span>
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </template>
-                    <!-- Flat list (no sections) -->
-                    <ul v-else class="p-4 space-y-2">
-                        <li v-for="video in sortedVideos" :key="video.id">
-                            <button @click="selectVideo(video)"
-                                :class="['w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-3',
-                                    currentVideo && currentVideo.id === video.id ? 'bg-gradient-to-r from-gray-600 to-gray-800 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
-                                <div v-if="video.thumbnail_url" class="flex-shrink-0 relative w-16 h-10 overflow-hidden rounded">
-                                    <img :src="video.thumbnail_url" :alt="video.title + ' thumbnail'" class="w-full h-full object-cover" />
-                                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
-                                    </div>
-                                </div>
-                                <svg v-else class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span class="flex-1 truncate">{{ video.title }}</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="p-4 mt-auto border-t border-gray-700">
-                    <Link :href="route('courses.show', { course: course.id })"
-                        class="block w-full text-center px-3 py-2 rounded-md text-sm bg-gray-600 hover:bg-gray-500 transition-colors">
-                    Back to Course Details
-                    </Link>
                 </div>
             </div>
         </div>
@@ -421,6 +332,16 @@ const props = defineProps({
     course: Object, // Contains course details and an array of its videos
     initialVideoId: [String, Number, null], // Optional ID of the video to play first
 });
+
+const getInitials = (name) => {
+    if (!name || typeof name !== 'string') return '';
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '';
+    return parts
+        .slice(0, 2)
+        .map((p) => p.charAt(0).toUpperCase())
+        .join('');
+};
 
 const showFeedbackPopup = ref(false);
 const completedCourse = ref(null);
@@ -477,8 +398,9 @@ function closeQuizPopup() {
 }
 
 const currentVideo = ref(null);
-const isLargeScreen = ref(window.innerWidth > 770); // Reactive variable for screen size
-const isVideoSidebarOpen = ref(false); // Separate state for video sidebar
+const currentSectionIndex = ref(0); // Which section is visible in right sidebar (one section at a time)
+const isLargeScreen = ref(window.innerWidth > 770);
+const isVideoSidebarOpen = ref(false);
 const newComment = ref(''); // For the new comment textarea
 const isCommentFocused = ref(false); // For showing comment buttons
 const showEmojiPicker = ref(false); // For emoji picker visibility
@@ -557,6 +479,32 @@ const sortedVideos = computed(() => {
 
 const getVideoById = (id) => sortedVideos.value.find(v => v.id === id);
 
+// One section at a time in sidebar
+const courseSections = computed(() => props.course?.sections || []);
+const currentSidebarSection = computed(() => {
+    const sections = courseSections.value;
+    if (!sections.length) return null;
+    const idx = Math.min(currentSectionIndex.value, sections.length - 1);
+    return sections[idx];
+});
+const hasNextCategory = computed(() => courseSections.value.length > 0 && currentSectionIndex.value < courseSections.value.length - 1);
+const hasPrevCategory = computed(() => currentSectionIndex.value > 0);
+const nextCategory = () => { if (hasNextCategory.value) currentSectionIndex.value++; };
+const prevCategory = () => { if (hasPrevCategory.value) currentSectionIndex.value--; };
+
+// Section that contains the current video (for display below player)
+const currentVideoSection = computed(() => {
+    if (!currentVideo.value || !courseSections.value.length) return null;
+    for (const section of courseSections.value) {
+        if (section.videos && section.videos.some(v => v.id === currentVideo.value.id)) return section;
+    }
+    return null;
+});
+const romanNumeral = (n) => {
+    const map = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV'];
+    return map[n - 1] != null ? map[n - 1] : String(n);
+};
+
 const currentVideoIndex = computed(() => {
     if (!currentVideo.value || !sortedVideos.value.length) {
         return -1;
@@ -578,12 +526,17 @@ const selectVideo = (video) => {
     }
 
     currentVideo.value = video;
-    lastProgressSaveTime = 0; // Reset for the new video
-    currentVideoSavedProgress.value = null; // Reset saved progress for the new video
-    initialTimeApplied.value = false; // Reset flag for new video
+    lastProgressSaveTime = 0;
+    currentVideoSavedProgress.value = null;
+    initialTimeApplied.value = false;
+
+    if (video && courseSections.value.length) {
+        const idx = courseSections.value.findIndex(s => s.videos && s.videos.some(v => v.id === video.id));
+        if (idx >= 0) currentSectionIndex.value = idx;
+    }
 
     if (video) {
-        fetchVideoProgress(video.id); // Fetch progress for the newly selected video
+        fetchVideoProgress(video.id);
         console.log(`selectVideo: Switched to video ${video.id}. Player should reload due to :key change.`);
     } else {
         console.log("selectVideo: Cleared current video.");
@@ -1075,4 +1028,247 @@ const updateScreenSize = () => {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
+
+/* Contained player layout: two columns, not full-page */
+.player-contained { }
+.player-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+}
+@media (max-width: 900px) {
+    .player-grid { grid-template-columns: 1fr; }
+}
+.player-left { min-width: 0; }
+.player-video-box { }
+.player-video-el { display: block; }
+.player-prev-next {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.player-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: white;
+    background-color: #1C355E;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+.player-nav-btn:hover { background-color: #254a7a; }
+.player-mark-complete {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1C355E;
+    background: transparent;
+    border: 1px solid #1C355E;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+.player-mark-complete:hover { background-color: rgba(34, 197, 94, 0.08); }
+.player-video-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+    color: #111;
+}
+.dark .player-video-title { color: #fff; }
+.player-section-label {
+    font-size: 0.875rem;
+    color: #1C355E;
+    margin: 0;
+}
+.dark .player-section-label { color: #4ade80; }
+
+/* Right column: one section + Next Category */
+.player-right {
+    position: sticky;
+    top: 1rem;
+    background: #1f2937;
+    color: #fff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+}
+.dark .player-right { background: #111827; }
+@media (max-width: 900px) {
+    .player-right {
+        position: fixed;
+        top: 5rem;
+        right: 0;
+        width: 320px;
+        max-width: calc(100vw - 2rem);
+        height: calc(100vh - 5rem);
+        z-index: 1002;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        box-shadow: -2px 0 12px rgba(0,0,0,0.2);
+    }
+    .player-right.open { transform: translateX(0); }
+}
+.player-sidebar-inner {
+    padding: 1rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+.player-sidebar-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: #fff;
+}
+.player-sidebar-lessons {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin: 0 0 0.75rem 0;
+}
+.player-lesson-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+.player-lesson-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0;
+    border: none;
+    background: transparent;
+    color: #e5e7eb;
+    cursor: pointer;
+    border-radius: 0.375rem;
+    transition: background 0.15s;
+}
+.player-lesson-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.player-lesson-item-active {
+    background: rgba(34, 197, 94, 0.2);
+    color: #1C355E;
+}
+.player-lesson-thumb {
+    width: 120px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+}
+.player-lesson-thumb-placeholder {
+    background: #374151;
+    display: block;
+}
+.player-lesson-title {
+    flex: 1;
+    color: #ffffff;
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.player-lesson-play-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    color: #fff;
+}
+.player-category-nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.player-category-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #9ca3af;
+    background: #374151;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+.player-category-btn:hover { color: #fff; background: #4b5563; }
+.player-category-btn-primary {
+    color: #fff;
+    background: #1C355E;
+}
+.player-category-btn-primary:hover { background: #254a7a; }
+.player-instructor-card {
+    padding: 1rem 0;
+    border-top: 1px solid #374151;
+}
+.player-instructor-heading {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    color: #fff;
+}
+.player-instructor-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.player-instructor-avatar-initials {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1C355E;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+.player-instructor-name {
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+}
+.player-instructor-role {
+    font-size: 0.8125rem;
+    color: #ffffff;
+    margin: 0.25rem 0 0 0;
+}
+.player-instructor-bio {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+    margin: 0.5rem 0 0 0;
+    line-height: 1.4;
+}
+.player-back-link {
+    display: block;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    color: #fcfcfc;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    margin-top: 0.5rem;
+}
+.player-back-link:hover { color: #4ade80; text-decoration: underline; }
+.player-mobile-menu-btn {
+    padding: 0.5rem;
+    color: #374151;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+}
+.dark .player-mobile-menu-btn { color: #e5e7eb; background: #1f2937; border-color: #374151; }
 </style>

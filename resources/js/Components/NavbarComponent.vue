@@ -366,7 +366,7 @@ export default {
           <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
           <a @click="scrollToSection('pricing')">PRICING</a>
           <a @click="scrollToSection('faq')">FAQ</a>
-          <Link :href="joinNowUrl">JOIN NOW</Link>
+          <!-- <Link :href="joinNowUrl">JOIN NOW</Link> -->
           <Link :href="loginUrl" class="login-link">LOG IN</Link>
         </div>
         <div class="mobile-menu-btn" @click="toggleMenu">
@@ -387,7 +387,7 @@ export default {
         <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
         <a @click="scrollToSection('pricing')">PRICING</a>
         <a @click="scrollToSection('faq')">FAQ</a>
-        <Link :href="joinNowUrl">JOIN NOW</Link>
+        <!-- <Link :href="joinNowUrl">JOIN NOW</Link> -->
         <Link :href="loginUrl">LOG IN</Link>
       </div>
     </div>

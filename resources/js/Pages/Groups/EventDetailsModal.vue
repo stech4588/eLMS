@@ -3,8 +3,8 @@
         <div v-if="event" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg">
             <div class="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-3">
-                    <div class="bg-indigo-100 dark:bg-indigo-900 p-2 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 dark:text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
@@ -34,7 +34,7 @@
                     </div>
                     <div v-if="event.call_link" class="md:col-span-2">
                         <strong class="block font-medium text-gray-900 dark:text-white">Call Link:</strong>
-                        <a :href="event.call_link" target="_blank" class="text-indigo-600 dark:text-indigo-400 hover:underline break-all">{{ event.call_link }}</a>
+                        <a :href="event.call_link" target="_blank" class="text-gray-900 dark:text-gray-200 hover:underline break-all">{{ event.call_link }}</a>
                     </div>
                 </div>
             </div>

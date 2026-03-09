@@ -235,7 +235,7 @@ const submitForm = () => {
 }
 
 .contact-submit-btn {
-    background: linear-gradient(115deg, #102548 30%, #004c8d 65%, #009ada 100%);
+    background: rgb(41, 41, 124);
     color: #ffffff;
     box-shadow: 
         0 4px 15px rgba(0, 76, 141, 0.3),

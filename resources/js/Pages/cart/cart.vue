@@ -1,33 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div class="bg-[#97d5ff] min-h-screen py-12 text-black dark:bg-dark-bg-primary dark:text-white">
+        <div class="bg-gray-50 min-h-screen py-10 text-black dark:bg-dark-bg-primary dark:text-white">
             <div class="container mx-auto px-4">
-                <!-- Promo Banner -->
-                <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-r from-[#9d85ff] to-[#6a6cff] p-1 text-white relative">
-                    <div class="flex items-center justify-between p-4">
-                        <div class="flex items-center gap-6">
-                            <!-- Countdown Box -->
-                            <div class="rounded-lg bg-[#6e58e0] p-3 text-center shadow-lg">
-                                <div class="text-xs font-bold uppercase tracking-wider">Don't miss out!</div>
-                                <div class="mt-1 font-mono text-2xl tracking-wider">
-                                    <span>{{ formattedTime.days }}</span>:
-                                    <span>{{ formattedTime.hours }}</span>:
-                                    <span>{{ formattedTime.minutes }}</span>:
-                                    <span>{{ formattedTime.seconds }}</span>
-                                </div>
-                            </div>
-                            <!-- Promo Text -->
-                            <div class="text-lg font-bold">
-                                + 2 months free with a 48-month plan
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Percentage Symbol -->
-                    <div class="absolute right-0 top-0 flex h-full items-center pr-6 text-8xl font-black text-white opacity-20 transform -translate-y-1">
-                        %
-                    </div>
-                </div>
-                <h1 class="text-4xl font-bold text-center mb-8">Your cart</h1>
+                <h1 class="text-3xl font-bold text-center mb-8 dark:text-white">Your Cart</h1>
                 <div class="flex flex-col lg:flex-row gap-8">
 
                     <!-- Left Side -->
@@ -54,7 +29,7 @@
                                 </div>
 
                                 <div
-                                    class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-6 rounded-md">
+                                    class="bg-blue-50 border-l-4 border-[#1C355E] text-[#1C355E] p-4 mt-6 rounded-md">
                                     <p><span class="font-bold">Great news!</span> Your course includes lifetime access
                                         and all future updates for free.</p>
                                 </div>
@@ -66,7 +41,7 @@
                     <!-- Right Side -->
                     <div class="lg:w-1/3">
                         <div class="bg-white rounded-lg shadow-md p-6 dark:bg-dark-bg-secondary">
-                            <h2 class="text-2xl font-semibold mb-4">Order summary</h2>
+                            <h2 class="text-2xl font-semibold mb-4 dark:text-white">Order summary</h2>
 
                             <div class="flex justify-between items-center mb-4 pb-4 border-b">
                                 <span class="text-gray-600 dark:text-white">{{ course.title }}</span>
@@ -90,7 +65,7 @@
 
                             <form @submit.prevent="checkout">
                                 <button type="submit"
-                                    class="w-full bg-[#3b82f6] text-white font-semibold py-3 rounded-lg hover:bg-[#5998ff] transition-colors"
+                                    class="w-full bg-[#1C355E] text-white font-semibold py-3 rounded-lg hover:bg-[#254a7a] transition-colors"
                                     :disabled="paymentProcessing || !course.price">
                                     <span v-if="paymentProcessing">Processing...</span>
                                     <span v-else>Continue</span>

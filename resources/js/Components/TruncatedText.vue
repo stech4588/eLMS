@@ -4,7 +4,7 @@
         <component :is="isExpanded ? 'p' : 'span'" v-html="displayText"></component>
         <button @click="isExpanded = !isExpanded"
                 :class="{ 'ml-1': !isExpanded, 'mt-1': isExpanded }"
-                class="text-blue-600 dark:text-blue-400 hover:underline">
+                class="text-gray-900 dark:text-gray-200 hover:underline">
           {{ isExpanded ? 'See less' : 'See more' }}
         </button>
     </template>

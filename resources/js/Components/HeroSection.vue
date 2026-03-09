@@ -335,7 +335,7 @@ onMounted(() => {
 }
 
 .icon-box {
-    color: #3b82f6;
+    color: #1C355E;
     margin-bottom: 20px;
 }
 
@@ -380,7 +380,7 @@ onMounted(() => {
           Where ordinary people transform into global online entrepreneurs.
         </p>
         <div class="hero-actions">
-          <a :href="joinNowUrl" class="btn-outline-green">BROWSE COURSES</a>
+          <!-- <a :href="joinNowUrl" class="btn-outline-green">BROWSE COURSES</a> -->
           <a :href="loginUrl" class="btn-white-link">Login Now</a>
         </div>
       </div>

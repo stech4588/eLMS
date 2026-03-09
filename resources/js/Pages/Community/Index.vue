@@ -15,7 +15,7 @@
                         <div class="flex-1">
                             <textarea
                                 v-model="newPostContent"
-                                class="w-full p-2 sm:p-3 border rounded-lg bg-gray-50 text-gray-700 dark:text-gray-100 border-gray-300 dark:border-[#1f2d40] dark:bg-[#142233] focus:border-blue-500 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-500 transition-colors"
+                                class="w-full p-2 sm:p-3 border rounded-lg bg-gray-50 text-gray-700 dark:text-gray-100 border-gray-300 dark:border-[#1f2d40] dark:bg-[#142233] focus:border-green-500 dark:focus:border-green-500 focus:ring-2 focus:ring-green-200 dark:focus:ring-green-500 transition-colors"
                                 rows="3"
                                 placeholder="What's on your mind?"
                             ></textarea>
@@ -31,7 +31,7 @@
                                 <button
                                     @click="submitPost"
                                     :disabled="!newPostContent.trim() && attachments.length === 0"
-                                    class="bg-[#148ad9] text-white px-4 py-2 rounded-lg hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 disabled:bg-blue-300 dark:disabled:bg-[#1f2d40] transition-colors"
+                                    class="bg-[#1C355E] text-white px-4 py-2 rounded-lg hover:bg-[#254a7a] dark:bg-[#1C355E] dark:hover:bg-[#254a7a] disabled:bg-gray-300 dark:disabled:bg-[#1f2d40] transition-colors"
                                 >
                                     Post
                                 </button>
