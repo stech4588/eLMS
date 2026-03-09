@@ -33,10 +33,11 @@ class HandleInertiaRequests extends Middleware
         $user = $request->user();
         $profileIncomplete = false;
 
+        // Disable profile completion gating: after login we no longer use the
+        // /register/complete step anywhere in the app, so always treat the
+        // profile as complete for Inertia shared props.
         if ($user) {
-            $profileIncomplete = empty($user->phone_number) ||
-                                 empty($user->primary_learning_goal) ||
-                                 empty($user->preferred_topic_ids);
+            $profileIncomplete = false;
         }
 
         return [

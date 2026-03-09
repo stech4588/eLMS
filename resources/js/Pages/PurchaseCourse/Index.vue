@@ -25,7 +25,10 @@
             <h1 class="main-title">{{ displayCourse.title }}</h1>
 
             <div class="course-infobox">
-              <p class="deep-dive-text">
+              <p v-if="displayCourse.description" class="deep-dive-text">
+                {{ displayCourse.description }}
+              </p>
+              <p v-else class="deep-dive-text">
                 Learn the steps, tools and set your goals to 10X YOUR INCOME in this powerful deep-dive LIVE TRAINING on
                 increasing your income!
               </p>
@@ -187,14 +190,15 @@ export default {
       formErrors: {},
     };
   },
-  computed: {
-    displayCourse() {
+computed: {
+  displayCourse() {
       if (typeof window === 'undefined') return this.course;
       const params = new URLSearchParams(window.location.search);
 
-      let title = params.get('title') || this.course.title;
-      let thumbnail = params.get('image') || this.course.thumbnail;
-      let instructor = params.get('instructor') || this.course.instructor;
+      const title = params.get('title') || this.course.title;
+      const thumbnail = params.get('image') || this.course.thumbnail;
+      const instructor = params.get('instructor') || this.course.instructor;
+      const description = params.get('description') || this.course.description;
 
       let learning_points = this.course.learning_points;
       const pointsParam = params.get('points');
@@ -211,7 +215,8 @@ export default {
         title,
         thumbnail,
         instructor,
-        learning_points
+        learning_points,
+        description,
       };
     },
     coursePrice() {

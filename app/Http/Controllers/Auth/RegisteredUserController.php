@@ -23,9 +23,16 @@ class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
+     *
+     * After login we no longer want to show the /register/complete page, so
+     * redirect authenticated users away from it (e.g. dashboard).
      */
-    public function create(Request $request): Response
+    public function create(Request $request)
     {
+        if (Auth::check()) {
+            return redirect('/dashboard');
+        }
+
         // Capture referral code if present and store for later use
         if ($request->filled('ref')) {
             Session::put('referral_code', $request->query('ref'));

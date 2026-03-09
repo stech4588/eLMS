@@ -111,9 +111,29 @@
                                 <h3 class="my-program-title">{{ course.title }}</h3>
                                 <p v-if="course.description" class="my-program-desc">{{ course.description }}</p>
                                 <div class="my-program-actions">
-                                    <Link :href="route('courses.show', { course: course.id })" 
-                                          class="my-program-btn-start">
+                                    <!-- If user has already purchased this course, show Start Now -->
+                                    <Link
+                                        v-if="course.is_purchased"
+                                        :href="route('courses.show', { course: course.id })"
+                                        class="my-program-btn-start"
+                                    >
                                         Start Now
+                                    </Link>
+
+                                    <!-- If not purchased, show Buy button with lock icon that goes to purchase page -->
+                                    <Link
+                                        v-else
+                                        :href="route('purchase-course.show', { course_id: course.id })"
+                                        class="my-program-btn-start my-program-btn-locked"
+                                    >
+                                        <span class="lock-icon" aria-hidden="true">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 10V7C7 4.791 8.791 3 11 3C13.209 3 15 4.791 15 7V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <rect x="5" y="10" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                                <circle cx="11" cy="15" r="1.5" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                        Buy
                                     </Link>
                                 </div>
                             </div>

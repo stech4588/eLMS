@@ -1018,6 +1018,21 @@ class CourseController extends Controller
             ]);
         }
 
+        // If the user is not the course author, require a paid purchase before viewing details.
+        $isPurchased = false;
+        if (Auth::check()) {
+            $isPurchased = Invoice::where('user_id', Auth::id())
+                                  ->where('payment_status', 'paid')
+                                  ->whereHas('details', function ($query) use ($course) {
+                                      $query->where('course_id', $course->id);
+                                  })
+                                  ->exists();
+        }
+
+        if (!Auth::check() || (Auth::id() !== $course->user_id && !$isPurchased)) {
+            return redirect()->route('purchase-course.show', ['course_id' => $course->id]);
+        }
+
         // Eager load relationships you might need
         $course->load([
             'courseType',
@@ -1033,17 +1048,6 @@ class CourseController extends Controller
             },
         ]);
         $course->load('videos'); // keep for first_video_thumbnail_url and flat list fallback
-
-        $isPurchased = false;
-        if (Auth::check()) {
-            // Check if a paid invoice exists for the user that has a detail record for this course
-            $isPurchased = Invoice::where('user_id', Auth::id())
-                                  ->where('payment_status', 'paid') // or 'completed' depending on your status values
-                                  ->whereHas('details', function ($query) use ($course) {
-                                      $query->where('course_id', $course->id);
-                                  })
-                                  ->exists();
-        }
 
         // Prepare the data for the view
         $courseData = [
@@ -1160,6 +1164,21 @@ class CourseController extends Controller
 
     public function play(Request $request, Course $course, $videoId = null)
     {
+        // Only allow access if user is the course author or has purchased the course
+        $isPurchased = false;
+        if (Auth::check()) {
+            $isPurchased = Invoice::where('user_id', Auth::id())
+                                  ->where('payment_status', 'paid')
+                                  ->whereHas('details', function ($query) use ($course) {
+                                      $query->where('course_id', $course->id);
+                                  })
+                                  ->exists();
+        }
+
+        if (!Auth::check() || (Auth::id() !== $course->user_id && !$isPurchased)) {
+            return redirect()->route('purchase-course.show', ['course_id' => $course->id]);
+        }
+
         // Dispatch the CourseViewed event
         if (Auth::check()) {
             event(new CourseViewed(Auth::user(), $course));
