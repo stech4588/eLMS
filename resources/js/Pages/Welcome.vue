@@ -388,15 +388,16 @@ function handleImageError() {
 
 <template>
     <div class="welcome-navbar-hero-section">
-        <NavbarComponent/>
+        <NavbarComponent />
         <HeroSection />
     </div>
     <!-- <MainHeroSection /> -->
-    <ConsolidatePlatform />
+    <FeaturedCourses />
+    <!-- <ConsolidatePlatform /> -->
     <!-- <ScrollingLogos /> -->
     <SequenceCanvas />
     <!-- <RealWorld /> -->
-    <FeatureContainer />
+    <!-- <FeatureContainer /> -->
     <!-- <div id="access">
       <ConsolidatePlatform />
     </div> -->
@@ -404,71 +405,74 @@ function handleImageError() {
     <!-- <div id="education">
       <FeatureContainer />
     </div> -->
-    <TeachingPhilosophy />
-    <Teaching />
+    <!-- <TeachingPhilosophy /> -->
+    <!-- <Teaching /> -->
     <!-- <Testimonials /> -->
-    
+
     <Professors />
-    <Reviews :reviews="reviews"/>
+    <Reviews :reviews="reviews" />
     <!-- <Results /> -->
     <BuildYourFuture />
     <FrequentQuestions />
     <div id="choice">
-      <YourChoice />
+        <YourChoice />
     </div>
     <FooterContainer />
-    
-  </template>
-  
-  <script>
-  import FeatureContainer from '../Components/FeatureContainer.vue';
-  import HeroSection from '../Components/HeroSection.vue';
-  import NavbarComponent from '../Components/NavbarComponent.vue'
-  import Teaching from '../Components/Teaching.vue';
-  import Professors from '../Components/Professors.vue';
+
+</template>
+
+<script>
+import FeatureContainer from '../Components/FeatureContainer.vue';
+import FeaturedCourses from '../Components/FeaturedCourses.vue';
+import HeroSection from '../Components/HeroSection.vue';
+import NavbarComponent from '../Components/NavbarComponent.vue'
+// import Teaching from '../Components/Teaching.vue';
+import Professors from '../Components/Professors.vue';
 //   import RealWorld from '../Components/RealWorld.vue';
 //   import Results from '../Components/Results.vue';
-  import TeachingPhilosophy from '../Components/TeachingPhilosophy.vue';
-  import BuildYourFuture from '../Components/BuildYourFuture.vue';
-  import FrequentQuestions from '../Components/FrequentQuestions.vue';
-  import YourChoice from '../Components/YourChoice.vue';
-  import FooterContainer from '../Components/Footer-Container.vue';
-  import SequenceCanvas from '../Components/SequenceCanvas.vue'
-  import ConsolidatePlatform from '../Components/ConsolidatePlatform.vue';
-  import ScrollingLogos from '../Components/ScrollingLogos.vue';
+// import TeachingPhilosophy from '../Components/TeachingPhilosophy.vue';
+import BuildYourFuture from '../Components/BuildYourFuture.vue';
+import FrequentQuestions from '../Components/FrequentQuestions.vue';
+import YourChoice from '../Components/YourChoice.vue';
+import FooterContainer from '../Components/Footer-Container.vue';
+import SequenceCanvas from '../Components/SequenceCanvas.vue'
+// import ConsolidatePlatform from '../Components/ConsolidatePlatform.vue';
+import ScrollingLogos from '../Components/ScrollingLogos.vue';
 //   import Testimonials from '../Components/testimonials.vue';
-  import Reviews from '../Components/ReviewSection.vue';
+import Reviews from '../Components/ReviewSection.vue';
 // import MainHeroSection from '@/Components/MainHeroSection.vue';
-  
-  export default {
+
+export default {
     name: 'App',
     props: {
-      reviews: Array,
+        reviews: Array,
     },
     components: {
-      FooterContainer,
-    //   MainHeroSection,
-      YourChoice,
-      FrequentQuestions,
-      NavbarComponent,
-      BuildYourFuture,
-    //   Results,
-      Professors,
-      Teaching,
-      TeachingPhilosophy,
-      FeatureContainer,
-    //   Testimonials,
-      Reviews,
-    //   RealWorld,
-      HeroSection,
-      SequenceCanvas,
-      ConsolidatePlatform,
-      ScrollingLogos,
+        FooterContainer,
+        //   MainHeroSection,
+        YourChoice,
+        FrequentQuestions,
+        NavbarComponent,
+        FeaturedCourses,
+        BuildYourFuture,
+        //   Results,
+        Professors,
+        // Teaching,
+        // TeachingPhilosophy,
+        FeatureContainer,
+        //   Testimonials,
+        Reviews,
+        //   RealWorld,
+        HeroSection,
+        SequenceCanvas,
+        // ConsolidatePlatform,
+        ScrollingLogos,
     }
-  }
-  </script>
-  
-  <style>
+}
+</script>
+
+<style>
+/* 
   #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -488,5 +492,18 @@ function handleImageError() {
       height: 152vh;
     }
   }
-  </style>
-  
+  */
+
+#app {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.welcome-navbar-hero-section {
+    background: #000000 !important;
+    height: auto;
+    min-height: 100vh;
+}
+</style>

@@ -1,3 +1,4 @@
+<!-- 
 <template>
   <nav class="modern-navbar">
     <div class="navbar-container">
@@ -9,13 +10,11 @@
         <li><a @click="scrollToSection('access')">ACCESS</a></li>
         <li><a @click="scrollToSection('learn')">LEARN</a></li>
         <li><a @click="scrollToSection('education')">EDUCATION</a></li>
-        <!-- <li><a @click="scrollToSection('result')">FEATURED</a></li> -->
         <li><a @click="scrollToSection('why-us')">WHY US</a></li>
         <li><a @click="scrollToSection('testimonials')">TESTIMONIALS</a></li>
 
         <li><a @click="scrollToSection('pricing')">PRICING</a></li>
         <li><a @click="scrollToSection('faq')">FAQ</a></li>
-        <!-- <li><a @click="scrollToSection('choice')">CHOICE</a></li> -->
       </ul>
 
       <div class="action-buttons" v-if="!menuOpen">
@@ -30,7 +29,6 @@
       </div>
     </div>
 
-    <!-- Smooth Animated Dropdown -->
     <transition name="dropdown">
       <div v-show="menuOpen" class="custom-dropdown">
         <Link :href="joinNowUrl">JOIN NOW</Link>
@@ -40,12 +38,8 @@
         <a @click="scrollToSection('education')">EDUCATION</a>
         <a @click="scrollToSection('why-us')">WHY US</a>
         <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
-
-        <!-- <a @click="scrollToSection('result')">FEATURED</a> -->
         <a @click="scrollToSection('pricing')">PRICING</a>
         <a @click="scrollToSection('faq')">FAQ</a>
-        <!-- <a @click="scrollToSection('choice')">CHOICE</a> -->
-
       </div>
     </transition>
   </nav>
@@ -113,9 +107,7 @@ export default {
 
 .modern-navbar {
   font-family: 'Segoe UI', sans-serif;
-  /* background: linear-gradient(115deg, #102548 30%, #004c8d 65%, #009ada 100%) !important; */
   color: #fff;
-  /* position: sticky; */
   top: 0;
   width: 100%;
   z-index: 1000;
@@ -131,7 +123,6 @@ export default {
 }
 
 .logo {
-  /* transform: rotate(90deg); */
   width: 140px;
 }
 
@@ -272,7 +263,6 @@ export default {
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
-/* Smooth Dropdown Styling */
 .custom-dropdown {
   background: rgba(30, 30, 47, 0.9);
   -webkit-backdrop-filter: blur(8px);
@@ -324,7 +314,6 @@ export default {
   color: #ffffff;
 }
 
-/* Vue Transition Classes */
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.4s ease;
@@ -345,7 +334,6 @@ export default {
   transform: scaleY(1);
 }
 
-/* Responsive */
 @media (max-width: 1320px) {
 
   .nav-links,
@@ -354,6 +342,193 @@ export default {
   }
 
   .hamburger {
+    display: flex;
+  }
+}
+</style>
+-->
+
+<!-- NEW REDESIGNED NAVBAR -->
+<template>
+  <nav class="simple-navbar">
+    <div class="container">
+      <div class="logo-side">
+        <Link :href="logoUrl">
+          <img src="/images/MBM_Uni.png" alt="Logo" class="navbar-logo" />
+        </Link>
+      </div>
+      <div class="links-side">
+        <div class="nav-links">
+          <a @click="scrollToSection('access')">ACCESS</a>
+          <a @click="scrollToSection('learn')">LEARN</a>
+          <a @click="scrollToSection('education')">EDUCATION</a>
+          <a @click="scrollToSection('why-us')">WHY US</a>
+          <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
+          <a @click="scrollToSection('pricing')">PRICING</a>
+          <a @click="scrollToSection('faq')">FAQ</a>
+          <Link :href="joinNowUrl">JOIN NOW</Link>
+          <Link :href="loginUrl" class="login-link">LOG IN</Link>
+        </div>
+        <div class="mobile-menu-btn" @click="toggleMenu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div v-if="menuOpen" class="mobile-overlay" @click="toggleMenu">
+      <div class="mobile-menu" @click.stop>
+        <a @click="scrollToSection('access')">ACCESS</a>
+        <a @click="scrollToSection('learn')">LEARN</a>
+        <a @click="scrollToSection('education')">EDUCATION</a>
+        <a @click="scrollToSection('why-us')">WHY US</a>
+        <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
+        <a @click="scrollToSection('pricing')">PRICING</a>
+        <a @click="scrollToSection('faq')">FAQ</a>
+        <Link :href="joinNowUrl">JOIN NOW</Link>
+        <Link :href="loginUrl">LOG IN</Link>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const menuOpen = ref(false);
+
+const user = computed(() => page.props.auth.user);
+
+const logoUrl = computed(() => {
+  if (user.value) {
+    if (page.props.auth.profile_incomplete && user.value.type === 'student') return '/register/complete';
+    return '/dashboard';
+  }
+  return '/';
+});
+
+const joinNowUrl = computed(() => {
+  if (user.value) {
+    if (page.props.auth.profile_incomplete && user.value.type === 'student') return '/register/complete';
+    return '/dashboard';
+  }
+  return '/joinnow';
+});
+
+const loginUrl = computed(() => {
+  if (user.value) {
+    if (page.props.auth.profile_incomplete && user.value.type === 'student') return '/register/complete';
+    return '/dashboard';
+  }
+  return '/login';
+});
+
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value;
+};
+
+const scrollToSection = (id) => {
+  const section = document.getElementById(id);
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
+  menuOpen.value = false;
+};
+</script>
+
+<style scoped>
+.simple-navbar {
+  background: #ffffff;
+  height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+.navbar-logo {
+  height: 100px;
+  width: auto;
+  filter: grayscale(100%) brightness(0);
+  /* Make logo black if needed */
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+}
+
+.nav-links a,
+.nav-links .login-link {
+  color: #000000;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.nav-links a:hover {
+  opacity: 0.7;
+}
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.bar {
+  width: 25px;
+  height: 2px;
+  background: #000;
+}
+
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mobile-menu {
+  background: #fff;
+  width: 250px;
+  height: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (max-width: 991px) {
+  .nav-links {
+    display: none;
+  }
+
+  .mobile-menu-btn {
     display: flex;
   }
 }

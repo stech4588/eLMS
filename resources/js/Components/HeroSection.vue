@@ -1,3 +1,4 @@
+<!-- 
 <template>
     <section class="hero-section">
         <div class="hero-overlay"></div>
@@ -186,7 +187,6 @@ onMounted(() => {
 .hero-section {
     position: relative;
     padding: 100px 20px;
-    /* background: linear-gradient(120deg, #f0f4ff, #e5eaff); */
     overflow: hidden;
     font-family: 'Segoe UI', sans-serif;
     background-color: transparent !important;
@@ -203,8 +203,6 @@ onMounted(() => {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    /* background: linear-gradient(115deg, #102548 30%, #004c8d 65%, #009ada 100%) !important; */
-    /* opacity: 0.3; */
     z-index: 0;
     background-color: transparent !important;
 }
@@ -274,8 +272,6 @@ onMounted(() => {
 }
 
 .btn-primary {
-    /* background: #789b4a; */
-    /* color: white; */
     padding: 12px 28px;
     border-radius: 50px;
     text-decoration: none;
@@ -361,3 +357,180 @@ onMounted(() => {
     line-height: 1.6;
 }
 </style>
+-->
+
+<!-- NEW REDESIGNED HERO SECTION -->
+<template>
+  <section class="video-hero">
+    <!-- Background Video -->
+    <video autoplay muted loop playsinline class="hero-video">
+      <source src="https://www.seertechsolutions.com/wp-content/uploads/2025/05/Seertech-Sales-Video-NewVoice-1.mp4"
+        type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Black Overlay -->
+    <div class="video-overlay"></div>
+
+    <!-- Hero Content Center -->
+    <div class="hero-content">
+      <div class="hero-text-center">
+        <h1>Welcome To<br> <span class="white-text">ElevateU University</span></h1>
+        <p class="white-text">
+          Where ordinary people transform into global online entrepreneurs.
+        </p>
+        <div class="hero-actions">
+          <a :href="joinNowUrl" class="btn-outline-green">BROWSE COURSES</a>
+          <a :href="loginUrl" class="btn-white-link">Login Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+const joinNowUrl = computed(() => {
+  if (user.value) {
+    if (page.props.auth.profile_incomplete) return '/register/complete';
+    return '/dashboard';
+  }
+  return '/joinnow';
+});
+
+const loginUrl = computed(() => {
+  if (user.value) {
+    if (page.props.auth.profile_incomplete) return '/register/complete';
+    return '/dashboard';
+  }
+  return '/login';
+});
+</script>
+
+<style scoped>
+.video-hero {
+  position: relative;
+  width: 100%;
+  height: 80vh; /* Slightly reduced height further for compactness */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #000;
+}
+
+.hero-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Lighter overlay for visibility */
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0 20px;
+  max-width: 700px; /* Reduced max-width for better centering */
+}
+
+.hero-text-center h1 {
+  color: #fff;
+  font-size: clamp(1.6rem, 4.5vw, 2.6rem); /* Further reduced weight/size */
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+}
+
+.white-text {
+  color: #ffffff !important;
+}
+
+.hero-text-center p {
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 35px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-outline-green {
+  display: inline-block;
+  padding: 12px 35px;
+  background: transparent;
+  border: 2px solid #2ECC71;
+  color: #2ECC71;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.btn-outline-green:hover {
+  background: #2ECC71;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+}
+
+.btn-white-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: opacity 0.2s;
+  border-bottom: 1px solid transparent;
+}
+
+.btn-white-link:hover {
+  opacity: 0.8;
+  border-bottom: 1px solid #fff;
+}
+
+@media (max-width: 600px) {
+  .video-hero {
+    height: 70vh;
+  }
+  .hero-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-outline-green {
+    width: 100%;
+    padding: 12px 25px;
+  }
+}
+</style>
+

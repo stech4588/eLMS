@@ -46,7 +46,7 @@
     </footer>
   </div>
 </template> -->
-<template>
+<!-- <template>
   <div class="mbm-main-footer">
     <footer class="mbm-footer">
       <div class="mbm-footer-container">
@@ -54,7 +54,6 @@
           <a :href="logoUrl" class="mbm-footer-logo">
             <img src="/images/MBM_Uni.png" alt="" class="mbm-footer-logo" />
           </a>
-          <!-- Column 1: Logo + Quick Links -->
           <div class="mbm-footer-row">
             <div class="mbm-footer-column">
               <h3 class="mbm-footer-heading">QUICK LINKS</h3>
@@ -70,7 +69,6 @@
               </div>
             </div>
 
-            <!-- Column 2: Asia Pacific Inquiries -->
             <div class="mbm-footer-column">
               <h3 class="mbm-footer-heading">Popular Courses</h3>
               <ul class="mbm-footer-links">
@@ -81,7 +79,6 @@
               </ul>
             </div>
 
-            <!-- Column 3: USA Inquiries -->
             <div class="mbm-footer-column">
               <h3 class="mbm-footer-heading">Top Learning Categories</h3>
               <ul class="mbm-footer-links">
@@ -92,7 +89,6 @@
               </ul>
             </div>
 
-            <!-- Column 4: EMEA Inquiries -->
             <div class="mbm-footer-column">
               <h3 class="mbm-footer-heading">Explore Our Courses</h3>
               <ul class="mbm-footer-links">
@@ -106,18 +102,6 @@
 
         </div>
 
-        <!-- Badges Row -->
-        <!-- <div class="mbm-badges">
-          <img src="/images/footer-img1.png" alt="" class="mbm-footer-img" />
-          <img src="/images/footer-img2.svg" alt="" class="mbm-footer-img" />
-          <img src="/images/footer-img3.png" alt="" class="mbm-footer-img" />
-          <img src="/images/footer-img4.png" alt="" class="mbm-footer-img" />
-          <img src="/images/footer-img5.png" alt="" class="mbm-footer-img" />
-          <img src="/images/footer-img6.svg" alt="" class="mbm-footer-img" />
-          <img src="/images/footer-img7.svg" alt="" class="mbm-footer-img" />
-        </div> -->
-
-        <!-- Bottom Bar -->
         <div class="mbm-footer-bottom">
           <p>© ElevateU University 2025</p>
           <p>
@@ -145,6 +129,75 @@
       </div>
     </footer>
   </div>
+</template> -->
+
+<template>
+  <footer class="footer-simple" id="footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <!-- Quick Links -->
+        <div class="footer-col">
+          <h4 class="footer-title">QUICK LINKS</h4>
+          <ul class="footer-list">
+            <li><a @click="scrollToSection('why-us')">Why Us</a></li>
+            <li><a @click="scrollToSection('learn')">Learn</a></li>
+            <li><a @click="scrollToSection('result')">Result</a></li>
+            <li><a @click="scrollToSection('pricing')">Pricing</a></li>
+          </ul>
+        </div>
+
+        <!-- Courses -->
+        <div class="footer-col">
+          <h4 class="footer-title">POPULAR COURSES</h4>
+          <ul class="footer-list">
+            <li>
+              <Link href="/dashboard">E-Commerce</Link>
+            </li>
+            <li>
+              <Link href="/dashboard">Copywriting</Link>
+            </li>
+            <li>
+              <Link href="/dashboard">Crypto Trading</Link>
+            </li>
+            <li>
+              <Link href="/dashboard">Business & Finance</Link>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div class="footer-col">
+          <h4 class="footer-title">LEGAL</h4>
+          <ul class="footer-list">
+            <li>
+              <Link href="/privacypolicy">Privacy Policy</Link>
+            </li>
+            <li>
+              <Link href="/terms">Terms of Service</Link>
+            </li>
+            <li>
+              <Link href="/contact">Contact Support</Link>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="footer-col footer-actions">
+          <Link :href="joinNowUrl" class="btn-footer-green">JOIN NOW ➜</Link>
+          <Link href="/contact" class="btn-footer-outline">CONTACT ➜</Link>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <p class="copyright">© {{ new Date().getFullYear() }} ELEVATEU UNIVERSITY. ALL RIGHTS RESERVED.</p>
+        <div class="footer-disclaimer">
+          Education purposes only. Individual results may vary.
+        </div>
+      </div>
+    </div>
+  </footer>
 </template>
 <script>
 import { Link, usePage } from '@inertiajs/vue3'
@@ -183,10 +236,139 @@ export default {
 };
 </script>
 
+/*
 <style scoped>
 .mbm-social-icons .mbm-social-icon-img {
   filter: brightness(0) invert(1);
-}</style>
+}
+</style> */
+
+<style scoped>
+/* NEW REDESIGNED FOOTER STYLES */
+.footer-simple {
+  background-color: #262c33;
+  color: #ffffff;
+  padding: 80px 20px 40px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.footer-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 25px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-list li {
+  margin-bottom: 12px;
+}
+
+.footer-list a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.footer-list a:hover {
+  color: #2ecc71;
+}
+
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.btn-footer-green {
+  background-color: #2ecc71;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-footer-green:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+
+.btn-footer-outline {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 11px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-footer-outline:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.footer-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 30px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.copyright {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.footer-disclaimer {
+  font-size: 12px;
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+</style>
 <!-- <style scoped>
 .footer {
   background-color: #12121D;
