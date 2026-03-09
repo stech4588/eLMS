@@ -501,9 +501,4 @@ export default {
     color: #ffffff;
 }
 
-.welcome-navbar-hero-section {
-    background: #000000 !important;
-    height: auto;
-    min-height: 100vh;
-}
 </style>
