@@ -1138,7 +1138,7 @@ const toggleFavorite = async (course) => {
 }
 
 .my-programs-heading {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: #111827;
     margin: 0 0 1.25rem;
@@ -1203,7 +1203,7 @@ const toggleFavorite = async (course) => {
 }
 
 .my-program-title {
-    font-size: 2.6rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #111827;
     margin: 0 0 0.5rem;

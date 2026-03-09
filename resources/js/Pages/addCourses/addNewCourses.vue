@@ -739,27 +739,7 @@
             </div>
         </div>
 
-        <footer class="footer_upload_video add-new-courses-footer dark:bg-[#1A2C38] dark:text-white" style=" display: flex; justify-content: space-between; padding: 20px; align-items: baseline; ">
-            <div>
-                Language(Eng)
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-                About
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-               Become an instructor
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-                Privacy Policy
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-               Accessibility
-            </div>
-        </footer>
+        <!-- Page-specific footer removed; global FooterContainer from layout is used -->
         </div>
     </AuthenticatedLayout>
 </template>

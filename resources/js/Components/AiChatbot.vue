@@ -12,7 +12,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 rounded-t-lg bg-gray-50 dark:bg-gray-700/50">
                     <div class="flex items-center space-x-3">
-                        <div class="p-1.5 bg-gradient-to-br from-green-400 to-green-600 rounded-full">
+                        <div class="p-1.5 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a8 8 0 1116 0 8 8 0 01-16 0zm9.333-3.047a.75.75 0 00-1.48-.314l-2.5 6.333a.75.75 0 001.314.65l.613-1.54A.75.75 0 0110 11.5h.047a.75.75 0 01.625.333l.613 1.54a.75.75 0 001.314-.65l-2.5-6.333zM9.414 9.5H10.5a.75.75 0 01.6.3l.375.938a.75.75 0 01-1.424.124L9.414 9.5z" clip-rule="evenodd" />
                             </svg>
