@@ -29,7 +29,6 @@
                 </div>
             </swiper-slide>
         </swiper>
-        <button @click="joinNowUrl" class="mbm-view-now">→ Join Now</button>
     </section>
 </template>
 

@@ -30,7 +30,7 @@
 
             <!-- CTA Button -->
             <div class="card-footer">
-                <Link :href="'/register'" class="btn-get-access">
+                <Link :href="route('purchase-course.show', { course_id: id, title: title, image: image, instructor: instructor, points: JSON.stringify(learningPoints) })" class="btn-get-access">
                     GET ACCESS NOW!
                 </Link>
             </div>
@@ -43,6 +43,10 @@ import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
+    id: {
+        type: [Number, String],
+        required: true
+    },
     title: {
         type: String,
         required: true

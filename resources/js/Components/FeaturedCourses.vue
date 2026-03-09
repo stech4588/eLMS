@@ -7,7 +7,7 @@
       </div>
 
       <div class="courses-grid">
-        <ExpandableCourseCard v-for="(course, index) in courses" :key="index" :title="course.title"
+        <ExpandableCourseCard v-for="(course, index) in courses" :key="index" :id="index" :title="course.title"
           :instructor="course.instructor" :image="course.image" :learningPoints="course.learningPoints" />
       </div>
     </div>
@@ -236,6 +236,17 @@ const courses = [
       "Keyword research and strategy",
       "Building a consulting business",
       "Technical SEO and auditing"
+    ]
+  },
+  {
+    title: "Real Estate Investing",
+    instructor: "ELEVATEU EXPERT",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80",
+    learningPoints: [
+      "Residential and commercial properties",
+      "Financing strategies and leverage",
+      "Property management best practices",
+      "Analyzing market value and ROI"
     ]
   }
 ];

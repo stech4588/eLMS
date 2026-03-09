@@ -43,35 +43,41 @@
                                 <h2 class="text-2xl font-semibold mb-2 mt-6">Recomendations</h2>
                                 <p class="text-gray-600 whitespace-pre-wrap dark:text-white">{{ course.recomendations || 'No recomendations available.' }}</p>
 
-                                 <!-- Placeholder for video player or video list -->
+                                 <!-- Course content: sections with videos or flat video list -->
                                 <div class="mt-6">
-                                    <h3 class="text-xl font-semibold">Course Content</h3>
-                                    <!-- If you have a list of videos, you can display them here -->
-                                    <p v-if="!course.videos || course.videos.length === 0" class="text-gray-500">No videos available for this course.</p>
-                                    <ul v-else class="list-disc pl-5 mt-2 space-y-1 text-gray-600 dark:text-white">
-                                        <li v-for="video in course.videos" :key="video.id">{{ video.title }}</li>
-                                    </ul>
-                                    
-                                    <div v-if="course.videos && course.videos.length > 0" class="mt-4" style="display: flex; justify-content: flex-end; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                                        
-                                        <!-- "View Feedback" button, visible only to the course author -->
+                                    <h3 class="text-xl font-semibold dark:text-white">Course Content</h3>
+                                    <p v-if="!hasAnyVideos" class="text-gray-500 dark:text-gray-400">No videos available for this course.</p>
+                                    <template v-else>
+                                        <!-- Sections with nested videos -->
+                                        <template v-if="course.sections && course.sections.length > 0">
+                                            <div v-for="section in course.sections" :key="section.id" class="mt-4">
+                                                <h4 class="font-semibold text-gray-800 dark:text-white">{{ section.title }}</h4>
+                                                <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-600 dark:text-gray-300">
+                                                    <li v-for="video in section.videos" :key="video.id">▶ {{ video.title }}</li>
+                                                </ul>
+                                            </div>
+                                        </template>
+                                        <!-- Fallback: flat video list (no sections or legacy) -->
+                                        <ul v-else class="list-disc pl-5 mt-2 space-y-1 text-gray-600 dark:text-white">
+                                            <li v-for="video in course.videos" :key="video.id">▶ {{ video.title }}</li>
+                                        </ul>
+                                    </template>
+
+                                    <div v-if="hasAnyVideos" class="mt-4" style="display: flex; justify-content: flex-end; align-items: center; gap: 1rem; flex-wrap: wrap;">
                                         <Link v-if="user && user.id === course.user_id"
                                               :href="route('courses.feedback', { course: course.id })"
                                               class="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition-colors">
                                             View Feedback
                                         </Link>
-
                                         <Link
                                             v-if="user && user.id !== course.user_id"
                                             :href="route('dashboard')"
                                             class="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                                             Go to Dashboard
                                         </Link>
-
-                                        <!-- Show "Play Course" to instructors, purchased students, and guests -->
-                                        <Link 
-                                              :href="route('courses.play', { course: course.id, video: course.videos[0].id })" 
-                                              class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">
+                                        <Link
+                                            :href="route('courses.play', { course: course.id, video: firstVideoId })"
+                                            class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors">
                                             Play Course
                                         </Link>
                                     </div>
@@ -112,8 +118,23 @@ const props = defineProps({
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 
-// You might want to fetch more detailed video information or other related data here
-// using onMounted or by passing more data from the controller.
+const hasAnyVideos = computed(() => {
+    if (!props.course) return false;
+    if (props.course.sections?.length) {
+        return props.course.sections.some(s => s.videos?.length);
+    }
+    return props.course.videos?.length > 0;
+});
+
+const firstVideoId = computed(() => {
+    if (!props.course) return null;
+    if (props.course.sections?.length) {
+        for (const s of props.course.sections) {
+            if (s.videos?.length) return s.videos[0].id;
+        }
+    }
+    return props.course.videos?.[0]?.id ?? null;
+});
 </script>
 
 <style >

@@ -14,6 +14,7 @@ class Video extends Model
 
     protected $fillable = [
         'course_id',
+        'course_section_id',
         'title',
         'description',
         'takeaway_notes',
@@ -29,6 +30,14 @@ class Video extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    /**
+     * Get the section this video belongs to.
+     */
+    public function courseSection(): BelongsTo
+    {
+        return $this->belongsTo(CourseSection::class, 'course_section_id');
     }
 
     /**
