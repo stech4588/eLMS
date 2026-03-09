@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
 import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
+import FooterContainer from '@/Components/Footer-Container.vue'
 import PromotionPopup from '@/Components/PromotionPopup.vue';
 import LearningGoalPopup from '@/Components/LearningGoalPopup.vue';
 import ContactNotificationModal from '@/Components/ContactNotificationModal.vue';
@@ -576,6 +577,7 @@ onMounted(() => {
             :notification-data="selectedContactNotification"
             @close="closeContactModal"
         />
+        <FooterContainer />
     </div>
 </template>
 
@@ -718,7 +720,7 @@ main {
 #box3 {
     width: 50px;
     height: 50px;
-    background: #4CCAFF;
+    background: #000000;
     animation: animate .4s linear infinite;
     border-radius: 3px;
 }

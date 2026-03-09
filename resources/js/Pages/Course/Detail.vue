@@ -266,6 +266,9 @@ const romanNumeral = (n) => {
 }
 .course-detail-section {
     margin-bottom: 2rem;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
 .course-detail-section-title {
     font-size: 1.125rem;

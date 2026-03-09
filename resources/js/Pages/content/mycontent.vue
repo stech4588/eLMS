@@ -112,92 +112,56 @@ const toggleFavorite = async (course) => {
         <div class="p-4">
             <div class="mx-auto max-w-7xl ">
                 <div class="overflow-hidden sm:rounded-lg">
+                    <!-- Top promo cards commented as per new design
                     <div class="course-card-wrapper dark:bg-[#1A2C38]">
-                        <div class="course-card dark:bg-gray-800">
-                            <div class="course-card-text dark:text-white">
-                                Leadership & Management
-                                <a href="/content" class="course-card-button dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Explore</a>
-                            </div>
-                            <img src="/images/leadership_management_image.svg" alt="Leadership & Management"
-                                class="course-card-image" />
-                        </div>
-
-                        <div class="course-card dark:bg-gray-800">
-                            <div class="course-card-text dark:text-white">
-                                Diversity & Equity
-                                <a href="/content" class="course-card-button dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Explore</a>
-                            </div>
-                            <img src="/images/diversity_image.svg" alt="Diversity & Equity" class="course-card-image" />
-                        </div>
-
-                        <div class="course-card dark:bg-gray-800">
-                            <div class="course-card-text dark:text-white">
-                                Productivity
-                                <a href="/content" class="course-card-button dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">Explore</a>
-                            </div>
-                            <img src="/images/productivity_image.svg" alt="Productivity" class="course-card-image" />
-                        </div>
+                        ...
                     </div>
+                    -->
 
                     <!-- Skills Section -->
-                <div class="section_box dark:bg-[#1A2C38]">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xl font-bold dark:text-white">Because of Skills you Follow</h3>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6 mycontent_grid" style="gap: 25px; padding: 20px;">
-                        <div v-for="(course, index) in displayedCourses" :key="`skill-${index}-${course.id}`" class="course-card-container">
-                            <div class="linkedin-card dark:bg-gray-800">
-                                <div class="flex flex-row">
-                                    <Link :href="route('courses.show', { course: course.id })" class="linkedin-card-img-wrap">
-                                    <img :src="getThumbnailSrc(course)" class="linkedin-card-img" alt="Course thumbnail" />
-                                </Link>
-                                <div style="width: 100%; padding: 10px;">
-                                    <p class="linkedin-card-type dark:text-[#d1d5db]">{{ course.type }}</p>
-                                    <p class="linkedin-card-title dark:text-white">{{ course.title }}</p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 h-10 overflow-hidden text-ellipsis dark:text-[#d1d5db]">{{ course.description || 'No description available.' }}</p>
-                                    
-                                </div>
-                                </div>
-                               
-                                <div class="linkedin-card-body dark:text-white">
-                                   
-                                    <div class="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
-                                        <div class="bg-blue-600 h-1.5 rounded-full" :style="{ width: course.progress + '%' }"></div>
-                                    </div>
-                                    <p class="text-xs text-gray-500 dark:text-gray-300 mb-4">{{ Math.round(course.progress) }}% complete</p>
-
-                                    <div class="linkedin-card-footer mt-auto">
-                                        <p class="linkedin-card-author dark:text-[#d1d5db]">By: {{ course.author || 'Placeholder' }}</p>
-                                        <button @click.stop.prevent="toggleFavorite(course)" class="linkedin-card-fav-btn">
-                                            <svg v-if="course.is_favorited" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
-                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                            </svg>
-                                            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-600 dark:text-gray-400">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-4 space-x-2">
-                                        <Link :href="route('courses.show', { course: course.id })" class="course-action-btn-details dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                                            Details
-                                        </Link>
-                                        
-                                        <div v-if="course.is_purchased" class="flex-grow">
-                                            <Link :href="course.first_video_id ? route('courses.play', { course: course.id, video: course.first_video_id }) : '#'" 
-                                                  class="course-action-btn-play dark:bg-blue-600 dark:text-white w-full">
-                                                Play Course
-                                            </Link>
-                                        </div>
-                                        <div v-else class="flex-grow">
-                                            <Link :href="route('cart', { course_id: course.id })" class="course-action-btn-buy dark:bg-gray-700 dark:text-white dark:border-gray-600 w-full">
-                                                <span>Buy Now</span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                                                </svg>
-                                            </Link>
-                                            
-                                        </div>
-                                    </div>
+                <div class="my-programs-section">
+                    <h2 class="my-programs-heading">Because of Skills you Follow</h2>
+                    <div class="my-programs-list mycontent-grid">
+                        <div
+                            v-for="(course, index) in displayedCourses"
+                            :key="`skill-${index}-${course.id}`"
+                            class="my-program-row"
+                        >
+                            <Link :href="route('courses.show', { course: course.id })" class="my-program-thumb-wrap">
+                                <img :src="getThumbnailSrc(course)" class="my-program-thumb" alt="Course thumbnail" />
+                            </Link>
+                            <div class="my-program-details">
+                                <h3 class="my-program-title">{{ course.title }}</h3>
+                                <p v-if="course.description" class="my-program-desc">
+                                    {{ course.description }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-300">
+                                    By: {{ course.author || 'Instructor' }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">
+                                    {{ Math.round(course.progress || 0) }}% complete
+                                </p>
+                                <div class="my-program-actions" style="margin-top: 0.75rem;">
+                                    <Link
+                                        :href="route('courses.show', { course: course.id })"
+                                        class="my-program-btn-secondary"
+                                    >
+                                        Details
+                                    </Link>
+                                    <Link
+                                        v-if="course.is_purchased"
+                                        :href="course.first_video_id ? route('courses.play', { course: course.id, video: course.first_video_id }) : '#'"
+                                        class="my-program-btn-start"
+                                    >
+                                        Start Now
+                                    </Link>
+                                    <Link
+                                        v-else
+                                        :href="route('cart', { course_id: course.id })"
+                                        class="my-program-btn-start"
+                                    >
+                                        Buy Now
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -264,6 +228,15 @@ const toggleFavorite = async (course) => {
     border-radius: 16px;
     margin-top:30px;
 }
+/* /content courses grid – 2x layout */
+.mycontent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+.mycontent-grid .my-program-row {
+    margin-bottom: 0;
+}
 @media (max-width: 430px) {
     .main_left_right_button {
         display: flex;
@@ -286,12 +259,6 @@ const toggleFavorite = async (course) => {
     margin-top: 16px;
     margin-bottom: 35px;
 }
-
-.skill_buttons {
-    font-weight: 600;
-    border-color: black;
-}
-
 
 .course-card-wrapper {
     display: flex;
@@ -388,6 +355,57 @@ const toggleFavorite = async (course) => {
     border: 1px solid #e6e6e6;
     width: 100%;
 }
+
+.my-program-thumb-wrap {
+    flex: 0 0 27%;
+    min-width: 0;
+    height: 200px;
+    display: block;
+    overflow: hidden;
+}
+
+.my-program-thumb {
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.my-program-details {
+    flex: 1;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.my-program-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+}
+
+.dark .my-program-title {
+    color: #f9fafb;
+}
+
+.my-program-desc {
+    font-size: 1.2rem;
+    color: #4b5563;
+    margin: 0 0 1rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .linkedin-card:hover {
     box-shadow: 0 8px 24px rgba(0,0,0,0.16);
     transform: translateY(-2px);
