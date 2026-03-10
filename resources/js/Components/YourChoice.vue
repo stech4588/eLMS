@@ -68,11 +68,11 @@
                 <p class="choice-subtext">
                     Break free from limitations. Contact us today to see how we can help you level up!
                 </p>
-                <div class="choice-action">
+                <!-- <div class="choice-action">
                     <Link :href="joinNowUrl" class="btn-primary-green">
                     JOIN ELEVATEU UNIVERSITY NOW ➜
                     </Link>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

@@ -60,9 +60,9 @@
       </div>
     </div>
 
-    <div class="review-actions">
+    <!-- <div class="review-actions">
       <button @click="joinNowUrl" class="btn-join-now">Join ElevateU University</button>
-    </div>
+    </div> -->
   </div>
 </template>
 

@@ -90,27 +90,24 @@
           <div class="pricing-side">
             <div class="pricing-card">
               <div class="card-header">
-                <h3 class="card-title">GET FULL ACCESS</h3>
+                <h3 class="card-title">GET COURSE ACCESS</h3>
                 <div class="price-box">
-                  <span class="price-strikethrough">$123</span>
-                  <span class="price-current">$55<small>/month</small></span>
+                  <span class="price-current">One‑time payment</span>
                 </div>
-                <p class="price-disclaimer">Cancel membership at any time</p>
+                <p class="price-disclaimer">Pay once, access the course anytime</p>
               </div>
 
               <ul class="benefit-list">
+                <li><span class="dash">—</span> Lifetime access to this course</li>
                 <li><span class="dash">—</span> Guided step-by-step lessons</li>
-                <li><span class="dash">—</span> 19 modern business models</li>
-                <li><span class="dash">—</span> Access to industry experts</li>
-                <li><span class="dash">—</span> Community chat groups</li>
-                <li><span class="dash">—</span> No experience needed</li>
-                <li><span class="dash">—</span> Custom-made learning app</li>
-                <li><span class="dash">—</span> 24/7 customer support</li>
+                <li><span class="dash">—</span> Learn at your own pace</li>
+                <li><span class="dash">—</span> Watch on any device, anytime</li>
+                <li><span class="dash">—</span> No subscription or membership needed</li>
               </ul>
 
               <div class="action-box">
-                <Link :href="joinNowUrl" class="btn-join-premium">JOIN NOW</Link>
-                <p class="lock-notice">Monthly price locked for life</p>
+                <!-- <Link :href="joinNowUrl" class="btn-join-premium">BUY THIS COURSE</Link> -->
+                <p class="lock-notice">Instant access after secure checkout</p>
               </div>
             </div>
           </div>

@@ -50,9 +50,9 @@
           </div>
         </div>
 
-        <div class="faq-action">
+        <!-- <div class="faq-action">
           <Link :href="joinNowUrl" class="btn-faq-join">JOIN NOW</Link>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

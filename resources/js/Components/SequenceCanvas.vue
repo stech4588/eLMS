@@ -146,11 +146,11 @@
       </div>
 
       <!-- Footer Actions -->
-      <div class="benefits-footer">
+      <!-- <div class="benefits-footer">
         <a :href="joinNowUrl" class="btn-green-enroll">
           Join ElevateU University
         </a>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>
