@@ -26,7 +26,7 @@ const joinNowUrl = computed(() => {
         </div> -->
          <div style="width:100%; display: flex; justify-content: center; align-items: center;">
     <a :href="joinNowUrl">
-      <img src="/images/MBM_Uni.png" alt="logo" style="width: 150px; height: 150px;">
+      <img src="/images/MBM_Uni.png" alt="logo" style="width: 150px;filter: grayscale(100%) brightness(0); height: 150px;">
     </a>
   </div>
 
@@ -40,6 +40,10 @@ const joinNowUrl = computed(() => {
 <style>
 .main_auth_layout_container{
     /* background: linear-gradient(93deg, #102548 30%, #004c8d 65%, #009ada 100%) !important; */
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
     padding-top: 0px !important;
     margin-top: 0px !important;
 }

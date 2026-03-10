@@ -250,10 +250,10 @@ const currentCourses = computed(() => {
                     </div>
                 </div>
             </div>
-        </div>
-        </div>
+        </div><!-- .library-page-content -->
 
-        <footer class="footer_upload_video footer-stick-bottom dark:bg-dark-bg-secondary dark:text-white">
+        <!-- <footer class="footer_upload_video footer-stick-bottom dark:bg-dark-bg-secondary dark:text-white">
+        <!-- <footer class="footer_upload_video footer-stick-bottom dark:bg-dark-bg-secondary dark:text-white">
             <div class="footer-lang-select libaray_dark_text">
                 Language(Eng)
             </div>
@@ -266,6 +266,8 @@ const currentCourses = computed(() => {
             <span class="footer-divider libaray_dark_text">•</span>
             <a href="#" class="footer-link libaray_dark_text">Accessibility</a>
         </footer>
+        </footer> -->
+        </div><!-- .page-with-footer-wrap -->
     </AuthenticatedLayout>
 </template>
 

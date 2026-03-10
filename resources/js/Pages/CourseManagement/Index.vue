@@ -54,16 +54,16 @@
                     <!-- Tab Navigation -->
                     <div class="mb-6">
                         <nav class="flex space-x-4 tabs_course_management" >
-                            <button @click="activeTab = 'courseType'" :class="{' bg-[#3b82f6] text-white ': activeTab === 'courseType', ' text-black-700 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary ': activeTab !== 'courseType'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2">
+                            <button @click="activeTab = 'courseType'" :class="{' bg-[#254A7A] text-white ': activeTab === 'courseType', ' text-black-700 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary ': activeTab !== 'courseType'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2">
                                 Course Types
                             </button>
-                            <button @click="activeTab = 'topic'" :class="{'bg-[#3b82f6] text-white': activeTab === 'topic', 'border-transparent text-black-500 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'topic'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2 " style="margin-left: 0px;">
+                            <button @click="activeTab = 'topic'" :class="{'bg-[#254A7A] text-white': activeTab === 'topic', 'border-transparent text-black-500 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'topic'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2 " style="margin-left: 0px;">
                                 Topics
                             </button>
-                            <button @click="activeTab = 'courseCertificate'" :class="{'bg-[#3b82f6] text-white': activeTab === 'courseCertificate', 'border-transparent text-black-500 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'courseCertificate'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
+                            <button @click="activeTab = 'courseCertificate'" :class="{'bg-[#254A7A] text-white': activeTab === 'courseCertificate', 'border-transparent text-black-500 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'courseCertificate'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
                                 Course Certificates
                             </button>
-                            <button @click="activeTab = 'courseIndustry'" :class="{'bg-[#3b82f6] text-white': activeTab === 'courseIndustry', 'border-transparent text-black-500 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'courseIndustry'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
+                            <button @click="activeTab = 'courseIndustry'" :class="{'bg-[#254A7A] text-white': activeTab === 'courseIndustry', 'border-transparent text-black-500 dark:text-gray-300 bg-white dark:bg-dark-bg-secondary': activeTab !== 'courseIndustry'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
                                 Course Industries
                             </button>
                         </nav>

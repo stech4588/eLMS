@@ -1,6 +1,7 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import FooterContainer from '@/Components/Footer-Container.vue';
 </script>
 
 <template>
@@ -34,6 +35,7 @@ import { Head } from '@inertiajs/vue3';
         <p>If you have questions or comments about this policy, you may email us at [Contact Email].</p>
       </div>
     </div>
+    <FooterContainer />
   </GuestLayout>
 </template>
 

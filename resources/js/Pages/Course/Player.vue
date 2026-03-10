@@ -8,16 +8,16 @@
         <QuizPopup :show="showQuizPopup" :quiz="activeQuiz" @close="closeQuizPopup" @completed="onQuizCompleted" />
         <QuizResultPopup :show="showQuizResultPopup" :attempt="quizAttemptResult" @close="onQuizResultClosed" />
         <div class="player-page-wrap bg-gray-100 dark:bg-gray-900 min-h-screen relative">
-            <AiChatbot
-                :show="showChatbot"
-                :chat-context="chatbotContext"
-                :welcome-message="chatbotWelcomeMessage"
-                :placeholder="chatbotPlaceholder"
-                @close="showChatbot = false"
-            />
+            <AiChatbot :show="showChatbot" :chat-context="chatbotContext" :welcome-message="chatbotWelcomeMessage"
+                :placeholder="chatbotPlaceholder" @close="showChatbot = false" />
             <div class="fixed bottom-4 right-4 z-40">
-                <button @click="showChatbot = true" class="bg-[#1C355E] text-white rounded-full p-4 shadow-lg hover:bg-[#254a7a] transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                <button @click="showChatbot = true"
+                    class="bg-[#1C355E] text-white rounded-full p-4 shadow-lg hover:bg-[#254a7a] transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
                 </button>
             </div>
 
@@ -27,101 +27,189 @@
                     <div class="player-left">
                         <div v-if="!isLargeScreen" class="flex justify-end mb-2">
                             <button @click="isVideoSidebarOpen = !isVideoSidebarOpen" class="player-mobile-menu-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
                             </button>
                         </div>
 
                         <div class="player-video-box bg-black rounded-lg overflow-hidden relative group">
-                            <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer" :key="currentVideo.id"
-                                :src="currentVideo.video_url" controls controlslist="nodownload" @contextmenu.prevent
-                                autoplay @pause="onPause" @ended="handleEnded" @loadedmetadata="handleLoadedMetadata"
-                                class="player-video-el w-full aspect-video object-contain" @play="onPlay">
+                            <video v-if="currentVideo && currentVideo.video_url" ref="videoPlayer"
+                                :key="currentVideo.id" :src="currentVideo.video_url" controls controlslist="nodownload"
+                                @contextmenu.prevent autoplay @pause="onPause" @ended="handleEnded"
+                                @loadedmetadata="handleLoadedMetadata" @play="onPlay" class="player-video-el">
                                 Your browser does not support the video tag.
                             </video>
-                            <div v-else class="w-full aspect-video bg-black flex items-center justify-center text-white">
+
+                            <!-- Custom overlay controls (play/pause + 10s skip) -->
+                            <div v-if="currentVideo && currentVideo.video_url" class="player-overlay-controls">
+                                <button type="button" class="player-overlay-button player-overlay-skip"
+                                    @click.stop="skipBackward(10)">
+                                    <!-- Back 10s icon -->
+                                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="12" r="10" fill="black" fill-opacity="0.6"/>
+  <path d="M12 5V2L8 6L12 10V7C15.31 7 18 9.69 18 13C18 16.31 15.31 19 12 19C8.69 19 6 16.31 6 13H4C4 17.42 7.58 21 12 21C16.42 21 20 17.42 20 13C20 8.58 16.42 5 12 5Z" fill="white"/>
+  <text x="12" y="14.5" font-family="Arial, sans-serif" font-size="5" font-weight="bold" fill="white" text-anchor="middle">10</text>
+</svg>
+                                </button>
+
+                                <button type="button" class="player-overlay-button player-overlay-play"
+                                    @click.stop="togglePlayPause">
+                                    <svg v-if="isPlaying" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="6" y="4" width="4" height="16" rx="1" />
+                                        <rect x="14" y="4" width="4" height="16" rx="1" />
+                                    </svg>
+                                    <svg v-else viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" class="player-overlay-button player-overlay-skip"
+                                    @click.stop="skipForward(10)">
+                                    <!-- Forward 10s icon -->
+                                    
+                                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="12" r="10" fill="black" fill-opacity="0.6"/>
+  <path d="M12 5V2L16 6L12 10V7C8.69 7 6 9.69 6 13C6 16.31 8.69 19 12 19C15.31 19 18 16.31 18 13H20C20 17.42 16.42 21 12 21C7.58 21 4 17.42 4 13C4 8.58 7.58 5 12 5Z" fill="white"/>
+  <text x="12" y="14.5" font-family="Arial, sans-serif" font-size="5" font-weight="bold" fill="white" text-anchor="middle">10</text>
+</svg>
+                                </button>
+                            </div>
+
+
+                            <div v-else
+                                class="w-full aspect-video bg-black flex items-center justify-center text-white">
                                 <p v-if="!course.videos || course.videos.length === 0">No videos available.</p>
                                 <p v-else>Select a video to play.</p>
                             </div>
                         </div>
 
-                        <div v-if="currentVideo && sortedVideos.length > 1" class="player-prev-next">
-                            <button v-if="currentVideoIndex > 0" @click="playPreviousVideo" class="player-nav-btn">Previous</button>
+                        <!-- <div v-if="currentVideo && sortedVideos.length > 1" class="player-prev-next">
+                            <button v-if="currentVideoIndex > 0" @click="playPreviousVideo"
+                                class="player-nav-btn">Previous</button>
                             <div v-else></div>
-                            <button v-if="currentVideoIndex < sortedVideos.length - 1" @click="playNextVideo" class="player-nav-btn">Next</button>
-                        </div>
+                            <button v-if="currentVideoIndex < sortedVideos.length - 1" @click="playNextVideo"
+                                class="player-nav-btn">Next</button>
+                        </div> -->
 
-                        <div v-if="currentVideo" class="player-below-video bg-white dark:bg-dark-bg-secondary rounded-lg border border-gray-200 dark:border-gray-700 p-4 mt-4">
-                            <button @click="saveProgress(true, false)" class="player-mark-complete">
-                                Mark As Complete
-                            </button>
-                            <h1 class="player-video-title">{{ currentVideo.title }}</h1>
-                            <p v-if="currentVideoSection" class="player-section-label">{{ (currentVideoSection.order != null ? currentVideoSection.order : (courseSections.findIndex(s => s.id === currentVideoSection.id) + 1)) }}. {{ currentVideoSection.title }}</p>
+                        <div v-if="currentVideo"
+                            class="player-below-video bg-white dark:bg-dark-bg-secondary rounded-lg border border-gray-200 dark:border-gray-700 p-4 mt-4">
+                            <div class="player-below-left">
+                                <button @click="saveProgress(true, false)" class="player-mark-complete">
+                                    Mark As Complete
+                                </button>
+                                <h1 class="player-video-title">{{ currentVideo.title }}</h1>
+                                <p v-if="currentVideoSection" class="player-section-label">
+                                    {{(currentVideoSection.order != null ? currentVideoSection.order :
+                                        (courseSections.findIndex(s => s.id === currentVideoSection.id) + 1)) }}.
+                                    {{ currentVideoSection.title }}
+                                </p>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="pr-div"><!-- Right: One section + Next Category -->
+                        <div :class="['player-right', { 'open': isVideoSidebarOpen || isLargeScreen }]">
+                            <div class="player-sidebar-inner no-scrollbar">
+                                <div v-if="!isLargeScreen" class="flex justify-end mb-2">
+                                    <button @click="isVideoSidebarOpen = false"
+                                        class="text-gray-400 hover:text-white p-1">✕</button>
+                                </div>
+                                <template v-if="courseSections.length > 0 && currentSidebarSection">
+                                    <h3 class="player-sidebar-heading">{{ romanNumeral(currentSectionIndex + 1) }}. {{
+                                        currentSidebarSection.title }}</h3>
+                                    <p class="player-sidebar-lessons">{{ (currentSidebarSection.videos || []).length }}
+                                        Lessons</p>
+                                    <ul class="player-lesson-list">
+                                        <li v-for="vid in (currentSidebarSection.videos || [])" :key="vid.id">
+                                            <button v-if="getVideoById(vid.id)"
+                                                @click="selectVideo(getVideoById(vid.id))"
+                                                :class="['player-lesson-item', currentVideo && currentVideo.id === vid.id ? 'player-lesson-item-active' : '']">
+                                                <svg v-if="currentVideo && currentVideo.id === vid.id"
+                                                    class="player-lesson-play-icon" fill="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M8 5v14l11-7z" />
+                                                </svg>
+                                                <img v-if="getVideoById(vid.id).thumbnail_url"
+                                                    :src="getVideoById(vid.id).thumbnail_url" :alt="vid.title"
+                                                    class="player-lesson-thumb" />
+                                                <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder">
+                                                </div>
+                                                <span class="player-lesson-title">{{ vid.title }}</span>
+
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <div class="player-category-nav">
+                                        <button v-if="hasPrevCategory" @click="prevCategory"
+                                            class="player-category-btn">Previous Category</button>
+                                        <button v-if="hasNextCategory" @click="nextCategory"
+                                            class="player-category-btn player-category-btn-primary">Next
+                                            Category</button>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <h3 class="player-sidebar-heading">Lessons</h3>
+                                    <ul class="player-lesson-list">
+                                        <li v-for="video in sortedVideos" :key="video.id">
+                                            <button @click="selectVideo(video)"
+                                                :class="['player-lesson-item', currentVideo && currentVideo.id === video.id ? 'player-lesson-item-active' : '']">
+                                                <img v-if="video.thumbnail_url" :src="video.thumbnail_url"
+                                                    :alt="video.title" class="player-lesson-thumb" />
+                                                <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder">
+                                                </div>
+                                                <span class="player-lesson-title">{{ video.title }}</span>
+                                                <svg v-if="currentVideo && currentVideo.id === video.id"
+                                                    class="player-lesson-play-icon" fill="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M8 5v14l11-7z" />
+                                                </svg>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </template>
+
+                                <Link :href="route('courses.show', { course: course.id })" class="player-back-link">Back
+                                    to Course Details</Link>
+                            </div>
+                        </div>
+                        <!-- Instructor card directly under right sidebar -->
+                        <div class="max-w-7xl mx-auto px-4" v-if="course && course.user">
+                            <div class="flex justify-end">
+                                <div class="player-instructor-card-details" style="margin-top: 1rem;">
+                                    <h3 class="player-instructor-heading-details">Instructor</h3>
+                                    <div class="flex items-start gap-3">
+                                        <div class="player-instructor-avatar-details">
+                                            {{ getInitials(course.user.name) }}
+                                        </div>
+                                        <div>
+                                            <p class="player-instructor-name-details">
+                                                {{ course.user.name }}
+                                            </p>
+                                            <p class="player-instructor-role-details">
+                                                Instructor
+                                            </p>
+                                            <p class="player-instructor-bio-details">
+                                                Course creator and instructor.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Right: One section + Next Category -->
-                    <div :class="['player-right', { 'open': isVideoSidebarOpen || isLargeScreen }]">
-                        <div class="player-sidebar-inner">
-                            <div v-if="!isLargeScreen" class="flex justify-end mb-2">
-                                <button @click="isVideoSidebarOpen = false" class="text-gray-400 hover:text-white p-1">✕</button>
-                            </div>
-                            <template v-if="courseSections.length > 0 && currentSidebarSection">
-                                <h3 class="player-sidebar-heading">{{ romanNumeral(currentSectionIndex + 1) }}. {{ currentSidebarSection.title }}</h3>
-                                <p class="player-sidebar-lessons">{{ (currentSidebarSection.videos || []).length }} Lessons</p>
-                                <ul class="player-lesson-list">
-                                    <li v-for="vid in (currentSidebarSection.videos || [])" :key="vid.id">
-                                        <button v-if="getVideoById(vid.id)" @click="selectVideo(getVideoById(vid.id))"
-                                            :class="['player-lesson-item', currentVideo && currentVideo.id === vid.id ? 'player-lesson-item-active' : '']">
-                                            <img v-if="getVideoById(vid.id).thumbnail_url" :src="getVideoById(vid.id).thumbnail_url" :alt="vid.title" class="player-lesson-thumb" />
-                                            <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder"></div>
-                                            <span class="player-lesson-title">{{ vid.title }}</span>
-                                            <svg v-if="currentVideo && currentVideo.id === vid.id" class="player-lesson-play-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                        </button>
-                                    </li>
-                                </ul>
-                                <div class="player-category-nav">
-                                    <button v-if="hasPrevCategory" @click="prevCategory" class="player-category-btn">Previous Category</button>
-                                    <button v-if="hasNextCategory" @click="nextCategory" class="player-category-btn player-category-btn-primary">Next Category</button>
-                                </div>
-                            </template>
-                            <template v-else>
-                                <h3 class="player-sidebar-heading">Lessons</h3>
-                                <ul class="player-lesson-list">
-                                    <li v-for="video in sortedVideos" :key="video.id">
-                                        <button @click="selectVideo(video)"
-                                            :class="['player-lesson-item', currentVideo && currentVideo.id === video.id ? 'player-lesson-item-active' : '']">
-                                            <img v-if="video.thumbnail_url" :src="video.thumbnail_url" :alt="video.title" class="player-lesson-thumb" />
-                                            <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder"></div>
-                                            <span class="player-lesson-title">{{ video.title }}</span>
-                                            <svg v-if="currentVideo && currentVideo.id === video.id" class="player-lesson-play-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </template>
-
-                            <div class="player-instructor-card">
-                                <h3 class="player-instructor-heading">Instructor</h3>
-                                <div class="flex items-start gap-3">
-                                    <div class="player-instructor-avatar player-instructor-avatar-initials">
-                                        {{ getInitials(course.user ? course.user.name : '') }}
-                                    </div>
-                                    <div>
-                                        <p class="player-instructor-name">{{ course.user ? course.user.name : 'Instructor' }}</p>
-                                        <p class="player-instructor-role">Instructor</p>
-                                        <p class="player-instructor-bio">Course creator and instructor.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Link :href="route('courses.show', { course: course.id })" class="player-back-link">Back to Course Details</Link>
-                        </div>
-                    </div>
                 </div>
             </div>
 
+
             <!-- Expanded details (description, etc.) below the grid -->
             <div class="max-w-7xl mx-auto px-4 pb-8">
-                <div class="p-6 lg:p-8 bg-white dark:bg-dark-bg-secondary dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 mt-6">
+                <div
+                    class="p-6 lg:p-8 bg-white dark:bg-dark-bg-secondary dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 mt-6">
                     <div v-if="currentVideo">
                         <h1 class="text-3xl font-bold mb-3 dark:text-white">{{ currentVideo.title }}</h1>
 
@@ -132,7 +220,8 @@
                         </div>
 
                         <!-- Takeaway Notes - Conditional -->
-                        <div v-if="currentVideo.takeaway_notes && currentVideoSavedProgress?.completed" class="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div v-if="currentVideo.takeaway_notes && currentVideoSavedProgress?.completed"
+                            class="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                             <div class="flex justify-between items-center mb-3">
                                 <h2 class="text-xl font-semibold dark:text-white">Takeaway Notes</h2>
                             </div>
@@ -142,21 +231,33 @@
                         <!-- Course Details -->
                         <div class="mt-8">
                             <h2 class="text-xl font-semibold mb-3 dark:text-white">Course Details</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-gray-600 dark:text-gray-300">
+                            <div
+                                class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-gray-600 dark:text-gray-300">
                                 <!-- <div class="flex items-center space-x-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     <span>{{ course.total_duration }}</span>
                                 </div> -->
                                 <div class="flex items-center space-x-3">
-                                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
+                                        </path>
+                                    </svg>
                                     <span>{{ course.type }}</span>
                                 </div>
                                 <div class="flex items-center space-x-3">
-                                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
                                     <span>Updated: {{ course.updated_at }}</span>
                                 </div>
                                 <div v-if="course.reviews_count > 0" class="flex items-center space-x-2">
-                                    <span class="font-bold text-lg text-gray-800 dark:text-white">{{ course.average_rating }}</span>
+                                    <span class="font-bold text-lg text-gray-800 dark:text-white">{{
+                                        course.average_rating }}</span>
                                     <StarRating :rating="course.average_rating" />
                                     <span>({{ course.reviews_count.toLocaleString() }} ratings)</span>
                                 </div>
@@ -167,7 +268,8 @@
                                 <h3 class="font-semibold">Course Description</h3>
                                 <TruncatedText :text="course.description || 'No description available.'" />
                                 <h3 class="font-semibold mt-4">Additional Information</h3>
-                                <TruncatedText :text="course.additional_description || 'No additional description available.'" />
+                                <TruncatedText
+                                    :text="course.additional_description || 'No additional description available.'" />
                                 <h3 class="font-semibold mt-4">Recommendations</h3>
                                 <TruncatedText :text="course.recommendations || 'No recommendations available.'" />
                             </div>
@@ -186,16 +288,16 @@
                                     <!-- Thumbnail -->
                                     <Link :href="route('courses.show', { course: relatedCourse.id })"
                                         class="flex-shrink-0 relative w-40 h-24">
-                                    <img :src="relatedCourse.thumbnail_url ? relatedCourse.thumbnail_url : '/images/default_course_thumbnail.jpg'"
-                                        alt="Course Thumbnail" class="w-full h-full object-cover rounded-lg">
-                                    <div v-if="relatedCourse.total_duration"
-                                        class="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                                        {{ relatedCourse.total_duration }}
-                                    </div>
-                                    <div v-if="relatedCourse.is_popular"
-                                        class="absolute top-1 left-1 bg-white text-gray-800 text-xs font-semibold px-2 py-1 rounded shadow">
-                                        Popular
-                                    </div>
+                                        <img :src="relatedCourse.thumbnail_url ? relatedCourse.thumbnail_url : '/images/default_course_thumbnail.jpg'"
+                                            alt="Course Thumbnail" class="w-full h-full object-cover rounded-lg">
+                                        <div v-if="relatedCourse.total_duration"
+                                            class="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                                            {{ relatedCourse.total_duration }}
+                                        </div>
+                                        <div v-if="relatedCourse.is_popular"
+                                            class="absolute top-1 left-1 bg-white text-gray-800 text-xs font-semibold px-2 py-1 rounded shadow">
+                                            Popular
+                                        </div>
                                     </Link>
 
                                     <!-- Course Info -->
@@ -203,8 +305,9 @@
                                         <p class="text-sm text-gray-500 dark:text-gray-400">Course</p>
                                         <Link :href="route('courses.show', { course: relatedCourse.id })"
                                             class="hover:text-gray-900 dark:hover:text-gray-200">
-                                        <h4 class="text-lg font-semibold truncate dark:text-white">{{ relatedCourse.title
-                                        }}</h4>
+                                            <h4 class="text-lg font-semibold truncate dark:text-white">{{
+                                                relatedCourse.title
+                                                }}</h4>
                                         </Link>
                                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{
                                             relatedCourse.learners_count }} learners</p>
@@ -230,11 +333,13 @@
 
                         <!-- Comments Section -->
                         <div class="mt-8">
-                            <h2 class="text-2xl font-semibold mb-4 dark:text-white">Comments ({{ totalCommentsCount }})</h2>
+                            <h2 class="text-2xl font-semibold mb-4 dark:text-white">Comments ({{ totalCommentsCount }})
+                            </h2>
 
                             <!-- New comment form -->
                             <div class="flex items-start space-x-4 mb-8">
-                                <div class="w-10 h-10 rounded-full bg-[#1C355E] text-white flex items-center justify-center font-semibold text-sm">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-[#1C355E] text-white flex items-center justify-center font-semibold text-sm">
                                     {{ getInitials(authUser && authUser.name ? authUser.name : 'You') }}
                                 </div>
                                 <div class="flex-1 relative">
@@ -243,9 +348,12 @@
                                         class="w-full p-3 bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-green-500 focus:ring-0 transition resize-none"
                                         style="outline: none;"></textarea>
                                     <div v-if="isCommentFocused" class="flex justify-between items-center mt-2">
-                                        <button @click="showEmojiPicker = !showEmojiPicker" class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <button @click="showEmojiPicker = !showEmojiPicker"
+                                            class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </button>
                                         <div class="space-x-2">
@@ -267,7 +375,8 @@
 
                             <!-- Display existing comments -->
                             <div v-if="displayedComments.length > 0" class="space-y-6">
-                                <div v-for="comment in displayedComments" :key="comment.id" class="flex items-start space-x-4">
+                                <div v-for="comment in displayedComments" :key="comment.id"
+                                    class="flex items-start space-x-4">
                                     <img :src="comment.user.profile_photo_url ? comment.user.profile_photo_url : '/images/profile_photo.jpg'"
                                         alt="User avatar" class="w-10 h-10 rounded-full object-cover" />
                                     <div class="flex-1">
@@ -367,7 +476,7 @@ const chatbotContext = computed(() => {
 });
 
 const chatbotWelcomeMessage = computed(() => {
-    return currentVideo.value 
+    return currentVideo.value
         ? "Hello! How can I help you with this video?"
         : "Hello! How can I help you with this course?";
 });
@@ -414,24 +523,24 @@ let lastProgressSaveTime = 0;
 const progressSaveInterval = 5000; // Save progress every 5 seconds
 
 const downloadNotes = () => {
-  if (!currentVideo.value || !currentVideo.value.takeaway_notes) {
-    return;
-  }
+    if (!currentVideo.value || !currentVideo.value.takeaway_notes) {
+        return;
+    }
 
-  const notes = currentVideo.value.takeaway_notes;
-  const title = currentVideo.value.title || 'video';
-  const filename = `${title}-notes.txt`;
+    const notes = currentVideo.value.takeaway_notes;
+    const title = currentVideo.value.title || 'video';
+    const filename = `${title}-notes.txt`;
 
-  const element = document.createElement('a');
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(notes));
-  element.setAttribute('download', filename);
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(notes));
+    element.setAttribute('download', filename);
 
-  element.style.display = 'none';
-  document.body.appendChild(element);
+    element.style.display = 'none';
+    document.body.appendChild(element);
 
-  element.click();
+    element.click();
 
-  document.body.removeChild(element);
+    document.body.removeChild(element);
 };
 
 const relatedCourses = ref([]);
@@ -456,15 +565,26 @@ const togglePlayPause = () => {
 };
 
 const skipForward = (seconds) => {
-    if (videoPlayer.value) {
-        videoPlayer.value.currentTime += seconds;
+    const player = videoPlayer.value;
+    if (!player || player.readyState < 1) {
+        return;
     }
+    const duration = Number.isFinite(player.duration) ? player.duration : 0;
+    const current = Number.isFinite(player.currentTime) ? player.currentTime : 0;
+    const rawTarget = current + seconds;
+    const maxTarget = duration > 0 ? Math.min(rawTarget, duration - 0.5) : rawTarget;
+    const safeTarget = Math.max(0, maxTarget);
+    player.currentTime = safeTarget;
 };
 
 const skipBackward = (seconds) => {
-    if (videoPlayer.value) {
-        videoPlayer.value.currentTime -= seconds;
+    const player = videoPlayer.value;
+    if (!player || player.readyState < 1) {
+        return;
     }
+    const current = Number.isFinite(player.currentTime) ? player.currentTime : 0;
+    const safeTarget = Math.max(0, current - seconds);
+    player.currentTime = safeTarget;
 };
 
 const COMMENTS_TO_SHOW_INCREMENT = 3;
@@ -864,19 +984,19 @@ onMounted(async () => {
         const response = await axios.get(route('progress.getCourseProgress', { course: props.course.id }));
         const courseProgress = response.data;
         const completedVideoIds = new Set(courseProgress.filter(p => p.completed).map(p => p.video_id));
-        
+
         // Find the first video that is not in the completed set
         videoToPlayInitially = sortedVideos.value.find(video => !completedVideoIds.has(video.id));
 
     } catch (error) {
         console.error("Could not fetch course progress, defaulting to first video.", error);
     }
-    
+
     // Fallback to the first video if no uncompleted video is found or if there was an error
     if (!videoToPlayInitially && sortedVideos.value.length > 0) {
         videoToPlayInitially = sortedVideos.value[0];
     }
-    
+
     if (videoToPlayInitially) {
         currentVideo.value = videoToPlayInitially;
         lastProgressSaveTime = 0;
@@ -918,7 +1038,7 @@ onUnmounted(() => {
     if (window.Tawk_API && typeof window.Tawk_API.showWidget === 'function') {
         window.Tawk_API.showWidget();
     }
-    
+
     console.warn('[[PLAYER UNMOUNTING]]: Attempting to save final progress (foreground save).', {
         hasPlayer: !!videoPlayer.value,
         hasCurrentVideo: !!currentVideo.value,
@@ -946,7 +1066,7 @@ onUnmounted(() => {
 const updateScreenSize = () => {
     const wasLargeScreen = isLargeScreen.value;
     isLargeScreen.value = window.innerWidth > 770;
-    
+
     // On large screens, always show sidebar; on small screens, close it if it was open due to large screen
     if (isLargeScreen.value && !wasLargeScreen) {
         // Just switched to large screen - sidebar will show automatically
@@ -987,7 +1107,7 @@ const updateScreenSize = () => {
         transition: transform 0.3s ease-in-out;
         box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
     }
-    
+
     .player_sidebar:not(.open) {
         transform: translateX(100%);
     }
@@ -1025,24 +1145,118 @@ const updateScreenSize = () => {
 }
 
 .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 /* Contained player layout: two columns, not full-page */
-.player-contained { }
+.player-contained {}
+
 .player-grid {
     display: grid;
     grid-template-columns: 1fr 340px;
-    gap: 1.5rem;
+    /* gap: 1.5rem; */
     align-items: start;
 }
+
 @media (max-width: 900px) {
-    .player-grid { grid-template-columns: 1fr; }
+    .player-grid {
+        grid-template-columns: 1fr;
+    }
 }
-.player-left { min-width: 0; }
-.player-video-box { }
-.player-video-el { display: block; }
+
+.player-left {
+    min-width: 0;
+}
+
+.player-video-box {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    border-radius: 0px;
+    background-color: #000;
+    overflow: hidden;
+    /* keep blue control bar inside video frame */
+}
+
+.player-video-el {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@media (max-width: 1024px) {
+    .player-video-el {
+        height: 100%;
+    }
+
+    /* .player-video-box {
+        height: 45vh;
+    } */
+}
+
+@media (max-width: 640px) {
+    .player-video-el {
+        height: 100%;
+    }
+
+    /* .player-video-box {
+        height: 35vh;
+    } */
+}
+
+/* Overlay controls (play/pause + 10s skip) */
+.player-overlay-controls {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8.5rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.group:hover .player-overlay-controls {
+    opacity: 1;
+}
+
+.player-overlay-button {
+    pointer-events: auto;
+    background: #1C355E;
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.player-overlay-play {
+    width: 72px;
+    height: 72px;
+}
+
+.player-overlay-skip {
+    width: 54px;
+    height: 54px;
+}
+
+.player-overlay-button svg {
+    width: 100%;
+    height: 100%;
+}
+
+.player-overlay-button:hover {
+    background: #254a7a;
+}
+
 .player-prev-next {
     display: flex;
     justify-content: space-between;
@@ -1051,6 +1265,7 @@ const updateScreenSize = () => {
     flex-wrap: wrap;
     gap: 0.5rem;
 }
+
 .player-nav-btn {
     display: inline-flex;
     align-items: center;
@@ -1063,10 +1278,15 @@ const updateScreenSize = () => {
     border-radius: 0.375rem;
     cursor: pointer;
 }
-.player-nav-btn:hover { background-color: #254a7a; }
+
+.player-nav-btn:hover {
+    background-color: #254a7a;
+}
+
 .player-mark-complete {
     display: inline-block;
     padding: 0.5rem 1rem;
+    width: 100%;
     font-size: 0.875rem;
     font-weight: 500;
     color: #1C355E;
@@ -1075,7 +1295,11 @@ const updateScreenSize = () => {
     border-radius: 0.375rem;
     cursor: pointer;
 }
-.player-mark-complete:hover { background-color: rgba(34, 197, 94, 0.08); }
+
+.player-mark-complete:hover {
+    background-color: rgba(34, 197, 94, 0.08);
+}
+
 .player-video-title {
     font-size: 1.25rem;
     font-weight: 700;
@@ -1083,27 +1307,130 @@ const updateScreenSize = () => {
     margin-bottom: 0.25rem;
     color: #111;
 }
-.dark .player-video-title { color: #fff; }
+
+.dark .player-video-title {
+    color: #fff;
+}
+
 .player-section-label {
     font-size: 0.875rem;
     color: #1C355E;
     margin: 0;
 }
-.dark .player-section-label { color: #4ade80; }
+
+.dark .player-section-label {
+    color: #4ade80;
+}
+
+/* Details section layout under player: main content + instructor aside */
+.player-details-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.75rem;
+}
+
+.player-details-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.player-details-aside {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.player-instructor-card-details {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+.dark .player-instructor-card-details {
+    background: #111827;
+    border-color: #1f2937;
+}
+
+.player-instructor-heading-details {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #111827;
+}
+
+.dark .player-instructor-heading-details {
+    color: #e5e7eb;
+}
+
+.player-instructor-avatar-details {
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    background: #1C355E;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+}
+
+.player-instructor-name-details {
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.dark .player-instructor-name-details {
+    color: #f9fafb;
+}
+
+.player-instructor-role-details {
+    font-size: 0.8rem;
+    color: #2563eb;
+    margin-top: 0.15rem;
+}
+
+.player-instructor-bio-details {
+    font-size: 0.8rem;
+    color: #4b5563;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+.dark .player-instructor-bio-details {
+    color: #9ca3af;
+}
+
+@media (max-width: 1024px) {
+    .player-details-wrapper {
+        flex-direction: column;
+    }
+
+    .player-details-aside {
+        width: 100%;
+    }
+}
 
 /* Right column: one section + Next Category */
 .player-right {
-    position: sticky;
-    top: 1rem;
-    background: #1f2937;
+    position: relative;
+    background: #252525;
     color: #fff;
-    border-radius: 0.5rem;
+    /* border-radius: 0.5rem; */
     overflow: hidden;
-    max-height: calc(100vh - 2rem);
+    height: 60vh;
+    /* max-height: calc(100vh - 2rem); */
     display: flex;
     flex-direction: column;
 }
-.dark .player-right { background: #111827; }
+
+.dark .player-right {
+    background: #111827;
+}
+
 @media (max-width: 900px) {
     .player-right {
         position: fixed;
@@ -1115,32 +1442,40 @@ const updateScreenSize = () => {
         z-index: 1002;
         transform: translateX(100%);
         transition: transform 0.3s ease;
-        box-shadow: -2px 0 12px rgba(0,0,0,0.2);
+        box-shadow: -2px 0 12px rgba(0, 0, 0, 0.2);
     }
-    .player-right.open { transform: translateX(0); }
+
+    .player-right.open {
+        transform: translateX(0);
+    }
 }
+
 .player-sidebar-inner {
     padding: 1rem;
     overflow-y: auto;
     flex: 1;
     min-height: 0;
 }
+
 .player-sidebar-heading {
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 0.25rem 0;
     color: #fff;
 }
+
 .player-sidebar-lessons {
     font-size: 0.75rem;
     color: #9ca3af;
     margin: 0 0 0.75rem 0;
 }
+
 .player-lesson-list {
     list-style: none;
     padding: 0;
     margin: 0 0 1rem 0;
 }
+
 .player-lesson-item {
     display: flex;
     align-items: center;
@@ -1155,22 +1490,30 @@ const updateScreenSize = () => {
     border-radius: 0.375rem;
     transition: background 0.15s;
 }
-.player-lesson-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+.player-lesson-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
 .player-lesson-item-active {
-    background: rgba(34, 197, 94, 0.2);
+    background: #4B4B4B;
     color: #1C355E;
 }
+
 .player-lesson-thumb {
-    width: 120px;
-    height: 68px;
+    width: 88px;
+    height: 50px;
     object-fit: cover;
     border-radius: 0.25rem;
     flex-shrink: 0;
 }
+
 .player-lesson-thumb-placeholder {
     background: #374151;
     display: block;
 }
+
 .player-lesson-title {
     flex: 1;
     color: #ffffff;
@@ -1179,44 +1522,58 @@ const updateScreenSize = () => {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 .player-lesson-play-icon {
     width: 1.25rem;
     height: 1.25rem;
     flex-shrink: 0;
     color: #fff;
 }
+
 .player-category-nav {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-bottom: 1rem;
 }
+
 .player-category-btn {
     padding: 0.5rem 0.75rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: #9ca3af;
-    background: #374151;
+    color: #feffff;
+    background: #4B4B4B;
     border: none;
     border-radius: 0.375rem;
     cursor: pointer;
 }
-.player-category-btn:hover { color: #fff; background: #4b5563; }
+
+.player-category-btn:hover {
+    color: #fff;
+    background: #4b5563;
+}
+
 .player-category-btn-primary {
     color: #fff;
-    background: #1C355E;
+    background: #4B4B4B;
 }
-.player-category-btn-primary:hover { background: #254a7a; }
+
+.player-category-btn-primary:hover {
+    background: #254a7a;
+}
+
 .player-instructor-card {
     padding: 1rem 0;
     border-top: 1px solid #374151;
 }
+
 .player-instructor-heading {
     font-size: 0.9375rem;
     font-weight: 600;
     margin: 0 0 0.75rem 0;
     color: #fff;
 }
+
 .player-instructor-avatar {
     width: 48px;
     height: 48px;
@@ -1224,11 +1581,12 @@ const updateScreenSize = () => {
     object-fit: cover;
     flex-shrink: 0;
 }
+
 .player-instructor-avatar-initials {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #1C355E;
+    background: #4B4B4B;
     color: #fff;
     display: inline-flex;
     align-items: center;
@@ -1236,22 +1594,26 @@ const updateScreenSize = () => {
     font-weight: 700;
     letter-spacing: 0.03em;
 }
+
 .player-instructor-name {
     font-weight: 600;
     margin: 0;
     color: #fff;
 }
+
 .player-instructor-role {
     font-size: 0.8125rem;
     color: #ffffff;
     margin: 0.25rem 0 0 0;
 }
+
 .player-instructor-bio {
     font-size: 0.8125rem;
     color: #9ca3af;
     margin: 0.5rem 0 0 0;
     line-height: 1.4;
 }
+
 .player-back-link {
     display: block;
     text-align: center;
@@ -1262,7 +1624,12 @@ const updateScreenSize = () => {
     border-radius: 0.375rem;
     margin-top: 0.5rem;
 }
-.player-back-link:hover { color: #4ade80; text-decoration: underline; }
+
+.player-back-link:hover {
+    color: #4ade80;
+    text-decoration: underline;
+}
+
 .player-mobile-menu-btn {
     padding: 0.5rem;
     color: #374151;
@@ -1270,5 +1637,10 @@ const updateScreenSize = () => {
     border: 1px solid #e5e7eb;
     border-radius: 0.375rem;
 }
-.dark .player-mobile-menu-btn { color: #e5e7eb; background: #1f2937; border-color: #374151; }
-</style>
+
+.dark .player-mobile-menu-btn {
+    color: #e5e7eb;
+    background: #1f2937;
+    border-color: #374151;
+}
+</style>layer-mobile-menu-btn { color: #e5e7eb; background: #1f2937; border-color: #374151; }

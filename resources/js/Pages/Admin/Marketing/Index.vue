@@ -148,7 +148,7 @@
 
                             <div class="mt-6 flex justify-end space-x-3">
                                 <button @click.prevent="cancelAction" type="button" class="px-4 py-2 border border-gray-300 dark:border-[#3b5161] rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-[#e5f2ff] hover:bg-gray-50 dark:hover:bg-[#253a49] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
-                                <button type="submit" :disabled="form.processing" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">{{ editingItem ? 'Save Changes' : 'Create' }}</button>
+                                <button type="submit" :disabled="form.processing" style="background-color:#254A7A; padding:12px; border-radius: 5px; color: white;">{{ editingItem ? 'Save Changes' : 'Create' }}</button>
                             </div>
                         </form>
                     </div>
@@ -159,13 +159,13 @@
                     <!-- Tab Navigation -->
                     <div class="mb-6">
                         <nav class="flex space-x-4 tabs_marketing_management">
-                            <button @click="changeTab('quotes')" :class="{' bg-[#3b82f6] text-white ': activeTab === 'quotes', ' text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38] ': activeTab !== 'quotes'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2">
+                            <button @click="changeTab('quotes')" :class="{' bg-[#254A7A] text-white ': activeTab === 'quotes', ' text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38] ': activeTab !== 'quotes'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2">
                                 Quotes
                             </button>
-                            <button @click="changeTab('promotions')" :class="{'bg-[#3b82f6] text-white': activeTab === 'promotions', 'border-transparent text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38]': activeTab !== 'promotions'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
+                            <button @click="changeTab('promotions')" :class="{'bg-[#254A7A] text-white': activeTab === 'promotions', 'border-transparent text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38]': activeTab !== 'promotions'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
                                 Promotions
                             </button>
-                             <button @click="changeTab('prompts')" :class="{'bg-[#3b82f6] text-white': activeTab === 'prompts', 'border-transparent text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38]': activeTab !== 'prompts'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
+                             <button @click="changeTab('prompts')" :class="{'bg-[#254A7A] text-white': activeTab === 'prompts', 'border-transparent text-black dark:text-[#e5f2ff] bg-white dark:bg-[#1A2C38]': activeTab !== 'prompts'}" class="px-3 py-2 font-medium text-sm rounded-md mb-2" style="margin-left: 0px;">
                                 Prompts
                             </button>
                         </nav>
@@ -177,7 +177,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Quotes</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add New Quote</button>
+                                    <button @click="startCreate" style="background-color:#254A7A; padding:12px; border-radius: 5px; color: white;">Add New Quote</button>
                                 </div>
                                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -213,7 +213,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Promotions</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add New Promotion</button>
+                                    <button @click="startCreate" style="background-color:#254A7A; padding:12px; border-radius: 5px; color: white;">Add New Promotion</button>
                                 </div>
                                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -258,7 +258,7 @@
                             <div class="p-6 text-gray-900 dark:text-white">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-medium">Prompts</h3>
-                                    <button @click="startCreate" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add New Prompt</button>
+                                    <button @click="startCreate"style="background-color:#254A7A; padding:12px; border-radius: 5px; color: white;">Add New Prompt</button>
                                 </div>
                                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">

@@ -577,7 +577,7 @@ onMounted(() => {
             :notification-data="selectedContactNotification"
             @close="closeContactModal"
         />
-        <FooterContainer />
+        <FooterContainer class="mt-auto" />
     </div>
 </template>
 

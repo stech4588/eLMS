@@ -67,7 +67,7 @@ const submit = () => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+                <h2 class="text-xl font-semibold leading-tight text-white-800">
                     {{ invoice ? 'Edit Invoice' : 'Create New Invoice' }}
                 </h2>
                 <Link :href="route('invoices.index')"

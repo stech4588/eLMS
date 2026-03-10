@@ -26,7 +26,7 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+            <h2 >
                 Edit User: {{ user.name }}
             </h2>
         </template>
