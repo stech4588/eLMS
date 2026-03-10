@@ -87,7 +87,7 @@
             </swiper>
         </div>
 
-        <router-link to="/join-now"> <button class="join-btn">JOIN NOW</button></router-link>
+        <!-- <router-link to="/join-now"> <button class="join-btn">JOIN NOW</button></router-link> -->
     </div>
 </template>
 

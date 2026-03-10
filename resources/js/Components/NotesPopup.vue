@@ -16,7 +16,7 @@
                 <button @click="organizeNotes" :disabled="isOrganizing || !video?.id" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md shadow-sm hover:bg-purple-700 disabled:opacity-50">
                     {{ isOrganizing ? 'Organizing...' : 'Organize with AI' }}
                 </button>
-                <button @click="downloadNotes" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700">
+                <button @click="downloadNotes" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#1C355E] border border-transparent rounded-md shadow-sm hover:bg-[#254a7a]">
                     Download Notes
                 </button>
             </div>

@@ -52,9 +52,9 @@ const currentCourses = computed(() => {
     <Head title=" My Library" />
 
     <AuthenticatedLayout>
-        
-        <div class="bg-white dark:bg-dark-bg-secondary p-6 dark:text-white"
-             style="gap: 20px; display: flex; flex-direction: column;">
+        <div class="page-with-footer-wrap">
+        <div class="bg-white dark:bg-dark-bg-secondary p-6 dark:text-white library-page-content"
+             style="gap: 20px; display: flex; flex-direction: column; flex: 1;">
             <div style="font-size: 36px; font-weight: 600;">
                 My Library
             </div>
@@ -64,9 +64,9 @@ const currentCourses = computed(() => {
                     <div class="flex items-center justify-between">
                         <div>
                             <div class="flex items-center">
-                                <div class="p-2 mr-2 bg-blue-100 rounded-full">
+                                <div class="p-2 mr-2 bg-gray-100 rounded-full">
                                     <!-- Placeholder for an icon -->
-                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor"
+                                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
@@ -208,7 +208,7 @@ const currentCourses = computed(() => {
                                                     <Link 
                                                         v-if="selectedOption === 'In Progress' && course.course_id && course.video_id"
                                                         :href="route('courses.play', { course: course.course_id, video: course.video_id })"
-                                                        class="px-4 py-2 text-sm text-blue-500 border border-blue-500 rounded hover:bg-blue-50"
+                                                        class="px-4 py-2 text-sm text-gray-700 border border-gray-600 rounded hover:bg-gray-100"
                                                         style="border-radius: 30px;"
                                                     >
                                                         Continue
@@ -217,7 +217,7 @@ const currentCourses = computed(() => {
                                                     <Link 
                                                         v-if="selectedOption === 'Saved' && course.id" 
                                                         :href="route('courses.show', { course: course.id })"
-                                                        class="px-4 py-2 text-sm text-blue-500 border border-blue-500 rounded hover:bg-blue-50" 
+                                                        class="px-4 py-2 text-sm text-gray-700 border border-gray-600 rounded hover:bg-gray-100" 
                                                         style="border-radius: 30px;"
                                                         >
                                                         View Course
@@ -251,8 +251,9 @@ const currentCourses = computed(() => {
                 </div>
             </div>
         </div>
+        </div>
 
-        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white">
+        <footer class="footer_upload_video footer-stick-bottom dark:bg-dark-bg-secondary dark:text-white">
             <div class="footer-lang-select libaray_dark_text">
                 Language(Eng)
             </div>
@@ -265,6 +266,7 @@ const currentCourses = computed(() => {
             <span class="footer-divider libaray_dark_text">•</span>
             <a href="#" class="footer-link libaray_dark_text">Accessibility</a>
         </footer>
+        </div>
     </AuthenticatedLayout>
 </template>
 
@@ -316,8 +318,15 @@ const currentCourses = computed(() => {
         flex-direction: column;
     }
 }
+.page-with-footer-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 5rem);
+}
+.library-page-content { flex: 1; }
+.footer-stick-bottom { margin-top: auto; }
 .footer_upload_video {
-    background-color: #477CAA;
+    background-color: #1C355E;
     color: white;
 }
 @media (max-width: 770px) {
@@ -361,7 +370,7 @@ const currentCourses = computed(() => {
 }
 
 .empty-library-button {
-    background-color: #0a66c2; /* LinkedIn blue */
+    background-color: #1C355E; /* primary green */
     color: #fff;
     padding: 10px 20px;
     border-radius: 20px;
@@ -413,7 +422,7 @@ const currentCourses = computed(() => {
 }
 
 .footer-link:hover {
-    color: #0073b1; /* LinkedIn blue for hover */
+    color: #254a7a; /* green hover */
     text-decoration: underline;
 }
 

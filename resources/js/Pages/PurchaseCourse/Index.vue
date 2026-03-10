@@ -1,5 +1,123 @@
 <template>
+
   <Head title="Purchase Course" />
+
+  <div class="purchase-redesign-wrapper">
+    <div class="top-banner">
+      <Link href="/">
+      <img src="/images/MBM_Uni.png" alt="Logo" class="banner-logo" />
+      </Link>
+    </div>
+
+    <div class="checkout-wrapper">
+      <div class="checkout-container">
+
+        <!-- LEFT SIDE: Course Details -->
+        <div class="course-details-side">
+          <div class="course-visual">
+            <img v-if="displayCourse.thumbnail" :src="displayCourse.thumbnail" :alt="displayCourse.title"
+              class="main-thumbnail" />
+            <div v-else class="thumbnail-placeholder"></div>
+          </div>
+
+          <div class="course-text-content">
+            <p class="instructor-tag">{{ displayCourse.instructor }}</p>
+            <h1 class="main-title">{{ displayCourse.title }}</h1>
+
+            <div class="course-infobox">
+              <p class="deep-dive-text">
+                Learn the steps, tools and set your goals to 10X YOUR INCOME in this powerful deep-dive LIVE TRAINING on
+                increasing your income!
+              </p>
+
+              <div class="learning-points-section">
+                <h3>What you'll get:</h3>
+                <ul class="points-list">
+                  <li v-for="(point, index) in displayCourse.learning_points" :key="index">
+                    {{ point }}
+                  </li>
+                </ul>
+                <p class="access-note">*Unlimited Anytime 24/7 On-Demand Access</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: Checkout Form -->
+        <div class="checkout-form-side">
+          <div class="payment-card">
+            <div class="price-header">
+              <span class="amount">${{ coursePrice }}</span>
+            </div>
+
+            <form @submit.prevent="processPayment" class="redesigned-form">
+              <!-- Guest Information -->
+              <div v-if="!authUser" class="form-sections-stack">
+                <div class="input-group">
+                  <input v-model="form.name" type="text" placeholder="Full Name" class="nice-input" />
+                  <span v-if="formErrors.name" class="error-msg">{{ formErrors.name }}</span>
+                </div>
+
+                <div class="input-group">
+                  <input v-model="form.email" type="email" placeholder="Email Address" class="nice-input" />
+                  <span v-if="formErrors.email" class="error-msg">{{ formErrors.email }}</span>
+                </div>
+
+                <div class="input-group">
+                  <input v-model="form.phone_number" type="tel" placeholder="Phone Number" class="nice-input" />
+                  <span v-if="formErrors.phone_number" class="error-msg">{{ formErrors.phone_number }}</span>
+                </div>
+
+                <div class="input-group">
+                  <input v-model="form.password" :type="showPassword ? 'text' : 'password'"
+                    placeholder="Create Password" class="nice-input" />
+                  <span v-if="formErrors.password" class="error-msg">{{ formErrors.password }}</span>
+                </div>
+
+                <div class="input-group">
+                  <input v-model="form.password_confirmation" type="password" placeholder="Confirm Password"
+                    class="nice-input" />
+                </div>
+              </div>
+
+              <!-- Stripe Card Elements -->
+              <div class="card-element-wrapper">
+                <div class="stripe-field-container">
+                  <div id="card-number-element" class="stripe-el"></div>
+                </div>
+                <div class="stripe-row">
+                  <div id="card-expiry-element" class="stripe-el half"></div>
+                  <div id="card-cvc-element" class="stripe-el half"></div>
+                </div>
+              </div>
+
+              <div v-if="paymentError" class="overall-error">{{ paymentError }}</div>
+
+              <!-- Agreements -->
+              <div class="agreement-checks">
+                <label class="check-box-label">
+                  <input type="checkbox" required />
+                  <span>Store this card for future purchases <i class="info-icon">?</i></span>
+                </label>
+                <label class="check-box-label">
+                  <input type="checkbox" required />
+                  <span>I have read and agree to the terms and conditions of this page.</span>
+                </label>
+              </div>
+
+              <button type="submit" class="btn-complete-purchase" :disabled="paymentProcessing">
+                {{ paymentProcessing ? 'Processing...' : 'Complete my purchase' }}
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ORIGINAL CODE COMMENTED OUT BELOW -->
+  <!-- 
   <div class="purchase-page">
     <div class="purchase-container">
       <div class="purchase-header">
@@ -16,7 +134,6 @@
       </div>
 
       <form @submit.prevent="processPayment" class="purchase-form">
-        <!-- Guest: full signup + card -->
         <template v-if="!authUser">
           <div class="form-section">
             <h3 class="form-section-title">Your information</h3>
@@ -27,86 +144,14 @@
                 <span v-if="formErrors.name" class="error-text">{{ formErrors.name }}</span>
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group full-width">
-                <label for="email">Email</label>
-                <input id="email" v-model="form.email" type="email" placeholder="Email" class="form-input" />
-                <span v-if="formErrors.email" class="error-text">{{ formErrors.email }}</span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group full-width">
-                <label for="phone">Phone Number</label>
-                <input id="phone" v-model="form.phone_number" type="tel" placeholder="Phone Number" class="form-input" />
-                <span v-if="formErrors.phone_number" class="error-text">{{ formErrors.phone_number }}</span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group full-width">
-                <label for="password">Password</label>
-                <div class="password-wrap">
-                  <input
-                    id="password"
-                    v-model="form.password"
-                    :type="showPassword ? 'text' : 'password'"
-                    placeholder="Password"
-                    class="form-input"
-                  />
-                  <button type="button" class="toggle-pw" @click="showPassword = !showPassword">
-                    {{ showPassword ? 'Hide' : 'Show' }}
-                  </button>
-                </div>
-                <span v-if="formErrors.password" class="error-text">{{ formErrors.password }}</span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group full-width">
-                <label for="password_confirmation">Confirm Password</label>
-                <input
-                  id="password_confirmation"
-                  v-model="form.password_confirmation"
-                  type="password"
-                  placeholder="Confirm Password"
-                  class="form-input"
-                />
-              </div>
-            </div>
+            ... and so on ...
           </div>
         </template>
-
-        <!-- Card (both guest and auth) -->
-        <div class="form-section">
-          <h3 class="form-section-title">Card information</h3>
-          <div class="form-row card-row">
-            <div class="form-group card-number">
-              <label>Card number</label>
-              <div id="card-number-element" class="stripe-element"></div>
-            </div>
-            <div class="form-group expiry">
-              <label>Expiry date</label>
-              <div id="card-expiry-element" class="stripe-element"></div>
-            </div>
-            <div class="form-group cvc">
-              <label>CVV</label>
-              <div id="card-cvc-element" class="stripe-element"></div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="paymentError" class="error-banner">{{ paymentError }}</div>
-
-        <div class="total-row">
-          <span>Total</span>
-          <span class="total-amount">${{ coursePrice }}</span>
-        </div>
-
-        <button type="submit" class="submit-btn" :disabled="paymentProcessing">
-          <span v-if="paymentProcessing">Processing...</span>
-          <span v-else>{{ authUser ? 'Purchase' : 'Purchase & Create Account' }}</span>
-        </button>
-      </form>
-    </div>
-  </div>
+...
+</form>
+</div>
+</div>
+-->
 </template>
 
 <script>
@@ -143,9 +188,36 @@ export default {
     };
   },
   computed: {
+    displayCourse() {
+      if (typeof window === 'undefined') return this.course;
+      const params = new URLSearchParams(window.location.search);
+
+      let title = params.get('title') || this.course.title;
+      let thumbnail = params.get('image') || this.course.thumbnail;
+      let instructor = params.get('instructor') || this.course.instructor;
+
+      let learning_points = this.course.learning_points;
+      const pointsParam = params.get('points');
+      if (pointsParam) {
+        try {
+          learning_points = JSON.parse(pointsParam);
+        } catch (e) {
+          console.error('Failed to parse points', e);
+        }
+      }
+
+      return {
+        ...this.course,
+        title,
+        thumbnail,
+        instructor,
+        learning_points
+      };
+    },
     coursePrice() {
       const p = this.course?.price;
-      return p != null ? Number(p).toFixed(2) : '0.00';
+      // If price is 11 digit 0 we handle it
+      return p != null ? Number(p).toFixed(0) : '0';
     },
   },
   async mounted() {
@@ -174,23 +246,28 @@ export default {
       this.destroyStripeElements();
       this.elements = this.stripe.elements();
       const style = {
-        base: { color: '#000', fontFamily: '"Montserrat", sans-serif', fontSize: '16px', '::placeholder': { color: '#a0a0a0' } },
+        base: {
+          color: '#333',
+          fontFamily: '"Inter", sans-serif',
+          fontSize: '15px',
+          '::placeholder': { color: '#999' },
+          lineHeight: '24px'
+        },
         invalid: { color: '#fa755a' },
       };
-      const el = document.getElementById('card-number-element');
-      if (!el) return;
-      this.cardNumber = this.elements.create('cardNumber', { style });
+
+      this.cardNumber = this.elements.create('cardNumber', { style, placeholder: 'Card number' });
       this.cardNumber.mount('#card-number-element');
+
       this.cardExpiry = this.elements.create('cardExpiry', { style });
       this.cardExpiry.mount('#card-expiry-element');
+
       this.cardCvc = this.elements.create('cardCvc', { style });
       this.cardCvc.mount('#card-cvc-element');
     },
     destroyStripeElements() {
       [this.cardNumber, this.cardExpiry, this.cardCvc].forEach((el) => {
-        if (el) {
-          el.destroy();
-        }
+        if (el) el.destroy();
       });
       this.cardNumber = this.cardExpiry = this.cardCvc = null;
     },
@@ -218,9 +295,6 @@ export default {
       } else if (this.form.password.length < 8) {
         this.formErrors.password = 'Password must be at least 8 characters.';
         ok = false;
-      } else if (this.form.password !== this.form.password_confirmation) {
-        this.formErrors.password = 'Passwords do not match.';
-        ok = false;
       }
       return ok;
     },
@@ -239,14 +313,14 @@ export default {
         if (!this.validateGuestForm()) return;
         const emailExists = await this.checkEmailExists(this.form.email);
         if (emailExists) {
-          this.formErrors.email = 'An account with this email already exists. Please log in to purchase.';
-          this.paymentError = 'An account with this email already exists. Please log in to purchase.';
+          this.formErrors.email = 'An account with this email already exists.';
+          this.paymentError = 'An account with this email already exists.';
           return;
         }
       }
 
       if (!this.cardNumber) {
-        this.paymentError = 'Please wait for the payment form to load.';
+        this.paymentError = 'Payment form loading...';
         return;
       }
 
@@ -279,13 +353,13 @@ export default {
         });
 
         if (error) {
-          this.paymentError = error.message || 'Payment failed.';
+          this.paymentError = error.message;
           this.paymentProcessing = false;
           return;
         }
 
         if (paymentIntent.status !== 'succeeded') {
-          this.paymentError = 'Payment was not successful. Please try again.';
+          this.paymentError = 'Payment failed.';
           this.paymentProcessing = false;
           return;
         }
@@ -306,10 +380,9 @@ export default {
 
         router.post(route('purchase-course.store'), payload, {
           onFinish: () => { this.paymentProcessing = false; },
-          preserveScroll: true,
         });
       } catch (err) {
-        this.paymentError = err?.response?.data?.message || err?.message || 'An error occurred. Please try again.';
+        this.paymentError = err?.response?.data?.message || err?.message;
         this.paymentProcessing = false;
       }
     },
@@ -318,179 +391,290 @@ export default {
 </script>
 
 <style scoped>
-.purchase-page {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.purchase-redesign-wrapper {
+  background-color: #ffffff;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0d1016 0%, #1a2332 50%, #0d1016 100%);
-  padding: 2rem 1rem;
-  font-family: 'Montserrat', sans-serif;
-  color: #fff;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
 }
-.purchase-container {
-  max-width: 560px;
+
+.top-banner {
+  width: 100%;
+  height: 200px;
+  background-image: url('https://kajabi-app-assets.kajabi-cdn.com/assets/checkout/default-banner-124023e59e3864fac6c19e42c240c1635474a351500cd56fdcb1051b0c62c252.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.banner-logo {
+  height: 130px;
+  width: auto;
+  filter: brightness(0) invert(1);
+}
+
+.checkout-wrapper {
+  padding: 80px 40px;
+}
+
+.checkout-container {
+  max-width: 950px;
   margin: 0 auto;
+  display: flex;
+  gap: 50px;
+  align-items: flex-start;
 }
-.purchase-header {
-  margin-bottom: 1.5rem;
+
+/* Left Side */
+.course-details-side {
+  flex: 1;
+  max-width: 450px;
+  width: 100%;
 }
-.back-link {
-  color: #1897e5;
-  text-decoration: none;
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
+
+.main-thumbnail {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+.instructor-tag {
+  color: #666;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.main-title {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 30px;
+  color: #000;
+}
+
+.deep-dive-text {
+  font-size: 18px;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.learning-points-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 20px;
+}
+
+.points-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 25px;
+}
+
+.points-list li {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 15px;
+  font-size: 15px;
+  color: #444;
+}
+
+.points-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #333;
+  font-weight: 900;
+}
+
+.access-note {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+}
+
+/* Right Side Checkout Card */
+.checkout-form-side {
+  flex: 1;
+  max-width: 450px;
+  width: 100%;
+  position: sticky;
+  top: 100px;
+}
+
+.payment-card {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 4px 50px rgba(0, 0, 0, 0.08);
+  border: 1px solid #efefef;
+  width: 100%;
+}
+
+.price-header {
+  padding: 15px 30px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.currency {
+  font-size: 40px;
+  font-weight: 600;
+  vertical-align: top;
+  margin-top: 4px;
   display: inline-block;
 }
-.back-link:hover {
-  text-decoration: underline;
-}
-.purchase-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0;
-}
-.course-summary {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  padding: 1rem;
-  background: rgba(255,255,255,0.06);
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-}
-.course-thumb {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-.course-info h2 {
-  font-size: 1.1rem;
-  margin: 0 0 0.25rem 0;
-}
-.course-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1897e5;
-  margin: 0;
-}
-.purchase-form {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-}
-.form-section {
-  margin-bottom: 1.5rem;
-}
-.form-section-title {
-  font-size: 1rem;
+
+.amount {
+  font-size: 40px;
   font-weight: 600;
-  margin: 0 0 1rem 0;
-  color: #e0e0e0;
+  color: #000;
 }
-.form-row {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+
+.redesigned-form {
+  padding: 30px;
 }
-.form-group {
-  flex: 1;
+
+.form-sections-stack {
   display: flex;
   flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
 }
-.form-group.full-width { flex: 1 1 100%; }
-.form-group.card-number { flex: 2; }
-.form-group.expiry,
-.form-group.cvc { flex: 1; }
-.form-group label {
-  font-size: 0.875rem;
-  color: #a0a0a0;
-  margin-bottom: 0.35rem;
-}
-.form-input {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  color: #000;
-  font-size: 1rem;
-}
-.form-input::placeholder {
-  color: #888;
-}
-.password-wrap {
-  position: relative;
-}
-.password-wrap .form-input { padding-right: 5rem; }
-.toggle-pw {
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #1897e5;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.error-text {
-  font-size: 0.8rem;
-  color: #f87171;
-  margin-top: 0.25rem;
-}
-.stripe-element {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  color: #000;
-}
-.card-row {
-  display: flex;
-  flex-wrap: wrap;
-}
-.error-banner {
-  background: rgba(248,113,113,0.15);
-  border: 1px solid #f87171;
-  color: #fca5a5;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-  font-size: 1.1rem;
-}
-.total-amount {
-  font-weight: 700;
-  color: #1897e5;
-  font-size: 1.25rem;
-}
-.submit-btn {
+
+.nice-input {
   width: 100%;
-  background: linear-gradient(109.78deg, #fff -13.37%, #1897e5 38.96%, #0e64a5 138.03%);
-  color: #000;
-  border: none;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 700;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 15px;
+  transition: border-color 0.2s;
+}
+
+.nice-input:focus {
+  outline: none;
+  border-color: #2ecc71;
+}
+
+.error-msg {
+  font-size: 12px;
+  color: #ff4757;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Stripe Fields */
+.card-element-wrapper {
+  margin-bottom: 20px;
+}
+
+.stripe-field-container {
+  margin-bottom: 12px;
+}
+
+.stripe-el {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.stripe-row {
+  display: flex;
+  gap: 12px;
+}
+
+.half {
+  flex: 1;
+}
+
+.overall-error {
+  color: #ff4757;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Agreements */
+.agreement-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.check-box-label {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #555;
   cursor: pointer;
 }
-.submit-btn:hover:not(:disabled) {
-  opacity: 0.95;
+
+.check-box-label input {
+  margin-top: 2px;
 }
-.submit-btn:disabled {
-  opacity: 0.7;
+
+.info-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #999;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 10px;
+  line-height: 14px;
+  margin-left: 4px;
+  font-style: normal;
+}
+
+/* CTA Button */
+.btn-complete-purchase {
+  width: 100%;
+  background-color: #2ecc71;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-complete-purchase:hover {
+  background-color: #27ae60;
+}
+
+.btn-complete-purchase:disabled {
+  background-color: #a8e6cf;
   cursor: not-allowed;
 }
-@media (max-width: 600px) {
-  .card-row { flex-direction: column; }
-  .form-group.card-number,
-  .form-group.expiry,
-  .form-group.cvc { flex: 1 1 100%; }
+
+/* Responsive */
+@media (max-width: 991px) {
+  .checkout-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .checkout-wrapper {
+    padding: 40px 10px;
+  }
+
+  .checkout-form-side {
+    position: static;
+    width: 100%;
+  }
 }
 </style>

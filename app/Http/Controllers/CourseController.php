@@ -1055,7 +1055,13 @@ class CourseController extends Controller
             'type' => $course->courseType ? $course->courseType->name : 'N/A',
             'industry_name' => $course->industry ? $course->industry->name : 'N/A', // Get name from relationship
             'certificate_name' => $course->certificate ? $course->certificate->name : 'N/A', // Get name from relationship
-            'author' => $course->user ? $course->user->name : 'Placeholder Author', // Or however you get the author
+            'author' => $course->user ? $course->user->name : 'Placeholder Author',
+            'instructor' => $course->user ? [
+                'id' => $course->user->id,
+                'name' => $course->user->name,
+                'profile_photo_url' => $course->user->profile_photo_url ?? null,
+                'type' => $course->user->type ?? 'instructor',
+            ] : null,
             'additional_description' => $course->additional_description,
             'recomendations' => $course->recomendations,
             'topic_name' => $course->topic ? $course->topic->name : 'N/A', // Get name from relationship
@@ -1090,6 +1096,7 @@ class CourseController extends Controller
         if ($course->videos->isNotEmpty() && $course->videos->first()->thumbnail_url) {
             $courseData['first_video_thumbnail_url'] = asset($course->videos->first()->thumbnail_url);
         }
+        $courseData['lessons_count'] = $course->videos->count();
 
         return Inertia::render('Course/Detail', [
             'course' => $courseData,

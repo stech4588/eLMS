@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
 import NavLink from '@/Components/NavLink.vue'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
+import FooterContainer from '@/Components/Footer-Container.vue'
 import PromotionPopup from '@/Components/PromotionPopup.vue';
 import LearningGoalPopup from '@/Components/LearningGoalPopup.vue';
 import ContactNotificationModal from '@/Components/ContactNotificationModal.vue';
@@ -158,21 +159,11 @@ onMounted(() => {
         }
     }
 
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-        // Respect explicit light choice; otherwise default to dark
-        isDark.value = false;
-        document.documentElement.classList.remove('dark');
-        document.documentElement.removeAttribute('data-swal2-theme');
-        localStorage.setItem('theme', 'light');
-    } else {
-        isDark.value = true;
-        document.documentElement.classList.add('dark');
-        document.documentElement.setAttribute('data-swal2-theme', 'dark');
-        if (!savedTheme) {
-            localStorage.setItem('theme', 'dark');
-        }
-    }
+    // Force light theme (theme toggle commented out)
+    isDark.value = false;
+    document.documentElement.classList.remove('dark');
+    document.documentElement.removeAttribute('data-swal2-theme');
+    localStorage.setItem('theme', 'light');
 
     // Expose global loader controls
     window.showPageLoader = () => { isLoading.value = true; };
@@ -214,6 +205,14 @@ const evaluatePagePermission = async () => {
         permissionMessage.value = hasPageAccess.value
             ? ''
             : 'You do not have permission to view this page.';
+        // If user doesn't have access to this page, redirect them away instead of
+        // showing an \"Access Denied\" screen.
+        if (requiredPermission && !hasPageAccess.value) {
+            const current = route().current();
+            if (current !== 'dashboard') {
+                router.visit(route('dashboard'));
+            }
+        }
     } catch (error) {
         hasPageAccess.value = false;
         permissionMessage.value = 'Unable to verify permissions. Please try again.';
@@ -266,6 +265,44 @@ const toggleSidebarCollapse = () => {
 
 const isPlayerPage = computed(() => page.component === 'Course/Player');
 const isCartPage = computed(() => page.component === 'cart/cart');
+const isStudent = computed(() => user.value?.type === 'student');
+const sidebarVisible = ref(false); // Sidebar commented out - nav in profile dropdown
+
+// Sidebar nav items for profile dropdown (same as AuthSidebar, permission-based)
+const profileMenuItems = computed(() => {
+    const items = [
+        { label: 'User Listing', href: '/users', show: hasPermission('userView') },
+        { label: 'Instructor Listing', href: '/admin/instructors', show: hasPermission('instructorListing') },
+        { label: 'Pricing', href: route('pricings.index'), show: hasPermission('pricingUpdate') },
+        { label: 'Course Management', href: '/course-management', show: hasPermission('coursemanagement') },
+        { label: 'Meta Tags', href: '/metatags', show: hasPermission('metatagsUpdate') },
+        { label: 'Community Settings', href: route('communitysettings'), show: hasPermission('communitySettingsView') },
+        { label: 'Marketing', href: route('admin.marketing.index'), show: hasPermission('marketingmanagement') },
+        { label: 'Home', href: '/dashboard', show: hasPermission('dashboardView') },
+        { label: 'My Career Journey', href: '/my-career-journey', show: hasPermission('careerJourneyView') },
+        { label: 'Community', href: route('community'), show: hasPermission('communityView') },
+        { label: 'Groups', href: route('groups.index'), show: true },
+        { label: 'Jobs', href: route('jobs.index'), show: true },
+        { label: 'My Library', href: '/library', show: hasPermission('libraryView') },
+        { label: 'Content', href: '/content', show: hasPermission('contentView') },
+        { label: 'Billing', href: route('billing.portal'), show: isStudent.value },
+        { label: 'My Courses', href: '/coursess', show: hasPermission('mycourses') },
+        { label: 'Add New Courses', href: '/addnewcourses', show: hasPermission('addnewcourses') },
+        { label: 'Help', href: '/help', show: true },
+    ];
+    return items;
+});
+
+// Nav links for navbar (subset of profile items - key pages only)
+const navbarLinks = computed(() => {
+    const links = [
+        { label: 'Dashboard', href: '/dashboard', show: hasPermission('dashboardView') },
+        { label: 'My Courses', href: '/coursess', show: hasPermission('mycourses') },
+        { label: 'Add Course', href: '/addnewcourses', show: hasPermission('addnewcourses') },
+        { label: 'My Library', href: '/library', show: hasPermission('libraryView') },
+    ];
+    return links.filter(l => l.show);
+});
 const isGroupChatPage = computed(() => page.component === 'Groups/Chat');
 const isHelpPage = computed(() => page.component === 'help/help');
 const isLargeScreen = ref(typeof window !== 'undefined' ? window.innerWidth >= 1025 : false);
@@ -303,7 +340,7 @@ onMounted(() => {
         <meta name="description" :content="meta.meta_description">
         <meta name="keywords" :content="meta.meta_keywords">
     </Head>
-    <div :class="{ 'dark': isDark }" class="flex min-h-screen bg-[#5A8FB3] dark:bg-dark-bg-primary mobile_view_style"
+    <div :class="{ 'dark': isDark }" class="flex min-h-screen bg-[#ffff] dark:bg-dark-bg-primary mobile_view_style"
         style="flex-direction: column;">
         <nav class="border-b border-gray-100 dark:border-dark-border-primary bg-white dark:bg-[#1A2C38] nav-gradient">
             <div class="mx-auto px-4 sm:px-6 lg:px-8" style="border-bottom: 1px solid rgb(225 225 225)">
@@ -311,6 +348,7 @@ onMounted(() => {
                   
 
                     <div class="flex items-center">
+                        <!-- Sidebar commented - nav items moved to profile dropdown
                         <div class="sidebar_button_nav">
                         <button class="sidebar_openbutton" @click="toggleSidebar">
                             <img src="/images/sidebar_icon.svg" class="dark:invert">
@@ -319,6 +357,7 @@ onMounted(() => {
                         <button class="sidebar_openbutton hidden min-[1025px]:block" @click="toggleSidebarCollapse">
                             <img src="/images/sidebar_icon.svg" class="dark:invert" style="height: 40px;">
                         </button>
+                        -->
 
                         <a :href="user && user.type === 'instructor' ? '/coursess' : (user ? '/dashboard' : '/')">
                             <img src="/images/MBM_Uni.png" alt="logo" class="logo_image_nav"
@@ -327,8 +366,20 @@ onMounted(() => {
                     </div>
 
 
-                    <!-- User Dropdown -->
-                    <div v-if="user" class="flex items-center ms-3 sm:ms-6">
+                    <!-- Right: Nav links + Notifications + Profile -->
+                    <div v-if="user" class="flex items-center gap-2 sm:gap-4">
+                        <!-- Nav links (right side, visible on md+) -->
+                        <nav v-if="navbarLinks.length" class="hidden md:flex items-center gap-0.5 mr-2">
+                            <Link
+                                v-for="item in navbarLinks"
+                                :key="item.href"
+                                :href="item.href"
+                                class="nav-bar-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-[#1C355E] dark:hover:text-[#93c5fd] hover:bg-gray-100 dark:hover:bg-[#0F202D] transition"
+                                :class="{ 'text-[#1C355E] dark:text-[#93c5fd]': page.url.startsWith(item.href) && item.href !== '/' }"
+                            >
+                                {{ item.label }}
+                            </Link>
+                        </nav>
                         <div class="relative" style="display:flex;flex-direction: row;">
                             <div class="flex items-center justify-center mr-2 sm:mr-4">
                                 <Dropdown align="right" width="48">
@@ -365,38 +416,42 @@ onMounted(() => {
                                     </template>
                                 </Dropdown>
                             </div>
+                            <!-- Theme toggle commented - default is light
                             <div class="mr-2 sm:mr-0"><button @click="toggleDarkMode"
                                     class="text-left text-sm text-gray-700 dark:text-dark-text-secondary p-1 sm:p-1.5">
                                     <i class="text-lg sm:text-xl" :class="isDark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon text-gray-700'" :title="isDark ? 'Light Mode' : 'Dark Mode'"></i>
                                 </button></div>
-                            <Dropdown align="right" width="48">
+                            -->
+                            <Dropdown align="right" width="64" contentClasses="py-0 bg-white dark:bg-[#1A2C38]">
                                 <template #trigger>
-                                    <span class="inline-flex rounded-md">
-                                        <button type="button"
-                                            class="inline-flex items-center rounded-md border border-transparent bg-white dark:bg-[#1A2C38] text-xs sm:text-sm font-medium leading-4 text-gray-500 dark:text-dark-text-secondary transition hover:text-gray-700 dark:hover:text-dark-text-primary focus:outline-none px-2 py-1 sm:px-2.5 sm:py-1.5">
-                                            <span class="hidden sm:inline">{{ user?.name || page.props.auth?.user?.name || 'Account' }}</span>
-                                            <span class="sm:hidden">{{ (user?.name || page.props.auth?.user?.name || 'A').charAt(0).toUpperCase() }}</span>
-                                            <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clip-rule="evenodd" />
+                                    <span class="inline-flex rounded-full">
+                                        <button type="button" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 transition focus:outline-none" title="Profile menu">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                             </svg>
                                         </button>
                                     </span>
                                 </template>
 
-                                <template #content class="dark:bg-[#1A2C38]">
-                                    <DropdownLink :href="route('profile.edit')"
-                                        class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
-                                        Profile</DropdownLink>
-                                    <DropdownLink v-if="hasPermission('emailSettingsManage')" :href="route('settings.index')"
-                                        class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
-                                        Settings</DropdownLink>
-
-                                    <DropdownLink @click="logout" as="button"
-                                        class="text-gray-700 dark:text-white dark:text-whitehover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
-                                        Log Out</DropdownLink>
+                                <template #content>
+                                    <div class="max-h-[320px] overflow-y-auto overscroll-contain rounded-b-md">
+                                        <template v-for="item in profileMenuItems" :key="item.href || item.label">
+                                            <DropdownLink v-if="item.show" :href="item.href"
+                                                class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary block">
+                                                {{ item.label }}
+                                            </DropdownLink>
+                                        </template>
+                                        <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                                        <DropdownLink :href="route('profile.edit')"
+                                            class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                            Profile</DropdownLink>
+                                        <DropdownLink v-if="hasPermission('emailSettingsManage')" :href="route('settings.index')"
+                                            class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                            Settings</DropdownLink>
+                                        <DropdownLink @click="logout" as="button"
+                                            class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary">
+                                            Log Out</DropdownLink>
+                                    </div>
                                 </template>
                             </Dropdown>
                         </div>
@@ -449,11 +504,13 @@ onMounted(() => {
                         <ResponsiveNavLink :href="route('billing.portal')" class="text-gray-700 dark:text-dark-text-secondary">
                             Billing
                         </ResponsiveNavLink>
+                        <!-- Theme toggle commented - default is light
                         <button @click="toggleDarkMode"
                             class="w-full text-left text-sm text-gray-700 dark:text-dark-text-secondary" style="padding: 5px;">
                             <i class="fas" :class="isDark ? 'fa-sun text-yellow-500' : 'fa-moon text-gray-700'"></i>
                             <span class="ml-2">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
                         </button>
+                        -->
                         <ResponsiveNavLink @click="logout" as="button"
                             class="text-gray-700 dark:text-dark-text-secondary">Log Out</ResponsiveNavLink>
                     </div>
@@ -462,13 +519,15 @@ onMounted(() => {
         </nav>
 
         <div style="display: flex; flex-direction: row;">
+            <!-- Sidebar commented - nav items in navbar profile dropdown
             <AuthSidebar v-if="!isCartPage" :class="{ 'sidebar-closed': !isSidebarOpen, 'player-page-sidebar': isPlayerPage }" :is-collapsed="isSidebarCollapsed"/>
+            -->
 
             <!-- Main Content Area -->
-            <div class="flex flex-col flex-1 main-content" :class="{ 
-                'content-expanded': !isSidebarCollapsed && !isPlayerPage && !isCartPage, 
-                'content-collapsed': isSidebarCollapsed && !isPlayerPage && !isCartPage, 
-                'no-sidebar': (isPlayerPage || isCartPage) && !isSidebarOpen && !isLargeScreen,
+<div class="flex flex-col flex-1 main-content" :class="{
+                'content-expanded': sidebarVisible && !isSidebarCollapsed && !isPlayerPage && !isCartPage,
+                'content-collapsed': sidebarVisible && isSidebarCollapsed && !isPlayerPage && !isCartPage,
+                'no-sidebar': (!sidebarVisible && !isPlayerPage && !isCartPage) || ((isPlayerPage || isCartPage) && !isSidebarOpen && !isLargeScreen),
                 'player-content-with-sidebar': isPlayerPage && ((isSidebarOpen && !isSidebarCollapsed) || (isLargeScreen && !isSidebarCollapsed)),
                 'player-content-with-sidebar-collapsed': isPlayerPage && ((isSidebarOpen && isSidebarCollapsed) || (isLargeScreen && isSidebarCollapsed))
             }">
@@ -502,7 +561,7 @@ onMounted(() => {
                             <p class="mt-4 text-gray-700 dark:text-gray-300">
                                 {{ permissionMessage || 'You do not have permission to view this page.' }}
                             </p>
-                            <Link :href="route('dashboard')" class="mt-6 inline-block bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition">
+                            <Link :href="route('dashboard')" class="mt-6 inline-block bg-[#1C355E] text-white px-5 py-2 rounded-md hover:bg-[#254a7a] transition">
                                 Go to Dashboard
                             </Link>
                         </div>
@@ -518,6 +577,7 @@ onMounted(() => {
             :notification-data="selectedContactNotification"
             @close="closeContactModal"
         />
+        <FooterContainer />
     </div>
 </template>
 
@@ -551,6 +611,7 @@ onMounted(() => {
 
 .logo_image_nav {
     display: block;
+    filter: grayscale(100%) brightness(0);
     cursor: pointer;
 }
 
@@ -574,7 +635,7 @@ onMounted(() => {
 }
 
 .home_page_style {
-    background-color: #5A8FB3;
+    background-color: #ffff;
     text-align: start;
 }
 
@@ -659,7 +720,7 @@ main {
 #box3 {
     width: 50px;
     height: 50px;
-    background: #4CCAFF;
+    background: #000000;
     animation: animate .4s linear infinite;
     border-radius: 3px;
 }
@@ -778,12 +839,12 @@ main {
 
 /* Player page content adjustments when sidebar is open */
 .player-content-with-sidebar {
-    margin-left: 300px !important;
+    /* margin-left: 300px !important; */
     transition: margin-left 0.3s ease-in-out;
 }
 
 .player-content-with-sidebar-collapsed {
-    margin-left: 92px !important;
+    /* margin-left: 92px !important; */
     transition: margin-left 0.3s ease-in-out;
 }
 
@@ -795,11 +856,11 @@ main {
     
     /* On large screens, player page content should always account for sidebar */
     .player-content-with-sidebar {
-        margin-left: 300px !important;
+        /* margin-left: 300px !important; */
     }
     
     .player-content-with-sidebar-collapsed {
-        margin-left: 92px !important;
+        /* margin-left: 92px !important; */
     }
     
     /* Override no-sidebar on large screens for player page */

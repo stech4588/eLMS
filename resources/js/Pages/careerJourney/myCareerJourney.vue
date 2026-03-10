@@ -190,7 +190,8 @@ function updateTopics() {
     <Head title="My Career Journey" />
 
     <AuthenticatedLayout>
-        <div class="career-journey-container">
+        <div class="page-with-footer-wrap">
+        <div class="career-journey-container career-journey-content-flex">
             <div class="career-journey-wrapper">
                 <div class="career-journey-content dark:bg-dark-bg-secondary dark:text-white">
                     <div class="career-journey-title">My Career Journey</div>
@@ -335,27 +336,8 @@ function updateTopics() {
                 </div>
             </div>
         </div>
-        <footer class="footer_upload_video dark:bg-dark-bg-secondary dark:text-white" style="display: flex; justify-content: space-between; padding: 20px; align-items: baseline; margin-top: 30px;">
-            <div>
-                Language(Eng)
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-                About
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-               Become an instructor
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-                Privacy Policy
-            </div>
-            <div style="font-size: 40px; font-weight: 400;">.</div>
-            <div>
-               Accessibility
-            </div>
-        </footer>
+        <!-- Page-specific footer removed; global FooterContainer from layout is used -->
+        </div>
     </AuthenticatedLayout>
 </template>
 
@@ -794,8 +776,15 @@ font-weight: 600;
     flex-wrap: wrap;
     width: 100%;
 }
+.page-with-footer-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 5rem);
+}
+.career-journey-content-flex { flex: 1; }
+.footer-stick-bottom { margin-top: auto; }
 .footer_upload_video {
-    background-color: #477CAA;
+    background-color: #1C355E;
     color: white;
 }
 @media (max-width: 770px) {

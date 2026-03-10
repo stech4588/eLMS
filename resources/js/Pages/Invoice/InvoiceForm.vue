@@ -85,7 +85,7 @@ const submit = () => {
                             <div class="mb-4">
                                 <label for="user_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">User</label>
                                 <select v-model="form.user_id" id="user_id" name="user_id"
-                                    class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
                                     <option disabled value="">Select a user</option>
                                     <option v-for="user in users" :key="user.id" :value="user.id">
                                         {{ user.name }} ({{ user.email }})
@@ -97,14 +97,14 @@ const submit = () => {
                             <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Billing Cycle</label>
-                                    <select v-model="form.billing_cycle" class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select v-model="form.billing_cycle" class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
                                         <option value="monthly">Monthly</option>
                                         <option value="yearly">Yearly</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Plan</label>
-                                    <select v-model="form.plan" class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select v-model="form.plan" class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
                                         <option v-for="plan in activePlanOptions" :key="plan.value" :value="plan.value">
                                             {{ plan.label }}
                                         </option>
@@ -121,7 +121,7 @@ const submit = () => {
                             <div class="mb-4">
                                 <label for="due_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Due Date</label>
                                 <input type="date" v-model="form.due_date" id="due_date" name="due_date"
-                                    class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                    class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm" />
                                 <div v-if="form.errors.due_date" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ form.errors.due_date }}</div>
                             </div>
 
@@ -136,7 +136,7 @@ const submit = () => {
                             <div class="mb-4">
                                 <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                                  <select v-model="form.status" id="status" name="status"
-                                     class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                     class="block w-full mt-1 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
                                     <option value="unpaid">Unpaid</option>
                                     <option value="paid">Paid</option>
                                     <option value="overdue">Overdue</option>
@@ -146,7 +146,7 @@ const submit = () => {
 
                             <div class="flex items-center justify-end mt-4">
                                 <button type="submit"
-                                    class="px-4 py-2 font-bold text-white bg-[#148ad9] rounded hover:bg-[#148ad9] focus:outline-none focus:shadow-outline-blue active:bg-blue-800"
+                                    class="px-4 py-2 font-bold text-white bg-[#1C355E] rounded hover:bg-[#254a7a] focus:outline-none focus:shadow-outline active:bg-[#1a3d6e]"
                                     :disabled="form.processing">
                                     {{ invoice ? 'Update Invoice' : 'Create Invoice' }}
                                 </button>

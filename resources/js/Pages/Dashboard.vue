@@ -9,8 +9,7 @@
 
 
             <div class="dashboard-surface mx-auto space-y-10">
-                <div class="main_filter_container filter-panel">
-                    <!-- Search row as separate block -->
+                <!-- <div class="main_filter_container filter-panel">
                     <div class="filter-search-row">
                         <div class="filter-search">
                         <img src="/images/search_icon.svg" alt="Search" class="search_icon filter-search__icon" />
@@ -19,7 +18,6 @@
                     </div>
                     <div class="filter-container">
                         <div class="filter_select_container filter-select-group">
-                            <!-- Topics Dropdown -->
                             <div class="dropdown_dashboard filter-select" ref="topicDropdownRef">
                                 <button @click="toggleTopicDropdown" class="filter-select__trigger" type="button">
                                     <span class="filter-select__label">{{ selectedTopicText || 'Topics' }}</span>
@@ -34,7 +32,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <!-- Course Type Dropdown -->
                             <div class="dropdown_dashboard filter-select" ref="courseTypeDropdownRef">
                                 <button @click="toggleCourseTypeDropdown" class="filter-select__trigger" type="button">
                                     <span class="filter-select__label">{{ selectedCourseTypeText || 'Course Type' }}</span>
@@ -49,7 +46,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <!-- Certificate Dropdown -->
                             <div class="dropdown_dashboard filter-select" ref="certificateDropdownRef">
                                 <button @click="toggleCertificateDropdown" class="filter-select__trigger" type="button">
                                     <span class="filter-select__label">{{ selectedCertificateText || 'Certificate' }}</span>
@@ -64,7 +60,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <!-- Course Industry Dropdown -->
                             <div class="dropdown_dashboard filter-select" ref="courseIndustryDropdownRef">
                                 <button @click="toggleCourseIndustryDropdown" class="filter-select__trigger" type="button">
                                     <span class="filter-select__label">{{ selectedCourseIndustryText || 'Course Industry' }}</span>
@@ -83,12 +78,10 @@
                     </div>
 
 
-                </div>
-                <!-- Skills Section -->
-                <div class="section_box dark:bg-[#0F212E] dark:text-white">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xl font-bold section-title">Because of Skills you Follow</h3>
-                    </div>
+                </div> -->
+                <!-- My Programs - single column row layout -->
+                <div class="my-programs-section">
+                    <h2 class="my-programs-heading">My Programs</h2>
                     <!-- Display Selected Filters -->
                     <div class="selected-filters-container mb-4" v-if="hasActiveFilters">
                         <span v-for="topic in selectedTopicFilters" :key="`topic-${topic.value}`" class="selected-filter-tag">
@@ -109,9 +102,21 @@
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
-                        <div v-for="(course, index) in displayedCourses" :key="`skill-${index}-${course.id}`" class="course-card-container">
-                            <CourseCard :course="course" @toggle-favorite="toggleFavorite" />
+                    <div class="my-programs-list">
+                        <div v-for="(course, index) in displayedCourses" :key="`skill-${index}-${course.id}`" class="my-program-row">
+                            <Link :href="route('courses.show', { course: course.id })" class="my-program-thumb-wrap">
+                                <img :src="course.first_video_thumbnail_url || '/images/skill_section_thumbnail.svg'" class="my-program-thumb" alt="" />
+                            </Link>
+                            <div class="my-program-details">
+                                <h3 class="my-program-title">{{ course.title }}</h3>
+                                <p v-if="course.description" class="my-program-desc">{{ course.description }}</p>
+                                <div class="my-program-actions">
+                                    <Link :href="route('courses.show', { course: course.id })" 
+                                          class="my-program-btn-start">
+                                        Start Now
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- Pagination -->
@@ -128,11 +133,11 @@
                     </div>
                 </div>
 
-                <div class=" dark:text-white f-direction" style="display:flex; justify-content:space-around; gap:15px;">
+                <!-- <div class=" dark:text-white f-direction" style="display:flex; justify-content:space-around; gap:15px;">
                     <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Leadership & Management
-                            <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-[#1C355E] dark:text-white">Explore</a>
                         </div>
                         <img src="/images/leadership_management_image.svg" alt="Leadership & Management"
                             class="course-card-image" />
@@ -141,7 +146,7 @@
                     <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Diversity & Equity
-                            <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-[#1C355E] dark:text-white">Explore</a>
                         </div>
                         <img src="/images/diversity_image.svg" alt="Diversity & Equity" class="course-card-image" />
                     </div>
@@ -149,11 +154,11 @@
                     <div class="course-card dark:bg-[#0F212E] dark:text-white">
                         <div class="course-card-text">
                             Productivity
-                            <a href="/content" class="course-card-button dark:bg-blue-700 dark:text-white">Explore</a>
+                            <a href="/content" class="course-card-button dark:bg-[#1C355E] dark:text-white">Explore</a>
                         </div>
                         <img src="/images/productivity_image.svg" alt="Productivity" class="course-card-image" />
                     </div>
-                </div>
+                </div> -->
 
 
                 <!-- 30min or Less Section -->
@@ -197,8 +202,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import SequenceCanvas from '@/Components/SequenceCanvas.vue'
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import CourseCard from '@/Components/CourseCard.vue';
-
 // Define props to receive data from the controller
 const props = defineProps({
     courseTypes: Array,
@@ -521,7 +524,7 @@ const toggleFavorite = async (course) => {
 <style>
 .dashboard-surface {
     width: 100%;
-    max-width: 1730px;
+    max-width: 1200px;
     background: #ffffff;
     border-radius: 24px;
     padding: 32px;
@@ -537,7 +540,7 @@ const toggleFavorite = async (course) => {
     content: '';
     position: absolute;
     inset: -35% 55% 35% -15%;
-    background: radial-gradient(55% 55% at 50% 50%, rgba(76, 202, 255, 0.25) 0%, rgba(76, 202, 255, 0) 100%);
+    background: radial-gradient(55% 55% at 50% 50%, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0) 100%);
     opacity: 0.4;
     filter: blur(0px);
     transition: opacity 0.6s ease;
@@ -1127,6 +1130,157 @@ const toggleFavorite = async (course) => {
 }
 .dark .dark_home_dropdown{
     background-color: rgba(21, 41, 56, 0.96) !important;
+}
+
+/* My Programs - single column row layout (image style) */
+.my-programs-section {
+    margin-top: 2rem;
+}
+
+.my-programs-heading {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 1.25rem;
+    text-align: left;
+}
+
+.dark .my-programs-heading {
+    color: #f9fafb;
+}
+
+.my-programs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.my-program-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    background: #ffffff;
+    height: 200px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s;
+}
+
+.my-program-row:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.dark .my-program-row {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.my-program-thumb-wrap {
+    flex: 0 0 27%;
+    min-width: 0;
+    height: 200px;
+    display: block;
+    overflow: hidden;
+}
+
+.my-program-thumb {
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.my-program-details {
+    flex: 1;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.my-program-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+}
+
+.dark .my-program-title {
+    color: #f9fafb;
+}
+
+.my-program-desc {
+    font-size: 1.2rem;
+    color: #4b5563;
+    margin: 0 0 1rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dark .my-program-desc {
+    color: #d1d5db;
+}
+
+.my-program-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: auto;
+}
+
+.my-program-btn-start {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1C355E;
+    background: #ffffff;
+    border: 2px solid #1C355E;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.my-program-btn-start:hover {
+    background: #1C355E;
+    color: #ffffff;
+}
+
+.dark .my-program-btn-start {
+    color: #4ade80;
+    border-color: #4ade80;
+    background: transparent;
+}
+
+.dark .my-program-btn-start:hover {
+    background: #1C355E;
+    color: #ffffff;
+    border-color: #1C355E;
+}
+
+@media (max-width: 640px) {
+    .my-program-row {
+        flex-direction: column;
+    }
+    .my-program-thumb-wrap {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+    .my-program-thumb {
+        min-height: 160px;
+    }
 }
 
 .course-card-container {

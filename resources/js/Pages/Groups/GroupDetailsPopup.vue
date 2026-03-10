@@ -26,11 +26,11 @@
                                             <img :src="member.profile_photo_url" alt="Member Avatar" class="w-8 h-8 rounded-full object-cover">
                                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
                                                 {{ member.name }}
-                                                <span v-if="member.id === group.creator.id" class="ml-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">(Admin)</span>
+                                                <span v-if="member.id === group.creator.id" class="ml-1 text-xs font-semibold text-gray-900 dark:text-gray-200">(Admin)</span>
                                             </span>
                                         </div>
                                         <span class="text-xs font-semibold uppercase px-2 py-1 rounded-full"
-                                              :class="member.pivot.role === 'admin' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-300'">
+                                              :class="member.pivot.role === 'admin' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-300'">
                                             {{ member.pivot.role }}
                                         </span>
                                     </li>
@@ -38,7 +38,7 @@
                             </div>
 
                             <div class="mt-6 flex justify-end">
-                                <button type="button" class="inline-flex justify-center rounded-md border border-transparent bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" @click="$emit('close')">
+                                <button type="button" class="inline-flex justify-center rounded-md border border-transparent bg-gray-100 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2" @click="$emit('close')">
                                     Close
                                 </button>
                             </div>

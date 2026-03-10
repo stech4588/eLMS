@@ -4,7 +4,7 @@
       <!-- LEFT SIDE CONTENT -->
       <div class="mbm-left">
         <h1 class="mbm-title">
-          <span class="mbm-bold">THE</span> <span class="mbm-blue">MOST</span><br />
+          <span class="mbm-bold">THE</span> <span class="mbm-accent">MOST</span><br />
           CONFIGURABLE<br />
           LEARNING<br />
           SOLUTION<br />
@@ -125,8 +125,8 @@ onMounted(() => {
   line-height: 1.3;
 }
 
-.mbm-blue {
-  color: #2ebeff;
+.mbm-accent {
+  color: #1C355E;
 }
 
 .mbm-bold {

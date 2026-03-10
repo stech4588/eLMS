@@ -102,12 +102,12 @@ const deleteJob = (job) => {
                         
                         <!-- Search and Filters -->
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                            <input type="text" v-model="search" placeholder="Search by title or skill..." class="col-span-1 md:col-span-2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                            <select v-model="skill" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <input type="text" v-model="search" placeholder="Search by title or skill..." class="col-span-1 md:col-span-2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600 rounded-md shadow-sm">
+                            <select v-model="skill" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600 rounded-md shadow-sm">
                                 <option value="">Filter by skill</option>
                                 <option v-for="s in skills" :key="s" :value="s">{{ s }}</option>
                             </select>
-                            <input type="date" v-model="date" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <input type="date" v-model="date" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600 rounded-md shadow-sm">
                             <button @click="clearFilters" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">
                                 Clear
                             </button>
@@ -117,7 +117,7 @@ const deleteJob = (job) => {
                         <div v-if="jobs.data.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div v-for="job in jobs.data" :key="job.id" class="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-200 flex flex-col relative" @click="openModal(job)">
                                 <div v-if="job.user.id === props.authUserId" class="absolute top-4 right-4 flex gap-2 z-10">
-                                    <button @click.stop.prevent="openModal(job, 'edit')" class="icon-btn bg-blue-600 hover:bg-blue-700 text-white" title="Edit job">
+                                    <button @click.stop.prevent="openModal(job, 'edit')" class="icon-btn bg-[#1C355E] hover:bg-[#254a7a] text-white" title="Edit job">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                                             <path d="M5 18h14v2H5zM15.586 3a2 2 0 012.828 0l1.586 1.586a2 2 0 010 2.828L9 18H5v-4L15.586 3z" />
                                         </svg>
@@ -139,7 +139,7 @@ const deleteJob = (job) => {
                                     <p class="text-gray-600 dark:text-gray-400 truncate">{{ job.skills }}</p>
                                 </div>
                                 <div class="mt-4 flex justify-end">
-                                    <a :href="job.apply_url" target="_blank" rel="noopener noreferrer" @click.stop class="inline-flex items-center px-3 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                                    <a :href="job.apply_url" target="_blank" rel="noopener noreferrer" @click.stop class="inline-flex items-center px-3 py-2 bg-[#1C355E] text-white text-sm rounded hover:bg-[#254a7a]">
                                         Apply
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7m0 0v7m0-7L10 14" />
