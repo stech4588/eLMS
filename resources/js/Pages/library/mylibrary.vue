@@ -266,7 +266,6 @@ const currentCourses = computed(() => {
             <span class="footer-divider libaray_dark_text">•</span>
             <a href="#" class="footer-link libaray_dark_text">Accessibility</a>
         </footer>
-        </div>
     </AuthenticatedLayout>
 </template>
 
