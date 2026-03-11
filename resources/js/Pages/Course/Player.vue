@@ -225,7 +225,7 @@
 
                         <!-- Video Description -->
                         <div class="mt-8 prose dark:prose-invert max-w-none">
-                            <h2 class="text-xl font-semibold mb-3 dark:text-white">Video Description</h2>
+                            <h2 class="text-xl font-semibold mb-3 dark:text-white" style="color: black!important; ">Video Description</h2>
                             <TruncatedText :text="currentVideo.description || 'No description available.'" />
                         </div>
 
@@ -233,14 +233,14 @@
                         <div v-if="currentVideo.takeaway_notes && currentVideoSavedProgress?.completed"
                             class="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                             <div class="flex justify-between items-center mb-3">
-                                <h2 class="text-xl font-semibold dark:text-white">Takeaway Notes</h2>
+                                <h2 class="text-xl font-semibold dark:text-white" style="color: black!important; ">Takeaway Notes</h2>
                             </div>
                             <TruncatedText :text="currentVideo.takeaway_notes" />
                         </div>
 
                         <!-- Course Details -->
                         <div class="mt-8">
-                            <h2 class="text-xl font-semibold mb-3 dark:text-white">Course Details</h2>
+                            <h2 class="text-xl font-semibold mb-3 dark:text-white" style="color: black!important; ">Course Details</h2>
                             <div
                                 class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-gray-600 dark:text-gray-300">
                                 <!-- <div class="flex items-center space-x-3">
@@ -254,28 +254,28 @@
                                             d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01">
                                         </path>
                                     </svg>
-                                    <span>{{ course.type }}</span>
+                                    <span style="color: black!important; ">{{ course.type }}</span>
                                 </div>
                                 <div class="flex items-center space-x-3">
-                                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor"
+                                    <svg class="w-6 h-6 text-gray-500" style="color: black!important; " fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                                         </path>
                                     </svg>
-                                    <span>Updated: {{ course.updated_at }}</span>
+                                    <span style="color: black!important; ">Updated: {{ course.updated_at }}</span>
                                 </div>
                                 <div v-if="course.reviews_count > 0" class="flex items-center space-x-2">
-                                    <span class="font-bold text-lg text-gray-800 dark:text-white">{{
+                                    <span class="font-bold text-lg text-gray-800 dark:text-white" style="color: black!important; ">{{
                                         course.average_rating }}</span>
                                     <StarRating :rating="course.average_rating" />
-                                    <span>({{ course.reviews_count.toLocaleString() }} ratings)</span>
+                                    <span style="color: black!important; ">({{ course.reviews_count.toLocaleString() }} ratings)</span>
                                 </div>
-                                <p v-else class="text-sm">No ratings yet.</p>
+                                <p v-else class="text-sm" style="color: black!important; ">No ratings yet.</p>
                             </div>
 
                             <div class="mt-6 prose dark:prose-invert max-w-none">
-                                <h3 class="font-semibold">Course Description</h3>
+                                <h3 class="font-semibold" style="color: black!important; ">Course Description</h3>
                                 <TruncatedText :text="course.description || 'No description available.'" />
                                 <h3 class="font-semibold mt-4">Additional Information</h3>
                                 <TruncatedText
@@ -1493,7 +1493,7 @@ const updateScreenSize = () => {
     background: #111827;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     .player-right {
         position: fixed;
         top: 5rem;
