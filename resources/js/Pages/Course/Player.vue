@@ -187,7 +187,7 @@
                             </div>
                         </div>
                         <!-- Instructor card directly under right sidebar -->
-                        <div class="max-w-7xl mx-auto px-4" v-if="course && course.user">
+                        <div class="max-w-7xl mx-auto" v-if="course && course.user">
                             <div class="flex justify-end">
                                 <div class="player-instructor-card-details" style="margin-top: 1rem;">
                                     <h3 class="player-instructor-heading-details">Instructor</h3>
@@ -518,7 +518,7 @@ function closeQuizPopup() {
 
 const currentVideo = ref(null);
 const currentSectionIndex = ref(0); // Which section is visible in right sidebar (one section at a time)
-const isLargeScreen = ref(window.innerWidth > 770);
+const isLargeScreen = ref(window.innerWidth > 900);
 const isVideoSidebarOpen = ref(false);
 const newComment = ref(''); // For the new comment textarea
 const isCommentFocused = ref(false); // For showing comment buttons
@@ -1110,7 +1110,7 @@ onUnmounted(() => {
 
 const updateScreenSize = () => {
     const wasLargeScreen = isLargeScreen.value;
-    isLargeScreen.value = window.innerWidth > 770;
+    isLargeScreen.value = window.innerWidth > 900;
 
     // On large screens, always show sidebar; on small screens, close it if it was open due to large screen
     if (isLargeScreen.value && !wasLargeScreen) {
@@ -1142,7 +1142,7 @@ const updateScreenSize = () => {
     }
 }
 
-@media (max-width: 770px) {
+@media (max-width: 900px) {
     .player_sidebar {
         position: fixed;
         top: 5rem;
@@ -1162,7 +1162,7 @@ const updateScreenSize = () => {
     }
 }
 
-@media (min-width: 771px) {
+@media (min-width: 900px) {
     .player_sidebar {
         position: relative !important;
     }
@@ -1405,10 +1405,14 @@ const updateScreenSize = () => {
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
-    padding: 1.25rem;
+    padding: 1rem;
     box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
 }
-
+@media (max-width: 900px) {
+    .player-instructor-card-details {
+       width: 100%;
+    }
+}
 .dark .player-instructor-card-details {
     background: #111827;
     border-color: #1f2937;
@@ -1493,7 +1497,7 @@ const updateScreenSize = () => {
     background: #111827;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .player-right {
         position: fixed;
         top: 5rem;
