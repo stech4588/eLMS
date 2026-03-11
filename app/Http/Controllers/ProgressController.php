@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Course;
+use App\Models\Progress;
 
 class ProgressController extends Controller
 {
@@ -51,12 +52,12 @@ class ProgressController extends Controller
             $result = $this->progressService->updateOrCreateProgress($request->validated());
 
             if ($request->wantsJson() && !$request->header('X-Inertia')) {
-                // For non-Inertia (axios) requests that want JSON
                 return response()->json($result, 201);
             }
 
-            // For Inertia requests, redirect back with the completion status in the session flash.
-            return back()->with('course_completed', $result['course_completed']);
+            return back()
+                ->with('course_completed', $result['course_completed'])
+                ->with('already_completed', $result['already_completed'] ?? false);
 
         } catch (\Exception $e) {
             Log::error('Progress save error in storeUserVideoProgress: ' . $e->getMessage() . ' Trace: ' . $e->getTraceAsString());
@@ -122,5 +123,25 @@ class ProgressController extends Controller
 
         $isCompleted = $this->progressService->isCourseCompletedAndUnreviewed($user, $course);
         return response()->json(['is_completed' => $isCompleted]);
+    }
+
+    public function getCompletedCount(Request $request, Course $course): JsonResponse
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['completed_count' => 0]);
+        }
+
+        $course->loadMissing('videos');
+        $videoIds = $course->videos->pluck('id');
+        $count = Progress::where('user_id', $user->id)
+            ->whereIn('video_id', $videoIds)
+            ->where('completed', true)
+            ->count();
+
+        return response()->json([
+            'completed_count' => $count,
+            'total_count' => $videoIds->count(),
+        ]);
     }
 }

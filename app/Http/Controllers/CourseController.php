@@ -1102,9 +1102,20 @@ class CourseController extends Controller
         }
         $courseData['lessons_count'] = $course->videos->count();
 
+        // Count how many videos the current user has completed in this course
+        $completedCount = 0;
+        if (Auth::check()) {
+            $videoIds = $course->videos->pluck('id');
+            $completedCount = Progress::where('user_id', Auth::id())
+                ->whereIn('video_id', $videoIds)
+                ->where('completed', true)
+                ->count();
+        }
+
         return Inertia::render('Course/Detail', [
             'course' => $courseData,
             'isPurchased' => $isPurchased,
+            'completedCount' => $completedCount,
             'unavailableMessage' => null,
         ]);
     }

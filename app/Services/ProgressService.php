@@ -21,22 +21,36 @@ class ProgressService
 
     public function updateOrCreateProgress(array $data)
     {
-        // Find or create the progress record
-        $progress = Progress::firstOrNew(
-            [
-                'user_id' => $data['user_id'],
-                'video_id' => $data['video_id']
-            ]
-        );
+        $progress = Progress::firstOrNew([
+            'user_id' => $data['user_id'],
+            'video_id' => $data['video_id'],
+        ]);
 
-        // Update watched_duration if it's greater or if it's a new record
+        // Once a video is completed for this user it stays completed forever.
+        // We return a flag so the frontend knows not to re-trigger quiz/notes/advance.
+        $alreadyCompleted = $progress->exists && $progress->completed;
+
+        if ($alreadyCompleted) {
+            // Only update last_watched_at so the "continue watching" feature stays fresh.
+            if (isset($data['last_watched_at'])) {
+                $progress->last_watched_at = $data['last_watched_at'];
+            }
+            $progress->save();
+
+            return [
+                'progress' => $progress,
+                'course_completed' => false,
+                'already_completed' => true,
+            ];
+        }
+
+        // Not yet completed — update watched_duration (only increase), completed, timestamp.
         if (isset($data['watched_duration'])) {
             if (!$progress->exists || $data['watched_duration'] > $progress->watched_duration) {
                 $progress->watched_duration = $data['watched_duration'];
             }
         }
 
-        // Always update completed status and last_watched_at from the new data
         if (isset($data['completed'])) {
             $progress->completed = $data['completed'];
         }
@@ -61,7 +75,6 @@ class ProgressService
 
                 if (!$alreadyReviewed) {
                     $courseCompleted = true;
-                    // Fire completion event
                     event(new CourseCompleted($user, $course));
                 }
             }
@@ -70,6 +83,7 @@ class ProgressService
         return [
             'progress' => $progress,
             'course_completed' => $courseCompleted,
+            'already_completed' => false,
         ];
     }
 

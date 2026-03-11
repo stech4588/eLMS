@@ -97,8 +97,13 @@
                         <div v-if="currentVideo"
                             class="player-below-video bg-white dark:bg-dark-bg-secondary rounded-lg border border-gray-200 dark:border-gray-700 p-4 mt-4">
                             <div class="player-below-left">
-                                <button @click="saveProgress(true, false)" class="player-mark-complete">
-                                    Mark As Complete
+                                <button
+                                    @click="saveProgress(true, false)"
+                                    class="player-mark-complete"
+                                    :class="{ 'player-mark-completed': isCurrentVideoCompleted }"
+                                    :disabled="isCurrentVideoCompleted"
+                                >
+                                    {{ isCurrentVideoCompleted ? 'Completed' : 'Mark As Complete' }}
                                 </button>
                                 <h1 class="player-video-title">{{ currentVideo.title }}</h1>
                                 <p v-if="currentVideoSection" class="player-section-label">
@@ -139,7 +144,9 @@
                                                 <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder">
                                                 </div>
                                                 <span class="player-lesson-title">{{ vid.title }}</span>
-
+                                                <svg v-if="completedVideoIds.has(vid.id)" class="player-lesson-check-icon" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
                                             </button>
                                         </li>
                                     </ul>
@@ -162,7 +169,10 @@
                                                 <div v-else class="player-lesson-thumb player-lesson-thumb-placeholder">
                                                 </div>
                                                 <span class="player-lesson-title">{{ video.title }}</span>
-                                                <svg v-if="currentVideo && currentVideo.id === video.id"
+                                                <svg v-if="completedVideoIds.has(video.id)" class="player-lesson-check-icon" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                                <svg v-else-if="currentVideo && currentVideo.id === video.id"
                                                     class="player-lesson-play-icon" fill="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path d="M8 5v14l11-7z" />
@@ -516,11 +526,40 @@ const showEmojiPicker = ref(false); // For emoji picker visibility
 const videoPlayer = ref(null); // Ref for the video element
 const { props: pageProps } = usePage();
 const authUser = computed(() => page.props.auth.user);
-const currentVideoSavedProgress = ref(null); // To store fetched progress
-const initialTimeApplied = ref(false); // New ref to track if initial time has been set
-const isPlaying = ref(true); // For play/pause toggle, defaults to true due to autoplay
+const currentVideoSavedProgress = ref(null);
+const initialTimeApplied = ref(false);
+const isPlaying = ref(true);
 let lastProgressSaveTime = 0;
-const progressSaveInterval = 5000; // Save progress every 5 seconds
+const progressSaveInterval = 5000;
+const completedVideoIds = ref(new Set());
+
+const isCurrentVideoCompleted = computed(() => {
+    return currentVideo.value ? completedVideoIds.value.has(currentVideo.value.id) : false;
+});
+
+const fetchVideoProgress = async (videoId) => {
+    try {
+        const { data } = await axios.get(route('progress.getUserVideoProgress', { video: videoId }));
+        currentVideoSavedProgress.value = data;
+        if (data && data.completed) {
+            completedVideoIds.value = new Set([...completedVideoIds.value, videoId]);
+        }
+    } catch {
+        currentVideoSavedProgress.value = null;
+    }
+};
+
+const handleLoadedMetadata = () => {
+    if (!videoPlayer.value || !currentVideoSavedProgress.value || initialTimeApplied.value) return;
+    const saved = currentVideoSavedProgress.value;
+    if (saved && saved.watched_duration > 0 && !saved.completed) {
+        const resume = Math.max(0, saved.watched_duration - 2);
+        if (resume < videoPlayer.value.duration) {
+            videoPlayer.value.currentTime = resume;
+        }
+    }
+    initialTimeApplied.value = true;
+};
 
 const downloadNotes = () => {
     if (!currentVideo.value || !currentVideo.value.takeaway_notes) {
@@ -639,7 +678,10 @@ const selectVideo = (video) => {
         if (!videoPlayer.value.ended && videoPlayer.value.currentTime > 0 && videoPlayer.value.duration > 0) {
             const isOutgoingCompleted = videoPlayer.value.currentTime >= videoPlayer.value.duration - 2;
             console.log(`selectVideo: Saving progress for outgoing video ${currentVideo.value.id}. Completed: ${isOutgoingCompleted}`);
-            saveProgress(isOutgoingCompleted, false); // Foreground save
+            // autoAdvance = false: we are already navigating to a new video, so
+            // the onSuccess handler must NOT call playNextVideo() again (which
+            // would skip a video).
+            saveProgress(isOutgoingCompleted, false, false);
         } else {
             console.log(`selectVideo: Not saving progress for outgoing video ${currentVideo.value.id}. Ended: ${videoPlayer.value.ended}, CurrentTime: ${videoPlayer.value.currentTime}, Duration: ${videoPlayer.value.duration}`);
         }
@@ -769,12 +811,18 @@ const fetchRelatedCourses = async () => {
 };
 
 const handlePause = () => {
+    if (completedVideoIds.value.has(currentVideo.value?.id)) return;
     if (videoPlayer.value && videoPlayer.value.readyState >= 2 && !videoPlayer.value.ended && videoPlayer.value.duration > 0) {
         saveProgress(false, false);
     }
 };
 
 const handleEnded = () => {
+    if (completedVideoIds.value.has(currentVideo.value?.id)) {
+        // Re-watching a completed video: just move to next, no save/quiz/notes
+        playNextVideo();
+        return;
+    }
     saveProgress(true, false);
 };
 
@@ -804,24 +852,17 @@ const handleCloseNotesPopup = () => {
         });
 };
 
-const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) => {
-    // Get auth user at the start of the function
+const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false, autoAdvance = true) => {
     const { props: pageProps } = usePage();
     const currentUser = pageProps.auth?.user;
 
-    console.log('[[SAVE PROGRESS ATTEMPT]]: Function saveProgress initiated.', {
-        isExplicitlyCompleted,
-        videoId: currentVideo.value?.id,
-        isBackgroundSave
-    });
-
     if (!currentVideo.value || !videoPlayer.value || !currentUser) {
-        console.error("saveProgress: Aborting. Missing currentVideo, videoPlayer, or currentUser.", {
-            hasVideo: !!currentVideo.value,
-            hasPlayer: !!videoPlayer.value,
-            hasUser: !!currentUser,
-            videoPlayerCurrentTime: videoPlayer.value ? videoPlayer.value.currentTime : 'N/A'
-        });
+        return;
+    }
+
+    // If this video is already completed for this user, don't re-save or
+    // re-trigger any quiz/notes/advance flow.  Just let the video play.
+    if (completedVideoIds.value.has(currentVideo.value.id)) {
         return;
     }
 
@@ -846,8 +887,45 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
         last_watched_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
     };
 
+    const videoIdBeingSaved = payload.video_id;
+
+    const handleCompletionFlow = (alreadyCompleted) => {
+        if (payload.completed) {
+            completedVideoIds.value = new Set([...completedVideoIds.value, videoIdBeingSaved]);
+
+            if (currentVideoSavedProgress.value) {
+                currentVideoSavedProgress.value.completed = true;
+            } else {
+                currentVideoSavedProgress.value = { completed: true };
+            }
+
+            // Skip quiz/notes/advance if backend says it was already completed before
+            if (alreadyCompleted) return;
+            if (!autoAdvance) return;
+
+            if (maybeShowVideoQuizFlow()) return;
+
+            if (currentVideo.value && currentVideo.value.takeaway_notes) {
+                notesForVideo.value = currentVideo.value;
+                showNotesPopup.value = true;
+                return;
+            }
+
+            axios.get(route('courses.completionStatus', { course: props.course.id }))
+                .then(response => {
+                    if (response.data.is_completed) {
+                        handleCourseCompletion();
+                    } else {
+                        playNextVideo();
+                    }
+                })
+                .catch(() => {
+                    playNextVideo();
+                });
+        }
+    };
+
     if (isBackgroundSave) {
-        console.log('Saving progress (background - axios) with data:', payload);
         axios.post(route('progress.storeUserVideoProgress'), payload, {
             headers: {
                 'Content-Type': 'application/json',
@@ -855,19 +933,17 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
             },
         })
             .then(response => {
+                lastProgressSaveTime = Date.now();
+                handleCompletionFlow(response.data.already_completed);
                 if (response.data.course_completed) {
                     handleCourseCompletion();
                 }
-                // console.log('Background progress saved successfully', response.data);
-                lastProgressSaveTime = Date.now(); // Still update this for throttling
             })
             .catch(error => {
                 console.error('Error saving background progress:', error.response ? error.response.data : error.message);
             });
     } else {
-        console.log('Saving progress (foreground - Inertia form) with data:', payload);
-        // Use Inertia's form helper for foreground requests (will show progress bar)
-        progressForm.reset(); // Reset form before filling
+        progressForm.reset();
         progressForm.user_id = payload.user_id;
         progressForm.video_id = payload.video_id;
         progressForm.watched_duration = payload.watched_duration;
@@ -880,41 +956,10 @@ const saveProgress = (isExplicitlyCompleted = false, isBackgroundSave = false) =
             onError: (errors) => {
                 console.error('Error saving progress (Inertia form):', errors);
             },
-            onSuccess: () => {
+            onSuccess: (page) => {
                 lastProgressSaveTime = Date.now();
-                if (payload.completed) {
-                    if (currentVideoSavedProgress.value) {
-                        currentVideoSavedProgress.value.completed = true;
-                    } else {
-                        currentVideoSavedProgress.value = { completed: true };
-                    }
-
-                    // Show per-video quiz first if present
-                    if (maybeShowVideoQuizFlow()) {
-                        return;
-                    }
-
-                    // Otherwise, show notes if present
-                    if (currentVideo.value && currentVideo.value.takeaway_notes) {
-                        notesForVideo.value = currentVideo.value;
-                        showNotesPopup.value = true;
-                        return;
-                    }
-
-                    // Otherwise, check course completion or go next
-                    axios.get(route('courses.completionStatus', { course: props.course.id }))
-                        .then(response => {
-                            if (response.data.is_completed) {
-                                handleCourseCompletion();
-                            } else {
-                                playNextVideo();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error checking course completion status:', error);
-                            playNextVideo();
-                        });
-                }
+                const alreadyCompleted = page.props?.flash?.already_completed ?? false;
+                handleCompletionFlow(alreadyCompleted);
             }
         });
     }
@@ -983,10 +1028,10 @@ onMounted(async () => {
     try {
         const response = await axios.get(route('progress.getCourseProgress', { course: props.course.id }));
         const courseProgress = response.data;
-        const completedVideoIds = new Set(courseProgress.filter(p => p.completed).map(p => p.video_id));
+        const doneIds = new Set(courseProgress.filter(p => p.completed).map(p => p.video_id));
+        completedVideoIds.value = doneIds;
 
-        // Find the first video that is not in the completed set
-        videoToPlayInitially = sortedVideos.value.find(video => !completedVideoIds.has(video.id));
+        videoToPlayInitially = sortedVideos.value.find(video => !doneIds.has(video.id));
 
     } catch (error) {
         console.error("Could not fetch course progress, defaulting to first video.", error);
@@ -1298,6 +1343,23 @@ const updateScreenSize = () => {
 
 .player-mark-complete:hover {
     background-color: rgba(34, 197, 94, 0.08);
+}
+
+.player-mark-completed {
+    background-color: #22c55e;
+    color: #fff;
+    border-color: #22c55e;
+    cursor: default;
+    opacity: 0.85;
+}
+.player-mark-completed:hover {
+    background-color: #22c55e;
+}
+
+.player-lesson-check-icon {
+    flex-shrink: 0;
+    color: #22c55e;
+    margin-left: auto;
 }
 
 .player-video-title {

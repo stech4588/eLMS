@@ -123,11 +123,13 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
     course: Object,
     isPurchased: Boolean,
+    completedCount: { type: Number, default: 0 },
     unavailableMessage: { type: String, default: null },
 });
 
@@ -167,7 +169,31 @@ const totalVideosCount = computed(() => {
     return props.course.videos?.length || 0;
 });
 
-const completedCount = computed(() => 0); // TODO: from progress API if needed
+// Live completed count: seed from server prop, then poll every 15s for real-time updates
+const liveCompletedCount = ref(props.completedCount ?? 0);
+let progressPollTimer = null;
+
+const fetchCompletedCount = async () => {
+    if (!props.course?.id || !user.value) return;
+    try {
+        const { data } = await axios.get(route('courses.completedCount', { course: props.course.id }));
+        if (typeof data.completed_count === 'number') {
+            liveCompletedCount.value = data.completed_count;
+        }
+    } catch {
+        // silent – keep last known value
+    }
+};
+
+onMounted(() => {
+    progressPollTimer = setInterval(fetchCompletedCount, 15000);
+});
+
+onUnmounted(() => {
+    if (progressPollTimer) clearInterval(progressPollTimer);
+});
+
+const completedCount = computed(() => liveCompletedCount.value);
 
 const romanNumeral = (n) => {
     const map = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];

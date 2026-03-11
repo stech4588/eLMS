@@ -216,6 +216,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/video-progress/{video}', [ProgressController::class, 'getUserVideoProgress'])->name('progress.getUserVideoProgress');
     Route::get('/course-progress/{course}', [ProgressController::class, 'getCourseProgress'])->name('progress.getCourseProgress');
     Route::get('/course/{course}/completion-status', [ProgressController::class, 'getCompletionStatus'])->name('courses.completionStatus');
+    Route::get('/course/{course}/completed-count', [ProgressController::class, 'getCompletedCount'])->name('courses.completedCount');
 
     Route::get('/admin/instructors', [InstructorController::class, 'index'])->name('admin.instructors.index');
     Route::get('/admin/instructors/{user}', [InstructorController::class, 'show'])->name('admin.instructors.show');
