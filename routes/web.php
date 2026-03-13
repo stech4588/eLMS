@@ -258,6 +258,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/community-posts', [CommunityPostController::class, 'index']);
     Route::post('/api/community-posts', [CommunityPostController::class, 'store']);
     Route::get('/api/community-posts/{communityPost}', [CommunityPostController::class, 'show']);
+    Route::put('/api/community-posts/{communityPost}', [CommunityPostController::class, 'update']);
+    Route::delete('/api/community-posts/{communityPost}', [CommunityPostController::class, 'destroy']);
+    Route::post('/api/community-posts/{communityPost}/toggle-like', [CommunityPostController::class, 'toggleLike']);
+    Route::post('/api/community-posts/{id}/restore', [CommunityPostController::class, 'restore']);
+    Route::post('/api/community-polls/{poll}/vote', [CommunityPostController::class, 'vote']);
 
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
