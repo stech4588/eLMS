@@ -4,12 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CommunityPost extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'parent_id', 'content'];
+    protected $fillable = ['user_id', 'parent_id', 'content', 'title', 'category', 'links'];
+    protected $casts = [
+        'links' => 'array',
+    ];
+    protected $appends = ['is_liked', 'likes_count'];
 
     public function user()
     {
@@ -29,5 +34,25 @@ class CommunityPost extends Model
     public function attachments()
     {
         return $this->hasMany(CommunityPostAttachment::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(CommunityPostLike::class);
+    }
+
+    public function poll()
+    {
+        return $this->hasOne(CommunityPostPoll::class);
+    }
+
+    public function getIsLikedAttribute()
+    {
+        return $this->likes()->where('user_id', auth()->id())->exists();
+    }
+
+    public function getLikesCountAttribute()
+    {
+        return $this->likes()->count();
     }
 }
