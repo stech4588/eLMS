@@ -1,4 +1,5 @@
 <template>
+    <AppLoader v-if="submitting" />
     <AuthenticatedLayout>
         <div class="elms-v3-community-bg transition-colors duration-300">
             <div class="container mx-auto p-4 max-w-4xl pt-8">
@@ -47,7 +48,7 @@
             <!-- Create Post Modal -->
             <div v-if="showPostModal" class="elms-v3-modal-overlay" @click.self="showPostModal = false">
                 <div class="elms-v3-modal-content create-modal">
-                    <div class="elms-v3-create-card overflow-hidden flex flex-col max-h-[90vh]" style="margin-bottom: 0;">
+                    <div class="elms-v3-create-card overflow-hidden flex flex-col max-h-[90vh]" style="margin-bottom: 0; border-radius: 20px;">
                         <div class="elms-v3-create-header flex-shrink-0">
                             <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 shadow-md border-2 border-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
@@ -115,63 +116,43 @@
                             </button>
                         </div>
 
-                        <!-- Link Upload Section (Modified for Multiple Links) -->
-                        <div v-if="showLinkInput" class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-2xl bg-gray-50/50 dark:bg-gray-800/30">
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
-                                    {{ linkInputType === 'youtube' ? 'Add YouTube Video' : 'Add Web Link' }}
-                                </span>
-                                <button @click="showLinkInput = false; tempLink = ''" class="text-xs font-bold text-gray-400 hover:text-red-500 uppercase tracking-wider">Close</button>
-                            </div>
-                            <div class="flex gap-2">
-                                <input 
-                                    v-model="tempLink"
-                                    :placeholder="linkInputType === 'youtube' ? 'Paste YouTube URL...' : 'Paste Web URL (e.g. https://google.com)'"
-                                    class="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all"
-                                    @keyup.enter="addLink"
-                                >
-                                <button @click="addLink" class="bg-blue-500 text-white px-4 rounded-xl font-bold text-xs uppercase transition-all hover:bg-blue-600 active:scale-95">Add</button>
-                            </div>
-                            <p v-if="tempLink && !isValidUrl(tempLink)" class="mt-2 text-[10px] text-red-500 font-bold">Please enter a valid working URL.</p>
-
-                            <!-- Link Previews -->
-                            <div v-if="addedLinks.length > 0" class="mt-4 space-y-3">
-                                <template v-for="(link, lIdx) in addedLinks" :key="'link-' + lIdx">
-                                    <!-- YouTube Preview -->
-                                    <div v-if="isYoutubeUrl(link)" class="relative group">
-                                        <div class="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-md aspect-video bg-black relative">
-                                            <img :src="getYoutubeThumbnail(link)" class="w-full h-full object-cover opacity-80">
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
-                                                    <i class="fa-solid fa-play text-white text-lg ml-0.5"></i>
-                                                </div>
+                        <!-- Previews of added links -->
+                        <div v-if="addedLinks.length > 0" class="mt-4 space-y-3">
+                            <template v-for="(link, lIdx) in addedLinks" :key="'link-preview-' + lIdx">
+                                <div v-if="isYoutubeUrl(link)" class="relative group">
+                                    <div class="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-md aspect-video bg-black relative">
+                                        <img :src="getYoutubeThumbnail(link)" class="w-full h-full object-cover opacity-80">
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+                                                <i class="fa-solid fa-play text-white text-lg ml-0.5"></i>
                                             </div>
-                                            <button @click="removeLink(lIdx)" class="absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
-                                                <i class="fa-solid fa-xmark"></i>
-                                            </button>
                                         </div>
-                                    </div>
-                                    
-                                    <!-- Generic Link UI (Simplified) -->
-                                    <div v-else class="flex items-center justify-between p-3 bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl shadow-sm">
-                                        <div class="flex items-center gap-3 overflow-hidden">
-                                             <div class="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center text-blue-500">
-                                                <i class="fa-solid fa-link text-xs"></i>
-                                            </div>
-                                            <span class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate max-w-[200px]">{{ link }}</span>
-                                        </div>
-                                        <button @click="removeLink(lIdx)" class="text-gray-400 hover:text-red-500 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
-                                            <i class="fa-solid fa-xmark text-sm"></i>
+                                        <button @click="removeLink(lIdx)" class="absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
+                                            <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </div>
-                                </template>
-                            </div>
+                                </div>
+                                
+                                <!-- Generic Link UI (Simplified) -->
+                                <div v-else class="flex items-center justify-between p-3 bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl shadow-sm">
+                                    <div class="flex items-center gap-3 overflow-hidden">
+                                         <div class="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center text-blue-500">
+                                            <i class="fa-solid fa-link text-xs"></i>
+                                        </div>
+                                        <span class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate max-w-[200px]">{{ link }}</span>
+                                    </div>
+                                    <button @click="removeLink(lIdx)" class="text-gray-400 hover:text-red-500 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
+                                        <i class="fa-solid fa-xmark text-sm"></i>
+                                    </button>
+                                </div>
+                            </template>
                         </div>
 
                         <!-- Attachment Previews -->
                         <div v-if="attachments.length > 0" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 max-h-[200px] overflow-y-auto p-1">
                             <div v-for="(file, index) in attachments" :key="index" class="relative group">
                                 <img v-if="file.type.startsWith('image/')" :src="file.preview" class="rounded-lg w-full h-24 object-cover border dark:border-gray-700">
+                                <video v-else-if="file.type.startsWith('video/')" :src="file.preview" class="rounded-lg w-full h-24 object-cover border dark:border-gray-700" muted></video>
                                 <div v-else class="flex flex-col items-center justify-center h-24 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -203,13 +184,13 @@
                                         <path d="M18 20V10M12 20V4M6 20v-6" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
-                                <div class="elms-v3-tool-btn relative" @click="toggleLinkPreview('generic')" :class="{ 'text-blue-500 bg-blue-50 dark:bg-blue-900/20': showLinkInput && linkInputType === 'generic' }" title="Add Generic Link">
+                                <div class="elms-v3-tool-btn relative" @click="toggleLinkPreview('generic')" title="Add Web Link">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
                                         <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M10.172 13.828a4 4 0 015.656 0l4-4a4 4 0 10-5.656-5.656l-1.102 1.101" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
-                                <div class="elms-v3-tool-btn relative" @click="toggleLinkPreview('youtube')" :class="{ 'text-red-500 bg-red-50 dark:bg-red-900/20': showLinkInput && linkInputType === 'youtube' }" title="Add YouTube Link">
+                                <div class="elms-v3-tool-btn relative" @click="toggleLinkPreview('youtube')" title="Add YouTube Link">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
                                         <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
                                         <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"/>
@@ -290,9 +271,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Post from '@/Components/Community/Post.vue';
+import AppLoader from '@/Components/Loader.vue';
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import axios from 'axios';
 import { showToast } from '@/toast.js';
+import Swal from 'sweetalert2';
 import EmojiPicker from 'vue3-emoji-picker';
 import 'vue3-emoji-picker/css';
 import { GiphyFetch } from '@giphy/js-fetch-api';
@@ -303,6 +286,7 @@ const posts = ref([]);
 const page = ref(1);
 const lastPage = ref(1);
 const loading = ref(false);
+const submitting = ref(false);
 const scrollComponent = ref(null);
 const showPostModal = ref(false);
 const newPostTitle = ref('');
@@ -325,17 +309,138 @@ const linkInputType = ref('generic');
 const tempLink = ref('');
 const addedLinks = ref([]);
 
-const toggleLinkPreview = (type) => {
-    if (showLinkInput.value && linkInputType.value === type) {
-        showLinkInput.value = false;
-        tempLink.value = '';
+const toggleLinkPreview = async (type) => {
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    if (type === 'generic') {
+        const { value: url } = await Swal.fire({
+            title: 'Add link',
+            html: `
+                <div class="elms-v3-swal-field-wrapper">
+                    <label class="elms-v3-swal-label">Enter a URL</label>
+                    <input id="swal-input-url" class="elms-v3-swal-input-custom" placeholder="">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Link',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            background: isDark ? '#1A2C38' : '#FFFFFF',
+            customClass: {
+                popup: 'elms-v3-swal-popup',
+                title: 'elms-v3-swal-title',
+                actions: 'elms-v3-swal-actions-custom',
+                confirmButton: 'elms-v3-swal-btn-confirm',
+                cancelButton: 'elms-v3-swal-btn-cancel'
+            },
+            preConfirm: () => {
+                const input = document.getElementById('swal-input-url');
+                return input.value;
+            },
+            didOpen: () => {
+                document.getElementById('swal-input-url').focus();
+            }
+        });
+
+        if (url) {
+            if (!isValidUrl(url)) {
+                showToast('Please enter a valid URL.', 'error');
+                return;
+            }
+            if (addedLinks.value.includes(url.trim())) {
+                showToast('Link already added.', 'warning');
+                return;
+            }
+            addedLinks.value.push(url.trim());
+        }
     } else {
-        showLinkInput.value = true;
-        linkInputType.value = type;
+        // Video Modal (Image 2)
+        const { value: result } = await Swal.fire({
+            title: 'Add video',
+            html: `
+                <div class="elms-v3-swal-video-input-container">
+                    <div class="elms-v3-swal-video-input-wrapper">
+                        <i class="fa-solid fa-link text-gray-400"></i>
+                        <input id="swal-input-video-url" placeholder="YouTube, Loom, Vimeo, or Wistia link">
+                    </div>
+                    <div id="swal-video-dropzone" class="elms-v3-swal-dropzone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1115.71 8h1.29a5 5 0 011 9.9M12 12v9m-4-4l4-4 4 4"/></svg>
+                        <div class="elms-v3-swal-dropzone-text">Drag and drop video here</div>
+                        <div class="elms-v3-swal-dropzone-link">or select file</div>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Add',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            background: isDark ? '#1A2C38' : '#FFFFFF',
+            customClass: {
+                popup: 'elms-v3-swal-popup',
+                title: 'elms-v3-swal-title',
+                actions: 'elms-v3-swal-actions-custom',
+                confirmButton: 'elms-v3-swal-btn-confirm',
+                cancelButton: 'elms-v3-swal-btn-cancel'
+            },
+            preConfirm: () => {
+                const input = document.getElementById('swal-input-video-url');
+                return { url: input.value };
+            },
+            didOpen: () => {
+                const input = document.getElementById('swal-input-video-url');
+                const dropzone = document.getElementById('swal-video-dropzone');
+                
+                input.focus();
+
+                // Drag and Drop support
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+                });
+
+                dropzone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files && files.length > 0) {
+                        const event = { target: { files: files } };
+                        handleFileChange(event);
+                        Swal.close();
+                    }
+                }, false);
+
+                dropzone.onclick = () => {
+                    Swal.close();
+                    triggerFileInput();
+                };
+            }
+        });
+
+        if (result && result.url) {
+            if (!isValidUrl(result.url)) {
+                showToast('Please enter a valid URL.', 'error');
+                return;
+            }
+            if (addedLinks.value.includes(result.url.trim())) {
+                showToast('Link already added.', 'warning');
+                return;
+            }
+            addedLinks.value.push(result.url.trim());
+        }
     }
 };
 
 const addLink = () => {
+    // Legacy support
     if (!tempLink.value.trim()) return;
     if (!isValidUrl(tempLink.value)) {
         showToast('Please enter a valid working URL.', 'error');
@@ -349,7 +454,6 @@ const addLink = () => {
 
     addedLinks.value.push(tempLink.value.trim());
     tempLink.value = '';
-    // Optional: close input after adding? USER probably wants to add more. Keep it open.
 };
 
 const removeLink = (index) => {
@@ -512,7 +616,7 @@ const triggerFileInput = () => {
 const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     files.forEach(file => {
-        if (file.type.startsWith('image/')) {
+        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
             file.preview = URL.createObjectURL(file);
         }
         attachments.value.push(file);
@@ -579,6 +683,7 @@ const submitPost = async () => {
         }
     }
 
+    submitting.value = true;
     try {
         const response = await axios.post('/api/community-posts', formData, {
             headers: {
@@ -593,6 +698,8 @@ const submitPost = async () => {
         console.error('Error submitting post:', error);
         const message = error.response?.data?.message || 'Error creating post';
         showToast(message, 'error');
+    } finally {
+        submitting.value = false;
     }
 };
 const handleScroll = () => {
