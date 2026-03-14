@@ -83,7 +83,7 @@ class CommunityPostController extends Controller
             'title' => 'required_without:parent_id|string|max:255',
             'content' => 'required|string',
             'parent_id' => 'nullable|exists:community_posts,id',
-            'attachments.*' => 'file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx,zip,txt|max:10240',
+            'attachments.*' => 'file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx,zip,txt,mp4,mov,ogg,qt,webm,m4v,avi,wmv,flv|max:51200',
             'links' => 'nullable|array',
             'links.*' => 'required|url',
         ]);
@@ -104,16 +104,22 @@ class CommunityPostController extends Controller
                 $fileNameToStore = time() . '_' . $originalFileName;
 
                 $path = 'community/files';
+                $attachmentType = 'file';
+
                 if (strpos($fileType, 'image') === 0) {
                     $path = 'community/images';
+                    $attachmentType = 'image';
+                } elseif (strpos($fileType, 'video') === 0 || in_array($file->getClientOriginalExtension(), ['mp4', 'mov', 'ogg', 'qt', 'webm', 'm4v', 'avi', 'wmv', 'flv'])) {
+                    $path = 'community/videos';
+                    $attachmentType = 'video';
                 }
                 
-                $filePath = $file->move(public_path($path), $fileNameToStore);
+                $file->move(public_path($path), $fileNameToStore);
 
                 $post->attachments()->create([
                     'file_path' => $path . '/' . $fileNameToStore,
                     'file_name' => $originalFileName,
-                    'file_type' => strpos($fileType, 'image') === 0 ? 'image' : 'file',
+                    'file_type' => $attachmentType,
                 ]);
             }
         }
@@ -168,7 +174,7 @@ class CommunityPostController extends Controller
         $request->validate([
             'title' => 'required_without:parent_id|string|max:255',
             'content' => 'required|string',
-            'attachments.*' => 'file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx,zip,txt|max:10240',
+            'attachments.*' => 'file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx,zip,txt,mp4,mov,ogg,qt,webm,m4v,avi,wmv,flv|max:51200',
             'links' => 'nullable|array',
             'links.*' => 'required|url',
         ]);
@@ -211,8 +217,14 @@ class CommunityPostController extends Controller
                     $fileNameToStore = time() . '_' . $originalFileName;
 
                     $path = 'community/files';
+                    $attachmentType = 'file';
+
                     if (strpos($fileType, 'image') === 0) {
                         $path = 'community/images';
+                        $attachmentType = 'image';
+                    } elseif (strpos($fileType, 'video') === 0 || in_array($file->getClientOriginalExtension(), ['mp4', 'mov', 'ogg', 'qt', 'webm', 'm4v', 'avi', 'wmv', 'flv'])) {
+                        $path = 'community/videos';
+                        $attachmentType = 'video';
                     }
                     
                     $file->move(public_path($path), $fileNameToStore);
@@ -220,8 +232,8 @@ class CommunityPostController extends Controller
                     $communityPost->attachments()->create([
                         'file_path' => $path . '/' . $fileNameToStore,
                         'file_name' => $originalFileName,
-                        'file_type' => (strpos($fileType, 'image') === 0) ? 'image' : 'file',
-                        'user_id' => Auth::id() // assuming attachments has user_id
+                        'file_type' => $attachmentType,
+                        'user_id' => Auth::id()
                     ]);
                 }
             }
