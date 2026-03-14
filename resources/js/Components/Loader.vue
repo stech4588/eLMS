@@ -1,43 +1,52 @@
 <template>
-    <div id="loader">
-      <div id="shadow1"></div>
-      <div id="shadow2"></div>
-      <div id="shadow3"></div>
-      <div id="box1"></div>
-      <div id="box2"></div>
-      <div id="box3"></div>
+    <div class="loader-overlay">
+        <div id="loader">
+            <div id="shadow1"></div>
+            <div id="shadow2"></div>
+            <div id="shadow3"></div>
+            <div id="box1"></div>
+            <div id="box2"></div>
+            <div id="box3"></div>
+        </div>
     </div>
-  </template>
-  <script>
-  export default {
+</template>
+
+<script>
+export default {
     name: 'Loader',
-  }
-  </script>
-  
+}
+</script>
+
 <style>
-#loader {
-    /* Uncomment this to make it run! */
-    /*   animation: loader 5s linear infinite;*/
-    margin-left: -75px;
-    position: absolute;
-    top: calc(50% - 20px);
-    left: calc(50% - 20px);
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999 !important;
 }
 
-@keyframes loader {
-    0% {
-        left: -100px
-    }
+.dark .loader-overlay {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
 
-    100% {
-        left: 110%;
-    }
+#loader {
+    position: relative;
+    width: 192px; /* 142px (last box left) + 50px (box width) */
+    height: 70px;
+    margin-right: -50px; /* Slight adjustment to center the group better */
 }
 
 #box1 {
     width: 50px;
     height: 50px;
-    background: #4CCAFF;
+    background: #000;
     animation: animate .5s linear infinite;
     position: absolute;
     top: 0;
@@ -48,7 +57,7 @@
 #box2 {
     width: 50px;
     height: 50px;
-    background: #2b2899;
+    background: #000;
     animation: animate .5s linear infinite;
     position: absolute;
     top: 0;
@@ -59,7 +68,7 @@
 #box3 {
     width: 50px;
     height: 50px;
-    background: #2b2899;
+    background: #000;
     animation: animate .5s linear infinite;
     position: absolute;
     top: 0;

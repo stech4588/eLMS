@@ -1,4 +1,5 @@
 <template>
+    <AppLoader v-if="editing || submittingReply" />
     <div class="elms-v3-post-card">
         <!-- Pinned Badge -->
         <div v-if="post.is_pinned" class="elms-v3-pinned absolute top-5 right-6 z-10 shadow-sm">
@@ -44,89 +45,30 @@
         </div>
 
         <!-- Content Layout (Social Style) -->
-        <div class="elms-v3-content-wrapper px-6">
-            <h3 v-if="displayTitle" class="elms-v3-post-title text-xl font-black mb-3 text-gray-900 dark:text-white leading-tight">
-                {{ displayTitle }}
-            </h3>
-            <p class="elms-v3-post-desc text-base text-gray-700 dark:text-gray-300 mb-4">{{ displayContent }}</p>
+        <div class="elms-v3-content-wrapper px-6 flex gap-6 cursor-pointer" @click="openReplyModal">
+            <div class="flex-1 min-w-0">
+                <h3 v-if="displayTitle" class="elms-v3-post-title text-xl font-bold mb-3 text-gray-900 dark:text-white leading-tight">
+                    {{ displayTitle }}
+                </h3>
+                <p class="elms-v3-post-desc text-base text-gray-700 dark:text-gray-300 mb-4 line-clamp-3 overflow-hidden text-ellipsis">{{ displayContent }}</p>
+            </div>
 
-            <!-- Poll UI in Feed -->
-            <div v-if="post.poll" class="mb-4 space-y-2 max-w-lg">
-                <div v-for="option in post.poll.options" :key="option.id" @click.stop="vote(option.id)"
-                    class="relative h-12 w-full bg-gray-50 dark:bg-gray-800/50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                    <div class="absolute inset-y-0 left-0 bg-blue-500/10 transition-all duration-500"
-                        :style="{ width: getOptionPercentage(option.votes_count) + '%' }"></div>
-                    <div class="absolute inset-0 px-4 flex items-center justify-between pointer-events-none">
-                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-3">
-                            <i v-if="isOptionSelected(option.id)" class="fa-solid fa-circle-check text-blue-500"></i>
-                            {{ option.option_text }}
-                        </span>
-                        <span class="text-xs font-black text-blue-500/60 transition-colors group-hover:text-blue-500">{{ getOptionPercentage(option.votes_count) }}%</span>
+            <!-- Right side small preview (only first image/video) -->
+            <div v-if="post.attachments && post.attachments.length > 0" 
+                 class="w-32 h-32 flex-shrink-0 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 shadow-sm transition-transform hover:scale-[1.02]">
+                <div class="relative w-full h-full group overflow-hidden">
+                    <video v-if="isVideo(post.attachments[0])" :src="post.attachments[0].file_url" class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out" muted playsinline></video>
+                    <img v-else :src="post.attachments[0].file_url" class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out">
+                    <div v-if="isVideo(post.attachments[0])" class="absolute inset-0 flex items-center justify-center bg-black/10">
+                         <div class="w-8 h-8 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-lg">
+                            <i class="fa-solid fa-play text-xs ml-0.5"></i>
+                         </div>
+                    </div>
+                    <!-- Counter for more attachments -->
+                    <div v-if="post.attachments.length > 1" class="absolute bottom-1.5 right-1.5 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded-lg text-[10px] font-bold shadow-sm">
+                        +{{ post.attachments.length - 1 }}
                     </div>
                 </div>
-            </div>
-
-            <!-- Media Attachments (Responsive Grid) -->
-            <div v-if="post.attachments && post.attachments.length > 0" 
-                 class="mb-4 grid gap-2 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800"
-                 :class="{
-                     'grid-cols-1': post.attachments.length === 1,
-                     'grid-cols-2': post.attachments.length >= 2
-                 }">
-                <template v-for="(att, idx) in post.attachments.slice(0, 4)" :key="att.id">
-                    <div class="relative aspect-video group cursor-pointer overflow-hidden bg-gray-100 dark:bg-gray-900" 
-                         @click.stop="openReplyModal"
-                         :class="{ 'row-span-2 h-full': post.attachments.length === 3 && idx === 0 }">
-                        <img :src="att.file_url" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                        <div v-if="isVideo(att)" class="absolute inset-0 flex items-center justify-center bg-black/20">
-                             <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white">
-                                <i class="fa-solid fa-play text-xl ml-1"></i>
-                             </div>
-                        </div>
-                        <!-- More overlay -->
-                        <div v-if="idx === 3 && post.attachments.length > 4" class="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-2xl font-black">
-                            +{{ post.attachments.length - 4 }}
-                        </div>
-                    </div>
-                </template>
-            </div>
-
-            <!-- YouTube Previews in Feed -->
-            <div v-if="post.links && post.links.some(l => isYoutubeUrl(l))" class="mb-4 space-y-3">
-                <template v-for="(link, lIdx) in post.links" :key="'yt-feed-' + lIdx">
-                    <div v-if="isYoutubeUrl(link)" class="elms-v3-media-thumb group shadow-lg ring-1 ring-white/10" @click.stop="redirectToLink(link)">
-                        <div class="aspect-video relative">
-                            <img :src="getYoutubeThumbnail(link)" alt="YouTube preview" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-300 group-hover:scale-[1.02]">
-                            <!-- Overlay Link Info -->
-                            <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                <div class="flex items-center gap-2 text-white/90 text-[10px] font-bold">
-                                    <i class="fa-brands fa-youtube text-red-500 text-sm"></i>
-                                    <span class="truncate">{{ link }}</span>
-                                </div>
-                            </div>
-                            <div class="elms-v3-play-icon bg-red-600/90 group-hover:scale-110 transition-transform shadow-xl">
-                                <i class="fa-solid fa-play text-white text-xs ml-0.5"></i>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-            
-            <!-- Generic Links Display in Feed (Premium simple grid) -->
-            <div v-if="post.links && post.links.some(l => !isYoutubeUrl(l))" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                <template v-for="(link, lIdx) in post.links" :key="'gen-feed-' + lIdx">
-                    <div v-if="!isYoutubeUrl(link)" @click.stop="redirectToLink(link)" class="group flex items-center gap-3 py-3 px-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800/40 hover:bg-white dark:hover:bg-gray-800 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900/50 transition-all duration-300 cursor-pointer overflow-hidden relative">
-                         <!-- Subtle background glow -->
-                        <div class="absolute -right-4 -top-4 w-12 h-12 bg-blue-500/5 blur-xl group-hover:bg-blue-500/10 transition-all"></div>
-                        <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 rotate-12 group-hover:rotate-0">
-                            <i class="fa-solid fa-link text-sm"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-[11px] font-extrabold text-gray-800 dark:text-gray-200 truncate tracking-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors uppercase">{{ link }}</p>
-                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 block opacity-60 group-hover:opacity-100">Click to Open</span>
-                        </div>
-                    </div>
-                </template>
             </div>
         </div>
 
@@ -175,6 +117,11 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-4 text-gray-400">
+                            <!-- Close Button -->
+                            <div @click="closeReplyModal" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer text-gray-500">
+                                <i class="fa-solid fa-xmark text-lg"></i>
+                            </div>
+
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5 cursor-pointer hover:text-gray-600">
                                 <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                             </svg>
@@ -241,62 +188,100 @@
                         </div>
                     </div>
 
-                    <!-- YouTube Link Preview in Modal -->
-                    <div v-if="post.link_url && isYoutubeUrl(post.link_url)" class="mb-8 relative group cursor-pointer" @click="redirectToLink(post.link_url)">
-                        <div class="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-lg aspect-video bg-black relative">
-                            <img :src="getYoutubeThumbnail(post.link_url)" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-play text-white text-2xl ml-1"></i>
+                    <!-- Link Previews in Modal -->
+                    <div v-if="post.links && post.links.length > 0" class="mb-8 space-y-4">
+                        <div v-for="(link, lIdx) in post.links" :key="'modal-link-' + lIdx">
+                            <!-- YouTube Link Preview -->
+                            <div v-if="isYoutubeUrl(link)" class="relative group cursor-pointer" @click="redirectToLink(link)">
+                                <div class="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-lg aspect-video bg-black relative">
+                                    <img :src="getYoutubeThumbnail(link)" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform">
+                                            <i class="fa-solid fa-play text-white text-2xl ml-1"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center gap-2 text-xs text-blue-500 font-bold">
+                                    <i class="fa-brands fa-youtube text-red-600 text-lg"></i>
+                                    <span class="truncate">{{ link }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Generic Link Preview -->
+                            <div v-else class="p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-all" @click="redirectToLink(link)">
+                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-500">
+                                    <i class="fa-solid fa-link"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">{{ link }}</p>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">External Link</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-3 flex items-center gap-2 text-xs text-blue-500 font-bold">
-                            <i class="fa-brands fa-youtube text-red-600 text-lg"></i>
-                            <span>Watch on YouTube</span>
-                        </div>
                     </div>
 
-                    <!-- Generic Link Preview in Modal -->
-                    <div v-else-if="post.link_url" class="mb-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-all" @click="redirectToLink(post.link_url)">
-                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-500">
-                            <i class="fa-solid fa-link"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-xs font-bold text-gray-900 dark:text-gray-100 truncate">{{ post.link_url }}</p>
-                            <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">External Link</p>
-                        </div>
-                    </div>
-
-                    <!-- Media Display in Modal (Stacked for high visibility) -->
-                    <div v-if="post.attachments && post.attachments.length > 0" class="mb-8 space-y-4">
-                        <div v-for="att in post.attachments" :key="att.id" class="rounded-2xl overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 flex flex-col items-center justify-center">
-                            <template v-if="isVideo(att)">
-                                <video :src="att.file_url" controls class="w-full max-h-[600px]"></video>
-                            </template>
-                            <template v-else-if="att.file_type === 'image' || att.file_path.match(/\.(jpeg|jpg|png|gif|svg)$/i)">
-                                <img :src="att.file_url" class="max-w-full h-auto max-h-[800px] object-contain">
-                            </template>
-                            <div v-else class="p-4 w-full flex items-center gap-3 bg-white dark:bg-gray-800">
-                                <i class="fa-solid fa-file-lines text-2xl text-blue-500"></i>
-                                <div class="flex-1 min-w-0 text-left">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ att.file_name }}</p>
-                                    <p class="text-xs text-gray-500">Document</p>
+                    <!-- Media Display in Modal (Dynamic Grid Layout) -->
+                    <div v-if="post.attachments && post.attachments.some(a => isVideo(a) || isImage(a))" 
+                         class="mb-6 overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 shadow-sm">
+                        <div class="grid gap-[2px] bg-white dark:bg-gray-800" :class="{
+                            'grid-cols-1': post.attachments.filter(a => isVideo(a) || isImage(a)).length === 1,
+                            'grid-cols-2': post.attachments.filter(a => isVideo(a) || isImage(a)).length > 1,
+                        }">
+                            <div v-for="(att, index) in post.attachments.filter(a => isVideo(a) || isImage(a)).slice(0, 3)" 
+                                 :key="att.id"
+                                 class="relative group cursor-pointer overflow-hidden bg-gray-100 dark:bg-gray-900"
+                                 :class="{
+                                     'col-span-2 aspect-[16/10]': (post.attachments.filter(a => isVideo(a) || isImage(a)).length === 3 && index === 0) || post.attachments.filter(a => isVideo(a) || isImage(a)).length === 1,
+                                     'col-span-1 aspect-square': (post.attachments.filter(a => isVideo(a) || isImage(a)).length === 3 && index > 0) || (post.attachments.filter(a => isVideo(a) || isImage(a)).length === 2),
+                                     'col-span-1 aspect-video': post.attachments.filter(a => isVideo(a) || isImage(a)).length > 3 && index === 0
+                                 }"
+                                 @click="openMedia(att)"
+                            >
+                                <template v-if="isVideo(att)">
+                                    <video :src="att.file_url" class="w-full h-full object-cover"></video>
+                                    <div class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-all">
+                                        <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-2xl transform group-hover:scale-110 transition-transform">
+                                            <i class="fa-solid fa-play text-2xl ml-1"></i>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-3 right-3 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-md font-bold tracking-wider">
+                                        {{ att.duration || '02:45' }}
+                                    </div>
+                                </template>
+                                <img v-else :src="att.file_url" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                
+                                <div v-if="index === 2 && post.attachments.filter(a => isVideo(a) || isImage(a)).length > 3" class="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center text-white font-black text-2xl">
+                                    +{{ post.attachments.filter(a => isVideo(a) || isImage(a)).length - 3 }}
                                 </div>
-                                <a :href="att.file_url" download class="text-blue-500 hover:underline text-xs font-bold">Download</a>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- File Attachments (Documents) -->
+                    <div v-if="post.attachments && post.attachments.some(a => !isVideo(a) && !isImage(a))" class="mb-8 space-y-2">
+                        <div v-for="att in post.attachments.filter(a => !isVideo(a) && !isImage(a))" :key="'doc-' + att.id" class="p-5 w-full flex items-center gap-4 bg-gray-50/50 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800 transition-all group">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-file-lines text-2xl"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-left">
+                                <p class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-500 transition-colors">{{ att.file_name }}</p>
+                                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-black">Document Attachment</p>
+                            </div>
+                            <a :href="att.file_url" download class="bg-white dark:bg-gray-700/50 px-5 py-2 rounded-xl text-blue-500 hover:bg-blue-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-tight shadow-sm border border-gray-100 dark:border-gray-600">Download</a>
                         </div>
                     </div>
 
                     <!-- Likes/Comments count display in modal body -->
-                    <div class="flex items-center gap-6 mb-8 pt-6 border-t dark:border-gray-800">
-                         <div class="flex items-center gap-2 text-gray-500 font-bold border rounded-lg px-4 py-1.5 cursor-pointer">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
-                                <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" />
-                            </svg>
-                            Like
-                            <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-xs ml-1">{{ post.likes_count || 1 }}</span>
-                         </div>
+                     <div class="flex items-center gap-6 mb-8 pt-6 border-t dark:border-gray-800">
+                          <div class="flex items-center gap-2 font-bold border rounded-lg px-4 py-1.5 cursor-pointer transition-colors"
+                               @click="toggleLikePost(post)"
+                               :class="post.is_liked ? 'text-blue-500 border-blue-200 bg-blue-50/50' : 'text-gray-500 border-gray-200 hover:bg-gray-50'">
+                             <svg viewBox="0 0 24 24" :fill="post.is_liked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+                                 <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3" />
+                             </svg>
+                             Like
+                             <span class="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-xs ml-1" :class="{ 'bg-blue-100 text-blue-600': post.is_liked }">{{ post.likes_count || 0 }}</span>
+                          </div>
                          <div class="flex items-center gap-2 text-gray-500 font-bold">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
                                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -402,81 +387,58 @@
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                             </svg>
                         </div>
-                        
-                        <div class="elms-v3-comment-input-pill">
-                            <!-- Attachment Previews -->
-                            <div v-if="replyAttachments.length > 0" class="flex flex-wrap gap-2 p-2 w-full border-b border-gray-100 dark:border-gray-700">
-                                <div v-for="(file, index) in replyAttachments" :key="index" class="relative w-12 h-12">
-                                    <img v-if="file.preview" :src="file.preview" class="w-full h-full object-cover rounded-lg border border-gray-200">
-                                    <div v-else class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg text-[10px] text-gray-500 overflow-hidden text-center">
-                                        {{ file.name.split('.').pop() }}
+                                               <div class="elms-v3-comment-input-pill bg-gray-50/30 dark:bg-gray-900/30 border-gray-100 dark:border-gray-800">
+                            <!-- Main Input Area -->
+                            <div class="w-full">
+                                <!-- Attachment Previews (Now above text) -->
+                                <div v-if="replyAttachments.length > 0" class="flex flex-wrap gap-2 p-2 border-b border-gray-100 dark:border-gray-800">
+                                    <div v-for="(file, index) in replyAttachments" :key="index" class="relative w-12 h-12">
+                                        <img v-if="file.type.startsWith('image/')" :src="file.preview" class="w-full h-full object-cover rounded-lg border border-gray-200 shadow-sm">
+                                        <video v-else-if="file.type.startsWith('video/')" :src="file.preview" class="w-full h-full object-cover rounded-lg border border-gray-200 shadow-sm" muted></video>
+                                        <div v-else class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg text-[10px] text-gray-500 overflow-hidden text-center font-bold">
+                                            {{ file.name.split('.').pop().toUpperCase() }}
+                                        </div>
+                                        <div @click="removeReplyAttachment(index)" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] cursor-pointer shadow-md hover:scale-110 transition-transform">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </div>
                                     </div>
-                                    <div @click="removeReplyAttachment(index)" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] cursor-pointer shadow-sm">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <input 
-                                ref="commentInput"
-                                v-model="newReplyContent" 
-                                @keyup.enter="submitReply"
-                                placeholder="Your comment" 
-                            >
-                            <div v-if="showReplyLinkInput" class="w-full px-4 py-2 border-t border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20">
-                                <div class="flex gap-2">
-                                    <input 
-                                        v-model="newReplyLink"
-                                        :placeholder="replyLinkInputType === 'youtube' ? 'Paste YouTube URL...' : 'Paste Web URL...'"
-                                        class="flex-1 text-xs text-blue-500 bg-transparent outline-none py-1"
-                                        @keyup.enter="addReplyLink"
-                                    >
-                                    <button @click="addReplyLink" class="text-[10px] font-bold text-blue-500 uppercase">Add</button>
-                                </div>
-                            </div>
-                            <div class="elms-v3-comment-tools shrink-0 px-2 lg:px-4">
-                                <div @click="submitReply"
-                                     class="p-2 rounded-full transition-all transform hover:scale-105 active:scale-95 mr-2"
-                                     :class="newReplyContent.trim() || replyAttachments.length > 0 || addedReplyLinks.length > 0 ? 'bg-blue-500 text-white shadow-md cursor-pointer' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'"
-                                     title="Send Comment"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M3.478 2.404L22.133 12 3.478 21.596l1.373-7.532C4.94 13.567 5.373 13 6 13h9c.552 0 1-.448 1-1s-.448-1-1-1H6c-.627 0-1.06-.567-1.149-1.064l-1.373-7.532z" /></svg>
-                                </div>
-                                <div class="elms-v3-comment-tool-icon" @click="triggerReplyFileInput" title="Add Attachments">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.414a4 4 0 00-5.656-5.656l-6.415 6.414a6 6 0 108.486 8.486L20.5 13" /></svg>
                                 </div>
 
-                                <div class="elms-v3-comment-tool-icon relative" @click="toggleEmojiPicker" title="Add Emoji">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" /></svg>
-                                    
-                                    <!-- Emoji Picker Popup -->
-                                    <div v-if="showEmojiPicker" class="absolute bottom-full right-0 mb-4 z-50">
-                                        <EmojiPicker :native="true" @select="onEmojiSelect" />
+                                <textarea 
+                                    ref="commentInput"
+                                    v-model="newReplyContent" 
+                                    placeholder="Write your comment..." 
+                                    class="w-full bg-transparent border-none focus:ring-0 text-sm py-4 px-4 min-h-[50px] max-h-[150px] resize-none text-gray-800 dark:text-gray-200"
+                                    @keydown.enter.prevent="submitReply"
+                                ></textarea>
+                            </div>
+
+                            <!-- Integrated Toolbar -->
+                            <div class="flex items-center justify-between px-3 pb-2 pt-1 border-t border-gray-100/50 dark:border-gray-800/50">
+                                <div class="flex items-center gap-1">
+                                    <div class="elms-v3-comment-tool-icon hover:text-blue-500" @click="triggerReplyFileInput" title="Add Image/Video">
+                                        <i class="fa-solid fa-image text-lg"></i>
                                     </div>
-                                </div>
-                                 <!-- <div class="elms-v3-comment-tool-icon font-black text-sm relative" @click="toggleGifPicker" title="Add GIF"> -->
-                                    <!-- GIF -->
-                                    <!-- GIF Picker Popup -->
-                                    <!-- <div v-if="showGifPicker" class="absolute bottom-full right-0 mb-4 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-4 w-72">
-                                        <div class="flex gap-2 mb-3">
-                                            <input v-model="gifSearch" @keyup.enter="searchGifs" placeholder="Search Giphy..." class="flex-1 text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 bg-transparent">
-                                            <button @click="searchGifs" class="bg-blue-500 text-white text-[10px] px-3 py-1 rounded-lg">Search</button>
+                                    <div class="elms-v3-comment-tool-icon hover:text-yellow-500 relative" @click="toggleEmojiPicker" title="Add Emoji">
+                                        <i class="fa-solid fa-face-smile text-lg"></i>
+                                        <div v-if="showEmojiPicker" class="absolute bottom-full left-0 mb-4 z-50">
+                                            <EmojiPicker :native="true" @select="onEmojiSelect" />
                                         </div>
-                                        <div class="grid grid-cols-2 gap-2 h-48 overflow-y-auto custom-scrollbar">
-                                            <div v-if="loadingGifs" class="col-span-2 text-center text-[10px] text-gray-500">Loading...</div>
-                                            <img v-for="gif in gifs" :key="gif.id" :src="gif.images.fixed_height_small.url" @click="selectGif(gif)" class="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80">
-                                        </div>
-                                    </div> -->
-                                <div class="elms-v3-comment-tool-icon" @click="toggleReplyLinkInput('generic')" :class="{ 'text-blue-500': showReplyLinkInput && replyLinkInputType === 'generic' }" title="Add Generic Link">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.172 13.828a4 4 0 015.656 0l4-4a4 4 0 10-5.656-5.656l-1.102 1.101" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </div>
+                                    <div class="elms-v3-comment-tool-icon hover:text-blue-500" @click="toggleReplyLinkInput('generic')" title="Add Web Link">
+                                        <i class="fa-solid fa-link text-lg"></i>
+                                    </div>
+                                    <div class="elms-v3-comment-tool-icon hover:text-red-500" @click="toggleReplyLinkInput('youtube')" title="Add YouTube Video">
+                                        <i class="fa-brands fa-youtube text-[20px]"></i>
+                                    </div>
+                                    <input type="file" ref="replyFileInput" class="hidden" @change="handleReplyFileChange" accept="image/*,video/*" multiple>
                                 </div>
-                                <div class="elms-v3-comment-tool-icon" @click="toggleReplyLinkInput('youtube')" :class="{ 'text-red-500': showReplyLinkInput && replyLinkInputType === 'youtube' }" title="Add YouTube Link">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
-                                        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
-                                        <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"/>
-                                    </svg>
-                                </div>
-                                <input type="file" ref="replyFileInput" class="hidden" @change="handleReplyFileChange" accept="image/*,video/*" multiple>
+
+                                <button @click="submitReply" 
+                                        class="bg-[#1C355E] text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg hover:bg-[#2a4e8c] active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed group flex items-center justify-center"
+                                        :disabled="!newReplyContent.trim() && replyAttachments.length === 0">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 ml-2 group-hover:translate-x-1 transition-transform"><path d="M3.478 2.404L22.133 12 3.478 21.596l1.373-7.532C4.94 13.567 5.373 13 6 13h9c.552 0 1-.448 1-1s-.448-1-1-1H6c-.627 0-1.06-.567-1.149-1.064l-1.373-7.532z" /></svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -499,9 +461,9 @@
     </div>
 
     <!-- Edit Post Modal -->
-    <div v-if="showEditModal" class="elms-v3-modal-overlay" @click.self="closeEditModal">
+    <div v-if="showEditModal" class="elms-v3-modal-overlay" @click.self="closeEditModal" >
         <div class="elms-v3-modal-content edit-modal">
-            <div class="elms-v3-create-card overflow-hidden flex flex-col" style="margin-bottom: 0;">
+            <div class="elms-v3-create-card overflow-hidden flex flex-col" style="margin-bottom: 0; border-top-left-radius: 20px; border-top-right-radius: 20px;">
                 <div class="elms-v3-create-header flex-shrink-0 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <i class="fa-solid fa-pen-to-square text-blue-500"></i>
@@ -526,25 +488,6 @@
                     rows="4"
                     @focus="lastEditFocusedField = 'content'"
                 ></textarea>
-
-                <!-- Edit Link Section (Modified for Multiple Links) -->
-                <div v-if="showEditLinkInput" class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-2xl bg-gray-50/50 dark:bg-gray-800/30">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
-                             {{ editLinkInputType === 'youtube' ? 'Add YouTube Video' : 'Add Web Link' }}
-                        </span>
-                        <button @click="showEditLinkInput = false; tempEditLink = ''" class="text-xs font-bold text-gray-400 hover:text-red-500 uppercase tracking-wider">Close</button>
-                    </div>
-                    <div class="flex gap-2">
-                        <input 
-                            v-model="tempEditLink"
-                            :placeholder="editLinkInputType === 'youtube' ? 'Paste YouTube URL...' : 'Paste Web URL...'"
-                            class="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm focus:border-blue-500 outline-none transition-all"
-                            @keyup.enter="addEditLink"
-                        >
-                        <button @click="addEditLink" class="bg-blue-500 text-white px-4 rounded-xl font-bold text-xs uppercase transition-all hover:bg-blue-600 active:scale-95">Add</button>
-                    </div>
-                    <p v-if="tempEditLink && !isValidUrl(tempEditLink)" class="mt-2 text-[10px] text-red-500 font-bold">Please enter a valid working URL.</p>
 
                     <!-- Previews of added links in edit -->
                     <div class="mt-4 space-y-3">
@@ -580,7 +523,7 @@
                 </div>
 
                 <!-- Edit Poll Section -->
-                <div v-if="showEditPoll" class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-2xl bg-gray-50/50 dark:bg-gray-800/30">
+                <div v-if="showEditPoll" class="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-2xl bg-gray-50/50 dark:bg-gray-800/30" >
                     <div class="flex items-center justify-between mb-4">
                         <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Poll</span>
                         <button @click="showEditPoll = false" class="text-xs font-bold text-gray-400 hover:text-red-500 uppercase tracking-wider">Remove</button>
@@ -628,6 +571,7 @@
                 <div v-if="editAttachments.length > 0" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 max-h-[150px] overflow-y-auto p-1">
                     <div v-for="(file, index) in editAttachments" :key="index" class="relative group">
                         <img v-if="file.type.startsWith('image/')" :src="file.preview" class="rounded-lg w-full h-24 object-cover border dark:border-gray-700">
+                        <video v-else-if="file.type.startsWith('video/')" :src="file.preview" class="rounded-lg w-full h-24 object-cover border dark:border-gray-700" muted></video>
                         <div v-else class="flex flex-col items-center justify-center h-24 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -639,7 +583,7 @@
                 </div>
             </div> <!-- End of overflow-y-auto custom-scrollbar -->
             
-            <div class="p-6 pt-4 border-t border-gray-100 dark:border-gray-800 flex-shrink-0">
+            <div class="p-6 pt-4 border-t border-gray-100 dark:border-gray-800 flex-shrink-0" style="border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;">
                 <div class="elms-v3-toolbar items-center justify-between">
                     <div class="flex items-center gap-2">
                         <div class="elms-v3-tool-btn" @click="triggerEditFileInput" title="Add Attachments">
@@ -656,13 +600,13 @@
                                 <path d="M18 20V10M12 20V4M6 20v-6" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="elms-v3-tool-btn relative" @click="toggleEditLinkInput('generic')" :class="{ 'text-blue-500 bg-blue-50 dark:bg-blue-900/20': showEditLinkInput && editLinkInputType === 'generic' }" title="Add Generic Link">
+                        <div class="elms-v3-tool-btn relative" @click="toggleEditLinkInput('generic')" title="Add Web Link">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
                                 <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M10.172 13.828a4 4 0 015.656 0l4-4a4 4 0 10-5.656-5.656l-1.102 1.101" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="elms-v3-tool-btn relative" @click="toggleEditLinkInput('youtube')" :class="{ 'text-red-500 bg-red-50 dark:bg-red-900/20': showEditLinkInput && editLinkInputType === 'youtube' }" title="Add YouTube Link">
+                        <div class="elms-v3-tool-btn relative" @click="toggleEditLinkInput('youtube')" title="Add YouTube Link">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6">
                                 <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
                                 <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"/>
@@ -697,11 +641,11 @@
         </div>
     </div>
 </div>
-</div>
 </template>
 
 <script setup>
 import { ref, defineProps, computed, onMounted, onUnmounted, defineEmits } from 'vue';
+import AppLoader from '@/Components/Loader.vue';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { showToast } from '@/toast.js';
@@ -721,6 +665,7 @@ const props = defineProps({
 const showMenu = ref(false);
 const showEditModal = ref(false);
 const editing = ref(false);
+const submittingReply = ref(false);
 const editForm = ref({
     title: '',
     content: '',
@@ -750,6 +695,9 @@ const removeEditPollOption = (index) => {
 const editAttachments = ref([]);
 const editFileInput = ref(null);
 const showEditEmojiPicker = ref(false);
+const showEditLinkInput = ref(false);
+const editLinkInputType = ref('generic');
+const tempEditLink = ref('');
 const lastEditFocusedField = ref('content');
 const existingAttachments = ref([]);
 
@@ -777,9 +725,12 @@ const triggerEditFileInput = () => {
 const handleEditFileChange = (e) => {
     const files = Array.from(e.target.files);
     files.forEach(file => {
-        file.preview = URL.createObjectURL(file);
+        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+            file.preview = URL.createObjectURL(file);
+        }
         editAttachments.value.push(file);
     });
+    editFileInput.value.value = '';
 };
 
 const removeEditAttachment = (index) => {
@@ -908,19 +859,143 @@ const loadingGifs = ref(false);
 const lastFocusedField = ref('content');
 
 const addedReplyLinks = ref([]);
+const showReplyLinkInput = ref(false);
+const newReplyLink = ref('');
 const replyLinkInputType = ref('generic');
 
-const toggleReplyLinkInput = (type) => {
-    if (showReplyLinkInput.value && replyLinkInputType.value === type) {
-        showReplyLinkInput.value = false;
-        newReplyLink.value = '';
+const toggleReplyLinkInput = async (type) => {
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    if (type === 'generic') {
+        const { value: url } = await Swal.fire({
+            title: 'Add link',
+            html: `
+                <div class="elms-v3-swal-field-wrapper">
+                    <label class="elms-v3-swal-label">Enter a URL</label>
+                    <input id="swal-input-url" class="elms-v3-swal-input-custom" placeholder="">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Link',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            background: isDark ? '#1A2C38' : '#FFFFFF',
+            customClass: {
+                popup: 'elms-v3-swal-popup',
+                title: 'elms-v3-swal-title',
+                actions: 'elms-v3-swal-actions-custom',
+                confirmButton: 'elms-v3-swal-btn-confirm',
+                cancelButton: 'elms-v3-swal-btn-cancel'
+            },
+            preConfirm: () => {
+                const input = document.getElementById('swal-input-url');
+                return input.value;
+            },
+            didOpen: () => {
+                document.getElementById('swal-input-url').focus();
+            }
+        });
+
+        if (url) {
+            if (!isValidUrl(url)) {
+                showToast('Please enter a valid URL.', 'error');
+                return;
+            }
+            if (addedReplyLinks.value.includes(url.trim())) {
+                showToast('Link already added.', 'warning');
+                return;
+            }
+            addedReplyLinks.value.push(url.trim());
+        }
     } else {
-        showReplyLinkInput.value = true;
-        replyLinkInputType.value = type;
+        // Video Modal (Image 2)
+        const { value: result } = await Swal.fire({
+            title: 'Add video',
+            html: `
+                <div class="elms-v3-swal-video-input-container">
+                    <div class="elms-v3-swal-video-input-wrapper">
+                        <i class="fa-solid fa-link text-gray-400"></i>
+                        <input id="swal-input-video-url" placeholder="YouTube, Loom, Vimeo, or Wistia link">
+                    </div>
+                    <div id="swal-video-dropzone" class="elms-v3-swal-dropzone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1115.71 8h1.29a5 5 0 011 9.9M12 12v9m-4-4l4-4 4 4"/></svg>
+                        <div class="elms-v3-swal-dropzone-text">Drag and drop video here</div>
+                        <div class="elms-v3-swal-dropzone-link">or select file</div>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Add',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            background: isDark ? '#1A2C38' : '#FFFFFF',
+            customClass: {
+                popup: 'elms-v3-swal-popup',
+                title: 'elms-v3-swal-title',
+                actions: 'elms-v3-swal-actions-custom',
+                confirmButton: 'elms-v3-swal-btn-confirm',
+                cancelButton: 'elms-v3-swal-btn-cancel'
+            },
+            preConfirm: () => {
+                const input = document.getElementById('swal-input-video-url');
+                return { url: input.value };
+            },
+            didOpen: () => {
+                const input = document.getElementById('swal-input-video-url');
+                const dropzone = document.getElementById('swal-video-dropzone');
+                
+                input.focus();
+
+                // Drag and Drop support
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+                });
+
+                dropzone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files && files.length > 0) {
+                        const event = { target: { files: files } };
+                        handleReplyFileChange(event);
+                        Swal.close();
+                    }
+                }, false);
+
+                dropzone.onclick = () => {
+                    Swal.close();
+                    triggerReplyFileInput();
+                };
+            }
+        });
+
+        if (result && result.url) {
+            if (!isValidUrl(result.url)) {
+                showToast('Please enter a valid URL.', 'error');
+                return;
+            }
+            if (addedReplyLinks.value.includes(result.url.trim())) {
+                showToast('Link already added.', 'warning');
+                return;
+            }
+            addedReplyLinks.value.push(result.url.trim());
+        }
     }
 };
 
 const addReplyLink = () => {
+    // This function is kept for backward compatibility if needed, 
+    // but the unified input uses toggleReplyLinkInput with Swal.
     if (!newReplyLink.value.trim()) return;
     if (!isValidUrl(newReplyLink.value)) {
         showToast('Please enter a valid working URL.', 'error');
@@ -947,27 +1022,143 @@ const isValidUrl = (string) => {
     }
 };
 
-const showEditLinkInput = ref(false);
-const editLinkInputType = ref('generic');
-const tempEditLink = ref('');
+const toggleEditLinkInput = async (type) => {
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    if (type === 'generic') {
+        const { value: url } = await Swal.fire({
+            title: 'Add link',
+            html: `
+                <div class="elms-v3-swal-field-wrapper">
+                    <label class="elms-v3-swal-label">Enter a URL</label>
+                    <input id="swal-input-url" class="elms-v3-swal-input-custom" placeholder="">
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Link',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            background: isDark ? '#1A2C38' : '#FFFFFF',
+            customClass: {
+                popup: 'elms-v3-swal-popup',
+                title: 'elms-v3-swal-title',
+                actions: 'elms-v3-swal-actions-custom',
+                confirmButton: 'elms-v3-swal-btn-confirm',
+                cancelButton: 'elms-v3-swal-btn-cancel'
+            },
+            preConfirm: () => {
+                const input = document.getElementById('swal-input-url');
+                return input.value;
+            },
+            didOpen: () => {
+                document.getElementById('swal-input-url').focus();
+            }
+        });
 
-const toggleEditLinkInput = (type) => {
-    if (showEditLinkInput.value && editLinkInputType.value === type) {
-        showEditLinkInput.value = false;
-        tempEditLink.value = '';
+        if (url) {
+            if (!isValidUrl(url)) {
+                showToast('Please enter a valid URL.', 'error');
+                return;
+            }
+            if (editForm.value.links.includes(url.trim())) {
+                showToast('Link already added.', 'warning');
+                return;
+            }
+            editForm.value.links.push(url.trim());
+        }
     } else {
-        showEditLinkInput.value = true;
-        editLinkInputType.value = type;
+        // Video Modal (Image 2)
+        const { value: result } = await Swal.fire({
+            title: 'Add video',
+            html: `
+                <div class="elms-v3-swal-video-input-container">
+                    <div class="elms-v3-swal-video-input-wrapper">
+                        <i class="fa-solid fa-link text-gray-400"></i>
+                        <input id="swal-input-video-url" placeholder="YouTube, Loom, Vimeo, or Wistia link">
+                    </div>
+                    <div id="swal-video-dropzone" class="elms-v3-swal-dropzone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1115.71 8h1.29a5 5 0 011 9.9M12 12v9m-4-4l4-4 4 4"/></svg>
+                        <div class="elms-v3-swal-dropzone-text">Drag and drop video here</div>
+                        <div class="elms-v3-swal-dropzone-link">or select file</div>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Add',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            background: isDark ? '#1A2C38' : '#FFFFFF',
+            customClass: {
+                popup: 'elms-v3-swal-popup',
+                title: 'elms-v3-swal-title',
+                actions: 'elms-v3-swal-actions-custom',
+                confirmButton: 'elms-v3-swal-btn-confirm',
+                cancelButton: 'elms-v3-swal-btn-cancel'
+            },
+            preConfirm: () => {
+                const input = document.getElementById('swal-input-video-url');
+                return { url: input.value };
+            },
+            didOpen: () => {
+                const input = document.getElementById('swal-input-video-url');
+                const dropzone = document.getElementById('swal-video-dropzone');
+                
+                input.focus();
+
+                // Drag and Drop support
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+                });
+
+                dropzone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files && files.length > 0) {
+                        const event = { target: { files: files } };
+                        handleEditFileChange(event);
+                        Swal.close();
+                    }
+                }, false);
+
+                dropzone.onclick = () => {
+                    Swal.close();
+                    triggerEditFileInput();
+                };
+            }
+        });
+
+        if (result && result.url) {
+            if (!isValidUrl(result.url)) {
+                showToast('Please enter a valid URL.', 'error');
+                return;
+            }
+            if (editForm.value.links.includes(result.url.trim())) {
+                showToast('Link already added.', 'warning');
+                return;
+            }
+            editForm.value.links.push(result.url.trim());
+        }
     }
 };
 
 const addEditLink = () => {
+    // Legacy support
     if (!tempEditLink.value.trim()) return;
     if (!isValidUrl(tempEditLink.value)) {
         showToast('Please enter a valid working URL.', 'error');
         return;
     }
-    if (!editForm.value.links) editForm.value.links = [];
     if (editForm.value.links.includes(tempEditLink.value.trim())) {
         showToast('Link already added.', 'warning');
         return;
@@ -1042,7 +1233,7 @@ const triggerReplyFileInput = () => {
 const handleReplyFileChange = (e) => {
     const files = Array.from(e.target.files);
     files.forEach(file => {
-        if (file.type.startsWith('image/')) {
+        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
             file.preview = URL.createObjectURL(file);
         }
         replyAttachments.value.push(file);
@@ -1135,7 +1326,9 @@ const getYoutubeEmbedId = (url) => {
 
 const getYoutubeThumbnail = (url) => {
     const videoId = getYoutubeEmbedId(url);
-    return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '';
+    if (!videoId) return '';
+    // Use hqdefault as it's more reliable than maxresdefault
+    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 };
 
 const redirectToLink = (url) => {
@@ -1268,9 +1461,39 @@ const displayContent = computed(() => {
 });
 
 const isVideo = (attachment) => {
-    if (!attachment) return false;
+    if (!attachment || !attachment.file_path) return false;
     return attachment.file_type === 'video' || 
-           attachment.file_path.match(/\.(mp4|webm|ogg|mov)$/i);
+           attachment.file_path.match(/\.(mp4|webm|ogg|mov|m4v|avi|wmv|flv)$/i);
+};
+
+const isImage = (attachment) => {
+    if (!attachment || !attachment.file_path) return false;
+    return attachment.file_type === 'image' || 
+           attachment.file_path.match(/\.(jpeg|jpg|png|gif|svg)$/i);
+};
+
+const openMedia = (att) => {
+    if (isVideo(att)) {
+        Swal.fire({
+            html: `
+                <div class="video-preview-wrapper" style="padding-top: 20px;">
+                    <video src="${att.file_url}" controls autoplay style="width: 100%; max-height: 80vh; border-radius: 12px; shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);"></video>
+                </div>
+            `,
+            showCloseButton: true,
+            showConfirmButton: false,
+            width: 'auto',
+            maxWidth: '1000px',
+            background: 'transparent',
+            padding: '0',
+            customClass: {
+                popup: 'elms-v3-video-popup',
+                closeButton: 'elms-v3-video-close'
+            }
+        });
+    } else {
+        window.open(att.file_url, '_blank');
+    }
 };
 
 const handleLike = () => {
@@ -1349,6 +1572,7 @@ const submitReply = async () => {
         });
     }
 
+    submittingReply.value = true;
     try {
         const response = await axios.post('/api/community-posts', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
@@ -1378,6 +1602,8 @@ const submitReply = async () => {
         console.error('Error submitting reply:', error);
         const message = error.response?.data?.message || 'Error submitting reply';
         showToast(message, 'error');
+    } finally {
+        submittingReply.value = false;
     }
 };
 </script>
