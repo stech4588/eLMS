@@ -381,7 +381,7 @@ onMounted(() => {
         </p>
         <div class="hero-actions">
           <!-- <a :href="joinNowUrl" class="btn-outline-green">BROWSE COURSES</a> -->
-          <a :href="loginUrl" class="btn-white-link">Login Now</a>
+          <a :href="loginUrl" class="btn-white-link login-btn">Login Now</a>
         </div>
       </div>
     </div>
@@ -516,6 +516,23 @@ const loginUrl = computed(() => {
 .btn-white-link:hover {
   opacity: 0.8;
   border-bottom: 1px solid #fff;
+}
+.login-btn{
+  background: transparent;
+  color: #fff;
+  padding: 12px 35px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  border: 2px solid #ffffff;
+}
+.login-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #ffffff;
 }
 
 @media (max-width: 600px) {

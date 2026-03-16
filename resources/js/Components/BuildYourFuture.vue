@@ -87,7 +87,7 @@
           </div>
 
           <!-- Pricing Side -->
-          <div class="pricing-side">
+          <!-- <div class="pricing-side">
             <div class="pricing-card">
               <div class="card-header">
                 <h3 class="card-title">GET COURSE ACCESS</h3>
@@ -106,11 +106,11 @@
               </ul>
 
               <div class="action-box">
-                <!-- <Link :href="joinNowUrl" class="btn-join-premium">BUY THIS COURSE</Link> -->
+                <Link :href="joinNowUrl" class="btn-join-premium">BUY THIS COURSE</Link>
                 <p class="lock-notice">Instant access after secure checkout</p>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
