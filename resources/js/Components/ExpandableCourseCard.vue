@@ -1,7 +1,7 @@
 <template>
     <div class="expandable-card">
         <!-- Top Image Section -->
-        <div class="card-image" :style="{ backgroundImage: `url(${image})` }">
+        <div class="card-image" :style="{ backgroundImage: `url(${cardImage})` }">
             <!-- Gradient overlay to ensure text/icons look good if added later -->
             <div class="image-overlay"></div>
         </div>
@@ -30,7 +30,7 @@
 
             <!-- CTA Button -->
             <div class="card-footer">
-                <Link :href="route('purchase-course.show', { course_id: id, title: title, image: image, instructor: instructor, points: JSON.stringify(learningPoints) })" class="btn-get-access">
+                <Link :href="route('purchase-course.show', { course_id: id, title: title, image: cardImage, instructor: instructor, points: JSON.stringify(learningPoints) })" class="btn-get-access">
                     GET ACCESS NOW!
                 </Link>
             </div>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -74,6 +74,39 @@ const props = defineProps({
 });
 
 const isExpanded = ref(false);
+
+// Get course image based on title - using computed property directly
+const cardImage = computed(() => {
+    const titleLower = props.title.toLowerCase().trim();
+    
+    // Get the image path based on keyword matching
+    let imagePath = props.image; // default
+    
+    if (titleLower.includes('crypto investing')) imagePath = '/course-card-img/Crypto Investing.jpg';
+    else if (titleLower.includes('crypto trading')) imagePath = '/course-card-img/Crypto Trading.png';
+    else if (titleLower.includes('business & finance')) imagePath = '/course-card-img/Business & Finance.jpg';
+    else if (titleLower.includes('client acquisition')) imagePath = '/course-card-img/Client Acquisition & Social Media.jpg';
+    else if (titleLower.includes('content creation')) imagePath = '/course-card-img/Content Creation & AI.jpg';
+    else if (titleLower.includes('ads mastery')) imagePath = '/course-card-img/Ads Mastery.jpg';
+    else if (titleLower.includes('digital advertising')) imagePath = '/course-card-img/Digital Advertising.jpg';
+    else if (titleLower.includes('digital marketing')) imagePath = '/course-card-img/Digital Marketing.jpg';
+    else if (titleLower.includes('influencer network')) imagePath = '/course-card-img/Influencer Network Management.jpg';
+    else if (titleLower.includes('lead generation')) imagePath = '/course-card-img/Lead Generation.jfif';
+    else if (titleLower.includes('credit repair')) imagePath = '/course-card-img/Credit Repair.jpg';
+    else if (titleLower.includes('drop shipping') || titleLower.includes('dropshipping')) imagePath = '/course-card-img/Drop Shipping.jpg';
+    else if (titleLower.includes('social media automation')) imagePath = '/course-card-img/Social Media Automation.jpg';
+    else if (titleLower.includes('seo consulting')) imagePath = '/course-card-img/SEO Consulting.jpg';
+    else if (titleLower.includes('real estate')) imagePath = '/course-card-img/Real Estate Investing.jpg';
+    else if (titleLower.includes('e-commerce') || titleLower.includes('ecommerce')) imagePath = '/course-card-img/E-Commerce.jpg';
+    else if (titleLower.includes('copywriting') || titleLower.includes('copy writing')) imagePath = '/course-card-img/copy writing.jfif';
+    else if (titleLower.includes('stocks')) imagePath = '/course-card-img/stocks.jpg';
+    else if (titleLower.includes('defi')) imagePath = '/course-card-img/DeFi.jpg';
+    else if (titleLower.includes('sales')) imagePath = '/course-card-img/sales.jpg';
+    else if (titleLower.includes('airbnb')) imagePath = '/course-card-img/Airbnb.jpg';
+    
+    // Encode the URL to handle spaces and special characters
+    return encodeURI(imagePath);
+});
 </script>
 
 <style scoped>
