@@ -363,11 +363,11 @@ onMounted(() => {
 <template>
   <section class="video-hero">
     <!-- Background Video -->
-    <video autoplay muted loop playsinline class="hero-video">
+    <!-- <video autoplay muted loop playsinline class="hero-video">
       <source src="https://www.seertechsolutions.com/wp-content/uploads/2025/05/Seertech-Sales-Video-NewVoice-1.mp4"
         type="video/mp4">
       Your browser does not support the video tag.
-    </video>
+    </video> -->
 
     <!-- Black Overlay -->
     <div class="video-overlay"></div>
@@ -442,7 +442,7 @@ const loginUrl = computed(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7); /* Lighter overlay for visibility */
+  background: #272d34; /* Lighter overlay for visibility */
   z-index: 0;
 }
 
