@@ -434,7 +434,7 @@ onMounted(() => {
                                 </template>
 
                                 <template #content>
-                                    <div class="max-h-[320px] overflow-y-auto overscroll-contain rounded-b-md">
+                                    <div class="max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain rounded-b-md">
                                         <template v-for="item in profileMenuItems" :key="item.href || item.label">
                                             <DropdownLink v-if="item.show" :href="item.href"
                                                 class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary block">

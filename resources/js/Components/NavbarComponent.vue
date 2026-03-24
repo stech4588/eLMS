@@ -359,13 +359,13 @@ export default {
       </div>
       <div class="links-side">
         <div class="nav-links">
-          <a @click="scrollToSection('access')">ACCESS</a>
-          <a @click="scrollToSection('learn')">LEARN</a>
           <a @click="scrollToSection('education')">EDUCATION</a>
+          <a @click="scrollToSection('learn')">LEARN</a>
           <a @click="scrollToSection('why-us')">WHY US</a>
           <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
           <a @click="scrollToSection('pricing')">PRICING</a>
           <a @click="scrollToSection('faq')">FAQ</a>
+          <a @click="scrollToSection('choice')">ACCESS</a>
           <!-- <Link :href="joinNowUrl">JOIN NOW</Link> -->
           <Link :href="loginUrl" class="login-link">LOG IN</Link>
         </div>
@@ -378,19 +378,24 @@ export default {
     </div>
 
     <!-- Mobile Menu Overlay -->
+    <transition name="mobile-menu-transition">
     <div v-if="menuOpen" class="mobile-overlay" @click="toggleMenu">
       <div class="mobile-menu" @click.stop>
-        <a @click="scrollToSection('access')">ACCESS</a>
+        <button class="close-btn" @click="toggleMenu">
+          <span class="close-icon">&times;</span>
+        </button>
         <a @click="scrollToSection('learn')">LEARN</a>
         <a @click="scrollToSection('education')">EDUCATION</a>
         <a @click="scrollToSection('why-us')">WHY US</a>
         <a @click="scrollToSection('testimonials')">TESTIMONIALS</a>
         <a @click="scrollToSection('pricing')">PRICING</a>
         <a @click="scrollToSection('faq')">FAQ</a>
+        <a @click="scrollToSection('choice')">ACCESS</a>
         <!-- <Link :href="joinNowUrl">JOIN NOW</Link> -->
         <Link :href="loginUrl">LOG IN</Link>
       </div>
     </div>
+    </transition>
   </nav>
 </template>
 
@@ -521,6 +526,55 @@ const scrollToSection = (id) => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+.mobile-menu a {
+  color: #000 !important;
+  text-decoration: none;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-icon {
+  font-size: 32px;
+  color: #000;
+  line-height: 1;
+}
+
+/* Mobile menu transitions */
+.mobile-menu-transition-enter-active,
+.mobile-menu-transition-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-transition-enter-from,
+.mobile-menu-transition-leave-to {
+  opacity: 0;
+}
+
+.mobile-menu-transition-enter-active .mobile-menu,
+.mobile-menu-transition-leave-active .mobile-menu {
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu-transition-enter-from .mobile-menu,
+.mobile-menu-transition-leave-to .mobile-menu {
+  transform: translateX(100%);
+}
+
+.mobile-menu-transition-enter-to .mobile-menu,
+.mobile-menu-transition-leave-from .mobile-menu {
+  transform: translateX(0);
 }
 
 @media (max-width: 991px) {
