@@ -2190,6 +2190,455 @@ textarea.elms-v3-input-content,
     color: #e2e8f0;
 }
 
+/* Community feed: time range + sort (Skool-style) */
+.elms-v3-feed-period-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.elms-v3-feed-period-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    border: 1px solid #1a1a1a;
+    background: #f3f4f6;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.elms-v3-feed-period-trigger:hover {
+    background: #e5e7eb;
+}
+
+.elms-v3-feed-period-chevron {
+    width: 16px;
+    height: 16px;
+    transform: rotate(180deg);
+    transition: transform 0.2s ease;
+}
+
+.elms-v3-feed-period-trigger.is-open .elms-v3-feed-period-chevron {
+    transform: rotate(0deg);
+}
+
+.elms-v3-feed-period-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    min-width: 160px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e5e7eb;
+    padding: 6px;
+    z-index: 50;
+}
+
+.elms-v3-feed-period-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    cursor: pointer;
+}
+
+.elms-v3-feed-period-item:hover {
+    background: #f3f4f6;
+}
+
+.elms-v3-feed-period-item.active {
+    background: #ffedd5;
+    color: #111;
+}
+
+.dark .elms-v3-feed-period-trigger {
+    background: #1e2f3a;
+    border-color: #3d4f5f;
+    color: #f1f5f9;
+}
+
+.dark .elms-v3-feed-period-trigger:hover {
+    background: #243544;
+}
+
+.dark .elms-v3-feed-period-menu {
+    background: #1a2c38;
+    border-color: #2d3e4e;
+}
+
+.dark .elms-v3-feed-period-item {
+    color: #e2e8f0;
+}
+
+.dark .elms-v3-feed-period-item:hover {
+    background: #243544;
+}
+
+.dark .elms-v3-feed-period-item.active {
+    background: #3d2a1f;
+    color: #fde68a;
+}
+
+.elms-v3-category-filters {
+    align-items: flex-start;
+}
+
+.elms-v3-category-pills-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.elms-v3-category-sort-wrap {
+    position: relative;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.elms-v3-category-pill-more {
+    font-weight: 600;
+    color: #555;
+    border-style: dashed;
+}
+
+.elms-v3-sort-trigger {
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+}
+
+.elms-v3-sort-trigger.is-active {
+    border-color: #009ee0;
+    color: #009ee0;
+}
+
+.elms-v3-sort-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 220px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e8e8e8;
+    padding: 6px;
+    z-index: 50;
+}
+
+.elms-v3-sort-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+}
+
+.elms-v3-sort-option:hover {
+    background: #f5f5f5;
+}
+
+.elms-v3-sort-option.active {
+    background: #fef9c3;
+}
+
+.elms-v3-sort-option-icon {
+    display: flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.elms-v3-sort-option-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.elms-v3-sort-option-hint {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    color: #888;
+    max-width: 90px;
+    line-height: 1.2;
+    text-align: right;
+}
+
+.dark .elms-v3-sort-dropdown {
+    background: #1a2c38;
+    border-color: #2d3e4e;
+}
+
+.dark .elms-v3-sort-option {
+    color: #e2e8f0;
+}
+
+.dark .elms-v3-sort-option:hover {
+    background: #243544;
+}
+
+.dark .elms-v3-sort-option.active {
+    background: #3d3520;
+    color: #fde68a;
+}
+
+.dark .elms-v3-sort-option-hint {
+    color: #94a3b8;
+}
+
+.dark .elms-v3-category-pill-more {
+    color: #94a3b8;
+    border-color: #3d4f5f;
+}
+
+/* Community post: document / PDF attachment cards */
+.elms-v3-doc-attachment-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fff;
+    padding: 14px 16px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.elms-v3-doc-attachment-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.elms-v3-doc-attachment-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.elms-v3-doc-pdf-badge {
+    flex-shrink: 0;
+    min-width: 40px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: #e53935;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.elms-v3-doc-type-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.elms-v3-doc-attachment-text {
+    flex: 1;
+    min-width: 140px;
+}
+
+.elms-v3-doc-file-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.elms-v3-doc-meta {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.elms-v3-doc-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.elms-v3-doc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.elms-v3-doc-btn-open {
+    background: #fff;
+    border-color: #e5e7eb;
+    color: #374151;
+}
+
+.elms-v3-doc-btn-open:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.elms-v3-doc-btn-download {
+    background: #009ee0;
+    border-color: #009ee0;
+    color: #fff;
+}
+
+.elms-v3-doc-btn-download:hover {
+    background: #0088c4;
+    border-color: #0088c4;
+}
+
+.dark .elms-v3-doc-attachment-card {
+    background: #1a2c38;
+    border-color: #2d3e4e;
+}
+
+.dark .elms-v3-doc-attachment-card:hover {
+    border-color: #3d4f5f;
+}
+
+.dark .elms-v3-doc-file-name {
+    color: #f1f5f9;
+}
+
+.dark .elms-v3-doc-meta {
+    color: #94a3b8;
+}
+
+.dark .elms-v3-doc-type-icon {
+    background: rgba(37, 99, 235, 0.2);
+    color: #93c5fd;
+}
+
+.dark .elms-v3-doc-btn-open {
+    background: #243544;
+    border-color: #3d4f5f;
+    color: #e2e8f0;
+}
+
+.dark .elms-v3-doc-btn-open:hover {
+    background: #2d3e4e;
+}
+
+/* Full-screen PDF viewer (modal) */
+.elms-v3-pdf-viewer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99990;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.elms-v3-pdf-viewer-panel {
+    width: 100%;
+    max-width: 1100px;
+    height: min(92vh, 900px);
+    background: #0f172a;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+}
+
+.elms-v3-pdf-viewer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.elms-v3-pdf-viewer-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.elms-v3-pdf-viewer-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.elms-v3-pdf-viewer-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+
+.elms-v3-pdf-viewer-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.elms-v3-pdf-viewer-frame {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    border: none;
+    background: #525659;
+}
+
 
 /* Premium Toast Styling */
 .elms-v3-toast-popup {

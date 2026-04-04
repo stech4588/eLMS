@@ -12,6 +12,7 @@ use App\Models\CommunityPostLike;
 use App\Models\CommunityPostPoll;
 use App\Models\CommunityPostPollOption;
 use App\Models\CommunityPostPollVote;
+use App\Models\CommunityPostRead;
 use Carbon\Carbon;
 
 class CommunityPostController extends Controller
@@ -19,17 +20,47 @@ class CommunityPostController extends Controller
     public function index(Request $request)
     {
         try {
-            $posts = CommunityPost::with(['user:id,name,type,profile_picture', 'attachments', 'poll.options' => function($query) {
-                    $query->withCount('votes');
-                }])
+            $sort = $request->get('sort', 'default');
+            if (! in_array($sort, ['default', 'new', 'top', 'unread'], true)) {
+                $sort = 'default';
+            }
+
+            $period = $request->get('period', 'month');
+            if (! in_array($period, ['day', 'week', 'month', 'year', 'all'], true)) {
+                $period = 'month';
+            }
+
+            $periodStart = match ($period) {
+                'day' => Carbon::now()->startOfDay(),
+                'week' => Carbon::now()->startOfWeek(),
+                'month' => Carbon::now()->startOfMonth(),
+                'year' => Carbon::now()->startOfYear(),
+                default => null,
+            };
+
+            $posts = CommunityPost::with(['user:id,name,type,profile_picture', 'attachments', 'poll.options' => function ($query) {
+                $query->withCount('votes');
+            }])
                 ->whereNull('parent_id')
                 ->when($request->category, function ($query, $category) {
                     if ($category !== 'all') {
                         return $query->where('category', $category);
                     }
                 })
-                ->withCount('replies')
-                ->latest()
+                ->when($periodStart, function ($query) use ($periodStart) {
+                    return $query->where('created_at', '>=', $periodStart);
+                })
+                ->when($sort === 'unread' && Auth::check(), function ($query) {
+                    return $query->whereDoesntHave('reads', function ($q) {
+                        $q->where('user_id', Auth::id());
+                    });
+                })
+                ->withCount(['replies', 'likes'])
+                ->when($sort === 'top', function ($query) {
+                    return $query->orderByDesc('likes_count')->orderByDesc('created_at');
+                }, function ($query) {
+                    return $query->latest();
+                })
                 ->paginate(10);
 
             return $posts;
@@ -45,6 +76,23 @@ class CommunityPostController extends Controller
     public function show(CommunityPost $communityPost)
     {
         try {
+            if (Auth::check()) {
+                $rootId = $communityPost->id;
+                $parentId = $communityPost->parent_id;
+                while ($parentId) {
+                    $row = CommunityPost::query()->select('id', 'parent_id')->find($parentId);
+                    if (! $row) {
+                        break;
+                    }
+                    $rootId = $row->id;
+                    $parentId = $row->parent_id;
+                }
+                CommunityPostRead::firstOrCreate([
+                    'user_id' => Auth::id(),
+                    'community_post_id' => $rootId,
+                ]);
+            }
+
             // Load the main post with likes information
             $communityPost->loadCount('likes');
             $communityPost->append('is_liked');

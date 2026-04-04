@@ -41,6 +41,11 @@ class CommunityPost extends Model
         return $this->hasMany(CommunityPostLike::class);
     }
 
+    public function reads()
+    {
+        return $this->hasMany(CommunityPostRead::class, 'community_post_id');
+    }
+
     public function poll()
     {
         return $this->hasOne(CommunityPostPoll::class);

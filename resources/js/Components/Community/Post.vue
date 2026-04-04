@@ -53,23 +53,85 @@
                 <p class="elms-v3-post-desc text-base text-gray-700 dark:text-gray-300 mb-4 line-clamp-3 overflow-hidden text-ellipsis">{{ displayContent }}</p>
             </div>
 
-            <!-- Right side small preview (only first image/video) -->
-            <div v-if="post.attachments && post.attachments.length > 0" 
-                 class="w-32 h-32 flex-shrink-0 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 shadow-sm transition-transform hover:scale-[1.02]">
+            <!-- Right side: only first image/video (PDFs/docs use full-width cards below — never as <img>) -->
+            <div
+                v-if="firstVisualAttachment"
+                class="w-32 h-32 flex-shrink-0 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 shadow-sm transition-transform hover:scale-[1.02]"
+            >
                 <div class="relative w-full h-full group overflow-hidden">
-                    <video v-if="isVideo(post.attachments[0])" :src="post.attachments[0].file_url" class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out" muted playsinline></video>
-                    <img v-else :src="post.attachments[0].file_url" class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out">
-                    <div v-if="isVideo(post.attachments[0])" class="absolute inset-0 flex items-center justify-center bg-black/10">
-                         <div class="w-8 h-8 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-lg">
+                    <video
+                        v-if="isVideo(firstVisualAttachment)"
+                        :src="firstVisualAttachment.file_url"
+                        class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out"
+                        muted
+                        playsinline
+                    ></video>
+                    <img
+                        v-else
+                        :src="firstVisualAttachment.file_url"
+                        alt=""
+                        class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out"
+                    >
+                    <div v-if="isVideo(firstVisualAttachment)" class="absolute inset-0 flex items-center justify-center bg-black/10">
+                        <div class="w-8 h-8 bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-lg">
                             <i class="fa-solid fa-play text-xs ml-0.5"></i>
-                         </div>
+                        </div>
                     </div>
-                    <!-- Counter for more attachments -->
-                    <div v-if="post.attachments.length > 1" class="absolute bottom-1.5 right-1.5 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded-lg text-[10px] font-bold shadow-sm">
+                    <div
+                        v-if="post.attachments.length > 1"
+                        class="absolute bottom-1.5 right-1.5 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded-lg text-[10px] font-bold shadow-sm"
+                    >
                         +{{ post.attachments.length - 1 }}
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Documents on feed: first file only; full list in opened thread -->
+        <div
+            v-if="firstFeedDocument"
+            class="px-6 pb-4 space-y-2 -mt-2"
+            @click.stop
+        >
+            <div class="elms-v3-doc-attachment-card">
+                <div class="elms-v3-doc-attachment-inner">
+                    <div v-if="isPdf(firstFeedDocument)" class="elms-v3-doc-pdf-badge" aria-hidden="true">PDF</div>
+                    <div v-else class="elms-v3-doc-type-icon" aria-hidden="true">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div class="elms-v3-doc-attachment-text">
+                        <p class="elms-v3-doc-file-name">{{ firstFeedDocument.file_name }}</p>
+                        <p class="elms-v3-doc-meta">{{ documentMetaLine(firstFeedDocument) }}</p>
+                    </div>
+                    <div class="elms-v3-doc-actions">
+                        <button
+                            type="button"
+                            class="elms-v3-doc-btn elms-v3-doc-btn-open"
+                            @click.stop="openDocument(firstFeedDocument)"
+                        >
+                            Open
+                        </button>
+                        <a
+                            :href="firstFeedDocument.file_url"
+                            :download="firstFeedDocument.file_name"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="elms-v3-doc-btn elms-v3-doc-btn-download"
+                            @click.stop
+                        >
+                            Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button
+                v-if="extraDocumentCount > 0"
+                type="button"
+                class="text-left text-xs font-semibold text-[#009EE0] dark:text-sky-400 px-1 hover:underline cursor-pointer w-full"
+                @click.stop="openReplyModal"
+            >
+                +{{ extraDocumentCount }} more file{{ extraDocumentCount === 1 ? '' : 's' }} — tap to view all
+            </button>
         </div>
 
         <!-- Footer Actions -->
@@ -257,17 +319,46 @@
                         </div>
                     </div>
 
-                    <!-- File Attachments (Documents) -->
-                    <div v-if="post.attachments && post.attachments.some(a => !isVideo(a) && !isImage(a))" class="mb-8 space-y-2">
-                        <div v-for="att in post.attachments.filter(a => !isVideo(a) && !isImage(a))" :key="'doc-' + att.id" class="p-5 w-full flex items-center gap-4 bg-gray-50/50 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800 transition-all group">
-                            <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-file-lines text-2xl"></i>
+                    <!-- File Attachments (Documents + PDF) -->
+                    <div
+                        v-if="post.attachments && post.attachments.some(a => !isVideo(a) && !isImage(a))"
+                        class="mb-8 space-y-3"
+                        @click.stop
+                    >
+                        <div
+                            v-for="att in post.attachments.filter(a => !isVideo(a) && !isImage(a))"
+                            :key="'doc-' + att.id"
+                            class="elms-v3-doc-attachment-card"
+                        >
+                            <div class="elms-v3-doc-attachment-inner">
+                                <div v-if="isPdf(att)" class="elms-v3-doc-pdf-badge" aria-hidden="true">PDF</div>
+                                <div v-else class="elms-v3-doc-type-icon" aria-hidden="true">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </div>
+                                <div class="elms-v3-doc-attachment-text">
+                                    <p class="elms-v3-doc-file-name">{{ att.file_name }}</p>
+                                    <p class="elms-v3-doc-meta">{{ documentMetaLine(att) }}</p>
+                                </div>
+                                <div class="elms-v3-doc-actions">
+                                    <button
+                                        type="button"
+                                        class="elms-v3-doc-btn elms-v3-doc-btn-open"
+                                        @click.stop="openDocument(att)"
+                                    >
+                                        Open
+                                    </button>
+                                    <a
+                                        :href="att.file_url"
+                                        :download="att.file_name"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="elms-v3-doc-btn elms-v3-doc-btn-download"
+                                        @click.stop
+                                    >
+                                        Download
+                                    </a>
+                                </div>
                             </div>
-                            <div class="flex-1 min-w-0 text-left">
-                                <p class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-500 transition-colors">{{ att.file_name }}</p>
-                                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-black">Document Attachment</p>
-                            </div>
-                            <a :href="att.file_url" download class="bg-white dark:bg-gray-700/50 px-5 py-2 rounded-xl text-blue-500 hover:bg-blue-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-tight shadow-sm border border-gray-100 dark:border-gray-600">Download</a>
                         </div>
                     </div>
 
@@ -558,10 +649,15 @@
                 <!-- Existing Attachments -->
                 <div v-if="existingAttachments && existingAttachments.length > 0" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 max-h-[150px] overflow-y-auto p-1">
                     <div v-for="att in existingAttachments" :key="att.id" class="relative group">
-                        <img v-if="!isVideo(att)" :src="att.file_url" class="rounded-lg w-full h-24 object-cover border dark:border-gray-700">
-                        <div v-else class="flex flex-col items-center justify-center h-24 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2">
+                        <img v-if="isImage(att)" :src="att.file_url" alt="" class="rounded-lg w-full h-24 object-cover border dark:border-gray-700">
+                        <div v-else-if="isVideo(att)" class="flex flex-col items-center justify-center h-24 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2">
                              <i class="fa-solid fa-video text-xl text-gray-400"></i>
                              <span class="text-[10px] truncate w-full text-center mt-1 dark:text-gray-400">Video</span>
+                        </div>
+                        <div v-else class="flex flex-col items-center justify-center h-24 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2">
+                            <span class="text-[10px] font-bold text-red-600" v-if="isPdf(att)">PDF</span>
+                            <i v-else class="fa-solid fa-file-lines text-xl text-gray-400"></i>
+                            <span class="text-[10px] truncate w-full text-center mt-1 dark:text-gray-400">{{ att.file_name }}</span>
                         </div>
                         <button @click="removeExistingAttachment(att.id)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-md">×</button>
                     </div>
@@ -620,7 +716,7 @@
                         <div class="elms-v3-category-select-wrapper ml-2">
                             <select v-model="editForm.category" class="elms-v3-category-select">
                                 <option value="general">General discussion</option>
-                                <option v-for="catId in ['new_member', 'wins', 'bonus', 'questions', 'announcements']" :key="catId" :value="catId">
+                                <option v-for="catId in ['new_member', 'wins', 'bonus', 'questions', 'free_resources', 'announcements', 'weekly_challenge', 'content_reviews', 'community_engagement']" :key="catId" :value="catId">
                                     {{ getCategoryLabel(catId) }}
                                 </option>
                             </select>
@@ -636,11 +732,51 @@
                         >
                             {{ editing ? 'SAVING...' : 'POST' }}
                         </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <Teleport to="body">
+        <div
+            v-if="pdfViewerOpen"
+            class="elms-v3-pdf-viewer-overlay"
+            @click.self="closePdfViewer"
+        >
+            <div class="elms-v3-pdf-viewer-panel" role="dialog" aria-modal="true" @click.stop>
+                <header class="elms-v3-pdf-viewer-header">
+                    <p class="elms-v3-pdf-viewer-title truncate" :title="pdfViewerTitle">{{ pdfViewerTitle }}</p>
+                    <div class="elms-v3-pdf-viewer-header-actions">
+                        <a
+                            :href="pdfViewerUrl"
+                            :download="pdfViewerTitle"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="elms-v3-pdf-viewer-icon-btn"
+                            title="Download"
+                        >
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                        <button
+                            type="button"
+                            class="elms-v3-pdf-viewer-icon-btn"
+                            title="Close"
+                            @click="closePdfViewer"
+                        >
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                </header>
+                <iframe
+                    v-if="pdfViewerUrl"
+                    :src="pdfViewerIframeSrc"
+                    class="elms-v3-pdf-viewer-frame"
+                    title="PDF preview"
+                />
+            </div>
+        </div>
+    </Teleport>
 </template>
 
 <script setup>
@@ -1402,7 +1538,11 @@ const getCategoryLabel = (catId) => {
         'wins': 'Wins / Results!',
         'bonus': 'Bonus Content',
         'questions': 'Ask Questions',
-        'announcements': 'Announcements'
+        'free_resources': 'Free Resources',
+        'announcements': 'Announcements',
+        'weekly_challenge': 'Weekly Challenge',
+        'content_reviews': 'Content Reviews',
+        'community_engagement': 'Community Engagement Pack',
     };
     return categories[catId] || 'General discussion';
 };
@@ -1414,7 +1554,11 @@ const getCategoryIcon = (catId) => {
         'wins': 'fa-solid fa-trophy',
         'bonus': 'fa-solid fa-gift',
         'questions': 'fa-solid fa-circle-question',
-        'announcements': 'fa-solid fa-bullhorn'
+        'free_resources': 'fa-solid fa-book',
+        'announcements': 'fa-solid fa-bullhorn',
+        'weekly_challenge': 'fa-solid fa-fire',
+        'content_reviews': 'fa-solid fa-video',
+        'community_engagement': 'fa-solid fa-users',
     };
     return icons[catId] || 'fa-solid fa-comments';
 };
@@ -1470,6 +1614,67 @@ const isImage = (attachment) => {
     if (!attachment || !attachment.file_path) return false;
     return attachment.file_type === 'image' || 
            attachment.file_path.match(/\.(jpeg|jpg|png|gif|svg)$/i);
+};
+
+const isPdf = (attachment) => {
+    if (!attachment) return false;
+    const name = `${attachment.file_name || ''} ${attachment.file_path || ''}`;
+    return /\.pdf(\?|$)/i.test(name);
+};
+
+const isDocumentFile = (a) => !isVideo(a) && !isImage(a);
+
+const firstVisualAttachment = computed(() => {
+    const list = props.post.attachments || [];
+    return list.find((a) => isImage(a) || isVideo(a)) ?? null;
+});
+
+const documentAttachments = computed(() => {
+    const list = props.post.attachments || [];
+    return list.filter((a) => isDocumentFile(a));
+});
+
+const firstFeedDocument = computed(() => documentAttachments.value[0] ?? null);
+
+const extraDocumentCount = computed(() =>
+    Math.max(0, documentAttachments.value.length - 1)
+);
+
+const documentMetaLine = (att) => {
+    if (isPdf(att)) return 'PDF';
+    const base = att.file_name || att.file_path || '';
+    const ext = base.includes('.') ? base.split('.').pop().toUpperCase() : 'FILE';
+    return `${ext} • Document`;
+};
+
+const pdfViewerOpen = ref(false);
+const pdfViewerUrl = ref('');
+const pdfViewerTitle = ref('');
+
+const pdfViewerIframeSrc = computed(() => {
+    if (!pdfViewerUrl.value) return '';
+    const u = pdfViewerUrl.value;
+    return u.includes('#') ? u : `${u}#view=FitH`;
+});
+
+const openDocument = (att) => {
+    if (isPdf(att)) {
+        pdfViewerUrl.value = att.file_url;
+        pdfViewerTitle.value = att.file_name || 'Document.pdf';
+        pdfViewerOpen.value = true;
+        document.body.style.overflow = 'hidden';
+    } else {
+        window.open(att.file_url, '_blank', 'noopener,noreferrer');
+    }
+};
+
+const closePdfViewer = () => {
+    pdfViewerOpen.value = false;
+    pdfViewerUrl.value = '';
+    pdfViewerTitle.value = '';
+    if (!replyModalOpen.value && !showEditModal.value) {
+        document.body.style.overflow = '';
+    }
 };
 
 const openMedia = (att) => {

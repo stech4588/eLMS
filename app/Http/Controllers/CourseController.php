@@ -234,7 +234,7 @@ class CourseController extends Controller
             'videos.*.takeaway_notes' => 'nullable|string',
             'videos.*.order' => 'nullable|integer',
             'videos.*.quiz' => 'nullable|string', // JSON string
-            'videos.*.videoFile' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:512000',
+            'videos.*.videoFile' => 'nullable|file|mimes:mp4,mov,ogg,qt',
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.duration_in_seconds' => 'nullable|integer|min:0',
             'videos.*.course_section_id' => 'nullable|exists:course_sections,id',
@@ -682,7 +682,7 @@ class CourseController extends Controller
             'videos.*.title' => 'required_with:videos|string|max:255',
             'videos.*.description' => 'required_with:videos|string',
             'videos.*.takeaway_notes' => 'nullable|string',
-            'videos.*.videoFile' => 'required_with:videos|file|mimes:mp4,mov,ogg,qt|max:512000',
+            'videos.*.videoFile' => 'required_with:videos|file|mimes:mp4,mov,ogg,qt',
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.order' => 'required_with:videos|integer',
             // Per-video quiz validation - if quiz data exists, it must be complete
@@ -842,7 +842,7 @@ class CourseController extends Controller
             'videos.*.title' => 'required_with:videos|string|max:255',
             'videos.*.description' => 'required_with:videos|string',
             'videos.*.takeaway_notes' => 'nullable|string',
-            'videos.*.videoFile' => 'nullable|file|mimes:mp4,mov,ogg,qt|max:512000',
+            'videos.*.videoFile' => 'nullable|file|mimes:mp4,mov,ogg,qt',
             'videos.*.thumbnailFile' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'videos.*.order' => 'required_with:videos|integer|min:1',
             'videos.*.duration_in_seconds' => 'nullable|integer|min:0',

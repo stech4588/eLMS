@@ -8,6 +8,40 @@
                  <h1 class="text-2xl font-bold dark:text-gray-200">Community</h1>
             </div> -->
 
+            <!-- Feed time range (Skool-style) -->
+            <div class="elms-v3-feed-period-bar">
+                <div class="relative" @click.stop>
+                    <button
+                        type="button"
+                        class="elms-v3-feed-period-trigger"
+                        :class="{ 'is-open': periodMenuOpen }"
+                        @click="periodMenuOpen = !periodMenuOpen"
+                    >
+                        {{ currentPeriodLabel }}
+                        <svg class="elms-v3-feed-period-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                        </svg>
+                    </button>
+                    <div
+                        v-if="periodMenuOpen"
+                        class="elms-v3-feed-period-menu"
+                        role="listbox"
+                    >
+                        <button
+                            v-for="opt in periodOptions"
+                            :key="opt.value"
+                            type="button"
+                            role="option"
+                            class="elms-v3-feed-period-item"
+                            :class="{ active: feedPeriod === opt.value }"
+                            @click="setFeedPeriod(opt.value)"
+                        >
+                            {{ opt.label }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Simple Post Bar Trigger (New Design) -->
             <div class="elms-v3-simple-post-bar" @click="showPostModal = true">
                 <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300">
@@ -18,30 +52,106 @@
                 <span class="placeholder-text">Write something...</span>
             </div>
 
-            <!-- Category Filters (New) -->
+            <!-- Category filters + sort (Skool-style) -->
             <div class="elms-v3-category-filters">
-                <div 
-                    class="elms-v3-category-pill all" 
-                    :class="{ active: selectedCategory === 'all' }"
-                    @click="filterByCategory('all')"
-                >
-                    All
+                <div class="elms-v3-category-pills-wrap">
+                    <div
+                        class="elms-v3-category-pill all"
+                        :class="{ active: selectedCategory === 'all' }"
+                        @click="filterByCategory('all')"
+                    >
+                        All
+                    </div>
+                    <div
+                        v-for="cat in visibleCategories"
+                        :key="cat.id"
+                        class="elms-v3-category-pill"
+                        :class="{ active: selectedCategory === cat.id }"
+                        @click="filterByCategory(cat.id)"
+                    >
+                        <i :class="cat.icon" class="text-xs mr-1 opacity-80"></i>
+                        {{ cat.label }}
+                    </div>
+                    <button
+                        v-if="showMoreTagsToggle"
+                        type="button"
+                        class="elms-v3-category-pill elms-v3-category-pill-more"
+                        @click="tagsExpanded = true"
+                    >
+                        More…
+                    </button>
+                    <button
+                        v-if="showLessTagsToggle"
+                        type="button"
+                        class="elms-v3-category-pill elms-v3-category-pill-more"
+                        @click="tagsExpanded = false"
+                    >
+                        Less…
+                    </button>
                 </div>
-                <div 
-                    v-for="cat in categories" 
-                    :key="cat.id"
-                    class="elms-v3-category-pill"
-                    :class="{ active: selectedCategory === cat.id }"
-                    @click="filterByCategory(cat.id)"
-                >
-                    <i :class="cat.icon" class="text-xs mr-1 opacity-80"></i>
-                    {{ cat.label }}
-                </div>
-                <!-- Filter Settings Icon (Mockup) -->
-                <div class="elms-v3-category-pill" style="min-width: 44px; justify-content: center; padding: 0; width: 44px; height: 44px;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
-                        <path d="M4 21v-7m0-4V3m8 21v-11m0-4V3m8 21v-9m0-4V3M1 14h6m2-7h6m2 9h6" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                <div class="elms-v3-category-sort-wrap" @click.stop>
+                    <button
+                        type="button"
+                        class="elms-v3-category-pill elms-v3-sort-trigger"
+                        :class="{ 'is-active': sortMenuOpen }"
+                        aria-label="Sort feed"
+                        @click="sortMenuOpen = !sortMenuOpen"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5" aria-hidden="true">
+                            <path d="M4 21v-7m0-4V3m8 21v-11m0-4V3m8 21v-9m0-4V3M1 14h6m2-7h6m2 9h6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div v-if="sortMenuOpen" class="elms-v3-sort-dropdown" role="menu">
+                        <button
+                            type="button"
+                            role="menuitem"
+                            class="elms-v3-sort-option"
+                            :class="{ active: feedSort === 'default' }"
+                            @click="setFeedSort('default')"
+                        >
+                            <span class="elms-v3-sort-option-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 12h4l2-6 4 12 2-6h4"/></svg>
+                            </span>
+                            Default
+                        </button>
+                        <button
+                            type="button"
+                            role="menuitem"
+                            class="elms-v3-sort-option"
+                            :class="{ active: feedSort === 'new' }"
+                            @click="setFeedSort('new')"
+                        >
+                            <span class="elms-v3-sort-option-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" stroke-linejoin="round"/></svg>
+                            </span>
+                            New
+                        </button>
+                        <button
+                            type="button"
+                            role="menuitem"
+                            class="elms-v3-sort-option"
+                            :class="{ active: feedSort === 'top' }"
+                            @click="setFeedSort('top')"
+                        >
+                            <span class="elms-v3-sort-option-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11l5-5 5 5M7 17l5-5 5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                            Top
+                            
+                        </button>
+                        <button
+                            type="button"
+                            role="menuitem"
+                            class="elms-v3-sort-option"
+                            :class="{ active: feedSort === 'unread' }"
+                            @click="setFeedSort('unread')"
+                        >
+                            <span class="elms-v3-sort-option-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                            Unread
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -246,10 +356,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">No conversations here yet</h3>
                         <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                            {{ selectedCategory === 'all' 
-                                ? "The community is quiet... be the first to start a discussion!" 
-                                : "There are no posts in this category yet. Be the first to share something!" 
-                            }}
+                            {{ emptyFeedHint }}
                         </p>
                         <button 
                             @click="showPostModal = true" 
@@ -272,7 +379,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Post from '@/Components/Community/Post.vue';
 import AppLoader from '@/Components/Loader.vue';
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import axios from 'axios';
 import { showToast } from '@/toast.js';
 import Swal from 'sweetalert2';
@@ -308,6 +415,86 @@ const showLinkInput = ref(false);
 const linkInputType = ref('generic');
 const tempLink = ref('');
 const addedLinks = ref([]);
+
+const feedPeriod = ref('month');
+const feedSort = ref('default');
+const sortMenuOpen = ref(false);
+const periodMenuOpen = ref(false);
+const tagsExpanded = ref(false);
+const TAGS_COLLAPSED_COUNT = 6;
+
+const periodOptions = [
+    { value: 'day', label: 'Day' },
+    { value: 'week', label: 'Week' },
+    { value: 'month', label: 'Month' },
+    { value: 'year', label: 'Year' },
+    { value: 'all', label: 'All time' },
+];
+
+const categories = [
+    { id: 'general', label: 'General discussion', icon: 'fa-solid fa-comments' },
+    { id: 'new_member', label: 'New Member!', icon: 'fa-solid fa-user-plus' },
+    { id: 'wins', label: 'Wins / Results!', icon: 'fa-solid fa-trophy' },
+    { id: 'bonus', label: 'Bonus Content', icon: 'fa-solid fa-gift' },
+    { id: 'questions', label: 'Ask Questions', icon: 'fa-solid fa-circle-question' },
+    { id: 'free_resources', label: 'Free Resources', icon: 'fa-solid fa-book' },
+    { id: 'announcements', label: 'Announcements', icon: 'fa-solid fa-bullhorn' },
+    { id: 'weekly_challenge', label: 'Weekly Challenge', icon: 'fa-solid fa-fire' },
+    { id: 'content_reviews', label: 'Content Reviews', icon: 'fa-solid fa-video' },
+    { id: 'community_engagement', label: 'Community Engagement Pack', icon: 'fa-solid fa-users' },
+];
+
+const currentPeriodLabel = computed(() => {
+    return periodOptions.find((o) => o.value === feedPeriod.value)?.label ?? 'Month';
+});
+
+const visibleCategories = computed(() => {
+    if (tagsExpanded.value || categories.length <= TAGS_COLLAPSED_COUNT) {
+        return categories;
+    }
+    return categories.slice(0, TAGS_COLLAPSED_COUNT);
+});
+
+const showMoreTagsToggle = computed(
+    () => !tagsExpanded.value && categories.length > TAGS_COLLAPSED_COUNT
+);
+const showLessTagsToggle = computed(
+    () => tagsExpanded.value && categories.length > TAGS_COLLAPSED_COUNT
+);
+
+const emptyFeedHint = computed(() => {
+    if (feedSort.value === 'unread') {
+        return "You're all caught up — or open a thread to mark posts as read.";
+    }
+    if (selectedCategory.value === 'all') {
+        return 'The community is quiet... be the first to start a discussion!';
+    }
+    return 'There are no posts in this category yet. Be the first to share something!';
+});
+
+const closeFeedMenus = () => {
+    sortMenuOpen.value = false;
+    periodMenuOpen.value = false;
+};
+
+const setFeedSort = (sort) => {
+    feedSort.value = sort;
+    sortMenuOpen.value = false;
+    refetchPosts();
+};
+
+const setFeedPeriod = (period) => {
+    feedPeriod.value = period;
+    periodMenuOpen.value = false;
+    refetchPosts();
+};
+
+const refetchPosts = () => {
+    posts.value = [];
+    page.value = 1;
+    lastPage.value = 1;
+    fetchPosts();
+};
 
 const toggleLinkPreview = async (type) => {
     const isDark = document.documentElement.classList.contains('dark');
@@ -562,15 +749,6 @@ const selectGif = (gif) => {
 */
 
 
-const categories = [
-    { id: 'general', label: 'General discussion', icon: 'fa-solid fa-comments' },
-    { id: 'new_member', label: 'New Member!', icon: 'fa-solid fa-user-plus' },
-    { id: 'wins', label: 'Wins / Results!', icon: 'fa-solid fa-trophy' },
-    { id: 'bonus', label: 'Bonus Content', icon: 'fa-solid fa-gift' },
-    { id: 'questions', label: 'Ask Questions', icon: 'fa-solid fa-circle-question' },
-    { id: 'announcements', label: 'Announcements', icon: 'fa-solid fa-bullhorn' },
-];
-
 const handlePostDeleted = (postId) => {
     posts.value = posts.value.filter(p => p.id !== postId);
 };
@@ -586,7 +764,14 @@ const fetchPosts = async () => {
     loading.value = true;
 
     try {
-        const response = await axios.get(`/api/community-posts?page=${page.value}&category=${selectedCategory.value}`);
+        const response = await axios.get('/api/community-posts', {
+            params: {
+                page: page.value,
+                category: selectedCategory.value,
+                sort: feedSort.value,
+                period: feedPeriod.value,
+            },
+        });
         posts.value = [...posts.value, ...response.data.data];
         lastPage.value = response.data.last_page;
         page.value++;
@@ -603,10 +788,7 @@ const addNewPost = (newPost) => {
 
 const filterByCategory = (catId) => {
     selectedCategory.value = catId;
-    posts.value = [];
-    page.value = 1;
-    lastPage.value = 1;
-    fetchPosts();
+    refetchPosts();
 };
 
 const triggerFileInput = () => {
@@ -710,6 +892,7 @@ const handleScroll = () => {
 }
 
 onMounted(() => {
+    document.addEventListener('click', closeFeedMenus);
     fetchPosts();
     window.addEventListener("scroll", handleScroll)
     // Realtime new posts
@@ -723,6 +906,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+    document.removeEventListener('click', closeFeedMenus);
     window.removeEventListener("scroll", handleScroll)
     try {
         if (window.Echo) {
