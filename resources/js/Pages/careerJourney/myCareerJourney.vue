@@ -184,6 +184,11 @@ function removeTopic(topicId) {
 function updateTopics() {
     topicForm.patch(route('preferred-topics.update'));
 }
+
+const onAvatarError = (e) => {
+    if (!e?.target) return;
+    e.target.src = '/images/profile-default.svg';
+};
 </script>
 
 <template>
@@ -251,7 +256,20 @@ function updateTopics() {
                                     <img src="/images/pen_icon.svg" alt="pen" class="edit-icon dark_career_focus_option" @click="startEditing" v-if="!isEditing"/>
                                 </div>
                                 <div v-if="!isEditing" class="goal-description">
-                                    {{ user.primary_learning_goal }}
+                                    <template v-if="user.primary_learning_goal">
+                                        {{ user.primary_learning_goal }}
+                                    </template>
+                                    <template v-else>
+                                        <div class="goal-placeholder-title">Set a goal to guide your learning</div>
+                                        <!-- <div class="goal-placeholder-text">
+                                            Example: “Become a confident App Developer in 60 days by completing 1 lesson daily.”
+                                        </div> -->
+                                        <ul class="goal-placeholder-list">
+                                            <li>Pick one topic to focus on</li>
+                                            <li>Commit a daily schedule</li>
+                                            <!-- <li>Track progress and improve weekly</li> -->
+                                        </ul>
+                                    </template>
                                 </div>
                                 <div v-else>
                                     <form @submit.prevent="saveCareerGoal">
@@ -320,7 +338,12 @@ function updateTopics() {
                                 <tr v-for="person in rankedLeaderboard" :key="person.id" :class="{ 'current-user-highlight': person.id === user.id }">
                                     <td>{{ person.rank }}</td>
                                     <td class="user-info">
-                                        <img :src="person.profile_photo_url || '/images/profile.svg'" alt="Profile" class="leaderboard-profile-image" />
+                                        <img
+                                            :src="person.profile_photo_url || '/images/profile-default.svg'"
+                                            alt="Profile"
+                                            class="leaderboard-profile-image"
+                                            @error="onAvatarError"
+                                        />
                                         <span>{{ person.name }}</span>
                                     </td>
                                     <td>{{ person.points }}</td>
@@ -345,7 +368,7 @@ function updateTopics() {
 /* Container Styles */
 .career-journey-container {
     padding: 0 16px 40px;
-    padding-top: 20px;
+    padding-top: 12px;
 }
 
 .career-journey-wrapper {
@@ -366,9 +389,10 @@ function updateTopics() {
 .career-journey-content {
     background: white;
     padding: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     border-radius: 16px;
     box-shadow: 0 12px 30px rgba(15, 32, 45, 0.08);
+    color: #111827; /* ensure readable text in light mode */
 }
 
 @media (min-width: 1024px) {
@@ -381,6 +405,7 @@ function updateTopics() {
 .career-journey-title {
     font-size: 36px;
     font-weight: 600;
+    color: #0f172a;
 }
 
 @media (max-width: 640px) {
@@ -391,8 +416,8 @@ function updateTopics() {
 }
 
 .journey-badges-section {
-    margin-top: 30px;
-    padding-bottom: 30px;
+    margin-top: 18px;
+    padding-bottom: 18px;
     border-bottom: 1px solid #e0e0e0;
 }
 .dark .journey-badges-section {
@@ -405,7 +430,7 @@ function updateTopics() {
 }
 .journey-badges-list {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -429,8 +454,8 @@ function updateTopics() {
 .profile-sections-container {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
-    margin-bottom: 20px;
+    margin-top: 24px;
+    margin-bottom: 12px;
     gap: 20px;
     flex-wrap: wrap;
 }
@@ -444,7 +469,8 @@ function updateTopics() {
 
 /* Profile Card Styles */
 .profile-card {
-    border: 1px solid gray;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
     width: 100%;
     max-width: 360px;
     border-radius: 16px;
@@ -457,16 +483,19 @@ function updateTopics() {
 .profile-name {
     font-size: 24px;
     margin-top: 10px;
+    color: #0f172a;
 }
 
 .profile-title {
     margin-top: 5px;
-    color: #666;
+    color: #64748b;
+    text-transform: capitalize;
 }
 
 /* Points Card Styles */
 .points-card {
-    border: 1px solid gray;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
     width: 100%;
     max-width: 360px;
     border-radius: 16px;
@@ -503,6 +532,7 @@ function updateTopics() {
 .points-header {
     font-size: 20px;
     font-weight: 600;
+    color: #0f172a;
 }
 
 .points-value {
@@ -510,24 +540,27 @@ function updateTopics() {
     font-weight: bold;
     text-align: center;
     margin-top: 10px;
+    color: #1C355E;
 }
 
 .points-footer {
     background-color: #D9D9D966;
     padding: 8px 13px 8px 13px;
-    border-top: 1px solid gray;
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
     text-align: center;
+    color: #334155;
 }
 
 /* Career Goal Card Styles */
 .career-goal-card {
-    border: 1px solid gray;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
     width: 100%;
     max-width: 360px;
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex: 1 1 0;
     box-shadow: 0 8px 24px rgba(15, 32, 45, 0.05);
     margin: 0 auto;
@@ -570,6 +603,7 @@ function updateTopics() {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #0f172a;
 }
 
 .edit-icon {
@@ -579,13 +613,43 @@ function updateTopics() {
 
 .goal-description {
     margin-top: 10px;
-    border-top: 1px solid gray;
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    padding-top: 10px;
+    color: #334155;
+}
+
+.goal-placeholder-title{
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.goal-placeholder-text{
+    color: #475569;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.goal-placeholder-list{
+    margin: 0;
+    padding-left: 18px;
+    color: #334155;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.dark .goal-placeholder-title,
+.dark .goal-placeholder-text,
+.dark .goal-placeholder-list{
+    color: #e5f2ff;
 }
 
 .goal-footer {
     background-color: #D9D9D966;
     padding: 8px 13px 8px 13px;
-    border-top: 1px solid gray;
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    color: #334155;
+    margin-top: 12px;
 }
 
 .profile-image {
@@ -685,6 +749,7 @@ function updateTopics() {
     border-radius: 16px;
     box-shadow: 0 12px 30px rgba(15, 32, 45, 0.08);
     flex: 1;
+    color: #111827; /* ensure readable text in light mode */
 }
 .learning-plan-title
 {
@@ -913,7 +978,7 @@ font-weight: 600;
 .leaderboard-section {
     background: white;
     padding: 30px;
-    margin-top: 30px;
+    margin-top: 20px;
     border-radius: 16px;
     box-shadow: 0 12px 30px rgba(15, 32, 45, 0.08);
     width: 100%;
@@ -935,6 +1000,11 @@ font-weight: 600;
     font-size: 24px;
     font-weight: 600;
     margin-bottom: 20px;
+    color: #0f172a;
+}
+
+.dark .leaderboard-title {
+    color: #ffffff;
 }
 
 .leaderboard-table-wrapper {
@@ -952,6 +1022,7 @@ font-weight: 600;
     padding: 12px 15px;
     text-align: left;
     vertical-align: middle;
+    color: #0f172a;
 }
 
 .leaderboard-table th {
@@ -966,8 +1037,10 @@ font-weight: 600;
     background-color: #4a4a4a;
     color: #fff;
 }
+
 .dark .leaderboard-table td {
     border-color: #5a5a5a;
+    color: #e5f2ff;
 }
 .dark .leaderboard-table {
     background-color: #293E4C;
@@ -984,9 +1057,21 @@ font-weight: 600;
 .current-user-highlight {
     background-color: #e0efff;
     font-weight: bold;
+    color: #0b2440;
 }
+
+.current-user-highlight td {
+    background-color: #e0efff;
+    color: #0b2440;
+}
+
 .dark .current-user-highlight {
     background-color: #3a5a8a;
+}
+
+.dark .current-user-highlight td {
+    background-color: #3a5a8a;
+    color: #ffffff;
 }
 .user-info {
     display: flex;

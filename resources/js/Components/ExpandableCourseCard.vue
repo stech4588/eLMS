@@ -30,8 +30,8 @@
 
             <!-- CTA Button -->
             <div class="card-footer">
-                <Link :href="route('purchase-course.show', { course_id: id, title: title, image: cardImage, instructor: instructor, points: JSON.stringify(learningPoints) })" class="btn-get-access">
-                    GET ACCESS NOW!
+                <Link :href="ctaHrefComputed" class="btn-get-access">
+                    {{ ctaTextComputed }}
                 </Link>
             </div>
         </div>
@@ -70,10 +70,31 @@ const props = defineProps({
             "Define your 10X income goals",
             "Kick the excuses holding you back to the curb"
         ]
+    },
+    ctaHref: {
+        type: String,
+        default: null
+    },
+    ctaText: {
+        type: String,
+        default: null
     }
 });
 
 const isExpanded = ref(false);
+
+const ctaHrefComputed = computed(() => {
+    if (props.ctaHref) return props.ctaHref;
+    return route('purchase-course.show', {
+        course_id: props.id,
+        title: props.title,
+        image: cardImage.value,
+        instructor: props.instructor,
+        points: JSON.stringify(props.learningPoints),
+    });
+});
+
+const ctaTextComputed = computed(() => props.ctaText || 'GET ACCESS NOW!');
 
 // Get course image based on title - using computed property directly
 const cardImage = computed(() => {

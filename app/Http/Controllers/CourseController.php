@@ -671,7 +671,8 @@ class CourseController extends Controller
             'price' => 'nullable|numeric|min:0',
             'additional_description' => 'required|string',
             'recomendations' => 'required|string',
-            'certificates' => 'required|exists:course_certificates,id',
+            // Certificates disabled for now
+            'certificates' => 'nullable|exists:course_certificates,id',
             'industry' => 'required|exists:course_industries,id',
             'course_type' => 'required|exists:course_types,id',
             'topic' => 'required|exists:topics,id',

@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 import { defineProps } from 'vue'
+import ExpandableCourseCard from '@/Components/ExpandableCourseCard.vue';
 
 
 const props = defineProps({
@@ -27,6 +28,48 @@ function showLessTopics() {
 
 const getThumbnailSrc = (course) => {
     return course.first_video_thumbnail_url ? course.first_video_thumbnail_url : '/images/skill_section_thumbnail.svg';
+};
+
+const getLearningPoints = (course) => {
+    const raw = (course?.description ?? '').toString().trim();
+    if (!raw) {
+        return [
+            'Step-by-step lessons',
+            'Practical examples',
+            'Actionable takeaways',
+            'Resources and templates',
+        ];
+    }
+
+    const points = raw
+        .replace(/\r\n/g, '\n')
+        .split(/\n|•|- |\u2022|\./g)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .filter((s) => s.length >= 8)
+        .slice(0, 6);
+
+    return points.length ? points : [
+        'Step-by-step lessons',
+        'Practical examples',
+        'Actionable takeaways',
+        'Resources and templates',
+    ];
+};
+
+const getCta = (course) => {
+    if (course?.is_purchased) {
+        return {
+            href: course.first_video_id
+                ? route('courses.play', { course: course.id, video: course.first_video_id })
+                : route('courses.show', { course: course.id }),
+            text: 'START NOW',
+        };
+    }
+    return {
+        href: route('purchase-course.show', { course_id: course.id }),
+        text: 'GET ACCESS NOW!',
+    };
 };
 
 const selectedCourseType = ref('java'); // default selected for other sections if still used
@@ -120,51 +163,19 @@ const toggleFavorite = async (course) => {
 
                     <!-- Skills Section -->
                 <div class="my-programs-section">
-                    <h2 class="my-programs-heading">Because of Skills you Follow</h2>
-                    <div class="my-programs-list mycontent-grid">
-                        <div
+                    <h2 class="my-programs-heading content-section-title">Because of Skills you Follow</h2>
+                    <div class="content-courses-grid">
+                        <ExpandableCourseCard
                             v-for="(course, index) in displayedCourses"
-                            :key="`skill-${index}-${course.id}`"
-                            class="my-program-row"
-                        >
-                            <Link :href="route('courses.show', { course: course.id })" class="my-program-thumb-wrap">
-                                <img :src="getThumbnailSrc(course)" class="my-program-thumb" alt="Course thumbnail" />
-                            </Link>
-                            <div class="my-program-details">
-                                <h3 class="my-program-title">{{ course.title }}</h3>
-                                <p v-if="course.description" class="my-program-desc">
-                                    {{ course.description }}
-                                </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-300">
-                                    By: {{ course.author || 'Instructor' }}
-                                </p>
-                                <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">
-                                    {{ Math.round(course.progress || 0) }}% complete
-                                </p>
-                                <div class="my-program-actions" style="margin-top: 0.75rem;">
-                                    <Link
-                                        :href="route('courses.show', { course: course.id })"
-                                        class="my-program-btn-secondary"
-                                    >
-                                        Details
-                                    </Link>
-                                    <Link
-                                        v-if="course.is_purchased"
-                                        :href="course.first_video_id ? route('courses.play', { course: course.id, video: course.first_video_id }) : '#'"
-                                        class="my-program-btn-start"
-                                    >
-                                        Start Now
-                                    </Link>
-                                    <Link
-                                        v-else
-                                        :href="route('cart', { course_id: course.id })"
-                                        class="my-program-btn-start"
-                                    >
-                                        Buy Now
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
+                            :key="`content-course-${index}-${course.id}`"
+                            :id="course.id"
+                            :title="course.title"
+                            :instructor="course.author || 'ELEVATEU EXPERT'"
+                            :image="getThumbnailSrc(course)"
+                            :learningPoints="getLearningPoints(course)"
+                            :ctaHref="getCta(course).href"
+                            :ctaText="getCta(course).text"
+                        />
                     </div>
                      <!-- Pagination Controls -->
                      <div v-if="totalPagesMyCourses > 1" class="flex justify-center items-center mt-8 space-x-2">
@@ -186,19 +197,24 @@ const toggleFavorite = async (course) => {
 
   <div class="section_box flex justify-start dark:bg-[#1A2C38]">
     <div class="w-full max-w-6xl">
-      <h3 class="text-xl font-bold mb-4 text-start dark:text-white">Topics</h3>
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-xl font-bold text-start text-gray-900 dark:text-white">Topics</h3>
+        <span class="text-sm text-gray-500 dark:text-gray-300">{{ topics.length }}</span>
+      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
-        <div
+      <div class="topics-grid">
+        <span
           v-for="(topic, index) in visibleTopics"
           :key="`topic-${index}`"
-          class="flex justify-start p-0">
-          <p class="font-small truncate max-w-[200px] dark:text-white">{{ topic.name }}</p>
-        </div>
+          class="topic-chip"
+          :title="topic.name"
+        >
+          {{ topic.name }}
+        </span>
       </div>
 
       <!-- Show More Button -->
-    <div class="flex justify-center mt-4 space-x-4" v-if="topics.length > 9">
+    <div class="flex justify-center mt-6 space-x-4" v-if="topics.length > 9">
   <button
     v-if="visibleTopicCount < topics.length"
     @click="showMoreTopics"
@@ -228,11 +244,91 @@ const toggleFavorite = async (course) => {
     border-radius: 16px;
     margin-top:30px;
 }
+
+.topics-grid{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.topic-chip{
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 10px 14px;
+    border-radius: 9999px;
+    border: 1px solid rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.9);
+    color: #111827;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.topic-chip:hover{
+    background: rgba(37, 74, 122, 0.08);
+    border-color: rgba(37, 74, 122, 0.35);
+    transform: translateY(-1px);
+}
+
+.dark .topic-chip{
+    background: rgba(15, 33, 46, 0.35);
+    border-color: rgba(229, 242, 255, 0.18);
+    color: #e5f2ff;
+}
+
+.dark .topic-chip:hover{
+    background: rgba(37, 74, 122, 0.35);
+    border-color: rgba(37, 74, 122, 0.55);
+}
 /* /content courses grid – 2x layout */
 .mycontent-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 20px;
+}
+
+.content-courses-grid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    justify-items: center;
+    align-items: start;
+}
+
+.content-section-title{
+    font-size: 34px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 18px;
+    line-height: 1.2;
+}
+
+.dark .content-section-title{
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .content-section-title{
+        font-size: 24px;
+        margin-bottom: 14px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .content-courses-grid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .content-courses-grid{
+        grid-template-columns: 1fr;
+    }
 }
 .mycontent-grid .my-program-row {
     margin-bottom: 0;
@@ -340,6 +436,7 @@ const toggleFavorite = async (course) => {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
+    line-clamp: 2; /* standard property for compatibility */
     -webkit-line-clamp: 2; /* number of lines to show */
     -webkit-box-orient: vertical;
 }

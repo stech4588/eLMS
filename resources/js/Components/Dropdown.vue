@@ -78,9 +78,24 @@ const closeOnEscape = (e) => {
     }
 };
 
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
+const closeOnOutsidePointerDown = (e) => {
+    if (!open.value) return;
+    const target = e.target;
+    if (!target) return;
+    if (triggerRef.value?.contains(target)) return;
+    if (menuRef.value?.contains(target)) return;
+    open.value = false;
+};
+
+onMounted(() => {
+    document.addEventListener('keydown', closeOnEscape);
+    // Use capture so it works even if other handlers stop propagation.
+    document.addEventListener('pointerdown', closeOnOutsidePointerDown, true);
+});
 onUnmounted(() => {
     unbindListeners();
+    document.removeEventListener('keydown', closeOnEscape);
+    document.removeEventListener('pointerdown', closeOnOutsidePointerDown, true);
 });
 
 const widthClass = computed(() => {
@@ -131,7 +146,6 @@ const alignmentClasses = computed(() => {
                     class="rounded-md shadow-lg"
                     :class="[widthClass, alignmentClasses]"
                     :style="menuStyles"
-                    @click="open = false"
                 >
                     <div
                         class="rounded-md ring-1 dark:bg-dark-bg-secondary ring-black ring-opacity-5"

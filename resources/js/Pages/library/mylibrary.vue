@@ -46,6 +46,11 @@ const currentCourses = computed(() => {
     return coursesData[selectedOption.value] || [];
 });
 
+const nextUp = computed(() => {
+    if (!props.inProgressItems?.length) return null;
+    return props.inProgressItems[0];
+});
+
 </script>
 
 <template>
@@ -53,93 +58,96 @@ const currentCourses = computed(() => {
 
     <AuthenticatedLayout>
         <div class="page-with-footer-wrap">
-        <div class="bg-white dark:bg-dark-bg-secondary p-6 dark:text-white library-page-content"
-             style="gap: 20px; display: flex; flex-direction: column; flex: 1;">
-            <div style="font-size: 36px; font-weight: 600;">
-                My Library
+        <div class="library-page-content library-shell">
+            <div class="library-header">
+                <div class="library-title">My Library</div>
+                <div class="library_main_div_header">
+                <!-- In Progress -->
+                <div class="library_main_div_header_card library-stat-card">
+                    <div class="library-stat-top">
+                        <div class="library-stat-left">
+                            <span class="library-stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 8v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </span>
+                            <div class="library-stat-label">In Progress</div>
+                        </div>
+                        <div class="library-stat-value">{{ props.inProgressItems.length }}</div>
+                    </div>
+                    <div class="library-stat-sub">
+                        Continue learning from where you left off.
+                    </div>
+                    <div class="library-stat-extra">
+                        <span class="library-chip">Tip: 10 mins daily</span>
+                        <span class="library-chip">Build your streak</span>
+                    </div>
+                </div>
+
+                <!-- Saved -->
+                <div class="library_main_div_header_card library-stat-card">
+                    <div class="library-stat-top">
+                        <div class="library-stat-left">
+                            <span class="library-stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M7 3h10a1 1 0 011 1v17l-6-3-6 3V4a1 1 0 011-1Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <div class="library-stat-label">Saved</div>
+                        </div>
+                        <div class="library-stat-value">{{ props.savedCourses.length }}</div>
+                    </div>
+                    <div class="library-stat-sub">
+                        Your bookmarked courses to watch later.
+                    </div>
+                    <div class="library-stat-extra">
+                        <span class="library-chip">Save from Content</span>
+                        <span class="library-chip">Watch anytime</span>
+                    </div>
+                </div>
+
+                <!-- Next up -->
+                <div class="library_main_div_header_card library-stat-card">
+                    <div class="library-stat-top">
+                        <div class="library-stat-left">
+                            <span class="library-stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M7 4v16l13-8-13-8Z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                            <div class="library-stat-label">Next up</div>
+                        </div>
+                        <div class="library-stat-value">Continue</div>
+                    </div>
+                    <div v-if="nextUp" class="library-nextup">
+                        <div class="library-nextup-title">{{ nextUp.course_title }}</div>
+                        <div class="library-nextup-sub">{{ nextUp.title }}</div>
+                        <Link
+                            v-if="nextUp.course_id && nextUp.video_id"
+                            :href="route('courses.play', { course: nextUp.course_id, video: nextUp.video_id })"
+                            class="library-nextup-btn"
+                        >
+                            <span class="library-nextup-btn-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M7 4v16l13-8-13-8Z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                            Resume
+                        </Link>
+                    </div>
+                    <div v-else class="library-stat-sub">
+                        Start a course to see your next lesson here.
+                    </div>
+                </div>
             </div>
-            <div class="library_main_div_header" style="display: flex; flex-direction: row; gap: 20px; width: 100%;">
-                <!-- Weekly Goals Card -->
-                <div class="library_main_div_header_card" style="border: 1px solid #7E7E7E; border-radius: 8px; padding: 16px; width: 33%;">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="flex items-center">
-                                <div class="p-2 mr-2 bg-gray-100 rounded-full">
-                                    <!-- Placeholder for an icon -->
-                                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class=" text-lg font-semibold">Weekly Goals <span
-                                            class="text-xs text-gray-500 libaray_dark_text">(May12 to
-                                            May18)</span>
-                                    </p>
-                                    <p class="text-sm text-gray-500 libaray_dark_text">2/120mins</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="text-gray-500 hover:text-gray-700">
-                            <!-- Placeholder for an edit icon -->
-                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
-                        </button>
-                    </div>
-                </div>
-                <!-- Skills Card -->
-                <div class="library_main_div_header_card" style="border: 1px solid #7E7E7E; border-radius: 8px; padding: 16px; width: 33%;">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="flex items-center" style="gap: 10px;">
-                                <div class="">
-                                    <!-- Placeholder for an icon -->
-                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
-                                </div>
-                                <div>
-                                    <p class=" text-lg font-semibold">Skills</p>
-                                    <p class="text-sm text-gray-500 libaray_dark_text">28 Followed Skills</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="text-gray-500 hover:text-gray-700">
-                            <!-- Placeholder for an edit icon -->
-                            <img src="/images/pen_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
-                        </button>
-                    </div>
-                </div>
-                <!-- Skill Evaluations Card -->
-                <div class="library_main_div_header_card" style="border: 1px solid #7E7E7E; border-radius: 8px; padding: 16px; width: 33%;">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <div class="flex items-center" style="gap: 10px;">
-                                <div class="">
-                                    <!-- Placeholder for an icon -->
-                                    <img src="/images/diamond.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
-                                </div>
-                                <div>
-                                    <p class=" text-lg font-semibold">Skill Evaluations</p>
-                                    <p class="text-sm text-gray-500 libaray_dark_text">2 Evaluations</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="text-gray-500 hover:text-gray-700">
-                            <!-- Placeholder for an arrow icon -->
-                            <img src="/images/right_arrow_icon.svg" alt="diamond" class="w-6 h-6 dark_library_pen_icon">
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <div class="py-12" style="padding: 23px;">
-            <div class="mx-auto max-w-7xl">
-                <!-- Header Cards -->
-
-                <div class="flex library_main_div bg-white dark:bg-dark-bg" style="background-color: transparent;">
+        <div class="library-body">
+                <div class="library_main_div">
                     <!-- Sidebar -->
-                    <div class="p-6 mr-6 bg-white rounded-lg library_main_div_left dark:bg-dark-bg-secondary" style="padding-left: 0px; padding-right: 0px; width: 25%;">
+                    <div class="library_main_div_left">
                         <nav>
                             <ul>
                                 <li v-for="option in sidebarOptions" :key="option.name" class="mb-4 library_left_sidebar" style="font-size: 20px;">
@@ -156,79 +164,73 @@ const currentCourses = computed(() => {
                     <!-- Main Content Area -->
                     <div class=" library_main_div_right">
                         <!-- Course List -->
-                        <div class="bg-white rounded-lg">
+                        <div class="bg-white rounded-lg library-right-surface">
                             <!-- <div class="p-6">
                                 <h3 class="mb-4 text-xl font-semibold">Showing: {{ selectedOption }}</h3>
                                  Conditional rendering based on selectedOption will go here
                             </div> -->
                             <!-- Loop through currentCourses -->
-                            <div v-if="currentCourses.length > 0" class="space-y-6">
-                                <div v-for="course in currentCourses" :key="course.id" class="p-6 bg-white rounded-lg shadow dark:bg-dark-bg-secondary dark:text-white">
-                                    <div class="flex library_videos">
-                                        <img :src="course.thumbnail" alt="Course Thumbnail" style="width: 200px; "
-                                            class="mr-4 rounded  h-15"> <!-- Make sure w-30 and h-21 are valid Tailwind classes or use style bindings -->
-                                        <div class="flex-grow">
-                                            <p class="text-xs text-black-500" style="font-size: 11px;">
-                                                {{ course.type }}
-                                                <!-- <span v-if="selectedOption === 'In Progress' && course.course_title">
-                                                     <strong>{{ course.course_title }}</strong>
-                                                </span> -->
-                                            </p>
-                                            <h3 class="mb-1 text-lg font-semibold" style="font-size: 16px;">{{ course.course_title }}</h3>
-                                            <p class="mb-2 text-sm text-black-500" style="font-size: 11px;">
-                                                {{ course.title }}
-                                            </p>
-                                            <p class="mb-2 text-sm text-black-500" style="font-size: 11px;">
-                                                By: {{ course.author }}
-                                                <span v-if="selectedOption === 'In Progress'"> > Last activity: {{ course.updated }}</span>
-                                                <span v-else-if="selectedOption === 'Saved'"> > Updated {{ course.updated }}</span>
-                                                <!-- General case for other types if any -->
-                                                <span v-else> > {{ course.updated }}</span>
-                                            </p>
-                                            <p v-if="selectedOption === 'Saved' && course.duration" class="mb-2 text-sm text-gray-600 dark:text-white" style="font-size: 11px;">Duration: {{ course.duration }}</p>
-                                            <!-- Display Video duration if it's an In Progress Video -->
-                                            <!-- <p v-if="selectedOption === 'In Progress' && course.duration" class="mb-2 text-sm text-gray-600" style="font-size: 11px;">Video Duration: {{ course.duration }}</p> -->
-                                            
-                                            <div class="" style="display: flex; justify-content: space-between; width: 100%;">
-                                                <div v-if="selectedOption !== 'Saved'" class="flex items-center mb-2" style="width: 60%;">
-                                                    <div class="w-full h-1 mr-2 bg-gray-200 rounded-full progress_bar_dark_main"
-                                                        style="height: 2px;"> 
-                                                        <div class="h-1 bg-black rounded-full progress_bar_dark"
-                                                            :style="{ width: course.progress + '%', height: '2px' }"></div> 
-                                                    </div>
-                                                    <span class="text-xs text-gray-500" style="min-width: 90px;">{{ course.timeLeft }}</span>
-                                                </div>
-                                                <!-- Spacer for Saved tab to align buttons to the right -->
-                                                <div v-else style="flex-grow: 1;"></div> 
+                            <div v-if="currentCourses.length > 0" class="library-courses-list">
+                                <div v-for="course in currentCourses" :key="course.id" class="library-course-card dark:bg-dark-bg-secondary dark:text-white">
+                                    <div class="library-course-media">
+                                        <img :src="course.thumbnail" alt="Course Thumbnail" class="library-course-thumb" />
+                                    </div>
 
-                                                <div class="flex flex-row items-end " style="align-items: center; gap: 10px;">
-                                                    <!-- <button class="text-gray-500 hover:text-gray-700">
-                                                        <img src="/images/three_dot.svg" alt="options" class="w-4 h-4">
-                                                    </button> -->
-                                                    <Link 
-                                                        v-if="selectedOption === 'In Progress' && course.course_id && course.video_id"
-                                                        :href="route('courses.play', { course: course.course_id, video: course.video_id })"
-                                                        class="px-4 py-2 text-sm text-gray-700 border border-gray-600 rounded hover:bg-gray-100"
-                                                        style="border-radius: 30px;"
-                                                    >
-                                                        Continue
-                                                    </Link>
-                                                    <!-- Fallback or different button for 'Saved' items or if IDs are missing -->
-                                                    <Link 
-                                                        v-if="selectedOption === 'Saved' && course.id" 
-                                                        :href="route('courses.show', { course: course.id })"
-                                                        class="px-4 py-2 text-sm text-gray-700 border border-gray-600 rounded hover:bg-gray-100" 
-                                                        style="border-radius: 30px;"
-                                                        >
-                                                        View Course
-                                                    </Link>
-                                                    <button 
-                                                        v-else-if="selectedOption === 'Saved'" 
-                                                        class="px-4 py-2 text-sm text-gray-400 border border-gray-400 rounded cursor-not-allowed"
-                                                        style="border-radius: 30px;" disabled >
-                                                        View Course
-                                                    </button>
+                                    <div class="library-course-body">
+                                        <div class="library-course-meta">
+                                            <span class="library-pill">{{ course.type }}</span>
+                                            <span class="library-course-updated">
+                                                <template v-if="selectedOption === 'In Progress'">Last activity: {{ course.updated }}</template>
+                                                <template v-else-if="selectedOption === 'Saved'">Updated {{ course.updated }}</template>
+                                                <template v-else>{{ course.updated }}</template>
+                                            </span>
+                                        </div>
+
+                                        <h3 class="library-course-title">
+                                            {{ course.course_title }}
+                                        </h3>
+                                        <p class="library-course-subtitle">
+                                            {{ course.title }}
+                                        </p>
+                                        <p class="library-course-author">
+                                            By: {{ course.author }}
+                                            <span v-if="selectedOption === 'Saved' && course.duration" class="library-course-duration">
+                                                • Duration: {{ course.duration }}
+                                            </span>
+                                        </p>
+
+                                        <div class="library-course-footer">
+                                            <div v-if="selectedOption !== 'Saved'" class="library-progress">
+                                                <div class="library-progress-bar">
+                                                    <div class="library-progress-fill" :style="{ width: (course.progress || 0) + '%' }"></div>
                                                 </div>
+                                                <span class="library-progress-text">{{ course.timeLeft }}</span>
+                                            </div>
+
+                                            <div class="library-actions">
+                                                <Link
+                                                    v-if="selectedOption === 'In Progress' && course.course_id && course.video_id"
+                                                    :href="route('courses.play', { course: course.course_id, video: course.video_id })"
+                                                    class="library-btn-primary"
+                                                >
+                                                    Continue
+                                                </Link>
+
+                                                <Link
+                                                    v-else-if="selectedOption === 'Saved' && course.id"
+                                                    :href="route('courses.show', { course: course.id })"
+                                                    class="library-btn-secondary"
+                                                >
+                                                    View Course
+                                                </Link>
+
+                                                <button
+                                                    v-else-if="selectedOption === 'Saved'"
+                                                    class="library-btn-disabled"
+                                                    disabled
+                                                >
+                                                    View Course
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -249,7 +251,6 @@ const currentCourses = computed(() => {
                         </div>
                     </div>
                 </div>
-            </div>
         </div><!-- .library-page-content -->
 
         <!-- <footer class="footer_upload_video footer-stick-bottom dark:bg-dark-bg-secondary dark:text-white">
@@ -275,17 +276,215 @@ const currentCourses = computed(() => {
 .home_page_style {
     padding: 0px;
 }
+.library-shell{
+    flex: 1;
+    padding: 20px 16px 8px;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.library-title{
+    font-size: 34px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 14px;
+    line-height: 1.15;
+}
+.dark .library-title{ color: #fff; }
+.library-header{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.library-body{
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 8px 16px 18px;
+}
 .library_left_sidebar {
         font-weight: 600;
         color: black !important;
     }
+.library_main_div_header{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    width: 100%;
+}
+.library_main_div_header_card{
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(15, 32, 45, 0.05);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.library_main_div_header_card:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(15, 32, 45, 0.08);
+    border-color: rgba(28, 53, 94, 0.18);
+}
+.dark .library_main_div_header_card{
+    background: #142233;
+    border-color: #1f2d40;
+    box-shadow: none;
+}
+.dark .library_main_div_header_card:hover{
+    box-shadow: none;
+    border-color: rgba(88, 207, 255, 0.22);
+}
+.library-stat-card{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.library-stat-left{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+.library-stat-icon{
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #1C355E;
+    background: rgba(28, 53, 94, 0.08);
+    border: 1px solid rgba(28, 53, 94, 0.15);
+    flex: 0 0 auto;
+}
+.library-stat-icon svg{
+    width: 18px;
+    height: 18px;
+}
+.dark .library-stat-icon{
+    color: #58cfff;
+    background: rgba(88, 207, 255, 0.10);
+    border-color: rgba(88, 207, 255, 0.22);
+}
+.library-stat-top{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+.library-stat-label{
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dark .library-stat-label{ color: #ffffff; }
+.library-stat-value{
+    font-size: 22px;
+    font-weight: 900;
+    color: #1C355E;
+}
+.dark .library-stat-value{ color: #58cfff; }
+.library-stat-sub{
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.35;
+}
+.dark .library-stat-sub{ color: rgba(229, 242, 255, 0.75); }
+.library-nextup-title{
+    font-weight: 800;
+    font-size: 13px;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+.dark .library-nextup-title{ color: #ffffff; }
+.library-nextup-sub{
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+.dark .library-nextup-sub{ color: rgba(229, 242, 255, 0.75); }
+.library-nextup-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: #1C355E;
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    text-decoration: none;
+    width: fit-content;
+    gap: 8px;
+}
+.library-nextup-btn:hover{ background: #254a7a; }
+.library-nextup-btn-icon{
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.library-nextup-btn-icon svg{
+    width: 16px;
+    height: 16px;
+}
+
+.library-stat-extra{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.library-chip{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.dark .library-chip{
+    color: rgba(229, 242, 255, 0.85);
+    background: rgba(229, 242, 255, 0.08);
+    border-color: rgba(229, 242, 255, 0.16);
+}
+.library_main_div{
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 16px;
+    align-items: start;
+}
+.library_main_div_left{
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 12px;
+    padding: 14px 0;
+}
+.dark .library_main_div_left{
+    background: #142233;
+    border-color: #1f2d40;
+}
+.library-right-surface{
+    width: 100%;
+    background: transparent;
+}
+.dark .library-right-surface{
+    background: transparent;
+}
+.library_main_div_right{
+    width: 100%;
+}
 @media (max-width: 1150px) {
     .library_left_sidebar {
         font-size: 15px !important;
     }
 }
+/* Ensure right panel uses full available width */
 .library_main_div_right{
-    width: 75%;
+    width: 100% !important;
 }
 @media (max-width: 1075px) {
     .library_main_div_right{
@@ -294,8 +493,8 @@ const currentCourses = computed(() => {
 }
 @media (max-width: 1075px) {
     .library_main_div {
-        flex-direction: column;
-        gap: 20px;
+        grid-template-columns: 1fr;
+        gap: 14px;
     }
 }
 @media (max-width: 1075px) {
@@ -305,8 +504,7 @@ const currentCourses = computed(() => {
 }
 @media (max-width: 1075px) {
     .library_main_div_header {
-        flex-direction: column !important;
-        /* width: 100% !important; */
+        grid-template-columns: 1fr !important;
     }
 }
 @media (max-width: 1075px) {
@@ -324,7 +522,7 @@ const currentCourses = computed(() => {
     flex-direction: column;
     min-height: calc(100vh - 5rem);
 }
-.library-page-content { flex: 1; }
+.library-page-content { flex: 0 0 auto; }
 .footer-stick-bottom { margin-top: auto; }
 .footer_upload_video {
     background-color: #1C355E;
@@ -347,11 +545,11 @@ const currentCourses = computed(() => {
     text-align: center;
     background-color: #fff;
     border-radius: 8px;
-    min-height: 400px; /* Ensure it takes up enough vertical space */
+    min-height: 240px;
 }
 
 .empty-library-image {
-    width: 250px; /* Adjust size as needed */
+    width: 220px;
     height: auto;
     margin-bottom: 20px;
 }
@@ -461,5 +659,224 @@ const currentCourses = computed(() => {
 }
 .dark .progress_bar_dark_main{
     background-color: #6c706f;
+}
+
+/* Library course card design */
+.library-courses-list{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.library-course-card{
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 16px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 10px 26px rgba(15, 32, 45, 0.06);
+    width: 100%;
+}
+
+.dark .library-course-card{
+    background: #142233;
+    border-color: #1f2d40;
+    box-shadow: none;
+}
+
+.library-course-thumb{
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+}
+
+.library-course-body{
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.library-course-meta{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.library-pill{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    background: rgba(37, 74, 122, 0.10);
+    border: 1px solid rgba(37, 74, 122, 0.20);
+}
+
+.dark .library-pill{
+    color: #e5f2ff;
+    background: rgba(88, 207, 255, 0.14);
+    border-color: rgba(88, 207, 255, 0.25);
+}
+
+.library-course-updated{
+    font-size: 12px;
+    color: #64748b;
+}
+
+.dark .library-course-updated{
+    color: rgba(229, 242, 255, 0.75);
+}
+
+.library-course-title{
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+    margin: 0;
+}
+
+.dark .library-course-title{ color: #ffffff; }
+
+.library-course-subtitle{
+    font-size: 13px;
+    color: #334155;
+    margin: 0;
+}
+.dark .library-course-subtitle{ color: rgba(229, 242, 255, 0.85); }
+
+.library-course-author{
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+}
+.dark .library-course-author{ color: rgba(229, 242, 255, 0.75); }
+
+.library-course-duration{
+    color: inherit;
+}
+
+.library-course-footer{
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.library-progress{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 240px;
+    flex: 1;
+}
+
+.library-progress-bar{
+    flex: 1;
+    height: 6px;
+    background: rgba(15, 23, 42, 0.10);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.dark .library-progress-bar{
+    background: rgba(229, 242, 255, 0.14);
+}
+
+.library-progress-fill{
+    height: 100%;
+    background: #1C355E;
+    border-radius: 999px;
+}
+
+.dark .library-progress-fill{
+    background: #58cfff;
+}
+
+.library-progress-text{
+    font-size: 12px;
+    color: #64748b;
+    min-width: 72px;
+    text-align: right;
+}
+.dark .library-progress-text{ color: rgba(229, 242, 255, 0.75); }
+
+.library-actions{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.library-btn-primary,
+.library-btn-secondary,
+.library-btn-disabled{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.library-btn-primary{
+    background: #1C355E;
+    color: #ffffff;
+    border: 1px solid transparent;
+}
+.library-btn-primary:hover{ background: #254a7a; transform: translateY(-1px); }
+
+.library-btn-secondary{
+    background: transparent;
+    color: #1C355E;
+    border: 1px solid rgba(28, 53, 94, 0.35);
+}
+.library-btn-secondary:hover{ background: rgba(28, 53, 94, 0.08); transform: translateY(-1px); }
+
+.library-btn-disabled{
+    background: transparent;
+    color: rgba(100, 116, 139, 0.8);
+    border: 1px solid rgba(100, 116, 139, 0.35);
+    cursor: not-allowed;
+}
+
+@media (max-width: 800px) {
+    .library-course-card{
+        grid-template-columns: 1fr;
+    }
+    .library-course-thumb{
+        height: 180px;
+    }
+    .library-progress{
+        min-width: 0;
+        width: 100%;
+    }
+    .library-progress-text{
+        text-align: left;
+    }
+}
+
+@media (min-width: 1024px) {
+    .library-course-card{
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+        padding: 16px;
+    }
+    .library-course-thumb{
+        height: 180px;
+    }
 }
 </style>

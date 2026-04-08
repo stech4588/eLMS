@@ -72,14 +72,62 @@
                 </div>
 
                 <div class="input-group">
-                  <input v-model="form.password" :type="showPassword ? 'text' : 'password'"
-                    placeholder="Create Password" class="nice-input" />
+                  <div class="password-field">
+                    <input
+                      v-model="form.password"
+                      :type="showPassword ? 'text' : 'password'"
+                      placeholder="Create Password"
+                      class="nice-input nice-input--with-icon"
+                    />
+                    <button
+                      type="button"
+                      class="password-eye-btn"
+                      @click="showPassword = !showPassword"
+                      :title="showPassword ? 'Hide password' : 'Show password'"
+                      aria-label="Toggle password visibility"
+                    >
+                      <svg v-if="!showPassword" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                      <svg v-else viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M3 3l18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10.6 10.6a2 2 0 102.8 2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M9.9 5.1A10.6 10.6 0 0112 5c6.5 0 10 7 10 7a18.2 18.2 0 01-4.2 5.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6.2 6.2C3.8 8.1 2 12 2 12s3.5 7 10 7c1 0 2-.2 2.9-.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
                   <span v-if="formErrors.password" class="error-msg">{{ formErrors.password }}</span>
                 </div>
 
                 <div class="input-group">
-                  <input v-model="form.password_confirmation" type="password" placeholder="Confirm Password"
-                    class="nice-input" />
+                  <div class="password-field">
+                    <input
+                      v-model="form.password_confirmation"
+                      :type="showConfirmPassword ? 'text' : 'password'"
+                      placeholder="Confirm Password"
+                      class="nice-input nice-input--with-icon"
+                    />
+                    <button
+                      type="button"
+                      class="password-eye-btn"
+                      @click="showConfirmPassword = !showConfirmPassword"
+                      :title="showConfirmPassword ? 'Hide password' : 'Show password'"
+                      aria-label="Toggle password visibility"
+                    >
+                      <svg v-if="!showConfirmPassword" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6Z" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                      <svg v-else viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M3 3l18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10.6 10.6a2 2 0 102.8 2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M9.9 5.1A10.6 10.6 0 0112 5c6.5 0 10 7 10 7a18.2 18.2 0 01-4.2 5.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6.2 6.2C3.8 8.1 2 12 2 12s3.5 7 10 7c1 0 2-.2 2.9-.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -180,6 +228,7 @@ export default {
       paymentProcessing: false,
       paymentError: null,
       showPassword: false,
+      showConfirmPassword: false,
       form: {
         name: '',
         email: '',
@@ -563,6 +612,43 @@ computed: {
   border-radius: 4px;
   font-size: 15px;
   transition: border-color 0.2s;
+}
+
+.nice-input--with-icon{
+  padding-right: 48px;
+}
+
+.password-field{
+  position: relative;
+}
+
+.password-eye-btn{
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.password-eye-btn svg{
+  width: 18px;
+  height: 18px;
+}
+
+.password-eye-btn:hover{
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
+  color: #111827;
 }
 
 .nice-input:focus {

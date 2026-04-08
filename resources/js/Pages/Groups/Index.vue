@@ -53,12 +53,24 @@
                         </div>
                     </div>
                 </div>
-                <div v-else class="text-center text-white dark:text-gray-400 py-16">
-                    <svg class="mx-auto h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-white dark:text-gray-100">No groups found</h3>
-                    <p class="mt-1 text-sm text-white">Get started by creating a new group.</p>
+                <div v-else class="text-center text-white dark:text-gray-400 py-16 px-4">
+                    <img
+                        src="/images/nothing_to_see.png"
+                        alt="Nothing to see"
+                        class="mx-auto w-56 max-w-full opacity-90"
+                    />
+                    <h3 class="mt-4 text-base font-semibold text-white dark:text-gray-100">
+                        {{ search ? 'No groups match your search' : 'No groups available right now' }}
+                    </h3>
+                    <p class="mt-1 text-sm text-white/90 dark:text-gray-300">
+                        {{ search ? 'Try a different keyword, or create a new group.' : 'Create the first one to get started.' }}
+                    </p>
+                    <button
+                        @click="openCreateGroupPopup"
+                        class="mt-6 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150"
+                    >
+                        Create Group
+                    </button>
                 </div>
 
                 <!-- Pagination -->

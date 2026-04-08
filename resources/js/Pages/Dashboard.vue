@@ -81,7 +81,7 @@
                 </div> -->
                 <!-- My Programs - single column row layout -->
                 <div class="my-programs-section">
-                    <h2 class="my-programs-heading">My Programs</h2>
+                    <h2 class="my-programs-heading">All Courses</h2>
                     <!-- Display Selected Filters -->
                     <div class="selected-filters-container mb-4" v-if="hasActiveFilters">
                         <span v-for="topic in selectedTopicFilters" :key="`topic-${topic.value}`" class="selected-filter-tag">
@@ -104,6 +104,23 @@
 
                     <div class="my-programs-list">
                         <div v-for="(course, index) in displayedCourses" :key="`skill-${index}-${course.id}`" class="my-program-row">
+                            <button
+                                type="button"
+                                class="course-save-btn"
+                                :class="{ 'is-saved': course.is_favorited }"
+                                @click.stop.prevent="toggleFavorite(course)"
+                                :title="course.is_favorited ? 'Saved' : 'Save'"
+                                aria-label="Save course"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path
+                                        d="M7 3h10a1 1 0 011 1v17l-6-3-6 3V4a1 1 0 011-1Z"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
                             <Link :href="route('courses.show', { course: course.id })" class="my-program-thumb-wrap">
                                 <img :src="course.first_video_thumbnail_url || '/images/skill_section_thumbnail.svg'" class="my-program-thumb" alt="" />
                             </Link>
@@ -1186,6 +1203,7 @@ const toggleFavorite = async (course) => {
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     transition: box-shadow 0.2s;
+    position: relative;
 }
 
 .my-program-row:hover {
@@ -1195,6 +1213,51 @@ const toggleFavorite = async (course) => {
 .dark .my-program-row {
     background: #1f2937;
     border-color: #374151;
+}
+
+.course-save-btn{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    color: #1C355E;
+    box-shadow: 0 8px 18px rgba(15, 32, 45, 0.12);
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    z-index: 5;
+}
+
+.course-save-btn svg{
+    width: 18px;
+    height: 18px;
+}
+
+.course-save-btn:hover{
+    transform: translateY(-1px);
+    background: #ffffff;
+    border-color: rgba(28, 53, 94, 0.22);
+}
+
+.course-save-btn.is-saved{
+    background: rgba(28, 53, 94, 0.10);
+    border-color: rgba(28, 53, 94, 0.22);
+}
+
+.dark .course-save-btn{
+    background: rgba(15, 33, 46, 0.92);
+    border-color: rgba(229, 242, 255, 0.16);
+    color: #58cfff;
+}
+
+.dark .course-save-btn.is-saved{
+    background: rgba(88, 207, 255, 0.12);
+    border-color: rgba(88, 207, 255, 0.25);
 }
 
 .my-program-thumb-wrap {

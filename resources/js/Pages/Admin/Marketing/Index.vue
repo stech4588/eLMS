@@ -190,17 +190,28 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="quote in quotes.data" :key="quote.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
-                                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ quote.content.split(' ').slice(0, 10).join(' ') + (quote.content.split(' ').length > 10 ? '...' : '') }}</td>
-                                                <td class="px-6 py-4">{{ quote.author }}</td>
-                                                <td class="px-6 py-4">
-                                                    <input type="checkbox" :checked="quote.is_active" @change="toggleStatus(quote)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
-                                                </td>
-                                                <td class="px-6 py-4 flex items-center">
-                                                    <button @click="startEdit(quote)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
-                                                    <button @click="deleteItem(quote.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
-                                                </td>
-                                            </tr>
+                                            <template v-if="quotes.data.length === 0">
+                                                <tr class="bg-white dark:bg-[#293E4C] dark:border-gray-700">
+                                                    <td colspan="4" class="px-6 py-10 text-center">
+                                                        <img src="/images/nothing_to_see.png" alt="Nothing to see" class="mx-auto w-40 max-w-full opacity-90" />
+                                                        <div class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">No quotes available right now</div>
+                                                        <div class="mt-1 text-xs text-gray-600 dark:text-gray-300">Click “Add New Quote” to create the first one.</div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                            <template v-else>
+                                                <tr v-for="quote in quotes.data" :key="quote.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
+                                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ quote.content.split(' ').slice(0, 10).join(' ') + (quote.content.split(' ').length > 10 ? '...' : '') }}</td>
+                                                    <td class="px-6 py-4">{{ quote.author }}</td>
+                                                    <td class="px-6 py-4">
+                                                        <input type="checkbox" :checked="quote.is_active" @change="toggleStatus(quote)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
+                                                    </td>
+                                                    <td class="px-6 py-4 flex items-center">
+                                                        <button @click="startEdit(quote)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                        <button @click="deleteItem(quote.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </tbody>
                                     </table>
                                 </div>
@@ -229,23 +240,34 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="promotion in promotions.data" :key="promotion.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
-                                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ promotion.id }}</td>
-                                                <td class="px-6 py-4">{{ promotion.title }}</td>
-                                                <td class="px-6 py-4">{{ promotion.promotion_type }}</td>
-                                                <td class="px-6 py-4">
-                                                    <span v-if="promotion.promotion_type === 'text'">{{ promotion.text_content ? (promotion.text_content.split(' ').slice(0, 10).join(' ') + (promotion.text_content.split(' ').length > 10 ? '...' : '')) : '' }}</span>
-                                                    <img v-else-if="promotion.promotion_type === 'poster' && promotion.image_url" :src="promotion.image_url" alt="Poster" class="h-10 w-10 object-cover rounded" />
-                                                </td>
-                                                <td class="px-6 py-4">
-                                                    <input type="checkbox" :checked="promotion.is_active" @change="toggleStatus(promotion)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
-                                                </td>
-                                                <td class="px-6 py-4">{{ promotion.till_date }}</td>
-                                                <td class="px-6 py-4 flex items-center">
-                                                    <button @click="startEdit(promotion)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
-                                                    <button @click="deleteItem(promotion.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
-                                                </td>
-                                            </tr>
+                                            <template v-if="promotions.data.length === 0">
+                                                <tr class="bg-white dark:bg-[#293E4C] dark:border-gray-700">
+                                                    <td colspan="7" class="px-6 py-10 text-center">
+                                                        <img src="/images/nothing_to_see.png" alt="Nothing to see" class="mx-auto w-40 max-w-full opacity-90" />
+                                                        <div class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">No promotions available right now</div>
+                                                        <div class="mt-1 text-xs text-gray-600 dark:text-gray-300">Click “Add New Promotion” to create the first one.</div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                            <template v-else>
+                                                <tr v-for="promotion in promotions.data" :key="promotion.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
+                                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ promotion.id }}</td>
+                                                    <td class="px-6 py-4">{{ promotion.title }}</td>
+                                                    <td class="px-6 py-4">{{ promotion.promotion_type }}</td>
+                                                    <td class="px-6 py-4">
+                                                        <span v-if="promotion.promotion_type === 'text'">{{ promotion.text_content ? (promotion.text_content.split(' ').slice(0, 10).join(' ') + (promotion.text_content.split(' ').length > 10 ? '...' : '')) : '' }}</span>
+                                                        <img v-else-if="promotion.promotion_type === 'poster' && promotion.image_url" :src="promotion.image_url" alt="Poster" class="h-10 w-10 object-cover rounded" />
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <input type="checkbox" :checked="promotion.is_active" @change="toggleStatus(promotion)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
+                                                    </td>
+                                                    <td class="px-6 py-4">{{ promotion.till_date }}</td>
+                                                    <td class="px-6 py-4 flex items-center">
+                                                        <button @click="startEdit(promotion)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                        <button @click="deleteItem(promotion.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </tbody>
                                     </table>
                                 </div>
@@ -273,19 +295,30 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="prompt in prompts.data" :key="prompt.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
-                                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ prompt.title }}</td>
-                                                <td class="px-6 py-4">{{ prompt.target_audience }}</td>
-                                                <td class="px-6 py-4">{{ prompt.trigger_condition }}</td>
-                                                <td class="px-6 py-4">{{ formatFrequency(prompt) }}</td>
-                                                <td class="px-6 py-4">
-                                                    <input type="checkbox" :checked="prompt.is_active" @change="toggleStatus(prompt)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
-                                                </td>
-                                                <td class="px-6 py-4 flex items-center">
-                                                    <button @click="startEdit(prompt)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
-                                                    <button @click="deleteItem(prompt.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
-                                                </td>
-                                            </tr>
+                                            <template v-if="prompts.data.length === 0">
+                                                <tr class="bg-white dark:bg-[#293E4C] dark:border-gray-700">
+                                                    <td colspan="6" class="px-6 py-10 text-center">
+                                                        <img src="/images/nothing_to_see.png" alt="Nothing to see" class="mx-auto w-40 max-w-full opacity-90" />
+                                                        <div class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">No prompts available right now</div>
+                                                        <div class="mt-1 text-xs text-gray-600 dark:text-gray-300">Click “Add New Prompt” to create the first one.</div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                            <template v-else>
+                                                <tr v-for="prompt in prompts.data" :key="prompt.id" class="bg-white border-b dark:bg-[#293E4C] dark:border-gray-700">
+                                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ prompt.title }}</td>
+                                                    <td class="px-6 py-4">{{ prompt.target_audience }}</td>
+                                                    <td class="px-6 py-4">{{ prompt.trigger_condition }}</td>
+                                                    <td class="px-6 py-4">{{ formatFrequency(prompt) }}</td>
+                                                    <td class="px-6 py-4">
+                                                        <input type="checkbox" :checked="prompt.is_active" @change="toggleStatus(prompt)" class="rounded dark:bg-gray-900 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" />
+                                                    </td>
+                                                    <td class="px-6 py-4 flex items-center">
+                                                        <button @click="startEdit(prompt)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-3"><img src="/images/pen_icon.svg" alt="Edit" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                        <button @click="deleteItem(prompt.id)" class="font-medium text-red-600 dark:text-red-500 hover:underline"><img src="/images/delete_icon.svg" alt="Delete" class="w-4 h-4 dark:invert action-icon" /></button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </tbody>
                                     </table>
                                 </div>

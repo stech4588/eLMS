@@ -290,7 +290,13 @@ const profileMenuItems = computed(() => {
         { label: 'Add New Courses', href: '/addnewcourses', show: hasPermission('addnewcourses') },
         { label: 'Help', href: '/help', show: true },
     ];
-    return items;
+    return items.map((item) => ({
+        ...item,
+        active: !!item.href && (
+            page.url === item.href ||
+            (item.href !== '/' && page.url.startsWith(item.href))
+        ),
+    }));
 });
 
 // Nav links for navbar (subset of profile items - key pages only)
@@ -436,7 +442,7 @@ onMounted(() => {
                                 <template #content>
                                     <div class="max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain rounded-b-md">
                                         <template v-for="item in profileMenuItems" :key="item.href || item.label">
-                                            <DropdownLink v-if="item.show" :href="item.href"
+                                            <DropdownLink v-if="item.show" :href="item.href" :active="item.active"
                                                 class="text-gray-700 dark:text-dark-text-secondary hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary block">
                                                 {{ item.label }}
                                             </DropdownLink>
@@ -684,8 +690,8 @@ onMounted(() => {
 }
 
 .page-transition-loader {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 5rem; /* keep navbar visible */
     left: 0;
     right: 0;
     bottom: 0;
@@ -693,7 +699,7 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 2500;
     /* border-radius: 8px; */
 }
 

@@ -204,6 +204,8 @@
 
 
 
+                                    <!-- Certificates field disabled for now -->
+                                    <!--
                                     <div class="mb-6" style="">
                                         <label for="certificates" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Certificates <span style="color: red;">*</span></label>
                                         <div class="custom-dropdown" @click="toggleDropdown('certificates')" :class="{ 'active': activeDropdown === 'certificates' }">
@@ -227,6 +229,7 @@
                                         </div>
                                         <p v-if="errors.certificates" class="text-red-500 text-sm mt-1" style="text-align: start;">{{ errors.certificates }}</p>
                                     </div>
+                                    -->
 
                                     <div class="mb-6" style="">
                                         <label for="topic" class="block mb-2 font-medium flex" style="gap: 10px; color: #7E7E7E;">Topic <span style="color: red;">*</span></label>
@@ -835,7 +838,7 @@ const isCourseComplete = computed(() => {
         course_description: form.course_description,
         additional_description: form.additional_description,
         recomendations: form.recomendations,
-        certificates: form.certificates,
+        // certificates: form.certificates, // disabled for now
         industry: form.industry,
         topic: form.topic,
         course_type: form.course_type,
@@ -871,7 +874,8 @@ const incompleteFieldsMessage = computed(() => {
     if (!form.course_description || form.course_description.trim() === '') missing.push('Description');
     if (!form.additional_description || form.additional_description.trim() === '') missing.push('Additional Description');
     if (!form.recomendations || form.recomendations.trim() === '') missing.push('Recommendations');
-    if (!form.certificates) missing.push('Certificates');
+    // Certificates disabled for now
+    // if (!form.certificates) missing.push('Certificates');
     if (!form.industry) missing.push('Industry');
     if (!form.topic) missing.push('Topic');
     if (!form.course_type) missing.push('Course Type');
@@ -1961,7 +1965,7 @@ const submitForm = async () => {
         course_description: 'Description',
         additional_description: 'Additional Description',
         recomendations: 'Recomendations',
-        certificates: 'Certificates',
+        // certificates: 'Certificates', // disabled for now
         industry: 'Industry',
         topic: 'Topic',
         course_type: 'Course Type',
@@ -2115,7 +2119,8 @@ const submitForm = async () => {
     // Add other course fields from the 'form' object as necessary
     formData.append('additional_description', form.additional_description);
     formData.append('recomendations', form.recomendations);
-    formData.append('certificates', form.certificates);
+    // Certificates disabled for now
+    // formData.append('certificates', form.certificates);
     formData.append('industry', form.industry);
     formData.append('course_type', form.course_type);
     formData.append('topic', form.topic);
